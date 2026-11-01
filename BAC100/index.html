@@ -105,6 +105,8 @@ input,select,textarea{font-size:16px!important}
 .howm{position:fixed;inset:0;z-index:50;background:rgba(40,40,30,.38);display:flex;align-items:flex-end;justify-content:center}
 .howm-box{width:100%;max-width:560px;max-height:90vh;overflow:auto;background:#fbfaf5;border-radius:20px 20px 0 0;padding:16px 16px 28px;display:grid;gap:12px;box-sizing:border-box}
 .crw{display:grid;justify-items:center}.crw canvas{border-radius:8px;max-width:100%}
+html.crlock,html.crlock body{overflow:hidden;overscroll-behavior:none}.howm,.howm-box{overscroll-behavior:contain}
+.crz{display:flex;align-items:center;gap:8px}.crz input{flex:1;accent-color:#4f9a45}.crz .btn{width:40px;padding:0;font-size:18px}
 .howl{margin:0;padding-left:20px;display:grid;gap:6px;font-size:14px}
 .ills{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ills figure{margin:0;display:grid;gap:6px;justify-items:center}.ills svg{width:100%;height:auto}
 .ills figcaption{font-size:12.5px;text-align:center;color:var(--muted)}
@@ -924,29 +926,61 @@ function updateRow(r){ const old=newList.querySelector(`[data-id="${r.id}"]`); i
   if(old.contains(document.activeElement)){ old.querySelector(".pc").replaceWith(nw.querySelector(".pc")); const sw=old.querySelector(".sw"); if(sw) sw.onclick=()=>{ r.st=r.st===r.cut?r.round:r.cut; updateRow(r); }; }
   else old.replaceWith(nw); syncApply(); }
 // ── 누끼 범위 지정: 사람·정상석만 네모로 감싸면 훨씬 깔끔하게 따짐 ──
+// 두 방식: (1) 네모 조절 (2) 사진 확대·이동(틀 고정, 사진을 키우고 끌기). 열려 있는 동안 페이지 스크롤 잠금.
 const CROPM=document.createElement("div"); CROPM.className="howm"; CROPM.hidden=true;
 CROPM.innerHTML=`<div class="howm-box"><div class="upm-h"><b>누끼 범위 지정</b><button type="button" class="x" id="crX" aria-label="닫기">×</button></div>
-  <p class="meta">사람이랑 정상석만 들어가게 네모를 줄여주세요. 모서리를 끌면 크기, 가운데를 끌면 위치가 바뀌어요.</p>
-  <div class="crw"><canvas id="crC"></canvas></div><div class="row2"><button type="button" class="btn share" id="crGo">이 범위로 누끼</button><button type="button" class="btn" id="crNo">취소</button></div></div>`;
+  <div class="seg" id="crSeg" role="group" aria-label="범위 지정 방식"><button type="button" data-m="box" aria-pressed="true">네모 조절</button><button type="button" data-m="zoom" aria-pressed="false">사진 확대·이동</button></div>
+  <p class="meta" id="crTip"></p>
+  <div class="crw"><canvas id="crC"></canvas></div>
+  <div class="crz" id="crZ" hidden><button type="button" class="btn" id="crZo" aria-label="축소">−</button><input type="range" id="crZr" min="1" max="6" step="0.01" value="1" aria-label="확대 배율"><button type="button" class="btn" id="crZi" aria-label="확대">+</button></div>
+  <div class="row2"><button type="button" class="btn share" id="crGo">이 범위로 누끼</button><button type="button" class="btn" id="crNo">취소</button></div></div>`;
 document.body.appendChild(CROPM);
-let CR=null; // {r, box:[x0,y0,x1,y1] 0~1}
-function drawCrop(){ const c=document.getElementById("crC"), ph=CR.r.ph, W=Math.min(CROPM.querySelector(".crw").clientWidth||320,520), H=Math.round(W*ph.height/ph.width);
-  const dpr=window.devicePixelRatio||1; c.width=W*dpr; c.height=H*dpr; c.style.width=W+"px"; c.style.height=H+"px"; const x=c.getContext("2d"); x.scale(dpr,dpr);
-  x.drawImage(ph,0,0,W,H); const [a,b,e,f]=CR.box, X0=a*W,Y0=b*H,X1=e*W,Y1=f*H;
+let CR=null; // {r, box:[x0,y0,x1,y1] 0~1, m:"box"|"zoom"}
+const CRTIP={box:"사람이랑 정상석만 들어가게 네모를 줄여주세요. 모서리를 끌면 크기, 가운데를 끌면 위치가 바뀌어요.",
+  zoom:"보이는 부분이 그대로 범위가 돼요. 사진을 끌어서 옮기고, 두 손가락이나 아래 막대로 키우세요."};
+function crFitZoom(){ // 확대 모드: 현재 네모를 사진 비율의 틀로 맞춤
+  const [a,b,x1,y1]=CR.box, cx=(a+x1)/2, cy=(b+y1)/2, z=Math.max(1,Math.min(6,1/Math.max(x1-a,y1-b))); crSetZoom(z,cx,cy); }
+function crSetZoom(z,cx,cy){ z=Math.max(1,Math.min(6,z)); const h=.5/z; cx=Math.max(h,Math.min(1-h,cx)); cy=Math.max(h,Math.min(1-h,cy)); CR.box=[cx-h,cy-h,cx+h,cy+h]; CR.z=z; const r=document.getElementById("crZr"); if(r) r.value=z; }
+function drawCrop(){ const c=document.getElementById("crC"), ph=CR.r.ph, maxH=Math.max(200,innerHeight*.42), W=Math.round(Math.min(CROPM.querySelector(".crw").clientWidth||320,520,maxH*ph.width/ph.height)), H=Math.round(W*ph.height/ph.width);
+  const dpr=window.devicePixelRatio||1; c.width=W*dpr; c.height=H*dpr; c.style.width=W+"px"; c.style.height=H+"px"; const x=c.getContext("2d"); x.scale(dpr,dpr); CR.W=W; CR.H=H;
+  const [a,b,e,f]=CR.box;
+  if(CR.m==="zoom"){ x.drawImage(ph,a*ph.width,b*ph.height,(e-a)*ph.width,(f-b)*ph.height,0,0,W,H); x.strokeStyle="#4f9a45"; x.lineWidth=3; x.strokeRect(1.5,1.5,W-3,H-3); return; }
+  x.drawImage(ph,0,0,W,H); const X0=a*W,Y0=b*H,X1=e*W,Y1=f*H;
   x.fillStyle="rgba(0,0,0,.45)"; x.fillRect(0,0,W,Y0); x.fillRect(0,Y1,W,H-Y1); x.fillRect(0,Y0,X0,Y1-Y0); x.fillRect(X1,Y0,W-X1,Y1-Y0);
   x.strokeStyle="#fff"; x.lineWidth=2; x.strokeRect(X0,Y0,X1-X0,Y1-Y0); x.fillStyle="#4f9a45";
-  [[X0,Y0],[X1,Y0],[X0,Y1],[X1,Y1]].forEach(([px,py])=>{ x.beginPath(); x.arc(px,py,9,0,7); x.fill(); x.strokeStyle="#fff"; x.stroke(); }); CR.W=W; CR.H=H; }
-function openCrop(r){ hideSug(); CR={r,box:(r.cbox||[.08,.08,.92,.98]).slice()}; CROPM.hidden=false; requestAnimationFrame(drawCrop); }
-(function(){ const c=CROPM.querySelector("#crC"); let mode=null, st=null;
+  [[X0,Y0],[X1,Y0],[X0,Y1],[X1,Y1]].forEach(([px,py])=>{ x.beginPath(); x.arc(px,py,9,0,7); x.fill(); x.strokeStyle="#fff"; x.stroke(); }); }
+function crMode(m){ CR.m=m; CROPM.querySelectorAll("#crSeg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===m)); document.getElementById("crTip").textContent=CRTIP[m]; document.getElementById("crZ").hidden=m!=="zoom"; if(m==="zoom") crFitZoom(); drawCrop(); }
+function openCrop(r){ hideSug(); CR={r,box:(r.cbox||[.08,.08,.92,.98]).slice(),m:"box",z:1}; CROPM.hidden=false; document.documentElement.classList.add("crlock"); requestAnimationFrame(()=>crMode("box")); }
+(function(){ const c=CROPM.querySelector("#crC"); let mode=null, st=null; const ptr=new Map(); let pin=null;
   c.style.touchAction="none";
-  c.addEventListener("pointerdown",e=>{ const rr=c.getBoundingClientRect(), px=(e.clientX-rr.left)/CR.W, py=(e.clientY-rr.top)/CR.H, [a,b,x1,y1]=CR.box, near=(u,v)=>Math.hypot((u-px)*CR.W,(v-py)*CR.H)<26;
-    mode=near(a,b)?"tl":near(x1,b)?"tr":near(a,y1)?"bl":near(x1,y1)?"br":(px>a&&px<x1&&py>b&&py<y1)?"mv":null; if(!mode) return; st={px,py,box:CR.box.slice()}; c.setPointerCapture(e.pointerId); e.preventDefault(); });
-  c.addEventListener("pointermove",e=>{ if(!mode) return; const rr=c.getBoundingClientRect(), px=(e.clientX-rr.left)/CR.W, py=(e.clientY-rr.top)/CR.H, dx=px-st.px, dy=py-st.py; let [a,b,x1,y1]=st.box; const m=.06, cl=v=>Math.max(0,Math.min(1,v));
+  // iOS 사파리에서 캔버스 위 드래그가 페이지를 끌고 가지 않게
+  c.addEventListener("touchmove",e=>e.preventDefault(),{passive:false});
+  CROPM.addEventListener("touchmove",e=>{ const box=CROPM.querySelector(".howm-box"); if(!box.contains(e.target)||box.scrollHeight<=box.clientHeight) e.preventDefault(); },{passive:false});
+  const pos=e=>{ const rr=c.getBoundingClientRect(); return {px:(e.clientX-rr.left)/CR.W, py:(e.clientY-rr.top)/CR.H}; };
+  c.addEventListener("pointerdown",e=>{ if(!CR) return; e.preventDefault(); c.setPointerCapture(e.pointerId);
+    if(CR.m==="zoom"){ ptr.set(e.pointerId,pos(e)); if(ptr.size===2){ const [p,q]=[...ptr.values()]; pin={d:Math.hypot((p.px-q.px)*CR.W,(p.py-q.py)*CR.H),z:CR.z,box:CR.box.slice(),mx:(p.px+q.px)/2,my:(p.py+q.py)/2}; } else { pin=null; st={...pos(e),box:CR.box.slice()}; } return; }
+    const {px,py}=pos(e), [a,b,x1,y1]=CR.box, near=(u,v)=>Math.hypot((u-px)*CR.W,(v-py)*CR.H)<26;
+    mode=near(a,b)?"tl":near(x1,b)?"tr":near(a,y1)?"bl":near(x1,y1)?"br":(px>a&&px<x1&&py>b&&py<y1)?"mv":null; if(!mode) return; st={px,py,box:CR.box.slice()}; });
+  c.addEventListener("pointermove",e=>{ if(!CR) return;
+    if(CR.m==="zoom"){ if(!ptr.has(e.pointerId)) return; ptr.set(e.pointerId,pos(e));
+      if(pin&&ptr.size>=2){ const [p,q]=[...ptr.values()], d=Math.hypot((p.px-q.px)*CR.W,(p.py-q.py)*CR.H), [a,b,x1,y1]=pin.box, w=x1-a, h=y1-b;
+        const z=Math.max(1,Math.min(6,pin.z*d/Math.max(1,pin.d))), ix=a+pin.mx*w, iy=b+pin.my*h, nh=1/z, mx=(p.px+q.px)/2, my=(p.py+q.py)/2; // 손가락 사이 지점을 고정한 채 확대
+        crSetZoom(z, ix-mx*nh+nh/2, iy-my*nh+nh/2); drawCrop(); }
+      else if(st){ const {px,py}=pos(e), [a,b,x1,y1]=st.box, w=x1-a; crSetZoom(CR.z,(a+x1)/2-(px-st.px)*w,(b+y1)/2-(py-st.py)*w); drawCrop(); }
+      return; }
+    if(!mode) return; const {px,py}=pos(e), dx=px-st.px, dy=py-st.py; let [a,b,x1,y1]=st.box; const m=.06, cl=v=>Math.max(0,Math.min(1,v));
     if(mode==="mv"){ const w=x1-a,h=y1-b; a=Math.max(0,Math.min(1-w,a+dx)); b=Math.max(0,Math.min(1-h,b+dy)); x1=a+w; y1=b+h; }
     else{ if(mode[1]==="l") a=Math.min(cl(a+dx),x1-m); else x1=Math.max(cl(x1+dx),a+m); if(mode[0]==="t") b=Math.min(cl(b+dy),y1-m); else y1=Math.max(cl(y1+dy),b+m); }
     CR.box=[a,b,x1,y1]; drawCrop(); });
-  c.addEventListener("pointerup",()=>{ mode=null; }); c.addEventListener("pointercancel",()=>{ mode=null; });
-  const close=()=>{ CROPM.hidden=true; CR=null; };
+  const up=e=>{ mode=null; ptr.delete(e.pointerId); if(ptr.size<2) pin=null; if(ptr.size===1&&CR){ const [k,v]=[...ptr.entries()][0]; st={...v,box:CR.box.slice()}; } else if(!ptr.size) st=null; };
+  c.addEventListener("pointerup",up); c.addEventListener("pointercancel",up);
+  c.addEventListener("wheel",e=>{ if(!CR||CR.m!=="zoom") return; e.preventDefault(); const [a,b,x1,y1]=CR.box; crSetZoom(CR.z*Math.exp(-e.deltaY*.002),(a+x1)/2,(b+y1)/2); drawCrop(); },{passive:false});
+  const zc=z=>{ const [a,b,x1,y1]=CR.box; crSetZoom(z,(a+x1)/2,(b+y1)/2); drawCrop(); };
+  CROPM.querySelector("#crZr").addEventListener("input",e=>zc(+e.target.value));
+  CROPM.querySelector("#crZi").onclick=()=>zc(CR.z*1.25); CROPM.querySelector("#crZo").onclick=()=>zc(CR.z/1.25);
+  CROPM.querySelectorAll("#crSeg button").forEach(b=>b.onclick=()=>{ if(CR&&CR.m!==b.dataset.m) crMode(b.dataset.m); });
+  addEventListener("resize",()=>{ if(CR) drawCrop(); });
+  const close=()=>{ CROPM.hidden=true; CR=null; ptr.clear(); pin=null; st=null; mode=null; document.documentElement.classList.remove("crlock"); };
   CROPM.querySelector("#crX").onclick=close; CROPM.querySelector("#crNo").onclick=close;
   CROPM.querySelector("#crGo").onclick=async()=>{ const {r,box}=CR, ph=r.ph, b=CROPM.querySelector("#crGo"); b.disabled=true; b.textContent="누끼 따는 중…";
     const [a,y,x1,y1]=box, sub=document.createElement("canvas"); sub.width=Math.max(1,Math.round((x1-a)*ph.width)); sub.height=Math.max(1,Math.round((y1-y)*ph.height));
