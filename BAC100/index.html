@@ -1048,8 +1048,8 @@ function roundSticker(ph){ const S=220, st=document.createElement("canvas"); st.
   x.save(); x.beginPath(); x.arc(S/2,S/2,S/2-12,0,Math.PI*2); x.clip(); x.drawImage(ph,sx,sy,side,side,12,12,S-24,S-24); x.restore(); return st; }
 document.querySelector("label[for=bulk]").addEventListener("click",()=>{ getSeg().catch(()=>{}); getOCR().catch(()=>{}); });
 document.getElementById("bulk").addEventListener("change",e=>{ const files=[...e.target.files]; e.target.value=""; if(!files.length) return; gc("upload-"+Math.min(files.length,11));
-  if(files.length>10){ const w=document.getElementById("upWarn"); w.textContent=`${files.length}장을 골랐어요. 한 번에 10장까지만 올릴 수 있어요. 10장 이하로 다시 골라주세요.`; w.hidden=false; return; }
-  document.getElementById("upWarn").hidden=true; addFiles(files,null); });
+  const w=document.getElementById("upWarn"); if(files.length>10){ w.textContent=`${files.length}장을 골랐어요. 한 번에 10장까지라 앞의 10장만 올려요. 나머지는 다음에 다시 올려주세요.`; w.hidden=false; } else w.hidden=true;
+  addFiles(files,null); });
 // 목록의 올리기 / 교체 → 신규 등록으로
 document.getElementById("file").addEventListener("change",e=>{ const f=e.target.files[0]; e.target.value=""; if(f&&selected) addFiles([f],selected); });
 document.getElementById("howBtn").onclick=()=>{ document.getElementById("howM").hidden=false; };
