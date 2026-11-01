@@ -952,7 +952,7 @@ function openCrop(r){ hideSug(); CR={r,box:(r.cbox||[.08,.08,.92,.98]).slice()};
     const [a,y,x1,y1]=box, sub=document.createElement("canvas"); sub.width=Math.max(1,Math.round((x1-a)*ph.width)); sub.height=Math.max(1,Math.round((y1-y)*ph.height));
     sub.getContext("2d").drawImage(ph,a*ph.width,y*ph.height,sub.width,sub.height,0,0,sub.width,sub.height);
     let st=null; try{ st=await cutout(sub); }catch(_){}
-    b.disabled=false; b.textContent="이 범위로 누끼"; r.cbox=box; r.round=roundSticker(sub); r.cut=st; r.st=st||r.round; close(); updateRow(r); };
+    b.disabled=false; b.textContent="이 범위로 누끼"; r.cbox=box; r.round=roundSticker(sub); r.cut=st; r.st=st||r.round; close(); if(r.done) r.done(r); else updateRow(r); };
 })();
 // 사용 통계 (공개판에서만 GoatCounter, 없으면 아무것도 안 함)
 function gc(ev){ try{ if(window.goatcounter&&goatcounter.count) goatcounter.count({path:ev,title:ev,event:true}); }catch(_){} }
@@ -1031,11 +1031,13 @@ function rowEl(m){
     el.innerHTML=`<button type="button" class="fav" aria-pressed="${FAV.has(n)}" aria-label="${m.name} 즐겨찾기"><svg viewBox="-8.5 -7 17 11.5" width="26" height="18" aria-hidden="true"><path d="M-7,3 C-5.5,-1 -3.5,-5.5 -1.5,-5.5 C0.2,-5.5 0.8,-2.8 1.6,-2.8 C2.6,-2.8 3.4,-4.2 4.4,-4.2 C5.6,-4.2 6.6,-0.5 7.4,3 Z"/></svg></button>
     <div class="nm"><b>${m.base}</b><small>${m.peak}</small></div>
     <div class="ct">${m.city}</div><div class="ht">${m.h.toLocaleString()}m</div>
-    <div class="pc">${p?`<span class="tw"><button type="button" class="thumb" aria-label="${m.name} 사진 보기"><img alt="" src="${p.st}"></button><button type="button" class="tx" aria-label="${m.base} 사진 삭제">×</button></span><button type="button" class="lnk up">교체</button>`:`<button type="button" class="lnk up">올리기</button>`}</div>
+    <div class="pc">${p?`<span class="tw"><button type="button" class="thumb" aria-label="${m.name} 사진 보기"><img alt="" src="${p.st}"></button><button type="button" class="tx" aria-label="${m.base} 사진 삭제">×</button></span><button type="button" class="lnk up">교체</button><button type="button" class="lnk cropl">범위 지정</button>`:`<button type="button" class="lnk up">올리기</button>`}</div>
     <div class="dc">${p?`<button type="button" class="dbtn ${g&&g.d?"":"in"}" aria-label="${m.base} 날짜 ${g&&g.d?"바꾸기":"입력"}">${g&&g.d?short(g.d):"--.--.--"}</button>${g&&g.bac?'<span class="bacb">BAC인증</span>':""}`:""}</div>`;
   el.querySelector(".fav").onclick=()=>{FAV.has(n)?FAV.delete(n):FAV.add(n);ls.set("bac100-fav",[...FAV]);refreshAll();scheduleCard();};
   el.querySelector(".up").onclick=()=>{ selected=n; document.getElementById("file").click(); };
   const th=el.querySelector(".thumb"); if(th) th.onclick=()=>openPhoto(n);
+  const cl=el.querySelector(".cropl"); if(cl) cl.onclick=async()=>{ const p0=PH[n]; const im=await loadImg(p0.ph); if(!im) return; const c=document.createElement("canvas"); c.width=im.width; c.height=im.height; c.getContext("2d").drawImage(im,0,0);
+    openCrop({ph:c,cbox:p0.cbox,done:r=>{ savePhoto(n,Object.assign(entryFrom(r.st,c,p0.d,p0.bac),{cbox:r.cbox})); afterPhotoChange(); }}); };
   const tx=el.querySelector(".tx"); if(tx) tx.onclick=()=>{ if(!tx.classList.contains("ask")){ tx.classList.add("ask"); tx.textContent="삭제"; setTimeout(()=>{ if(tx.isConnected){ tx.classList.remove("ask"); tx.textContent="×"; } },2500); return; }
     delete PH[n]; IDB.del(n); if(SEED_PHOTOS[n]){ DELS.add(n); ls.set("bac100-deleted",[...DELS]); } delete POS[n]; ls.set("bac100-pos",POS); afterPhotoChange(); };
   const db=el.querySelector(".dbtn"); if(db) db.onclick=()=>openDate(n,db);
