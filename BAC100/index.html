@@ -156,6 +156,8 @@ html.crlock,html.crlock body{overflow:hidden;overscroll-behavior:none}.howm,.how
 .b100 .seal{position:absolute;top:50%;width:14.2cqw;aspect-ratio:1;transform:translateY(-50%);z-index:3}.b100 .seal.l{left:2.4cqw}.b100 .seal.r{right:2.4cqw}
 .b100 .seal svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 .25cqw .35cqw rgba(0,0,0,.18))}
 .b100 .cap{text-align:center;font-size:12.5px;font-weight:700;color:#2f6a2c;margin-top:4px}
+.slot.wide.lock{cursor:default}.slot.wide.lock .b100{filter:grayscale(1);opacity:.32}.slot.wide.lock .cap,.slot.wide.lock .b100 .in,.slot.wide.lock .b100 .ph{display:none}
+.slot .lockov{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:1px;text-align:center;color:#6f6e58}.slot .lockov .q{position:static;font-size:26px;opacity:.9}.slot .lockov b{font-size:14px;color:#4b5a3f}.slot .lockov small{font-size:12px;color:#8a8970}
 .slot .q{position:absolute;inset:4px 4px 22px;display:grid;place-items:center;font-size:24px;opacity:.55}
 .dbtn.in{color:#a3a18c;font-weight:500;letter-spacing:.5px}
 .dpop{position:fixed;z-index:60;width:230px;background:#fffefa;border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 28px rgba(40,40,30,.2);padding:12px;display:grid;gap:8px}
@@ -1173,6 +1175,9 @@ function banner100(){ const L=Object.keys(PH).map(Number).filter(n=>PH[n]).sort(
 function renderBadges(){ const c=D.filter(m=>isDone(m.n)).length, b=document.getElementById("badgeSlots"); if(!b) return; b.innerHTML="";
   [10,20,30,40,49,50,60,70,80,90,100].forEach(k=>{ const e=document.createElement("div"), open=MS_PREVIEW||c>=k; e.className="slot"+(open?" open":"");
     const pic=document.createElement("div"); pic.className="pic";
+    if(!open&&k===100){ // 마지막 현수막은 잠겨 있어도 한 줄 가득 흐릿하게 보여줌 (기대감)
+      e.className="slot wide lock"; e.innerHTML=banner100()+`<div class="lockov"><span class="q" aria-hidden="true">🔒</span><b>100좌 완등 현수막</b><small>100좌를 다 오르면 열려요 · 지금 ${c}좌</small></div>`;
+      e.setAttribute("aria-label",`100좌 완등 현수막, 아직 잠김 (지금 ${c}좌)`); b.appendChild(e); return; }
     if(!open){ e.innerHTML='<span class="q" aria-hidden="true">🔒</span><b>?좌</b>'; e.setAttribute("aria-label","아직 안 열린 마일스톤 스티커"); b.appendChild(e); return; }
     if(k===100){ const on=DECOS.some(d=>d.k===100); e.className="slot open wide"+(on?" on":""); e.innerHTML=banner100()+(on?'<span class="onmap">지도에 ✓</span>':""); e.setAttribute("aria-label","100좌 완등 현수막"); e.setAttribute("role","button"); e.tabIndex=0; e.onclick=()=>toggleDeco(100); b.appendChild(e); return; }
     if(k===50){ pic.appendChild(ribbonSVG()); }
