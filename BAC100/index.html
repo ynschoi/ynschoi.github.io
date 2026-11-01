@@ -965,7 +965,7 @@ const CRTIP={box:"사람이랑 정상석만 들어가게 네모를 줄여주세�
 function crFitZoom(){ // 확대 모드: 현재 네모를 사진 비율의 틀로 맞춤
   const [a,b,x1,y1]=CR.box, cx=(a+x1)/2, cy=(b+y1)/2, z=Math.max(1,Math.min(6,1/Math.max(x1-a,y1-b))); crSetZoom(z,cx,cy); }
 function crSetZoom(z,cx,cy){ z=Math.max(1,Math.min(6,z)); const h=.5/z; cx=Math.max(h,Math.min(1-h,cx)); cy=Math.max(h,Math.min(1-h,cy)); CR.box=[cx-h,cy-h,cx+h,cy+h]; CR.z=z; const r=document.getElementById("crZr"); if(r) r.value=z; }
-function drawCrop(){ const c=document.getElementById("crC"), ph=CR.r.ph, maxH=Math.max(200,innerHeight*.42), W=Math.round(Math.min(CROPM.querySelector(".crw").clientWidth||320,520,maxH*ph.width/ph.height)), H=Math.round(W*ph.height/ph.width);
+function drawCrop(){ const c=document.getElementById("crC"), ph=CR.r.ph, maxH=Math.max(140,Math.min(innerHeight*.42,innerHeight*.9-350)), W=Math.round(Math.min(CROPM.querySelector(".crw").clientWidth||320,520,maxH*ph.width/ph.height)), H=Math.round(W*ph.height/ph.width);
   const dpr=window.devicePixelRatio||1; c.width=W*dpr; c.height=H*dpr; c.style.width=W+"px"; c.style.height=H+"px"; const x=c.getContext("2d"); x.scale(dpr,dpr); CR.W=W; CR.H=H;
   const [a,b,e,f]=CR.box;
   if(CR.m==="zoom"){ x.drawImage(ph,a*ph.width,b*ph.height,(e-a)*ph.width,(f-b)*ph.height,0,0,W,H); x.strokeStyle="#4f9a45"; x.lineWidth=3; x.strokeRect(1.5,1.5,W-3,H-3); return; }
