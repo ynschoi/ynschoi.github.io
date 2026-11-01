@@ -46,6 +46,7 @@ svg#map{display:block;width:100%;height:auto;max-height:82vh;touch-action:pan-y;
 .fmt{all:unset;cursor:pointer;font-size:13px;color:#a3a18c;padding:8px 2px}
 .linkbox{display:grid;gap:4px}.linkbox input{font-size:13px}
 .upwarn{margin:0;font-size:13px;color:#b04a2f;background:#fff3ec;border:1px solid #f1cdbd;border-radius:10px;padding:8px 10px}
+.mvtip{margin:0;font-size:13px;line-height:1.55;color:var(--fg);background:#f4f8ea;border:1px solid #cfe1b4;border-radius:10px;padding:8px 10px}
 .uphead .lim{font-size:13px;color:var(--muted)}
 .uphint{font-size:13px;color:var(--fg);line-height:1.5;flex:1;min-width:0}
 .uphead{flex-wrap:nowrap!important;align-items:center}
@@ -61,6 +62,7 @@ input,select,textarea{font-size:16px!important}
 .about{padding:6px 4px;font-size:14px;line-height:1.6;color:var(--fg)}.about p{margin:0}.about p+p{margin-top:2px}
 .about dl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:0}.about dt{color:var(--muted);font-weight:700}.about dd{margin:0}
 .about a{color:#4f7a44;font-weight:700;text-underline-offset:2px}
+.about .bk{margin-top:8px;display:grid;gap:6px;padding:10px 12px;background:#fffefa;border:1px solid var(--line);border-radius:12px;font-size:13.5px}.about .bk b{color:var(--fg)}.about .bk .btn{display:inline-flex;align-items:center}
 .about .safe{margin-top:6px;padding:10px 12px;background:#f4f8ea;border:1px solid #cfe1b4;border-radius:12px;font-size:13.5px}.about .safe b{color:#2f6a2c}
 .uphead{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.uphead .meta{font-size:13px}
 .inx{position:relative}.inx .search{padding-right:40px}
@@ -314,6 +316,7 @@ footer{font-size:12px;color:var(--muted)}
       <div class="uphint"><div>블랙야크 인증 사진을 올리면 편해요. <button type="button" class="lnk" id="howBtn">자세히</button></div><div>산에서 찍은 사진을 바로 올려도 돼요.</div></div></div>
     <input type="file" id="bulk" accept="image/*" multiple hidden>
     <p class="upwarn" id="upWarn" role="alert" hidden></p>
+    <p class="mvtip" id="mvTip" hidden>사파리에서 쓰던 지도가 있나요? 홈 화면 앱은 저장 공간이 따로라 비어 보여요. 사파리에서 <b>하트 탭 → 백업 파일 저장</b> 후, 여기서 <button type="button" class="lnk" id="mvGo">백업 불러오기</button>를 눌러 옮겨주세요.</p>
     <div id="newBox" class="newbox" hidden>
       <div class="nbh"><b>신규 등록 <span id="nbCnt"></span></b><span class="meta" id="aiNote"></span><button type="button" class="btn share" id="applyBtn" disabled>반영</button></div>
       <div id="ovw" class="ovw" hidden></div>
@@ -350,6 +353,11 @@ footer{font-size:12px;color:var(--muted)}
     <p>버그 신고, 불만(?) 신고, 새로운 아이디어 기부<br>DM 주시면 잽싸게 반영해보겠습니다.<br>예쁘게 써주시고 태그도 환영합니다🤍</p>
     <dl><dt>만든 사람</dt><dd><a href="https://www.instagram.com/youngs.00/" target="_blank" rel="noopener">@youngs.00</a></dd><dt>버전</dt><dd>version 1.1 - 2026.11.01</dd></dl>
     <p class="safe"><b>🔒 보안 걱정은 안 하셔도 돼요</b><br>사진은 서버로 보내지 않아요.<br>누끼도, 저장도 전부 내 폰 브라우저 안에서만 이루어져요.<br>단, 브라우저 데이터를 지우거나 폰을 바꾸면 지도가 사라지니 주의해주세요.</p>
+    <div class="bk"><b>📦 지도 옮기기 · 백업</b>
+      <span>아이폰은 사파리와 홈 화면 앱의 저장 공간이 따로예요. 사파리에서 쓰다가 홈 화면에 추가했거나 폰을 바꿀 때는 백업 파일로 옮겨주세요.</span>
+      <div class="row2"><button type="button" class="btn share" id="bkSave">백업 파일 저장</button><label class="btn" for="bkIn">백업 불러오기</label></div>
+      <input type="file" id="bkIn" accept=".json,application/json" hidden>
+      <span class="tip" id="bkMsg" role="status"></span></div>
   </div>
   <div hidden><button type="button" id="mkShare">이미지 저장</button><button type="button" id="linkShare">링크 공유</button></div>
   <div id="p-sticker" class="pane" hidden>
@@ -1641,9 +1649,31 @@ document.getElementById("shrSave").onclick=async()=>{ gc("save-image-"+FMT);
     await dl.save({filename:FMT==="post"?"my-100-summits-post.png":"my-100-summits-story.png",data:shareBlob}); msg.textContent=FMT==="post"?"저장했어요. 인스타 게시글로 올려보세요.":"저장했어요. 인스타 스토리에 올려보세요.";
   }catch(err){ msg.textContent=err&&err.code==="declined"?"저장을 취소했어요.":"저장이 안 됐어요. 이미지를 길게 눌러 저장하세요."; }
 };
+// ── 백업 / 옮기기: 사진(IndexedDB) + 설정(localStorage)을 파일 하나로 ──
+try{ navigator.storage&&navigator.storage.persist&&navigator.storage.persist(); }catch(_){} // 브라우저가 저장소를 함부로 지우지 않게 요청
+const bkMsg=document.getElementById("bkMsg");
+document.getElementById("bkSave").onclick=async e=>{ const b=e.currentTarget; b.disabled=true; bkMsg.textContent="백업 만드는 중…";
+  try{ const lsd={}; for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(k&&k.startsWith("bac100-")) lsd[k]=localStorage.getItem(k); }
+    const photos={}; Object.keys(PH).forEach(n=>{ if(!SEED_PHOTOS[n]) photos[n]=PH[n]; });
+    const blob=new Blob([JSON.stringify({app:"bac100",v:1,at:new Date().toISOString(),ls:lsd,photos})],{type:"application/json"});
+    const t=new Date(), fname=`bac100-backup-${t.getFullYear()}${String(t.getMonth()+1).padStart(2,"0")}${String(t.getDate()).padStart(2,"0")}.json`, n=Object.keys(photos).length;
+    const file=new File([blob],fname,{type:"application/json"});
+    try{ if(navigator.canShare&&navigator.canShare({files:[file]})){ await navigator.share({files:[file]}); bkMsg.textContent=`정상석 ${n}장 백업했어요. '파일에 저장'으로 저장해두세요.`; return; } }catch(err){ if(err&&err.name==="AbortError"){ bkMsg.textContent=""; return; } }
+    const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=fname; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+    bkMsg.textContent=`정상석 ${n}장 백업 파일을 저장했어요.`;
+  }catch(err){ bkMsg.textContent="백업을 만들지 못했어요. 다시 시도해주세요."; } finally{ b.disabled=false; } };
+document.getElementById("bkIn").addEventListener("change",async e=>{ const f=e.target.files[0]; e.target.value=""; if(!f) return; bkMsg.textContent="불러오는 중…";
+  try{ const j=JSON.parse(await f.text()); if(!j||j.app!=="bac100"||!j.photos) throw new Error("bad");
+    Object.entries(j.ls||{}).forEach(([k,v])=>{ if(k.startsWith("bac100-")) try{ localStorage.setItem(k,v); }catch(_){} });
+    const ns=Object.keys(j.photos); for(const n of ns) await IDB.put(n,j.photos[n]);
+    bkMsg.textContent=`정상석 ${ns.length}장을 불러왔어요. 새로고침할게요…`; setTimeout(()=>location.reload(),700);
+  }catch(err){ bkMsg.textContent="명산 지도 백업 파일이 아니거나 망가진 파일이에요."; } });
+document.getElementById("mvGo").onclick=()=>document.getElementById("bkIn").click();
 drawPeaks(); drawStickers(); renderList(); updateCount(); setView(FULL.slice());
 (async()=>{ try{ const old=ls.get("bac100-myphotos",null); if(old){ for(const k in old) await IDB.put(k,old[k]); try{localStorage.removeItem("bac100-myphotos")}catch(e){} }
-  const got=await IDB.all(); if(Object.keys(got).length){ Object.assign(PH,got); drawStickers(); renderList(); updateCount(); } }catch(e){} })();
+  const got=await IDB.all(); if(Object.keys(got).length){ Object.assign(PH,got); drawStickers(); renderList(); updateCount(); } }catch(e){}
+  const standalone=navigator.standalone===true||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches);
+  document.getElementById("mvTip").hidden=!(standalone&&!Object.keys(PH).length); })();
 window.addEventListener("hashchange",scheduleCard); renderCard();
 if(AUTO){AUTOPOS=autoLayout(n=>HS(n,SH_()));placeStickers();}
 </script>
