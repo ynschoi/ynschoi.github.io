@@ -509,8 +509,8 @@ LABELS.forEach(l=>{
 });
 // 도별 채움: 오른 비율만큼 초록이 차오름
 function mix(a,b,t){const h=x=>[1,3,5].map(i=>parseInt(x.slice(i,i+2),16));const A=h(a),B=h(b);return "#"+A.map((v,i)=>Math.round(v+(B[i]-v)*t).toString(16).padStart(2,"0")).join("")}
-const RAMP=[[0,"#e4edc4"],[.35,"#c1df92"],[.7,"#92ca6c"],[1,"#6fb455"]];
-function gColor(r){ if(r<=0) return "#f3f1e6"; if(r>=1) return "#55a046";
+const RAMP=[[0,"#e8f1c6"],[.3,"#b8db88"],[.6,"#7cba5a"],[.85,"#4f9a43"],[1,"#448f3e"]]; // 진행할수록 명도 차이를 크게
+function gColor(r){ if(r<=0) return "#f3f1e6"; if(r>=1) return "#5aa84a";
   for(let i=1;i<RAMP.length;i++){ if(r<=RAMP[i][0]){ const [a,ca]=RAMP[i-1],[b,cb]=RAMP[i]; return mix(ca,cb,(r-a)/(b-a)); } } return RAMP[3][1]; }
 const onDark=r=>r>=1;
 // 바다 장식: 물결, 구름, 나침반 (지도 단위 좌표)
@@ -1457,7 +1457,8 @@ async function makeShare(){
   if(ST==="p1"||ST==="p3"||ST==="q1"||ST==="q3"){for(let g=0;g<9;g++)if(gs[g]>=GTOT[g])glowStroke(x,GPS[g],s*Q,[[9,ST==="p3"?"rgba(255,210,110,.45)":"rgba(255,226,150,.4)",4]],RBB[g]);}
   if(ST==="p5"){for(let g=0;g<9;g++)if(gs[g]>=GTOT[g]){x.save();x.shadowColor="rgba(40,55,30,.32)";x.shadowBlur=5*s*Q;x.shadowOffsetY=2.4*s*Q;x.shadowOffsetX=.8*s*Q;x.fillStyle=PAPER;x.fill(GPS[g]);x.restore();}}
   if(ST==="s3"){for(let g=0;g<9;g++)if(gs[g]>=GTOT[g]){x.save();x.shadowColor="rgba(40,55,30,.35)";x.shadowBlur=5*s*Q;x.shadowOffsetY=2.6*s*Q;x.shadowOffsetX=1*s*Q;x.fillStyle=PAPER;x.fill(GPS[g]);x.restore();}}
-  LANDP.forEach(o=>{x.fillStyle=gColor(gs[o.g]/GTOT[o.g]);x.fill(o.p);x.strokeStyle=x.fillStyle;x.lineWidth=.7;x.stroke(o.p);}); // 같은 도 조각 사이 틈 메움
+  const fullFill=g=>{ const bb=RBB[g], gr=x.createLinearGradient(bb[0],bb[1],bb[0]+bb[2],bb[1]+bb[3]); gr.addColorStop(0,"#93d36a"); gr.addColorStop(.55,"#5aa84a"); gr.addColorStop(1,"#3f8f45"); return gr; }; // 완등: 햇살 그라데이션
+  LANDP.forEach(o=>{const r=gs[o.g]/GTOT[o.g]; x.fillStyle=r>=1?fullFill(o.g):gColor(r);x.fill(o.p);x.strokeStyle=x.fillStyle;x.lineWidth=.7;x.stroke(o.p);}); // 같은 도 조각 사이 틈 메움
   if(window.__crayon){const all=new Path2D();LANDP.forEach(o=>all.addPath(o.p));x.save();x.clip(all);
     const pat=x.createPattern(window.__crayon,"repeat");pat.setTransform(new DOMMatrix().scale(70/220));x.globalCompositeOperation="multiply";x.fillStyle=pat;x.fillRect(-20,-20,620,830);
     x.globalCompositeOperation="source-over";x.globalAlpha=.9;x.fillRect(-20,-20,620,830);x.restore();x.globalAlpha=1;}
