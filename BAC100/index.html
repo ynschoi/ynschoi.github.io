@@ -105,6 +105,19 @@ input,select,textarea{font-size:16px!important}
 .howm{position:fixed;inset:0;z-index:50;background:rgba(40,40,30,.38);display:flex;align-items:flex-end;justify-content:center}
 .howm-box{width:100%;max-width:560px;max-height:90vh;overflow:auto;background:#fbfaf5;border-radius:20px 20px 0 0;padding:16px 16px 28px;display:grid;gap:12px;box-sizing:border-box}
 .crw{display:grid;justify-items:center}.crw canvas{border-radius:8px;max-width:100%}
+/* 휴대폰 폭: 고정 칸을 줄여서 산 이름 칸이 0이 되어 지역과 겹치던 문제 해결 */
+@media (max-width:480px){
+.mh,.mr{grid-template-columns:24px minmax(0,1fr) 44px 42px 54px 54px;column-gap:3px;padding:0 4px 0 2px}
+.island{padding-right:26px}.island .x{width:26px;right:0}
+.mr .nm b{font-size:13.5px;overflow-wrap:anywhere}.mr .nm small{font-size:11.5px;overflow-wrap:anywhere}
+.mr .ct{white-space:normal;word-break:keep-all;font-size:12px}.mr .ht{font-size:12px}
+.mr .pc .lnk{font-size:11.5px;white-space:nowrap}.mr .dbtn{font-size:12px}.mr .xb{width:24px}
+.mh button{font-size:11.5px}.fav svg,.favh svg{width:22px}
+}
+@media (max-width:360px){
+.mh,.mr{grid-template-columns:24px minmax(0,1fr) 42px 54px 54px}
+.mr .ht,.mh [data-k=h]{display:none}.mr .nm.wide{grid-column:span 2}
+}
 html.crlock,html.crlock body{overflow:hidden;overscroll-behavior:none}.howm,.howm-box{overscroll-behavior:contain}
 .crz{display:flex;align-items:center;gap:8px}.crz input{flex:1;accent-color:#4f9a45}.crz .btn{width:40px;padding:0;font-size:18px}
 .howl{margin:0;padding-left:20px;display:grid;gap:6px;font-size:14px}
