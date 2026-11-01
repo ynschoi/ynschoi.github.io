@@ -867,14 +867,24 @@ async function cutout(src){
   for(let p=0;p<N;p++){ f[p]=(d[p*4]/mx-.485)/.229; f[N+p]=(d[p*4+1]/mx-.456)/.224; f[2*N+p]=(d[p*4+2]/mx-.406)/.225; }
   const ses=await getSeg(), out=await ses.run({[ses.inputNames[0]]:new ort.Tensor("float32",f,[1,3,S,S])}), m=out[ses.outputNames[0]].data;
   let lo=1e9,hi=-1e9; for(let i=0;i<N;i++){lo=Math.min(lo,m[i]);hi=Math.max(hi,m[i]);}
-  const mc=document.createElement("canvas"); mc.width=S; mc.height=S; const mx2=mc.getContext("2d"), md=mx2.createImageData(S,S); let on=0;
-  for(let i=0;i<N;i++){ const v=(m[i]-lo)/((hi-lo)||1), a=Math.max(0,Math.min(1,(v-.12)/.4)); md.data[i*4+3]=Math.round(a*255); if(a>.5) on++; }
+  const mc=document.createElement("canvas"); mc.width=S; mc.height=S; const mx2=mc.getContext("2d"), md=mx2.createImageData(S,S);
+  // 마스크 정리: 반투명하게 애매하게 남는 배경을 줄이고(경계 더 단단하게), 본체와 떨어진 작은 조각은 지움
+  const A=new Float32Array(N); for(let i=0;i<N;i++){ const v=(m[i]-lo)/((hi-lo)||1); A[i]=Math.max(0,Math.min(1,(v-.3)/.25)); }
+  const lab=new Int32Array(N).fill(-1), sizes=[], q=new Int32Array(N);
+  for(let i=0;i<N;i++){ if(A[i]<=.5||lab[i]>=0) continue; const id=sizes.length; let h=0,t=0; q[t++]=i; lab[i]=id;
+    while(h<t){ const j=q[h++], y=(j/S)|0, x0=j-y*S; const nb=[x0>0?j-1:-1,x0<S-1?j+1:-1,y>0?j-S:-1,y<S-1?j+S:-1];
+      for(const k of nb) if(k>=0&&lab[k]<0&&A[k]>.5){ lab[k]=id; q[t++]=k; } } sizes.push(t); }
+  const big=Math.max(0,...sizes), keepC=sizes.map(z=>z>=big*.05&&z>=N*.004);
+  const keep=new Uint8Array(N); for(let i=0;i<N;i++) if(lab[i]>=0&&keepC[lab[i]]) keep[i]=1;
+  let on=0; for(let i=0;i<N;i++){ const y=(i/S)|0, x0=i-y*S;
+    const near=keep[i]||(x0>0&&keep[i-1])||(x0<S-1&&keep[i+1])||(y>0&&keep[i-S])||(y<S-1&&keep[i+S]); // 경계 1픽셀만 부드럽게
+    const a=near?A[i]:0; md.data[i*4+3]=Math.round(a*255); if(keep[i]) on++; }
   if(on/N<.03) return null; mx2.putImageData(md,0,0);
   // 원본 크기로 마스크 입히기
   const W=src.width,H=src.height, cut=document.createElement("canvas"); cut.width=W; cut.height=H; const cx=cut.getContext("2d",{willReadFrequently:true});
   cx.drawImage(src,0,0); cx.globalCompositeOperation="destination-in"; cx.imageSmoothingQuality="high"; cx.drawImage(mc,0,0,W,H); cx.globalCompositeOperation="source-over";
   // 남은 부분만 잘라내기
-  const ad=cx.getImageData(0,0,W,H).data; let x0=W,y0=H,x1=0,y1=0; for(let y=0;y<H;y+=2) for(let xx=0;xx<W;xx+=2){ if(ad[(y*W+xx)*4+3]>40){ if(xx<x0)x0=xx; if(xx>x1)x1=xx; if(y<y0)y0=y; if(y>y1)y1=y; } }
+  const ad=cx.getImageData(0,0,W,H).data; let x0=W,y0=H,x1=0,y1=0; for(let y=0;y<H;y+=2) for(let xx=0;xx<W;xx+=2){ if(ad[(y*W+xx)*4+3]>110){ if(xx<x0)x0=xx; if(xx>x1)x1=xx; if(y<y0)y0=y; if(y>y1)y1=y; } }
   if(x1<=x0||y1<=y0) return null;
   const k=Math.min(1,340/Math.max(x1-x0,y1-y0)), b=7, pad=b+4, sw=Math.round((x1-x0)*k), sh=Math.round((y1-y0)*k);
   const st=document.createElement("canvas"); st.width=sw+pad*2; st.height=sh+pad*2; const sx=st.getContext("2d");
