@@ -1,4 +1,4 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta property="og:title" content="나의 명산 지도"><meta property="og:description" content="블랙야크 명산100 완등 지도 만들기"></head><body>
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta property="og:title" content="나의 명산 지도"><meta property="og:description" content="블랙야크 명산100 완등 지도 만들기"><script data-goatcounter="https://bac100.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script></head><body>
 <title>나의 명산 100</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Song+Myung&family=Noto+Sans+KR:wght@900&display=swap">
@@ -80,7 +80,7 @@ input,select,textarea{font-size:16px!important}
 .mr .ct{font-size:13px;line-height:1.3;text-align:center;white-space:nowrap}.mr .ht{font-variant-numeric:tabular-nums;text-align:center}
 .mr>*{align-self:center}.mh button{text-align:center}
 .mr .fav,.mh .favh{justify-self:center}
-.mr .pc{display:grid;justify-items:center;gap:4px;padding:8px 0}
+.mr .pc{display:grid;justify-items:center;gap:2px;padding:8px 0}
 .tw{position:relative;display:inline-block}
 .tx{all:unset;cursor:pointer;position:absolute;top:-6px;right:-10px;min-width:18px;height:18px;border-radius:9px;background:#6f6e58;color:#fff;font-size:13px;line-height:18px;text-align:center;box-shadow:0 0 0 2px #fff}
 .tx.ask{background:#c8452f;font-size:11px;padding:0 6px;right:-18px}
@@ -104,6 +104,7 @@ input,select,textarea{font-size:16px!important}
 .spin{font-size:11.5px;color:#a3a18c}
 .howm{position:fixed;inset:0;z-index:50;background:rgba(40,40,30,.38);display:flex;align-items:flex-end;justify-content:center}
 .howm-box{width:100%;max-width:560px;max-height:90vh;overflow:auto;background:#fbfaf5;border-radius:20px 20px 0 0;padding:16px 16px 28px;display:grid;gap:12px;box-sizing:border-box}
+.crw{display:grid;justify-items:center}.crw canvas{border-radius:8px;max-width:100%}
 .howl{margin:0;padding-left:20px;display:grid;gap:6px;font-size:14px}
 .ills{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ills figure{margin:0;display:grid;gap:6px;justify-items:center}.ills svg{width:100%;height:auto}
 .ills figcaption{font-size:12.5px;text-align:center;color:var(--muted)}
@@ -686,7 +687,7 @@ let SZ=ls.get("bac100-sz",2); if(!(SZ>=0&&SZ<5)) SZ=2;
 let FMT="story"; // 처음엔 늘 9:16
 function syncFmt(){ document.getElementById("fmtTog").textContent=FMT==="post"?"4:5":"9:16"; }
 const APP_URL=window.claude?"https://claude.ai/artifact/HuDVvbrMwg39gWczUG44oo":location.href.split("#")[0];
-document.getElementById("linkShare").onclick=async()=>{ const box=document.getElementById("linkBox"), inp=document.getElementById("linkIn"), msg=document.getElementById("linkMsg");
+document.getElementById("linkShare").onclick=async()=>{ gc("share-link"); const box=document.getElementById("linkBox"), inp=document.getElementById("linkIn"), msg=document.getElementById("linkMsg");
   inp.value=APP_URL; box.hidden=false;
   try{ if(navigator.share){ await navigator.share({title:"나의 명산 지도",text:"내 블랙야크 명산100 지도 만들기",url:APP_URL}); msg.textContent=""; return; } }catch(e){ if(e&&e.name==="AbortError") return; }
   try{ await navigator.clipboard.writeText(APP_URL); msg.textContent="링크를 복사했어요."; }
@@ -893,7 +894,7 @@ function newRowEl(r){
   el.innerHTML=`<div class="lc"><input type="checkbox" ${r.on&&m?"checked":""} ${m?"":"disabled"} aria-label="반영할지 선택"><button type="button" class="xb" aria-label="이 사진 빼기">×</button></div>
     ${named?`<div class="nm"><b>${m.base}</b><small>${m.peak}</small>${ow?'<span class="ow">덮어쓰기</span>':""}</div><div class="ct">${m.city}</div><div class="ht">${m.h.toLocaleString()}m</div>`
       :`<div class="nm wide"><div class="sugw"><input type="text" placeholder="산 이름 입력" aria-label="산 이름 입력" value="${r.q||""}"><div class="sug" hidden></div></div></div>`}
-    <div class="pc">${r.st?`<button type="button" class="thumb" aria-label="사진 보기"><img alt="" src="${r.st.toDataURL("image/png")}"></button>${r.cut?`<button type="button" class="lnk sw">${r.st===r.cut?"원형으로":"누끼로"}</button>`:""}`:'<span class="spin">누끼 중…</span>'}</div>
+    <div class="pc">${r.st?`<button type="button" class="thumb" aria-label="사진 보기"><img alt="" src="${r.st.toDataURL("image/png")}"></button>${r.cut?`<button type="button" class="lnk sw">${r.st===r.cut?"원형으로":"누끼로"}</button>`:""}<button type="button" class="lnk cropb">범위 지정</button>`:'<span class="spin">누끼 중…</span>'}</div>
     <div class="dc">${r.d?`<button type="button" class="dbtn">${short(r.d)}</button>`:'<button type="button" class="dbtn in" aria-label="날짜 입력">--.--.--</button>'}${r.bac?'<span class="bacb">BAC인증</span>':""}</div>`;
   el.querySelector(".xb").onclick=()=>{ NEW=NEW.filter(o=>o!==r); renderNew(); };
   const ck=el.querySelector(".lc input"); ck.onchange=()=>{ r.on=ck.checked; syncApply(); };
@@ -908,6 +909,7 @@ function newRowEl(r){
     inp.oninput=show; inp.onfocus=show;
     inp.onblur=()=>setTimeout(()=>{ if(SUGFOR===inp) hideSug(); if(r.edit&&r.n&&!inp.value){ r.edit=false; renderNew(); }},150); }
   const sw=el.querySelector(".sw"); if(sw) sw.onclick=()=>{ r.st=r.st===r.cut?r.round:r.cut; renderNew(); };
+  const cb=el.querySelector(".cropb"); if(cb) cb.onclick=()=>openCrop(r);
   const th=el.querySelector(".thumb"); if(th) th.onclick=()=>{ const im=document.getElementById("lbimg"); im.src=r.ph.toDataURL("image/jpeg",.85); document.getElementById("lbt").textContent=m?m.base:"새 사진"; document.getElementById("lbh").textContent=r.d||""; document.getElementById("lb").hidden=false; };
   const db=el.querySelector(".dbtn"); db.onclick=()=>openDateFor(db,r.d,v=>{ r.d=v; renderNew(); }, m?m.base:"새 사진");
   el.dataset.id=r.id; return el; }
@@ -921,6 +923,39 @@ addEventListener("resize",()=>{ if(!SUGBOX.hidden) placeSug(); }); if(window.vis
 function updateRow(r){ const old=newList.querySelector(`[data-id="${r.id}"]`); if(!old){ renderNew(); return; } const nw=newRowEl(r);
   if(old.contains(document.activeElement)){ old.querySelector(".pc").replaceWith(nw.querySelector(".pc")); const sw=old.querySelector(".sw"); if(sw) sw.onclick=()=>{ r.st=r.st===r.cut?r.round:r.cut; updateRow(r); }; }
   else old.replaceWith(nw); syncApply(); }
+// ── 누끼 범위 지정: 사람·정상석만 네모로 감싸면 훨씬 깔끔하게 따짐 ──
+const CROPM=document.createElement("div"); CROPM.className="howm"; CROPM.hidden=true;
+CROPM.innerHTML=`<div class="howm-box"><div class="upm-h"><b>누끼 범위 지정</b><button type="button" class="x" id="crX" aria-label="닫기">×</button></div>
+  <p class="meta">사람이랑 정상석만 들어가게 네모를 줄여주세요. 모서리를 끌면 크기, 가운데를 끌면 위치가 바뀌어요.</p>
+  <div class="crw"><canvas id="crC"></canvas></div><div class="row2"><button type="button" class="btn share" id="crGo">이 범위로 누끼</button><button type="button" class="btn" id="crNo">취소</button></div></div>`;
+document.body.appendChild(CROPM);
+let CR=null; // {r, box:[x0,y0,x1,y1] 0~1}
+function drawCrop(){ const c=document.getElementById("crC"), ph=CR.r.ph, W=Math.min(CROPM.querySelector(".crw").clientWidth||320,520), H=Math.round(W*ph.height/ph.width);
+  const dpr=window.devicePixelRatio||1; c.width=W*dpr; c.height=H*dpr; c.style.width=W+"px"; c.style.height=H+"px"; const x=c.getContext("2d"); x.scale(dpr,dpr);
+  x.drawImage(ph,0,0,W,H); const [a,b,e,f]=CR.box, X0=a*W,Y0=b*H,X1=e*W,Y1=f*H;
+  x.fillStyle="rgba(0,0,0,.45)"; x.fillRect(0,0,W,Y0); x.fillRect(0,Y1,W,H-Y1); x.fillRect(0,Y0,X0,Y1-Y0); x.fillRect(X1,Y0,W-X1,Y1-Y0);
+  x.strokeStyle="#fff"; x.lineWidth=2; x.strokeRect(X0,Y0,X1-X0,Y1-Y0); x.fillStyle="#4f9a45";
+  [[X0,Y0],[X1,Y0],[X0,Y1],[X1,Y1]].forEach(([px,py])=>{ x.beginPath(); x.arc(px,py,9,0,7); x.fill(); x.strokeStyle="#fff"; x.stroke(); }); CR.W=W; CR.H=H; }
+function openCrop(r){ hideSug(); CR={r,box:(r.cbox||[.08,.08,.92,.98]).slice()}; CROPM.hidden=false; requestAnimationFrame(drawCrop); }
+(function(){ const c=CROPM.querySelector("#crC"); let mode=null, st=null;
+  c.style.touchAction="none";
+  c.addEventListener("pointerdown",e=>{ const rr=c.getBoundingClientRect(), px=(e.clientX-rr.left)/CR.W, py=(e.clientY-rr.top)/CR.H, [a,b,x1,y1]=CR.box, near=(u,v)=>Math.hypot((u-px)*CR.W,(v-py)*CR.H)<26;
+    mode=near(a,b)?"tl":near(x1,b)?"tr":near(a,y1)?"bl":near(x1,y1)?"br":(px>a&&px<x1&&py>b&&py<y1)?"mv":null; if(!mode) return; st={px,py,box:CR.box.slice()}; c.setPointerCapture(e.pointerId); e.preventDefault(); });
+  c.addEventListener("pointermove",e=>{ if(!mode) return; const rr=c.getBoundingClientRect(), px=(e.clientX-rr.left)/CR.W, py=(e.clientY-rr.top)/CR.H, dx=px-st.px, dy=py-st.py; let [a,b,x1,y1]=st.box; const m=.06, cl=v=>Math.max(0,Math.min(1,v));
+    if(mode==="mv"){ const w=x1-a,h=y1-b; a=Math.max(0,Math.min(1-w,a+dx)); b=Math.max(0,Math.min(1-h,b+dy)); x1=a+w; y1=b+h; }
+    else{ if(mode[1]==="l") a=Math.min(cl(a+dx),x1-m); else x1=Math.max(cl(x1+dx),a+m); if(mode[0]==="t") b=Math.min(cl(b+dy),y1-m); else y1=Math.max(cl(y1+dy),b+m); }
+    CR.box=[a,b,x1,y1]; drawCrop(); });
+  c.addEventListener("pointerup",()=>{ mode=null; }); c.addEventListener("pointercancel",()=>{ mode=null; });
+  const close=()=>{ CROPM.hidden=true; CR=null; };
+  CROPM.querySelector("#crX").onclick=close; CROPM.querySelector("#crNo").onclick=close;
+  CROPM.querySelector("#crGo").onclick=async()=>{ const {r,box}=CR, ph=r.ph, b=CROPM.querySelector("#crGo"); b.disabled=true; b.textContent="누끼 따는 중…";
+    const [a,y,x1,y1]=box, sub=document.createElement("canvas"); sub.width=Math.max(1,Math.round((x1-a)*ph.width)); sub.height=Math.max(1,Math.round((y1-y)*ph.height));
+    sub.getContext("2d").drawImage(ph,a*ph.width,y*ph.height,sub.width,sub.height,0,0,sub.width,sub.height);
+    let st=null; try{ st=await cutout(sub); }catch(_){}
+    b.disabled=false; b.textContent="이 범위로 누끼"; r.cbox=box; r.round=roundSticker(sub); r.cut=st; r.st=st||r.round; close(); updateRow(r); };
+})();
+// 사용 통계 (공개판에서만 GoatCounter, 없으면 아무것도 안 함)
+function gc(ev){ try{ if(window.goatcounter&&goatcounter.count) goatcounter.count({path:ev,title:ev,event:true}); }catch(_){} }
 function syncApply(){ const k=NEW.filter(r=>r.n&&r.on&&r.st).length; applyBtn.disabled=!k; applyBtn.textContent=k?`반영 (${k})`:"반영"; }
 function renderNew(){ hideSug(); newList.innerHTML=""; NEW.forEach(r=>newList.appendChild(newRowEl(r))); newBox.hidden=!NEW.length; document.getElementById("nbCnt").textContent=NEW.length?NEW.length+"장":""; syncApply(); }
 const ovw=document.getElementById("ovw");
@@ -929,7 +964,7 @@ applyBtn.onclick=()=>{ const L=NEW.filter(r=>r.n&&r.on&&r.st), dup=L.filter(r=>P
   ovw.innerHTML=`<div><b>${dup.map(r=>byN(r.n).base).join(", ")}</b>은(는) 이미 정상석 사진이 있어요. 새 사진으로 덮어쓸까요?</div>
     <div class="row2"><button type="button" class="btn share" data-a="all">덮어쓰기</button><button type="button" class="btn" data-a="skip">그건 빼고 반영</button><button type="button" class="btn" data-a="no">취소</button></div>`;
   ovw.hidden=false; ovw.querySelectorAll("button").forEach(b=>b.onclick=()=>{ ovw.hidden=true; if(b.dataset.a==="all") doApply(L); else if(b.dataset.a==="skip") doApply(L.filter(r=>!PH[r.n])); }); };
-function doApply(L){ L.forEach(r=>{ savePhoto(r.n,entryFrom(r.st,r.ph,r.d,r.bac)); }); NEW=NEW.filter(r=>!L.includes(r)); renderNew(); afterPhotoChange();
+function doApply(L){ if(L.length) gc("apply"); L.forEach(r=>{ savePhoto(r.n,entryFrom(r.st,r.ph,r.d,r.bac)); }); NEW=NEW.filter(r=>!L.includes(r)); renderNew(); afterPhotoChange();
   aiNote.textContent=L.length?`${L.length}개 반영했어요`:""; }
 // 날짜 입력창(신규 등록용으로도 씀)
 function openDateFor(anchor,cur,cb,title){ dpCb=cb; dpN=null; dpop.querySelector(".dpt").textContent=title+" 오른 날"; const inp=dpop.querySelector("input"); inp.value=cur?cur.replace(/\./g,"-"):""; dpop.hidden=false;
@@ -963,7 +998,7 @@ function roundSticker(ph){ const S=220, st=document.createElement("canvas"); st.
   x.beginPath(); x.arc(S/2,S/2,S/2-4,0,Math.PI*2); x.fillStyle="#fff"; x.fill();
   x.save(); x.beginPath(); x.arc(S/2,S/2,S/2-12,0,Math.PI*2); x.clip(); x.drawImage(ph,sx,sy,side,side,12,12,S-24,S-24); x.restore(); return st; }
 document.querySelector("label[for=bulk]").addEventListener("click",()=>{ getSeg().catch(()=>{}); getOCR().catch(()=>{}); });
-document.getElementById("bulk").addEventListener("change",e=>{ const files=[...e.target.files]; e.target.value=""; if(!files.length) return;
+document.getElementById("bulk").addEventListener("change",e=>{ const files=[...e.target.files]; e.target.value=""; if(!files.length) return; gc("upload-"+Math.min(files.length,11));
   if(files.length>10){ const w=document.getElementById("upWarn"); w.textContent=`${files.length}장을 골랐어요. 한 번에 10장까지만 올릴 수 있어요. 10장 이하로 다시 골라주세요.`; w.hidden=false; return; }
   document.getElementById("upWarn").hidden=true; addFiles(files,null); });
 // 목록의 올리기 / 교체 → 신규 등록으로
@@ -1511,7 +1546,7 @@ document.getElementById("mkShare").onclick=async e=>{
   document.getElementById("shr").hidden=false;
 };
 document.getElementById("shrX").onclick=()=>document.getElementById("shr").hidden=true;
-document.getElementById("shrSave").onclick=async()=>{
+document.getElementById("shrSave").onclick=async()=>{ gc("save-image-"+FMT);
   const msg=document.getElementById("shrMsg");
   const fname=FMT==="post"?"my-100-summits-post.png":"my-100-summits-story.png";
   if(!window.claude){ // 일반 웹: 폰은 공유창(사진 저장), 아니면 바로 다운로드
