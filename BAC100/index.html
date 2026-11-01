@@ -1592,7 +1592,11 @@ function compose(live){
     G.deco.push({i,cx:G.ox+s*dx,cy:G.oy+s*dy,w:w*s,h:h*s,rot:r,hx:G.ox+s*(dx+hx),hy:G.oy+s*(dy+hy),xx:G.ox+s*(dx-hx),xy:G.oy+s*(dy-hy),hr:hr*s}); });
   // 만든 사람 (제주 오른쪽, 항상 맨 앞)
   { const jx=G.ox+(223.5+14)*s, jy=Math.min(B.c.height/Q-8, G.oy+(764.3+JDY())*s-2+(FMT==="post"?40:48)); x.setTransform(Q,0,0,Q,0,0); x.textAlign="left"; x.textBaseline="alphabetic";
-    x.font=`700 ${FMT==="post"?18:22}px "ChosunGu","KoPubDotum",sans-serif`; x.lineJoin="round"; x.lineWidth=5; x.strokeStyle="#ffffff"; x.strokeText("만든 사람 @youngs.00",jx,jy); x.fillStyle="#1f5a2a"; x.fillText("만든 사람 @youngs.00",jx,jy); }
+    // 9:16·저장·공유 알약과 같은 모양: 반투명 알약 + 회색 글씨, 화면에서 같은 크기. 맨 위에 그려서 아래 정상석을 살짝 가림
+    const cw=cardImg.getBoundingClientRect().width||340, k=Q*1080/cw/Q, fs=10.5*k, px=8*k, py=2*k, T="만든 사람 @youngs.00";
+    x.font=`700 ${fs}px "KoPubDotum","Pretendard",sans-serif`; const tw=x.measureText(T).width, h=fs*1.25+py*2, top=jy-fs*.95-py;
+    x.globalAlpha=.9; x.fillStyle="rgba(239,237,227,.85)"; x.beginPath(); x.roundRect(jx-px,top,tw+px*2,h,h/2); x.fill();
+    x.fillStyle="#8e8c78"; x.textBaseline="alphabetic"; x.fillText(T,jx,jy); x.globalAlpha=1; }
   x.setTransform(1,0,0,1,0,0); window.__cardGeo=G; shareBlob=null;
 }
 async function relayout(){ await preloadStk(); AUTOC={}; if(MIGRATE){ POS=Object.assign(autoLayout(n=>HS(n,stkSize())),POS); ls.set("bac100-pos",POS); ls.set("bac100-auto",false); MIGRATE=false; } compose(); }
