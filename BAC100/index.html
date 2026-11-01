@@ -583,8 +583,13 @@ function landReady(){ if(LANDPTS) return true; if(typeof DPTS==="undefined"||typ
 function onLand(x0,y0){ return LANDCTX.isPointInPath(ALLLAND,x0,y0); }
 function nearestLand(x0,y0){ let best=null,bd=1e18; for(const q of LANDPTS){const d=(q[0]-x0)**2+(q[1]-y0)**2; if(d<bd){bd=d;best=q;}} return best; }
 let RPTS=null, RCTX=null;
+let RGRID=null; // 지도 1px마다 어느 도인지 (-1: 바다). 자동 배치에서 수백만 번 묻기 때문에 미리 구워둠
 function regionReady(){ if(RPTS) return true; if(typeof DPTS==="undefined"||typeof GPS==="undefined") return false;
-  RPTS=DPTS.map(a=>a.filter((q,i)=>i%3===0)); RCTX=document.createElement("canvas").getContext("2d"); return true; }
+  RPTS=DPTS.map(a=>a.filter((q,i)=>i%3===0)); RCTX=document.createElement("canvas").getContext("2d");
+  const W=FULL[2],H=FULL[3],c=document.createElement("canvas"); c.width=W; c.height=H; const x=c.getContext("2d",{willReadFrequently:true});
+  GPS.forEach((P,g)=>{ x.fillStyle=`rgb(${(g+1)*25},0,0)`; x.fill(P); }); const d=x.getImageData(0,0,W,H).data; RGRID=new Int8Array(W*H);
+  for(let i=0;i<W*H;i++){ const a=d[i*4+3]; RGRID[i]=a<128?-1:Math.round(d[i*4]/25)-1; } return true; }
+function regionAt(px,py){ const X=px|0,Y=py|0; if(X<0||Y<0||X>=FULL[2]||Y>=FULL[3]) return -1; return RGRID[Y*FULL[2]+X]; }
 function nearestIn(g,x0,y0){ let best=null,bd=1e18; for(const q of RPTS[g]){const d=(q[0]-x0)**2+(q[1]-y0)**2; if(d<bd){bd=d;best=q;}} return best; }
 function autoLayout(hOf){
   const ns=Object.keys(PH).map(Number), useR=regionReady();
@@ -595,8 +600,8 @@ function autoLayout(hOf){
   // 스티커 몸통 여러 점이 모두 자기 도 안에 있어야 함 → 도 경계에 걸치지 않음
   const probes=b=>[[b.cx,b.cy+b.h/2-6],[b.cx-b.w*.38,b.cy+b.h/2-8],[b.cx+b.w*.38,b.cy+b.h/2-8],[b.cx,b.cy],[b.cx-b.w*.3,b.cy-b.h*.25],[b.cx+b.w*.3,b.cy-b.h*.25]];
   // 다른 도 땅에는 안 걸치게, 바다로는 절반까지 나가도 됨
-  const inOther=(g,px,py)=>{ for(let k=0;k<9;k++) if(k!==g&&RCTX.isPointInPath(GPS[k],px,py)) return true; return false; };
-  const contain=(b,f)=>{ if(!useR) return 0; let mx=0,my=0,bad=0; const P=probes(b), own=P.map(([px,py])=>RCTX.isPointInPath(GPS[b.g],px,py)), nOwn=own.filter(Boolean).length;
+  const inOther=(g,px,py)=>{ const r=regionAt(px,py); return r>=0&&r!==g; };
+  const contain=(b,f)=>{ if(!useR) return 0; let mx=0,my=0,bad=0; const P=probes(b), own=P.map(([px,py])=>regionAt(px,py)===b.g), nOwn=own.filter(Boolean).length;
     P.forEach(([px,py],i)=>{ if(own[i]) return; if(inOther(b.g,px,py)||nOwn<3){ const q=nearestIn(b.g,px,py); if(q){mx+=q[0]-px;my+=q[1]-py;bad++;} } });
     if(bad){b.cx+=mx/bad*f;b.cy+=my/bad*f;} return bad; };
   const allow=.18; // 스티커끼리는 살짝 겹쳐도 됨(진짜 스티커처럼)
@@ -1185,29 +1190,37 @@ autoBtn.onclick=async()=>{ await preloadStk(); POS=autoLayout(n=>HS(n,stkSize())
 const LANDP=[...document.querySelectorAll("#land path")].map(p=>({g:+p.dataset.g,p:new Path2D(p.getAttribute("d"))}));
 const COASTP=new Path2D(document.getElementById("coast").getAttribute("d"));
 const loadImg=src=>new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src;});
-let shareBlob=null;
+let shareBlob=null, MAPCACHE=null;
 // ── 시안 스타일: #f 테두리, #t1 풀밭, #t2 자수, #t3 연필 낙서 (완등한 도에만) ──
 const SK=()=>{const m=/^#(f|t[1-3]|s[1-3]|g[1-6]|p[1-5]|q[1-3])$/.exec(location.hash||"");return m?m[1]:"g5";};
 const isStitch=st=>!!st&&(st[0]==="s"||st[0]==="g"||st[0]==="p"||st[0]==="q");
 // ── 깔끔한 완등 패치 (아래 칩과 같은 느낌) ──
-function glowStroke(x,P,k,layers){x.save();layers.forEach(([lw,c,bl])=>{x.filter=bl?`blur(${bl*k}px)`:"none";x.strokeStyle=c;x.lineWidth=lw;x.stroke(P);});x.filter="none";x.restore();}
+// ctx.filter="blur()"는 캔버스 전체 크기의 중간 버퍼를 만들어 한 번에 수백 ms 걸림 → 필요한 네모(bb: 지도 단위 [x,y,w,h])만 작은 캔버스에 그려서 붙임
+const BLURT=document.createElement("canvas");
+function blurred(x,bb,blur,draw){ const m=x.getTransform(); if(!bb||m.b||m.c||!blur){ x.save(); if(blur) x.filter=`blur(${blur}px)`; draw(x); x.restore(); return; }
+  const pad=blur*3/m.a+2, ux=bb[0]-pad, uy=bb[1]-pad, W0=(bb[2]+pad*2)*m.a, H0=(bb[3]+pad*2)*m.d; if(W0<=0||H0<=0) return;
+  const r=W0*H0>40000?.5:1, sa=m.a*r, sd=m.d*r, W=Math.ceil(W0*r), H=Math.ceil(H0*r); // 큰 영역은 반 해상도로 (번짐이라 티 안 남, 4배 빠름)
+  if(BLURT.width<W||BLURT.height<H){ BLURT.width=Math.max(BLURT.width,W); BLURT.height=Math.max(BLURT.height,H); }
+  const y=BLURT.getContext("2d"); y.setTransform(1,0,0,1,0,0); y.clearRect(0,0,W,H); y.setTransform(sa,0,0,sd,-ux*sa,-uy*sd); y.lineCap=x.lineCap; y.lineJoin=x.lineJoin; y.filter=`blur(${blur*r}px)`; draw(y); y.filter="none";
+  x.save(); x.setTransform(1,0,0,1,0,0); x.imageSmoothingQuality="high"; x.drawImage(BLURT,0,0,W,H,ux*m.a+m.e,uy*m.d+m.f,W/r,H/r); x.restore(); }
+function glowStroke(x,P,k,layers,bb){x.save();layers.forEach(([lw,c,bl])=>{ if(bl) blurred(x,bb,bl*k,y=>{y.strokeStyle=c;y.lineWidth=lw;y.stroke(P);}); else {x.strokeStyle=c;x.lineWidth=lw;x.stroke(P);} });x.restore();}
 function patchRegion(x,g,st,k){
   const P=GPS[g];
   x.save();x.clip(P);
   // 안쪽 은은한 빛
-  if(st!=="p4"){x.filter=`blur(${2.6*k}px)`;x.strokeStyle=st==="p3"?"rgba(255,228,150,.55)":"rgba(255,248,222,.6)";x.lineWidth=7;x.stroke(P);x.filter="none";}
+  if(st!=="p4"){blurred(x,RBB[g],2.6*k,y=>{y.strokeStyle=st==="p3"?"rgba(255,228,150,.55)":"rgba(255,248,222,.6)";y.lineWidth=7;y.stroke(P);});}
   x.restore();
   x.save();x.lineCap="round";x.lineJoin="round";
   if(st==="p1"){ const ring=runP(g,3.2,3,2);
-    glowStroke(x,ring,k,[[3,"rgba(255,230,160,.55)",1.6]]);x.strokeStyle="#fff3cf";x.lineWidth=1.05;x.stroke(ring);x.strokeStyle="#ffffff";x.lineWidth=.45;x.stroke(ring);}
+    glowStroke(x,ring,k,[[3,"rgba(255,230,160,.55)",1.6]],RBB[g]);x.strokeStyle="#fff3cf";x.lineWidth=1.05;x.stroke(ring);x.strokeStyle="#ffffff";x.lineWidth=.45;x.stroke(ring);}
   else if(st==="p2"){ const ring=runP(g,2.6,100000,0);
-    glowStroke(x,ring,k,[[4,"rgba(255,240,190,.5)",2],[2,"rgba(255,250,230,.7)",.8]]);x.strokeStyle="#fffef6";x.lineWidth=.6;x.stroke(ring);}
+    glowStroke(x,ring,k,[[4,"rgba(255,240,190,.5)",2],[2,"rgba(255,250,230,.7)",.8]],RBB[g]);x.strokeStyle="#fffef6";x.lineWidth=.6;x.stroke(ring);}
   else if(st==="p3"){ const ring=runP(g,3.2,3,2);
-    glowStroke(x,ring,k,[[4.5,"rgba(255,214,120,.5)",2.2]]);x.strokeStyle="#f3d27a";x.lineWidth=1.1;x.stroke(ring);x.strokeStyle="#fff6d6";x.lineWidth=.42;x.stroke(ring);}
+    glowStroke(x,ring,k,[[4.5,"rgba(255,214,120,.5)",2.2]],RBB[g]);x.strokeStyle="#f3d27a";x.lineWidth=1.1;x.stroke(ring);x.strokeStyle="#fff6d6";x.lineWidth=.42;x.stroke(ring);}
   else if(st==="p4"){ const r1=runP(g,2.6,3,2),r2=runP(g,5,2,2);
     x.strokeStyle="#ffffff";x.lineWidth=.9;x.stroke(r1);x.strokeStyle="rgba(255,248,225,.7)";x.lineWidth=.6;x.stroke(r2);}
   else if(st==="p6"){ const line=runP(g,2.4,100000,0),ring=runP(g,4.6,3,2);
-    glowStroke(x,line,k,[[4,"rgba(255,238,185,.5)",2],[2,"rgba(255,250,230,.7)",.8]]);x.strokeStyle="#fffef6";x.lineWidth=.55;x.stroke(line);
+    glowStroke(x,line,k,[[4,"rgba(255,238,185,.5)",2],[2,"rgba(255,250,230,.7)",.8]],RBB[g]);x.strokeStyle="#fffef6";x.lineWidth=.55;x.stroke(line);
     x.strokeStyle="rgba(255,243,207,.95)";x.lineWidth=.85;x.stroke(ring);}
   else { const ring=runP(g,3.2,3,2);
     x.strokeStyle="#fff3cf";x.lineWidth=1;x.stroke(ring);x.strokeStyle="#ffffff";x.lineWidth=.42;x.stroke(ring);}
@@ -1236,6 +1249,7 @@ const EDGE=[...Array(9)].map(()=>[]);
           run.push([px,py,nx,ny]);}
         carry=(carry-L)%SP;if(carry<0)carry+=SP;}
       EDGE[g].push(run);});});})();
+const RBB=EDGE.map(runs=>{ let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9; runs.forEach(r=>r.forEach(([px,py])=>{ if(px<x0)x0=px; if(px>x1)x1=px; if(py<y0)y0=py; if(py>y1)y1=py; })); return x0>x1?[0,0,FULL[2],FULL[3]]:[x0-10,y0-10,x1-x0+20,y1-y0+20]; });
 function runStitch(x,g,d,col,lw,on,off){x.strokeStyle=col;x.lineWidth=lw;x.lineCap="round";
   EDGE[g].forEach(run=>{x.beginPath();for(let i=0;i<run.length;i++){const k=i%(on+off);const[p0,p1,n0,n1]=run[i],q=[p0+n0*d,p1+n1*d];
     if(k===0)x.moveTo(q[0],q[1]);else if(k<on)x.lineTo(q[0],q[1]);}x.stroke();});}
@@ -1279,14 +1293,14 @@ function goldRegion(x,g,st,k){const rnd=srand(300+g);
           x.lineWidth=.42;x.beginPath();x.moveTo(a[0]+a[2]*d,a[1]+a[3]*d);x.lineTo(b[0]+b[2]*d,b[1]+b[3]*d);x.stroke();}
       });});
     // 은은한 광채
-    x.save();x.globalCompositeOperation="screen";x.filter=`blur(${1.6*k}px)`;x.strokeStyle="rgba(255,245,215,.35)";x.lineWidth=2.6;x.stroke(runP(g,4.6,100000,0));x.filter="none";x.restore();
+    x.save();x.globalCompositeOperation="screen";blurred(x,RBB[g],1.6*k,y=>{y.strokeStyle="rgba(255,245,215,.35)";y.lineWidth=2.6;y.stroke(runP(g,4.6,100000,0));});x.restore();
   }
   else if(st==="g5"){ // 빛으로 된 실: 하얀 심 + 따뜻한 빛 번짐, 바느질 땀은 살아있게
     blanket(x,g,"#fffdf2");
     const cord=runP(g,4.6,100000,0), st2=runP(g,4.6,2,1);
     x.save();x.globalCompositeOperation="screen";
-    [[7,"rgba(255,226,150,.22)",3.2],[4,"rgba(255,236,180,.35)",1.8],[2.2,"rgba(255,248,220,.55)",.8]].forEach(([w,c,bl])=>{x.filter=`blur(${bl*k}px)`;x.strokeStyle=c;x.lineWidth=w;x.stroke(cord);});
-    x.filter="none";x.restore();
+    [[7,"rgba(255,226,150,.22)",3.2],[4,"rgba(255,236,180,.35)",1.8],[2.2,"rgba(255,248,220,.55)",.8]].forEach(([w,c,bl])=>blurred(x,RBB[g],bl*k,y=>{y.strokeStyle=c;y.lineWidth=w;y.stroke(cord);}));
+    x.restore();
     x.save();x.lineCap="round";x.strokeStyle="#fff3cf";x.lineWidth=1.1;x.stroke(st2);x.strokeStyle="#ffffff";x.lineWidth=.45;x.stroke(st2);x.restore();
     // 실을 따라 맺힌 빛망울
     EDGE[g].forEach(run=>run.forEach(([px,py,nx,ny],i)=>{ if((i+g*5)%37) return; const cx=px+nx*4.6,cy=py+ny*4.6,r=2.2+rnd()*1.6;
@@ -1304,12 +1318,12 @@ function goldRegion(x,g,st,k){const rnd=srand(300+g);
       x.lineCap="round";x.strokeStyle=`rgb(${Math.round(150+100*v)},${Math.round(110+125*v)},${Math.round(40+150*v)})`;x.lineWidth=.95;
       x.beginPath();x.moveTo(ax,ay);x.lineTo(bx,by);x.stroke();
       x.strokeStyle=`rgba(255,253,240,${.25+.6*v})`;x.lineWidth=.3;x.beginPath();x.moveTo(ax+L[0]*.25,ay+L[1]*.25);x.lineTo(bx+L[0]*.25,by+L[1]*.25);x.stroke();
-      if(v>.97&&rnd()<.25){x.save();x.globalCompositeOperation="screen";x.filter=`blur(${1.2*k}px)`;x.fillStyle="rgba(255,250,225,.9)";x.beginPath();x.arc((ax+bx)/2,(ay+by)/2,1.3,0,7);x.fill();x.filter="none";x.restore();}
+      if(v>.97&&rnd()<.25){const qx=(ax+bx)/2,qy=(ay+by)/2;x.save();x.globalCompositeOperation="screen";blurred(x,[qx-4,qy-4,8,8],1.2*k,y=>{y.fillStyle="rgba(255,250,225,.9)";y.beginPath();y.arc(qx,qy,1.3,0,7);y.fill();});x.restore();}
     }));
   }
   else { // 빛나는 꼰 금실: 안쪽 은은한 빛 + 빛 번지는 실 + 꼬임 + 몇 개의 반짝임
     const cord=runP(g,4.8,100000,0);
-    x.save();x.globalCompositeOperation="screen";x.strokeStyle="rgba(255,244,190,.5)";x.lineWidth=8;x.filter=`blur(${3*k}px)`;x.stroke(cord);x.filter="none";x.restore();
+    x.save();x.globalCompositeOperation="screen";blurred(x,RBB[g],3*k,y=>{y.strokeStyle="rgba(255,244,190,.5)";y.lineWidth=8;y.stroke(cord);});x.restore();
     blanket(x,g,"#fffdf2");
     x.save();x.shadowColor="rgba(255,236,150,1)";x.shadowBlur=6*k;x.strokeStyle="#f6d87c";x.lineWidth=1.6;x.lineCap="round";x.stroke(cord);x.shadowBlur=3*k;x.stroke(cord);x.restore();
     goldStroke(x,cord,1.5);
@@ -1380,16 +1394,19 @@ async function makeShare(){
   const mapTop=(MOTTO&&TAGS.length)?LT.mapTop:(MOTTO||TAGS.length)?LT.mapTop-(LT.tt-LT.mt):LT.py+28;
   // 지도 액자(바다)
   const BB=[70,0,526,784], BW=BB[2]-BB[0]; const fx=14,fy=mapTop,fw=W-28,fh=H-mapTop-(FMT==="post"?14:24), EH=FULL[3]+JDY();
-  const X0=x, mapC=document.createElement("canvas"); mapC.width=c.width; mapC.height=c.height+Math.ceil(200*Q); x=mapC.getContext("2d"); x.scale(Q,Q);
-  x.save();
   const s=Math.min(fw/BW,(fh-6)/EH);
   const GX=fx+(fw-BW*s)/2-BB[0]*s,GY=fy+Math.max(0,fh-EH*s)*.4; const GEO={ox:GX,oy:GY,s,stk:[]};
+  // 지도 층은 사진·즐겨찾기·크기·글꼴·스타일이 바뀔 때만 다시 그림 (이름·한 마디 칠 때는 재사용)
+  const mapKey=[FMT,FONT,ST,hidePk?1:0,Q,W,H,mapTop,gs.join(","),[...FAV].sort().join(","),Object.keys(PH).sort().join(",")].join("|");
+  const X0=x; let mapC; if(MAPCACHE&&MAPCACHE.key===mapKey) mapC=MAPCACHE.c; else {
+  mapC=document.createElement("canvas"); mapC.width=c.width; mapC.height=c.height+Math.ceil(200*Q); x=mapC.getContext("2d"); x.scale(Q,Q);
+  x.save();
   x.translate(GX,GY);x.scale(s,s);x.lineJoin="round";x.lineCap="round";
   // 바다 장식
   x.strokeStyle="#b9c7bf";x.lineWidth=.9;WAVES.forEach(w=>x.stroke(new Path2D(wavePath(w))));
   CLOUDS.forEach(cl=>{const p=new Path2D(cloudPath(cl));x.fillStyle="#fffefa";x.fill(p);x.strokeStyle="#6f6e58";x.lineWidth=.7;x.stroke(p);});
   // 땅: 기본 채움 → 크레용 결 → 도 경계
-  if(ST==="p1"||ST==="p3"||ST==="q1"||ST==="q3"){for(let g=0;g<9;g++)if(gs[g]>=GTOT[g])glowStroke(x,GPS[g],s*Q,[[9,ST==="p3"?"rgba(255,210,110,.45)":"rgba(255,226,150,.4)",4]]);}
+  if(ST==="p1"||ST==="p3"||ST==="q1"||ST==="q3"){for(let g=0;g<9;g++)if(gs[g]>=GTOT[g])glowStroke(x,GPS[g],s*Q,[[9,ST==="p3"?"rgba(255,210,110,.45)":"rgba(255,226,150,.4)",4]],RBB[g]);}
   if(ST==="p5"){for(let g=0;g<9;g++)if(gs[g]>=GTOT[g]){x.save();x.shadowColor="rgba(40,55,30,.32)";x.shadowBlur=5*s*Q;x.shadowOffsetY=2.4*s*Q;x.shadowOffsetX=.8*s*Q;x.fillStyle=PAPER;x.fill(GPS[g]);x.restore();}}
   if(ST==="s3"){for(let g=0;g<9;g++)if(gs[g]>=GTOT[g]){x.save();x.shadowColor="rgba(40,55,30,.35)";x.shadowBlur=5*s*Q;x.shadowOffsetY=2.6*s*Q;x.shadowOffsetX=1*s*Q;x.fillStyle=PAPER;x.fill(GPS[g]);x.restore();}}
   LANDP.forEach(o=>{x.fillStyle=gColor(gs[o.g]/GTOT[o.g]);x.fill(o.p);});
@@ -1429,14 +1446,14 @@ async function makeShare(){
   if(isStitch(ST)){ LABELS.forEach(l=>{const r=gs[l.g]/GTOT[l.g];if(r<1)return;x.save();
     const w=26,h=11,cx=l.x,cy=l.y+9,GD=ST[0]==="g"&&ST<"g4";
     if(ST>="g4"){const P=new Path2D();P.roundRect(cx-w/2,cy-h/2,w,h,5.5);x.fillStyle="#fffdf2";x.fill(P);
-      x.save();x.globalCompositeOperation="screen";[[3.4,"rgba(255,232,160,.45)",1.4],[1.6,"rgba(255,248,220,.75)",.5]].forEach(([lw,c,bl])=>{x.filter=`blur(${bl*s*Q}px)`;x.strokeStyle=c;x.lineWidth=lw;x.stroke(P);});x.filter="none";x.restore();
+      x.save();x.globalCompositeOperation="screen";[[3.4,"rgba(255,232,160,.45)",1.4],[1.6,"rgba(255,248,220,.75)",.5]].forEach(([lw,c,bl])=>blurred(x,[cx-w/2-2,cy-h/2-2,w+4,h+4],bl*s*Q,y=>{y.strokeStyle=c;y.lineWidth=lw;y.stroke(P);}));x.restore();
       x.setLineDash([1.6,1.1]);x.strokeStyle="#f3d98e";x.lineWidth=.55;x.beginPath();x.roundRect(cx-w/2+1.2,cy-h/2+1.2,w-2.4,h-2.4,4.3);x.stroke();x.setLineDash([]);
       x.fillStyle="#6b5418";x.font=`800 7.2px ${F}`;x.textAlign="center";x.textBaseline="middle";x.fillText("완등 ★",cx,cy+.3);x.textBaseline="alphabetic";x.restore();return;}
     if(GD){const gr=x.createLinearGradient(cx-w/2,cy-h/2,cx+w/2,cy+h/2);gr.addColorStop(0,"#c9962f");gr.addColorStop(.45,"#fff1b8");gr.addColorStop(.6,"#f0c95e");gr.addColorStop(1,"#a9781e");x.fillStyle=gr;x.shadowColor="rgba(255,220,120,.9)";x.shadowBlur=3*s*Q;}else x.fillStyle="#fffbea";
     x.beginPath();x.roundRect(cx-w/2,cy-h/2,w,h,5.5);x.fill();x.shadowBlur=0;
     x.setLineDash([1.6,1.2]);x.strokeStyle=GD?"#fffbea":"#4f9a45";x.lineWidth=.6;x.beginPath();x.roundRect(cx-w/2+1.2,cy-h/2+1.2,w-2.4,h-2.4,4.3);x.stroke();x.setLineDash([]);
     x.fillStyle=GD?"#5a3d08":"#2f6a2c";x.font=`800 7.2px ${F}`;x.textAlign="center";x.textBaseline="middle";x.fillText("완등 ★",cx,cy+.3);x.textBaseline="alphabetic";x.restore();}); }
-  x.restore();
+  x.restore(); MAPCACHE={key:mapKey,c:mapC}; }
   // 지도 붙이기: 제주 쪽(JCUT 아래)은 위로 당겨서
   { const cutPx=Math.round((GY+JCUT*s)*Q), dyPx=Math.round(JDY()*s*Q); x=X0; x.save(); x.setTransform(1,0,0,1,0,0);
     x.drawImage(mapC,0,0,c.width,cutPx,0,0,c.width,cutPx);
@@ -1483,25 +1500,28 @@ const stkSize=()=>88*SZL[SZ]*Math.min(1,Math.sqrt(24/Math.max(Object.keys(PH).le
 async function preloadStk(){ for(const n of Object.keys(PH)){ const src=PH[n].st; if(!IMGC[n]||IMGC[n].src!==src){ const im=await loadImg(src); IMGC[n]={src,im}; } } }
 function curPos(){ return Object.assign({},AUTO?AUTOC:{},POS); }
 // 스티커만 다시 그리기 (끌 때 매 프레임)
+let STATIC=null; // 끌기 중: 끌리는 스티커를 뺀 나머지 전부를 한 번 그려둔 층
 function compose(live){
   const B=BASE; if(!B) return; const cv=document.getElementById("cardImg");
   if(cv.width!==B.c.width||cv.height!==B.c.height){cv.width=B.c.width;cv.height=B.c.height;}
   const x=cv.getContext("2d"), G=B.GEO, s=G.s, Q=B.Q; G.stk=[];
-  x.setTransform(1,0,0,1,0,0); x.drawImage(B.c,0,0);
-  x.setTransform(Q*s,0,0,Q*s,Q*G.ox,Q*G.oy);
   const SHs=stkSize(), SP=curPos(), ls_=live&&live.n!=null?live:null; if(ls_) SP[ls_.n]={dx:ls_.dx,dy:ls_.dy};
-  let ns=Object.keys(PH).map(Number).sort((a,b)=>byN(a).y-byN(b).y); if(ls_){ns=ns.filter(n=>n!==ls_.n);ns.push(ls_.n);}
+  let ns=Object.keys(PH).map(Number).sort((a,b)=>byN(a).y-byN(b).y); if(ls_){ns=ns.filter(n=>n!==ls_.n);}
   const moved=n=>{const o=SP[n];return o&&(Math.abs(o.dx)>2||Math.abs(o.dy)>2);};
-  // 연결선: 산 → 정상석, 곧은 점선
-  x.save();x.setLineDash([2.2,1.6]);x.lineCap="round";x.strokeStyle="rgba(70,66,52,.75)";x.lineWidth=.7;
-  ns.forEach(n=>{if(!moved(n))return;const m=byN(n),o=SP[n];x.beginPath();x.moveTo(m.x,MY(m));x.lineTo(m.x+o.dx,MY(m)+o.dy);x.stroke();});
-  x.restore(); x.fillStyle="rgba(120,112,94,.9)"; ns.forEach(n=>{if(!moved(n))return;const m=byN(n);x.beginPath();x.arc(m.x,MY(m),1.6,0,7);x.fill();});
-  for(const n of ns){const m=byN(n),p=PH[n],o=SP[n]||{dx:0,dy:0},c=IMGC[n]; if(!c||!c.im) continue;
+  const lead=n=>{ if(!moved(n)) return; const m=byN(n),o=SP[n]; x.save();x.setLineDash([2.2,1.6]);x.lineCap="round";x.strokeStyle="rgba(70,66,52,.75)";x.lineWidth=.7;
+    x.beginPath();x.moveTo(m.x,MY(m));x.lineTo(m.x+o.dx,MY(m)+o.dy);x.stroke();x.restore(); x.fillStyle="rgba(120,112,94,.9)";x.beginPath();x.arc(m.x,MY(m),1.6,0,7);x.fill(); };
+  const stk=n=>{ const m=byN(n),p=PH[n],o=SP[n]||{dx:0,dy:0},c=IMGC[n]; if(!c||!c.im) return;
     const h=HS(n,SHs),w=h*p.w/p.h,bx=m.x+o.dx,by=MY(m)+o.dy;
     G.stk.push({n,cx:G.ox+s*bx,cy:G.oy+s*(by-h/2+6),w:w*s,h:h*s,rot:TILT(n)});
     x.save();x.translate(bx,by-h/2+6);x.rotate(TILT(n));
     if(ls_&&ls_.n===n){x.shadowColor="rgba(0,0,0,.28)";x.shadowBlur=10/s;x.shadowOffsetY=5/s;}
-    x.drawImage(c.im,-w/2,-h/2,w,h);x.restore();}
+    x.drawImage(c.im,-w/2,-h/2,w,h);x.restore(); };
+  if(ls_&&STATIC&&STATIC.n===ls_.n&&STATIC.w===cv.width&&STATIC.h===cv.height){ x.setTransform(1,0,0,1,0,0); x.drawImage(STATIC.c,0,0); G.stk=STATIC.stk.slice(); x.setTransform(Q*s,0,0,Q*s,Q*G.ox,Q*G.oy); }
+  else { x.setTransform(1,0,0,1,0,0); x.drawImage(B.c,0,0); x.setTransform(Q*s,0,0,Q*s,Q*G.ox,Q*G.oy);
+    ns.forEach(lead); for(const n of ns) stk(n);
+    if(ls_){ const sc=(STATIC&&STATIC.c)||document.createElement("canvas"); sc.width=cv.width; sc.height=cv.height; sc.getContext("2d").drawImage(cv,0,0); STATIC={n:ls_.n,c:sc,w:cv.width,h:cv.height,stk:G.stk.slice()}; }
+    else STATIC=null; }
+  if(ls_){ lead(ls_.n); stk(ls_.n); }
   // 마일스톤 꾸미기 스티커 (정상석 위에)
   G.deco=[]; DECOS.forEach((d,i)=>{ const im=DIMG[d.k]; if(!im) return; const lv=live&&live.deco===i?live:null, dx=lv?lv.x:d.x, dy=lv?lv.y:d.y, h=d.h, r=d.r||0, w=h*im.width/im.height;
     x.save(); x.translate(dx,dy); x.rotate(r); if(lv){x.shadowColor="rgba(0,0,0,.28)";x.shadowBlur=10/s;x.shadowOffsetY=5/s;}
