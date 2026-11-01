@@ -952,11 +952,11 @@ async function addFiles(files,presetN){
   renderNew();
   // 2단계: 누끼 (느림) — 하나씩 채워짐
   for(const [i,r] of rows.entries()){ if(!NEW.includes(r)) continue; aiNote.textContent=`누끼 따는 중 ${i+1} / ${rows.length}`;
-    let st=null; if(!segFail){ try{ st=await cutout(r.ph); }catch(_){ segFail=true; } }
+    let st=null; if(!segFail){ try{ st=await cutout(r.ph); }catch(e){ segFail=String(e&&e.message||e).slice(0,80); } }
     r.cut=st; r.st=st||r.round; updateRow(r); }
   // 목록에서 '교체'로 올린 건 바로 바꿔 끼움 (날짜는 기존 것 유지)
   if(presetN){ const r=rows[0]; if(r&&r.st&&NEW.includes(r)){ const old=PH[presetN]; if(!r.d&&old&&old.d) r.d=old.d; doApply([r]); aiNote.textContent=`${byN(presetN).base} 사진을 ${old?"바꿨어요":"올렸어요"}`; return; } }
-  aiNote.textContent=`${over?"한 번에 10장까지라 앞의 10장만 올렸어요 · ":""}${rows.length}장 처리 (${((performance.now()-t0)/1000).toFixed(1)}초)${ocrFail?" · 캡처 글자 읽기 실패":""}${segFail?" · 누끼 실패, 동그란 스티커로":""}`;
+  aiNote.textContent=`${over?"한 번에 10장까지라 앞의 10장만 올렸어요 · ":""}${rows.length}장 처리 (${((performance.now()-t0)/1000).toFixed(1)}초)${ocrFail?" · 캡처 글자 읽기 실패":""}${segFail?` · 누끼 실패(${segFail}), 동그란 스티커로`:""}`;
 }
 function roundSticker(ph){ const S=220, st=document.createElement("canvas"); st.width=S; st.height=S; const x=st.getContext("2d");
   const side=Math.min(ph.width,ph.height), sx=(ph.width-side)/2, sy=(ph.height-side)/2;
