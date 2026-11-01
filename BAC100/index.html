@@ -1202,17 +1202,7 @@ autoBtn.onclick=async()=>{ await preloadStk(); POS=autoLayout(n=>HS(n,stkSize())
 
 // ── 인스타 스토리 이미지 (1080×1920) ──
 const LANDP=[...document.querySelectorAll("#land path")].map(p=>({g:+p.dataset.g,p:new Path2D(p.getAttribute("d"))}));
-// 해안선·도 경계: 양쪽이 같은 도인 구간(대구·대전 같은 광역시 경계)만 빼고 그림
-const COASTP=(()=>{ const d=document.getElementById("coast").getAttribute("d"), W=566, H=784, cv=document.createElement("canvas"); cv.width=W; cv.height=H;
-  const c=cv.getContext("2d",{willReadFrequently:true}); c.imageSmoothingEnabled=false;
-  [...document.querySelectorAll("#land path")].forEach(e=>{ c.fillStyle=`rgb(${(+e.dataset.g+1)*25},0,0)`; c.fill(new Path2D(e.getAttribute("d"))); });
-  const px=c.getImageData(0,0,W,H).data, gAt=(x,y)=>{ x=x|0; y=y|0; if(x<0||y<0||x>=W||y>=H) return -1; const k=(y*W+x)*4; return px[k+3]<200?-1:Math.round(px[k]/25)-1; };
-  const out=new Path2D(); let drop=0,keep=0;
-  d.split("M").filter(Boolean).forEach(sub=>{ const pts=sub.replace(/Z/gi,"").split("L").map(q=>q.split(",").map(Number)).filter(q=>q.length===2&&!isNaN(q[0])); let pen=false;
-    for(let i=0;i+1<pts.length;i++){ const a=pts[i],b=pts[i+1],L=Math.hypot(b[0]-a[0],b[1]-a[1]); let inner=false;
-      if(L>1e-6){ const nx=-(b[1]-a[1])/L*2.2,ny=(b[0]-a[0])/L*2.2,mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2, g1=gAt(mx+nx,my+ny), g2=gAt(mx-nx,my-ny); inner=g1>=0&&g1===g2; }
-      if(inner){ pen=false; drop++; continue; } keep++; if(!pen){ out.moveTo(a[0],a[1]); pen=true; } out.lineTo(b[0],b[1]); } });
-  return out; })();
+const COASTP=new Path2D(document.getElementById("coast").getAttribute("d")); // 해안선·도 경계·광역시 경계(대구 등)는 원래 선 그대로
 const loadImg=src=>new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src;});
 let shareBlob=null, MAPCACHE=null;
 // ── 시안 스타일: #f 테두리, #t1 풀밭, #t2 자수, #t3 연필 낙서 (완등한 도에만) ──
@@ -1470,7 +1460,7 @@ async function makeShare(){
   if(window.__crayon){const all=new Path2D();LANDP.forEach(o=>all.addPath(o.p));x.save();x.clip(all);
     const pat=x.createPattern(window.__crayon,"repeat");pat.setTransform(new DOMMatrix().scale(70/220));x.globalCompositeOperation="multiply";x.fillStyle=pat;x.fillRect(-20,-20,620,830);
     x.globalCompositeOperation="source-over";x.globalAlpha=.9;x.fillRect(-20,-20,620,830);x.restore();x.globalAlpha=1;}
-  x.globalAlpha=.9;x.lineWidth=1.1;x.strokeStyle="#fffdf6";for(let g=0;g<9;g++)x.stroke(runP(g,0,100000,0));x.globalAlpha=1; // 광역시 안쪽 경계는 안 그림
+  x.globalAlpha=.9;x.lineWidth=1.1;x.strokeStyle="#fffdf6";LANDP.forEach(o=>x.stroke(o.p));x.globalAlpha=1;
   // 손그림 해안선
   x.strokeStyle="#3a3a2e";x.lineWidth=1;x.globalAlpha=.9;x.stroke(COASTP);x.globalAlpha=.3;x.save();x.translate(.5,.4);x.stroke(COASTP);x.restore();x.globalAlpha=1;
   // 풀잎
