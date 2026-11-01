@@ -760,8 +760,8 @@ document.getElementById("lb").addEventListener("click",e=>{if(e.target.id==="lb"
 function brighten(cv){
   const x=cv.getContext("2d"), im=x.getImageData(0,0,cv.width,cv.height), d=im.data;
   let sum=0,cnt=0; for(let i=0;i<d.length;i+=16){ if(d[i+3]<128) continue; sum+=.299*d[i]+.587*d[i+1]+.114*d[i+2]; cnt++; }
-  const m=cnt?sum/cnt:128; if(m>=100) return;
-  const g=Math.max(.55,Math.log(108/255)/Math.log(Math.max(m,1)/255)), lut=new Uint8ClampedArray(256);
+  const m=cnt?sum/cnt:128; if(m>=118) return;
+  const g=Math.max(.5,Math.log(125/255)/Math.log(Math.max(m,1)/255)), lut=new Uint8ClampedArray(256);
   for(let i=0;i<256;i++) lut[i]=Math.round(255*Math.pow(i/255,g));
   for(let i=0;i<d.length;i+=4){ d[i]=lut[d[i]]; d[i+1]=lut[d[i+1]]; d[i+2]=lut[d[i+2]]; }
   x.putImageData(im,0,0);
@@ -852,7 +852,15 @@ function getSeg(){ if(SEGP) return SEGP; const base=new URL("nk/",location.href)
   SEGP.catch(()=>{SEGP=null;}); return SEGP; }
 async function cutout(src){
   const S=224, c=document.createElement("canvas"); c.width=S; c.height=S; const x=c.getContext("2d",{willReadFrequently:true}); x.drawImage(src,0,0,S,S);
-  const d=x.getImageData(0,0,S,S).data, N=S*S, f=new Float32Array(3*N); let mx=1; for(let i=0;i<d.length;i+=4) mx=Math.max(mx,d[i],d[i+1],d[i+2]);
+  const d=x.getImageData(0,0,S,S).data, N=S*S, f=new Float32Array(3*N);
+  // 누끼용 입력만 밝게 펴기: 밝기 1~99% 구간을 0~255로 늘리고, 평균이 중간 밝기가 되게 감마 보정
+  { const hist=new Uint32Array(256); for(let i=0;i<d.length;i+=4) hist[Math.round(.299*d[i]+.587*d[i+1]+.114*d[i+2])]++;
+    let c=0,lo=0,hi=255; for(let v=0;v<256;v++){c+=hist[v]; if(c>=N*.01){lo=v;break;}} c=0; for(let v=255;v>=0;v--){c+=hist[v]; if(c>=N*.01){hi=v;break;}}
+    const rng=Math.max(30,hi-lo); let mean=0; for(let v=0;v<256;v++) mean+=hist[v]*Math.max(0,Math.min(1,(v-lo)/rng)); mean/=N;
+    const g=Math.max(.45,Math.min(1.2,Math.log(.5)/Math.log(Math.max(.05,Math.min(.95,mean))))), lut=new Uint8ClampedArray(256);
+    for(let v=0;v<256;v++) lut[v]=Math.round(255*Math.pow(Math.max(0,Math.min(1,(v-lo)/rng)),g));
+    for(let i=0;i<d.length;i+=4){ d[i]=lut[d[i]]; d[i+1]=lut[d[i+1]]; d[i+2]=lut[d[i+2]]; } }
+  let mx=1; for(let i=0;i<d.length;i+=4) mx=Math.max(mx,d[i],d[i+1],d[i+2]);
   for(let p=0;p<N;p++){ f[p]=(d[p*4]/mx-.485)/.229; f[N+p]=(d[p*4+1]/mx-.456)/.224; f[2*N+p]=(d[p*4+2]/mx-.406)/.225; }
   const ses=await getSeg(), out=await ses.run({[ses.inputNames[0]]:new ort.Tensor("float32",f,[1,3,S,S])}), m=out[ses.outputNames[0]].data;
   let lo=1e9,hi=-1e9; for(let i=0;i<N;i++){lo=Math.min(lo,m[i]);hi=Math.max(hi,m[i]);}
