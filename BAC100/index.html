@@ -71,9 +71,10 @@ input,select,textarea{font-size:16px!important}
 .trow{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:8px;align-items:center}.trow>.inx,.trow>.search{min-width:0}.trow .search{padding:7px 10px}.trow .tmv{font-size:11.5px;color:#a3a18c}
 .btn.rs{padding:0 10px;min-height:32px;font-size:12.5px;white-space:nowrap}
 .about{padding:6px 4px;font-size:14px;line-height:1.6;color:var(--fg)}.about p{margin:0}.about p+p{margin-top:2px}
-.about dl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:0}.about dt{color:var(--muted);font-weight:700}.about dd{margin:0}
+.about dl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:0}.about dl dt{min-width:4.6em}.about p+dl.who{margin-top:14px}.about dl.who+dl.ver{margin-top:6px}.about dl.ver+.safe{margin-top:14px}.about dt{color:var(--muted);font-weight:700}.about dd{margin:0}
 .about a{color:#4f7a44;font-weight:700;text-underline-offset:2px}
-.about .bk{margin-top:8px;display:grid;gap:6px;padding:10px 12px;background:#fffefa;border:1px solid var(--line);border-radius:12px;font-size:13.5px}.about .bk b{color:var(--fg)}.about .bk .btn{display:inline-flex;align-items:center}
+.about .bk{margin-top:10px;display:grid;gap:6px;padding:10px 12px;background:#fffefa;border:1px solid var(--line);border-radius:12px;font-size:13.5px}.about .bk b{color:var(--fg)}.about .bkbtn{display:flex;gap:6px;flex-wrap:wrap}
+.pill2{all:unset;cursor:pointer;display:inline-flex;align-items:center;font-size:12.5px;font-weight:700;line-height:1;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:#fffefa;color:var(--fg)}.pill2.on{background:#4f9a45;border-color:#4f9a45;color:#fffefa}.pill2:disabled{opacity:.5}.pill2:focus-visible{outline:2px solid var(--hl);outline-offset:2px}
 .about .safe{margin-top:6px;padding:10px 12px;background:#f4f8ea;border:1px solid #cfe1b4;border-radius:12px;font-size:13.5px}.about .safe b{color:#2f6a2c}
 .uphead{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.uphead .meta{font-size:13px}
 .inx{position:relative}.inx .search{padding-right:40px}
@@ -360,13 +361,14 @@ footer{font-size:12px;color:var(--muted)}
   </div>
 
   <div id="p-heart" class="pane about" hidden>
-    <p>안녕하세요,<br>100대 명산 동료 여러분!<br>저는 겨우 10좌라서 완등은 먼 훗날 이야기이고요<br>하나씩 쌓이는 소소한 재미를 더해보려고 만들어보았습니다.</p>
-    <p>버그 신고, 불만(?) 신고, 새로운 아이디어 기부<br>DM 주시면 잽싸게 반영해보겠습니다.<br>예쁘게 써주시고 태그도 환영합니다🤍</p>
-    <dl><dt>만든 사람</dt><dd><a href="https://www.instagram.com/youngs.00/" target="_blank" rel="noopener">@youngs.00</a></dd><dt>버전</dt><dd>version 1.1 - 2026.11.01</dd></dl>
-    <p class="safe"><b>🔒 보안 걱정은 안 하셔도 돼요</b><br>사진은 서버로 보내지 않아요.<br>누끼도, 저장도 전부 내 폰 브라우저 안에서만 이루어져요.<br>단, 브라우저 데이터를 지우거나 폰을 바꾸면 지도가 사라지니 주의해주세요.</p>
-    <div class="bk"><b>📦 지도 옮기기 · 백업</b>
-      <span>지도는 이 브라우저에만 저장돼요. 다른 브라우저나 홈 화면 앱으로 옮기거나 폰을 바꿀 때는 백업 파일로 옮겨주세요.</span>
-      <div class="row2"><button type="button" class="btn share" id="bkSave">백업 파일 저장</button><label class="btn" for="bkIn">백업 불러오기</label></div>
+    <p>안녕하세요,<br>100대 명산 동료 여러분!<br>저는 겨우 10좌라서 완등은 먼 훗날 이야기고요,<br>하나씩 쌓이는 소소한 재미를 더해보려고 만들어보았습니다.</p>
+    <p>버그 신고, 개선 요청, 재밌는 아이디어<br>DM 주시면 잽싸게 반영해보겠습니다.<br>예쁘게 써주시고 태그도 환영합니다🤍</p>
+    <dl class="who"><dt>만든 사람</dt><dd><a href="https://www.instagram.com/youngs.00/" target="_blank" rel="noopener">@youngs.00</a></dd></dl>
+    <dl class="ver"><dt>버전</dt><dd>version 1.1 - 2026.11.01</dd></dl>
+    <p class="safe"><b>🔒 보안 걱정 NO!</b><br>사진은 서버로 보내지 않습니다.<br>누끼, 저장 모두 내 폰 브라우저 안에서 이루어집니다.</p>
+    <div class="bk"><b>📦 지도 백업 · 불러오기</b>
+      <span>지도는 이 브라우저에만 저장됩니다.<br>필요한 경우, 백업 파일로 옮겨주세요.</span>
+      <div class="bkbtn"><button type="button" class="pill2 on" id="bkSave">백업 파일 저장</button><label class="pill2" for="bkIn">백업 불러오기</label></div>
       <input type="file" id="bkIn" accept=".json,application/json" hidden>
       <span class="tip" id="bkMsg" role="status"></span></div>
   </div>
