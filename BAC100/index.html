@@ -730,7 +730,7 @@ let SZ=ls.get("bac100-sz",2); if(!(SZ>=0&&SZ<5)) SZ=2;
 // ── 스토리 / 게시글 ──
 let FMT="story"; // 처음엔 늘 9:16
 function syncFmt(){ document.getElementById("fmtTog").textContent=FMT==="post"?"4:5":"9:16"; }
-const APP_URL=window.claude?"https://claude.ai/artifact/HuDVvbrMwg39gWczUG44oo":location.href.split("#")[0];
+const APP_URL="https://my100san.github.io/"; // 어느 주소에서 열어도 공유는 새 짧은 주소로
 document.getElementById("linkShare").onclick=async()=>{ gc("share-link"); const box=document.getElementById("linkBox"), inp=document.getElementById("linkIn"), msg=document.getElementById("linkMsg");
   inp.value=APP_URL;
   try{ if(navigator.share){ await navigator.share({title:"나의 명산 지도",text:"내 블랙야크 명산100 지도 만들기",url:APP_URL}); msg.textContent=""; return; } }catch(e){ if(e&&e.name==="AbortError") return; }
