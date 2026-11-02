@@ -321,6 +321,17 @@ footer{font-size:12px;color:var(--muted)}
 .memo p{margin:0}.memo p+p{margin-top:8px}.memo .from{text-align:right}
 .memo .tape{position:absolute;left:50%;top:-9px;width:86px;height:20px;transform:translateX(-50%) rotate(-3deg);background:rgba(214,232,190,.85);background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.3) 0 6px,transparent 6px 14px)}
 .h5{text-align:center;padding:6px 6px 2px;line-height:1.7}.h5 .mt{width:54px;display:block;margin:0 auto 6px}.h5 p{margin:0}.h5 p+p{margin-top:10px}.h5 .h5t{font-size:17px;font-weight:700;color:#2f6a2c}.h5 .from{font-weight:700}
+.about .again{text-align:right;margin:0 0 6px}
+.capm{width:96px;border:1.5px dashed #4f9a45;border-radius:6px;padding:4px;background:#fff;display:grid;gap:3px;font:600 7px/1.2 "KoPubDotum",sans-serif;color:#555}.capm .ch{background:#eaf4dc;border-radius:3px;padding:2px 3px;justify-self:start}.capm img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:2px;display:block}
+.coach{position:fixed;inset:0;z-index:90}.coach.try{pointer-events:none}.coach.try .bub,.coach .blk{pointer-events:auto}.coach .blk{position:fixed}
+.coach.wait .hole,.coach.wait .bub{opacity:0}.coach .hole{position:fixed;border-radius:14px;box-shadow:0 0 0 9999px rgba(15,18,12,.72);transition:all .28s ease;pointer-events:none}
+.coach .hole::after{content:"";position:absolute;inset:-4px;border-radius:17px;border:2px solid rgba(255,255,255,.85)}
+.coach .bub{position:fixed;left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));max-width:420px;margin:0 auto;background:#fffefa;border-radius:16px;padding:14px 16px 12px;box-shadow:0 10px 30px rgba(0,0,0,.3);display:grid;gap:10px;transition:top .28s ease}
+.coach .bwrap{display:flex;gap:12px;align-items:center}.coach .ill{flex:none}.coach .ill svg{width:100%;height:auto;display:block}.coach .bub p small{display:block;margin-top:4px;font-size:12px;color:var(--muted);line-height:1.5}
+.coach .bub p{margin:0;font-size:15px;line-height:1.6;color:var(--fg)}.coach .bub p b{color:#2f6a2c}
+.coach .bot{display:flex;align-items:center;gap:10px}.coach .dots{display:flex;gap:5px;flex:1}.coach .dots i{width:6px;height:6px;border-radius:50%;background:#d6d2c2}.coach .dots i.on{background:#4f9a45;width:16px;border-radius:3px}
+.coach .skip{all:unset;cursor:pointer;font-size:13px;color:var(--muted);padding:6px 4px}.coach .next{all:unset;cursor:pointer;font-size:13.5px;font-weight:700;color:#fffefa;background:#4f9a45;border-radius:999px;padding:7px 16px}
+@media (prefers-reduced-motion:reduce){.coach .hole,.coach .bub{transition:none}}
 </style>
 
 <div class="wrap">
@@ -375,6 +386,7 @@ footer{font-size:12px;color:var(--muted)}
   </div>
 
   <div id="p-heart" class="pane about" hidden>
+    <p class="again"><button type="button" class="lnk" id="coachAgain">사용법 다시 보기</button></p>
     <div class="h1 letter"><p class="to">100대 명산 동료 여러분</p><p>안녕하세요!<br>저는 겨우 10좌라서 완등은 먼 훗날 이야기고요,<br>하나씩 쌓이는 소소한 재미를 더해보려고 만들어보았습니다.</p><p>버그 신고, 개선 요청, 재밌는 아이디어<br>DM 주시면 잽싸게 반영해보겠습니다.<br>예쁘게 써주시고 태그도 환영합니다🤍</p><p class="from">From. <a href="https://www.instagram.com/youngs.00/" target="_blank" rel="noopener">@youngs.00</a></p></div><p class="safe"><b>🔒 보안 걱정 NO!</b><br>사진은 서버로 보내지 않습니다.<br>누끼, 저장 모두 내 폰 브라우저 안에서 이루어집니다.</p><div class="bk"><b>📦 지도 백업 · 불러오기</b><span>지도는 이 브라우저에만 저장됩니다.<br>필요한 경우, 백업 파일로 옮겨주세요.</span>
       <div class="bkbtn"><button type="button" class="pill2 on" id="bkSave">백업 파일 저장</button><label class="pill2" for="bkIn">백업 불러오기</label></div>
       <input type="file" id="bkIn" accept=".json,application/json" hidden><span class="tip" id="bkMsg" role="status"></span></div><p class="hver">version 1.1 · 2026.11.01</p>
@@ -1722,6 +1734,7 @@ function endDrag(e,cancel){
   if(!drag) return; const d=drag; drag=null; if(dragRAF){cancelAnimationFrame(dragRAF);dragRAF=0;}
   if(!d.moved){ if(!cancel) showIsland(d.b.n); return; }
   if(!cancel&&d.live){ POS[d.b.n]={dx:d.live.dx,dy:d.live.dy}; ls.set("bac100-pos",POS); }
+  if(!cancel&&d.live&&window.onCoachDrag) onCoachDrag();
   compose();
 }
 cardImg.addEventListener("pointerup",e=>endDrag(e,false));
@@ -1777,7 +1790,46 @@ drawPeaks(); drawStickers(); renderList(); updateCount(); setView(FULL.slice());
 (async()=>{ try{ const old=ls.get("bac100-myphotos",null); if(old){ for(const k in old) await IDB.put(k,old[k]); try{localStorage.removeItem("bac100-myphotos")}catch(e){} }
   const got=await IDB.all(); if(Object.keys(got).length){ Object.assign(PH,got); drawStickers(); renderList(); updateCount(); } }catch(e){}
   const standalone=navigator.standalone===true||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches);
-  document.getElementById("mvTip").hidden=!(standalone&&!Object.keys(PH).length); })();
+  document.getElementById("mvTip").hidden=!(standalone&&!Object.keys(PH).length);
+  if(!ls.get("bac100-coach",false)&&!Object.keys(PH).length&&!standalone) setTimeout(()=>startCoach(),600); })(); // 처음 온 사람에게만 (정상석이 이미 있으면 안 띄움)
+// ── 처음 사용법 안내: 어둡게 덮고 한 곳씩 밝게 ──
+const unionEl=(...q)=>({getBoundingClientRect(){ const R=q.map(x=>document.querySelector(x)).filter(Boolean).map(e=>e.getBoundingClientRect()); const l=Math.min(...R.map(r=>r.left)),t=Math.min(...R.map(r=>r.top)),r_=Math.max(...R.map(r=>r.right)),b=Math.max(...R.map(r=>r.bottom)); return {left:l,top:t,right:r_,bottom:b,width:r_-l,height:b-t}; }});
+const COACH=[
+  {el:()=>document.querySelector('label[for=bulk]'), tab:"upload", cap:true, t:"<b>정상석과 찍은 사진</b>을 올려주세요.<br><b>BAC 인증 캡처</b>를 올리면 편해요."},
+  {el:()=>demoArea(), try:true, t:"사진을 올리면 <b>지도에 붙어요</b>.<br>정상석을 <b>끌어서</b> 옮겨보세요!"},
+  {el:()=>document.querySelector('.ptabs [data-p="text"]'), t:"<b>닉네임</b>과 <b>각오 한 마디</b>를 써주세요."},
+  {el:()=>document.querySelector('.cvact'), t:"<b>저장</b>하고 <b>공유</b>해보세요!"}];
+let coachI=-1, coachEl=null, COACH_DEMO=null;
+function demoArea(){ const cv=document.querySelector('.cardview'), G=window.__cardGeo, c=document.getElementById('cardImg'); if(!cv) return null;
+  const R=cv.getBoundingClientRect(); if(COACH_FIX){ const t=R.top+COACH_FIX[0], bt=R.top+COACH_FIX[1]; return {getBoundingClientRect:()=>({left:R.left,right:R.right,width:R.width,top:t,bottom:bt,height:bt-t})}; } if(!G||!G.stk||!COACH_DEMO) return cv; const k=c.getBoundingClientRect().width/1080, cr=c.getBoundingClientRect();
+  const S=G.stk.filter(b=>COACH_DEMO.includes(b.n)); if(!S.length) return cv;
+  const t=Math.min(...S.map(b=>cr.top+(b.cy-b.h/2)*k))-14, bt=Math.max(...S.map(b=>cr.top+(b.cy+b.h/2)*k))+14;
+  return {getBoundingClientRect:()=>({left:R.left,right:R.right,width:R.width,top:t,bottom:bt,height:bt-t})}; }
+const COACH_EX={77:[351,382],51:[343,382],94:[371,382]}; // 예시 정상석: 지리산 천왕봉, 설악산 대청봉, 한라산 백록담 (곰 마스코트, 저장 안 함)
+let COACH_MIG=null, COACH_FIX=null;
+function addCoachDemo(){ if(COACH_DEMO) return; COACH_MIG=MIGRATE; MIGRATE=false; /* 처음 쓰는 사람의 자동 배치가 예시를 옮기지 않게 */ COACH_DEMO=Object.keys(COACH_EX).map(Number).filter(n=>!PH[n]); if(!COACH_DEMO.length){ COACH_DEMO=null; return; }
+  COACH_DEMO.forEach(n=>{ const [w,h]=COACH_EX[n], u=`ex/${n}.webp`; PH[n]={st:u,ph:u,w,h,d:"",bac:false}; delete POS[n]; }); afterPhotoChange(); }
+function removeCoachDemo(){ if(COACH_MIG!==null){ MIGRATE=COACH_MIG; COACH_MIG=null; } if(!COACH_DEMO) return; const L=COACH_DEMO; COACH_DEMO=null; let ch=false; L.forEach(n=>{ delete PH[n]; if(POS[n]){ delete POS[n]; ch=true; } }); if(ch) ls.set("bac100-pos",POS); document.getElementById("island").hidden=true; afterPhotoChange(); }
+window.onCoachDrag=()=>{ if(coachEl&&COACH[coachI].try){ const bp=coachEl.querySelector(".bub p"); bp.style.minHeight=bp.offsetHeight+"px"; bp.innerHTML="잘했어요! 👏<br>다른 정상석도 옮겨보세요."; requestAnimationFrame(placeCoach); } };
+function startCoach(){ if(coachEl) return; coachI=0; coachEl=document.createElement("div"); coachEl.className="coach"; coachEl.setAttribute("role","dialog"); coachEl.setAttribute("aria-label","사용법 안내");
+  coachEl.innerHTML='<div class="blk"></div><div class="blk"></div><div class="blk"></div><div class="blk"></div><div class="hole"></div><div class="bub"><div class="bwrap"><div class="ill"></div><p></p></div><div class="bot"><div class="dots">'+COACH.map(()=>"<i></i>").join("")+'</div><button type="button" class="skip">건너뛰기</button><button type="button" class="next">다음</button></div></div>';
+  document.body.appendChild(coachEl); coachEl.querySelector(".skip").onclick=endCoach; coachEl.querySelector(".next").onclick=()=>{ if(coachI<COACH.length-1){ coachI++; showCoach(); } else endCoach(); };
+  addEventListener("resize",placeCoach); showCoach(); }
+function waitDemo(n){ const G=window.__cardGeo; if(n>60||(G&&COACH_DEMO&&G.stk&&COACH_DEMO.every(d=>G.stk.some(b=>b.n===d)))) { coachScroll(); return; } setTimeout(()=>waitDemo(n+1),60); }
+function coachScroll(){ const el=COACH[coachI].el(); if(!el) return; const r=el.getBoundingClientRect(), cvT=document.querySelector('.cardview').getBoundingClientRect().top; COACH_FIX=[r.top-cvT,r.bottom-cvT]; const bh=coachEl.querySelector(".bub").offsetHeight;
+  const room=innerHeight-bh-40; scrollTo({top:scrollY+r.top-Math.max(16,(room-r.height)/2),behavior:"instant"}); requestAnimationFrame(()=>{ placeCoach(); requestAnimationFrame(()=>{ placeCoach(); coachEl.classList.remove("wait"); }); }); }
+function showCoach(){ const st=COACH[coachI]; COACH_FIX=null; if(coachEl) coachEl.querySelector(".bub p").style.minHeight=""; coachEl.classList.toggle("wait",!!st.try); if(st.try){ addCoachDemo(); setTimeout(()=>waitDemo(0),0); } coachEl.classList.toggle("try",!!st.try); if(st.tab) document.querySelector(`.ptabs [data-p="${st.tab}"]`).click();
+  coachEl.querySelector(".bub p").innerHTML=st.t; const il=coachEl.querySelector(".ill"); if(st.cap){ il.innerHTML='<div class="capm" aria-hidden="true"><span class="ch">명산100 · 지리산</span><img src="ex/cap.webp" alt=""><span class="ch">2026.11.01 08:17</span></div>'; il.hidden=false; } else { il.innerHTML=""; il.hidden=true; } coachEl.querySelectorAll(".dots i").forEach((d,i)=>d.classList.toggle("on",i===coachI));
+  coachEl.querySelector(".next").textContent=coachI===COACH.length-1?"시작하기":"다음";
+  const el=st.try?null:st.el(); if(el){ const r=el.getBoundingClientRect(); if(r.top<70||r.bottom>innerHeight-170) scrollTo({top:scrollY+r.top-(r.height>innerHeight*.5?70:Math.max(80,(innerHeight-r.height)/2-60)),behavior:"instant"}); }
+  requestAnimationFrame(placeCoach); }
+function placeCoach(){ if(!coachEl) return; const el=COACH[coachI].el(); if(!el) return; const r=el.getBoundingClientRect(), pad=6;
+  const h=coachEl.querySelector(".hole"), b=coachEl.querySelector(".bub"), bh=b.offsetHeight, top=Math.max(8,r.top-pad), bot=Math.min(innerHeight-bh-30,r.bottom+pad,innerHeight-8); // 화면보다 큰 건 말풍선 자리만큼 잘라서 밝힘
+  Object.assign(h.style,{left:(r.left-pad)+"px",top:top+"px",width:(r.width+pad*2)+"px",height:Math.max(0,bot-top)+"px"});
+  const bl=coachEl.querySelectorAll(".blk"), L=r.left-pad, R=r.right+pad; [[0,0,innerWidth,top],[0,bot,innerWidth,innerHeight-bot],[0,top,L,bot-top],[R,top,innerWidth-R,bot-top]].forEach(([a,b2,w,hh],i)=>Object.assign(bl[i].style,{left:a+"px",top:b2+"px",width:Math.max(0,w)+"px",height:Math.max(0,hh)+"px"}));
+  b.style.top=(innerHeight-bot>bh+24?bot+14:top-bh-14>8?top-bh-14:innerHeight-bh-16)+"px"; }
+function endCoach(){ if(!coachEl) return; removeCoachDemo(); coachEl.remove(); coachEl=null; removeEventListener("resize",placeCoach); ls.set("bac100-coach",true); document.querySelector('.ptabs [data-p="upload"]').click(); scrollTo({top:0,behavior:"instant"}); }
+document.getElementById("coachAgain").onclick=()=>startCoach();
 window.addEventListener("hashchange",scheduleCard); renderCard();
 if(AUTO){AUTOPOS=autoLayout(n=>HS(n,SH_()));placeStickers();}
 </script>
