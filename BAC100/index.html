@@ -307,6 +307,20 @@ body{background-image:var(--grain,none)}
 .lb figcaption span{font:500 13px var(--mono);color:var(--muted)}
 .lb .top{display:flex;justify-content:flex-end}
 footer{font-size:12px;color:var(--muted)}
+
+.about .hver{margin-top:14px;text-align:center;font-size:11.5px;color:#a3a18c}
+.letter{background:#fffefa;border:1px solid var(--line);border-radius:6px;padding:16px 16px 14px;background-image:repeating-linear-gradient(transparent 0 23.4px,#ece8da 23.4px 24.4px);line-height:24.4px;box-shadow:0 2px 8px rgba(60,60,40,.06)}
+.letter p{margin:0}.letter p+p{margin-top:24.4px}.letter .to{font-weight:700;color:#2f6a2c}.letter .from{text-align:right;font-weight:700}
+.h1 p,.h2 p,.h4 p,.h5 p{font-size:14px}
+.post{position:relative;background:#fffefa;border:1.5px dashed #b9cf9c;border-radius:12px;padding:16px 16px 14px;line-height:1.7}
+.post p{margin:0}.post p+p{margin-top:10px}.post .to{font-weight:700;color:#2f6a2c;padding-right:44px}.post .from{text-align:right;font-weight:700}
+.post .stamp{position:absolute;right:12px;top:10px;width:36px;transform:rotate(6deg)}
+.h3hi b{font-size:15.5px}.h3list{list-style:none;margin:14px 0 0;padding:0;border-top:1px solid var(--line)}
+.h3list li{display:grid;grid-template-columns:5em 1fr;gap:8px;padding:10px 2px;border-bottom:1px solid var(--line);font-size:13.5px}.h3list li span{color:var(--muted);font-weight:700}
+.memo{position:relative;background:#f6fbe9;border-radius:4px;padding:22px 16px 14px;box-shadow:0 6px 14px rgba(60,80,40,.12);transform:rotate(-.6deg);line-height:1.7}
+.memo p{margin:0}.memo p+p{margin-top:8px}.memo .from{text-align:right}
+.memo .tape{position:absolute;left:50%;top:-9px;width:86px;height:20px;transform:translateX(-50%) rotate(-3deg);background:rgba(214,232,190,.85);background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.3) 0 6px,transparent 6px 14px)}
+.h5{text-align:center;padding:6px 6px 2px;line-height:1.7}.h5 .mt{width:54px;display:block;margin:0 auto 6px}.h5 p{margin:0}.h5 p+p{margin-top:10px}.h5 .h5t{font-size:17px;font-weight:700;color:#2f6a2c}.h5 .from{font-weight:700}
 </style>
 
 <div class="wrap">
@@ -361,16 +375,9 @@ footer{font-size:12px;color:var(--muted)}
   </div>
 
   <div id="p-heart" class="pane about" hidden>
-    <p>안녕하세요,<br>100대 명산 동료 여러분!<br>저는 겨우 10좌라서 완등은 먼 훗날 이야기고요,<br>하나씩 쌓이는 소소한 재미를 더해보려고 만들어보았습니다.</p>
-    <p>버그 신고, 개선 요청, 재밌는 아이디어<br>DM 주시면 잽싸게 반영해보겠습니다.<br>예쁘게 써주시고 태그도 환영합니다🤍</p>
-    <dl class="who"><dt>만든 사람</dt><dd><a href="https://www.instagram.com/youngs.00/" target="_blank" rel="noopener">@youngs.00</a></dd></dl>
-    <dl class="ver"><dt>버전</dt><dd>version 1.1 - 2026.11.01</dd></dl>
-    <p class="safe"><b>🔒 보안 걱정 NO!</b><br>사진은 서버로 보내지 않습니다.<br>누끼, 저장 모두 내 폰 브라우저 안에서 이루어집니다.</p>
-    <div class="bk"><b>📦 지도 백업 · 불러오기</b>
-      <span>지도는 이 브라우저에만 저장됩니다.<br>필요한 경우, 백업 파일로 옮겨주세요.</span>
+    <div class="h1 letter"><p class="to">100대 명산 동료 여러분</p><p>안녕하세요!<br>저는 겨우 10좌라서 완등은 먼 훗날 이야기고요,<br>하나씩 쌓이는 소소한 재미를 더해보려고 만들어보았습니다.</p><p>버그 신고, 개선 요청, 재밌는 아이디어<br>DM 주시면 잽싸게 반영해보겠습니다.<br>예쁘게 써주시고 태그도 환영합니다🤍</p><p class="from"><a href="https://www.instagram.com/youngs.00/" target="_blank" rel="noopener">@youngs.00</a> 드림</p></div><p class="safe"><b>🔒 보안 걱정 NO!</b><br>사진은 서버로 보내지 않습니다.<br>누끼, 저장 모두 내 폰 브라우저 안에서 이루어집니다.</p><div class="bk"><b>📦 지도 백업 · 불러오기</b><span>지도는 이 브라우저에만 저장됩니다.<br>필요한 경우, 백업 파일로 옮겨주세요.</span>
       <div class="bkbtn"><button type="button" class="pill2 on" id="bkSave">백업 파일 저장</button><label class="pill2" for="bkIn">백업 불러오기</label></div>
-      <input type="file" id="bkIn" accept=".json,application/json" hidden>
-      <span class="tip" id="bkMsg" role="status"></span></div>
+      <input type="file" id="bkIn" accept=".json,application/json" hidden><span class="tip" id="bkMsg" role="status"></span></div><p class="hver">version 1.1 · 2026.11.01</p>
   </div>
   <div hidden><button type="button" id="mkShare">이미지 저장</button><button type="button" id="linkShare">링크 공유</button></div>
   <div id="p-sticker" class="pane" hidden>
