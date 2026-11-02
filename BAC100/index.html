@@ -1,7 +1,7 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>나의 명산 100</title><meta property="og:title" content="나의 명산 지도"><meta property="og:description" content="블랙야크 명산100 완등 지도 만들기">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://my100san.github.io/">
-<meta property="og:image" content="https://my100san.github.io/og.jpg">
+<meta property="og:url" content="https://ynschoi.github.io/BAC100/">
+<meta property="og:image" content="https://ynschoi.github.io/BAC100/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
@@ -754,7 +754,7 @@ let SZ=ls.get("bac100-sz",2); if(!(SZ>=0&&SZ<5)) SZ=2;
 // ── 스토리 / 게시글 ──
 let FMT="story"; // 처음엔 늘 9:16
 function syncFmt(){ document.getElementById("fmtTog").textContent=FMT==="post"?"4:5":"9:16"; }
-const APP_URL="https://my100san.github.io/"; // 어느 주소에서 열어도 공유는 새 짧은 주소로
+const APP_URL="https://ynschoi.github.io/BAC100/"; // 어느 주소에서 열어도 공유는 새 짧은 주소로
 document.getElementById("linkShare").onclick=async()=>{ gc("share-link"); const box=document.getElementById("linkBox"), inp=document.getElementById("linkIn"), msg=document.getElementById("linkMsg");
   inp.value=APP_URL;
   try{ if(navigator.share){ await navigator.share({url:APP_URL}); msg.textContent=""; return; } }catch(e){ if(e&&e.name==="AbortError") return; }
@@ -1663,7 +1663,7 @@ function compose(live){
     TSTATIC={key:lt.txt,c:sc,w:cv.width,h:cv.height,stk:G.stk.slice(),deco:G.deco.slice(),txt:G.txt.slice()}; drawTxt(x,B,lt.txt,[lt.x,lt.y],G,true); } else TSTATIC=null;
   credit(); x.setTransform(1,0,0,1,0,0); window.__cardGeo=G; shareBlob=null;
   // 만든 사람 (제주 오른쪽, 항상 맨 앞)
-  function credit(){ x.setTransform(Q,0,0,Q,0,0); const post=FMT==="post", cy=B.FOOTY, T="✎ 나도 만들기  my100san.github.io  ·  @youngs.00", fs=(post?24:28)*1.1; // 맨 아래 손글씨 한 줄 (글꼴은 만세로 고정)
+  function credit(){ x.setTransform(Q,0,0,Q,0,0); const post=FMT==="post", cy=B.FOOTY, T="✎ 나도 만들기  ynschoi.github.io/BAC100  ·  @youngs.00", fs=(post?24:28)*1.1; // 맨 아래 손글씨 한 줄 (글꼴은 만세로 고정)
     x.textAlign="center"; x.textBaseline="middle"; x.font=`400 ${fs}px "YoonManse","Pretendard",sans-serif`; x.lineJoin="round"; x.strokeStyle="rgba(251,250,245,.9)"; x.lineWidth=5; x.strokeText(T,540,cy); x.fillStyle="#6f6e58"; x.fillText(T,540,cy);
     x.textAlign="left"; x.textBaseline="alphabetic"; }
 }
