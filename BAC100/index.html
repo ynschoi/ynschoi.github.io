@@ -1040,7 +1040,8 @@ function openCrop(r){ hideSug(); CR={r,box:(r.cbox||[.08,.08,.92,.98]).slice(),m
     b.disabled=false; b.textContent="이 범위로 누끼"; r.cbox=box; r.round=roundSticker(sub); r.cut=st; r.st=st||r.round; close(); if(r.done) r.done(r); else updateRow(r); };
 })();
 // 사용 통계 (공개판에서만 GoatCounter, 없으면 아무것도 안 함)
-function gc(ev){ try{ if(window.goatcounter&&goatcounter.count) goatcounter.count({path:ev,title:ev,event:true}); }catch(_){} }
+const GC_SITE=location.hostname.startsWith("my100san")?"new":"old"; // 이벤트를 주소별로 구분: new = my100san.github.io, old = ynschoi.github.io/BAC100
+function gc(ev){ try{ if(window.goatcounter&&goatcounter.count){ const k=GC_SITE+"/"+ev; goatcounter.count({path:k,title:k,event:true}); } }catch(_){} }
 function syncApply(){ const k=NEW.filter(r=>r.n&&r.on&&r.st).length; applyBtn.disabled=!k; applyBtn.textContent=k?`반영 (${k})`:"반영"; }
 function renderNew(){ hideSug(); newList.innerHTML=""; NEW.forEach(r=>newList.appendChild(newRowEl(r))); newBox.hidden=!NEW.length; document.getElementById("nbCnt").textContent=NEW.length?NEW.length+"장":""; syncApply(); }
 const ovw=document.getElementById("ovw");
