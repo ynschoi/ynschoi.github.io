@@ -59,6 +59,11 @@ input,select,textarea{font-size:16px!important}
 .pane{display:grid;gap:8px}
 .ptabs .hrt{display:block;margin:0 auto;overflow:visible}.ptabs .hrt path{fill:#c9c6b6;stroke:#a9a690;stroke-width:1.2;stroke-linejoin:round;transition:fill .15s}
 .ptabs [aria-selected="true"] .hrt path{fill:#5fae4f;stroke:#3f8f3a}
+.tgrp{display:grid;gap:6px}.thead{display:flex;align-items:center;gap:8px}.thead .tmv{font-size:11.5px;color:#a3a18c;margin-left:auto}
+.fmtov.rs2{position:static}
+.tin{display:flex;align-items:center;gap:6px;position:relative}.tin .search{flex:1;min-width:0;padding:8px 36px 8px 12px}.tin .search::placeholder{color:#c2bfae}
+.tin .tx2{all:unset;cursor:pointer;position:absolute;right:62px;top:50%;transform:translateY(-50%);width:30px;height:30px;display:grid;place-items:center;font-size:18px;color:var(--muted)}
+.tin .btn.ok{flex:none;min-height:38px;padding:0 14px}.tin .btn.ok.on{background:#4f9a45;color:#fffefa;border-color:#4f9a45}
 .trow{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:8px;align-items:center}.trow>.inx,.trow>.search{min-width:0}.trow .search{padding:7px 10px}.trow .tmv{font-size:11.5px;color:#a3a18c}
 .btn.rs{padding:0 10px;min-height:32px;font-size:12.5px;white-space:nowrap}
 .about{padding:6px 4px;font-size:14px;line-height:1.6;color:var(--fg)}.about p{margin:0}.about p+p{margin-top:2px}
@@ -339,9 +344,11 @@ footer{font-size:12px;color:var(--muted)}
   </div>
 
   <div id="p-text" class="pane" hidden>
-    <div class="trow"><label for="nickIn" class="tip">이름</label><input id="nickIn" class="search" maxlength="16"></div>
-    <div class="trow"><label for="mottoIn" class="tip">한 마디</label><div class="inx"><input id="mottoIn" class="search" maxlength="40" placeholder="안 넣어도 돼요"><button type="button" id="mottoX" class="x" aria-label="한 마디 지우기">×</button></div><button type="button" class="btn rs" id="mottoRs" aria-label="한 마디 원위치">원위치</button></div>
-    <div class="trow"><span class="tip">태그 <span id="tagCnt"></span></span><span class="tip tmv">지도에서 끌어서 옮길 수 있어요</span><button type="button" class="btn rs" id="tagsRs" aria-label="태그 원위치">원위치</button></div>
+    <div class="tgrp"><label for="nickIn" class="tip">닉네임</label>
+      <form class="tin" id="nickForm"><input id="nickIn" class="search" maxlength="16" placeholder="나" autocomplete="off"><button type="button" class="tx2" id="nickX" aria-label="닉네임 지우기">×</button><button type="submit" class="btn ok" id="nickOk">확인</button></form></div>
+    <div class="tgrp"><div class="thead"><label for="mottoIn" class="tip">각오 한 마디</label><button type="button" class="fmtov rs2" id="mottoRs" aria-label="각오 한 마디 원위치">원위치</button></div>
+      <form class="tin" id="mottoForm"><input id="mottoIn" class="search" maxlength="40" placeholder="100좌까지 화이팅!" autocomplete="off"><button type="button" class="tx2" id="mottoX" aria-label="각오 한 마디 지우기">×</button><button type="submit" class="btn ok" id="mottoOk">확인</button></form></div>
+    <div class="thead"><span class="tip">태그 <span id="tagCnt"></span></span><button type="button" class="fmtov rs2" id="tagsRs" aria-label="태그 원위치">원위치</button><span class="tip tmv">지도에서 끌어서 옮길 수 있어요</span></div>
     <div id="tagList" class="tags"></div>
     <form id="tagForm" class="tagadd"><input id="tagIn" class="search" maxlength="20" placeholder="태그 추가 (최대 5개)" aria-label="태그 추가"><button type="submit" class="btn">추가</button></form>
     <label for="fontSel" class="tip">지도 글꼴</label>
@@ -733,13 +740,18 @@ document.getElementById("linkShare").onclick=async()=>{ gc("share-link"); const 
 document.getElementById("fmtTog").onclick=()=>{FMT=FMT==="post"?"story":"post";ls.set("bac100-fmt",FMT);syncFmt();scheduleCard();}; syncFmt();
 let NICK=ls.get("bac100-nick","나")||"나", MOTTO=ls.get("bac100-motto","");
 const nickIn=document.getElementById("nickIn"), mottoIn=document.getElementById("mottoIn");
-nickIn.value=NICK; mottoIn.value=MOTTO;
-nickIn.oninput=()=>{NICK=nickIn.value.trim(); ls.set("bac100-nick",NICK||"나"); scheduleCard(); renderBadges();};
-nickIn.onblur=()=>{ if(!nickIn.value.trim()){ nickIn.value="나"; NICK="나"; } };
+nickIn.value=NICK==="나"?"":NICK; mottoIn.value=MOTTO; // 빈칸이면 회색 '나'가 보이고 그대로 '나'로 씀
+// 글자를 칠 때는 반영하지 않고, 확인(또는 키보드 완료)을 눌러야 지도에 반영 → 확인 버튼이 초록이면 아직 반영 전
+const syncOk=()=>{ document.getElementById("nickOk").classList.toggle("on",(nickIn.value.trim()||"나")!==NICK); document.getElementById("mottoOk").classList.toggle("on",mottoIn.value.trim()!==MOTTO); };
+const applyNick=()=>{ NICK=nickIn.value.trim()||"나"; ls.set("bac100-nick",NICK); scheduleCard(); renderBadges(); syncOk(); nickIn.blur(); };
+const applyMotto=()=>{ MOTTO=mottoIn.value.trim(); ls.set("bac100-motto",MOTTO); scheduleCard(); syncOk(); mottoIn.blur(); };
+document.getElementById("nickForm").addEventListener("submit",e=>{e.preventDefault();applyNick();});
+document.getElementById("mottoForm").addEventListener("submit",e=>{e.preventDefault();applyMotto();});
+document.getElementById("nickX").onclick=()=>{ nickIn.value=""; applyNick(); };
+nickIn.oninput=syncOk; mottoIn.oninput=syncOk;
 document.getElementById("mottoRs").onclick=()=>{ delete TPOS.motto; ls.set("bac100-tpos",TPOS); compose(); };
 document.getElementById("tagsRs").onclick=()=>{ delete TPOS.tags; ls.set("bac100-tpos",TPOS); compose(); };
-document.getElementById("mottoX").onclick=()=>{ mottoIn.value=""; MOTTO=""; ls.set("bac100-motto",""); scheduleCard(); };
-mottoIn.oninput=()=>{MOTTO=mottoIn.value.trim(); ls.set("bac100-motto",MOTTO); scheduleCard();};
+document.getElementById("mottoX").onclick=()=>{ mottoIn.value=""; applyMotto(); };
 let TAGS=ls.get("bac100-tags",["BAC","블랙야크","100대명산"]);
 function renderTags(){ const L=document.getElementById("tagList"); L.innerHTML="";
   TAGS.forEach((t,i)=>{const s=document.createElement("span");s.className="tag";s.textContent=t.startsWith("@")?t:"#"+t;
