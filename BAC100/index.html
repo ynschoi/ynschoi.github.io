@@ -37,11 +37,10 @@ svg#map{display:block;width:100%;height:auto;max-height:82vh;touch-action:pan-y;
 .cardview canvas{display:block;width:100%;height:auto;cursor:pointer;touch-action:pan-y;-webkit-user-drag:none;user-select:none;-webkit-touch-callout:none}
 .fmtov{all:unset;cursor:pointer;position:absolute;left:6px;top:6px;z-index:3;font-size:10.5px;opacity:.9;font-weight:700;color:#8e8c78;background:rgba(239,237,227,.85);border-radius:999px;padding:2px 8px}
 .cvact{display:flex;gap:4px}.cvact .fmtov{position:static}
-.cvbar{position:absolute;left:6px;right:6px;top:6px;z-index:3;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:4px;pointer-events:none}.cvbar .cvact{justify-self:end}.cvbar>*{pointer-events:auto}
+.cvbar{position:absolute;left:6px;right:6px;top:6px;z-index:3;display:flex;justify-content:space-between;align-items:center;gap:4px;pointer-events:none}.cvbar>*{pointer-events:auto}
 .cvl{display:flex;gap:4px}.cvl .fmtov{position:static}
-.cvc{display:flex;gap:3px;white-space:nowrap}.cvc .fmtov{position:static;padding:2px 6px}
 .fmtov{white-space:nowrap}.fmtov.sq{padding:2px 7px;min-width:10px;text-align:center}.fmtov:disabled{opacity:.35;cursor:default}
-.cvbar.tight{display:flex;justify-content:space-between}.cvbar.tight .cvc .fmtov{padding:2px 5px}.cvbar.mini #cvAuto{display:none}
+
 .cardview .ghost{position:absolute;pointer-events:none;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25));opacity:.92}
 .cardview .tip{position:absolute;right:10px;top:8px;background:rgba(251,250,245,.9);padding:2px 8px;border-radius:999px}
 [hidden]{display:none!important}
@@ -311,7 +310,7 @@ footer{font-size:12px;color:var(--muted)}
 
 <div class="wrap">
   <span id="cnt" hidden></span>
-  <div class="cardview"><div class="cvbar"><span class="cvl"><button type="button" class="fmtov" id="fmtTog" aria-label="이미지 비율 바꾸기">9:16</button><button type="button" class="fmtov" id="cvFont" aria-label="지도 글꼴 바꾸기">글꼴</button></span><span class="cvc" aria-label="정상석 조정"><button type="button" class="fmtov" id="cvReset" aria-label="정상석 원위치">원위치</button><button type="button" class="fmtov" id="cvAuto" aria-label="정상석 잘 보이게">잘 보이게</button><button type="button" class="fmtov sq" id="cvMinus" aria-label="정상석 작게">−</button><button type="button" class="fmtov sq" id="cvPlus" aria-label="정상석 크게">+</button></span><span class="cvact"><button type="button" class="fmtov" id="cvSave" aria-label="이미지 저장">저장</button><button type="button" class="fmtov" id="cvShare" aria-label="링크 공유">공유</button></span></div><canvas id="cardImg" role="img" aria-label="나의 명산 지도 카드"></canvas><span id="cardBusy" class="tip" hidden>그리는 중…</span></div>
+  <div class="cardview"><div class="cvbar"><span class="cvl"><button type="button" class="fmtov" id="fmtTog" aria-label="이미지 비율 바꾸기">9:16</button></span><span class="cvact"><button type="button" class="fmtov" id="cvSave" aria-label="이미지 저장">저장</button><button type="button" class="fmtov" id="cvShare" aria-label="링크 공유">공유</button></span></div><canvas id="cardImg" role="img" aria-label="나의 명산 지도 카드"></canvas><span id="cardBusy" class="tip" hidden>그리는 중…</span></div>
   <div id="linkBox" class="linkbox" hidden><input id="linkIn" class="search" readonly aria-label="공유 링크"><span class="tip" id="linkMsg"></span></div>
 
   <div id="island" class="island" hidden></div>
@@ -613,6 +612,8 @@ function regionReady(){ if(RPTS) return true; if(typeof DPTS==="undefined"||type
   const W=FULL[2],H=FULL[3],c=document.createElement("canvas"); c.width=W; c.height=H; const x=c.getContext("2d",{willReadFrequently:true});
   GPS.forEach((P,g)=>{ x.fillStyle=`rgb(${(g+1)*25},0,0)`; x.fill(P); }); const d=x.getImageData(0,0,W,H).data; RGRID=new Int8Array(W*H);
   for(let i=0;i<W*H;i++){ const a=d[i*4+3]; RGRID[i]=a<128?-1:Math.round(d[i*4]/25)-1; } return true; }
+let LANDTOP=null; // 지도 x(정수)마다 가장 위쪽 땅의 y
+function landTopReady(){ if(LANDTOP) return true; if(!regionReady()) return false; const W=FULL[2],H=FULL[3]; LANDTOP=new Array(W).fill(null); for(let x=0;x<W;x++){ for(let y=0;y<H;y++){ if(RGRID[y*W+x]>=0){ LANDTOP[x]=y; break; } } } return true; }
 function regionAt(px,py){ const X=px|0,Y=py|0; if(X<0||Y<0||X>=FULL[2]||Y>=FULL[3]) return -1; return RGRID[Y*FULL[2]+X]; }
 function nearestIn(g,x0,y0){ let best=null,bd=1e18; for(const q of RPTS[g]){const d=(q[0]-x0)**2+(q[1]-y0)**2; if(d<bd){bd=d;best=q;}} return best; }
 function autoLayout(hOf){
@@ -734,10 +735,6 @@ let SZ=ls.get("bac100-sz",2); if(!(SZ>=0&&SZ<5)) SZ=2;
   b.onclick=()=>{SZ=i;ls.set("bac100-sz",SZ);g.querySelectorAll("button").forEach((x,j)=>x.setAttribute("aria-pressed",j===SZ));relayout();};g.appendChild(b);});})();
 // ── 스토리 / 게시글 ──
 let FMT="story"; // 처음엔 늘 9:16
-// ── 카드 위 알약: 글꼴 바꾸기, 정상석 원위치·잘 보이게·크기 ──
-const FSHORT={ChosunGu:"굴림",Pretendard:"프리",Songgeul:"송글",Sarang:"사랑",YoonManse:"만세",ChosunNm:"명조",KoPubDotum:"돋움",SCoreDream:"드림"};
-function syncCv(){ const f=document.getElementById("cvFont"); if(f&&typeof FONT!=="undefined") f.textContent=FSHORT[FONT]||"글꼴";
-  const mi=document.getElementById("cvMinus"), pl=document.getElementById("cvPlus"); if(mi&&typeof SZ!=="undefined"){ mi.disabled=SZ<=0; pl.disabled=SZ>=4; } }
 function syncFmt(){ document.getElementById("fmtTog").textContent=FMT==="post"?"4:5":"9:16"; }
 const APP_URL="https://my100san.github.io/"; // 어느 주소에서 열어도 공유는 새 짧은 주소로
 document.getElementById("linkShare").onclick=async()=>{ gc("share-link"); const box=document.getElementById("linkBox"), inp=document.getElementById("linkIn"), msg=document.getElementById("linkMsg");
@@ -1462,9 +1459,17 @@ async function makeShare(){
   if(MOTTO){ const MQ=`“${MOTTO}”`; let fs2=LT.mtfs; x.font=`400 ${fs2}px ${F}`; while(x.measureText(MQ).width>R0-L0&&fs2>16){fs2--;x.font=`400 ${fs2}px ${F}`;} TXT.motto={t:MQ,font:x.font,fs:fs2,fill:ink,x:L0-8,y:ty}; ty=LT.tt; }
   if(TAGS.length){ TXT.tags={t:TAGS.map(t=>t.startsWith("@")?t:"#"+t).join("  "),font:`600 ${LT.ttfs}px ${F}`,fs:LT.ttfs,fill:acc,x:L0,y:ty}; }
   }
-  const mapTop=(MOTTO&&TAGS.length)?LT.mapTop:(MOTTO||TAGS.length)?LT.mapTop-(LT.tt-LT.mt):LT.py+28;
+  // 지도: 한 마디·태그 아래로 적당히 올리고, 맨 아래에 주소·아이디 한 줄 자리
+  const UP=FMT==="post"?44:56, FOOT=FMT==="post"?56:72;
+  const mapTop0=(MOTTO&&TAGS.length)?LT.mapTop:(MOTTO||TAGS.length)?LT.mapTop-(LT.tt-LT.mt):LT.py+28;
   // 지도 액자(바다)
-  const BB=[70,0,526,784], BW=BB[2]-BB[0]; const fx=14,fy=mapTop,fw=W-28,fh=H-mapTop-(FMT==="post"?14:24), EH=FULL[3]+JDY();
+  const BB=[70,0,526,784], BW=BB[2]-BB[0], EH=FULL[3]+JDY(), fx=14,fw=W-28;
+  // 한 마디·태그 줄 아래로 땅이 오도록: 글자가 실제로 지나가는 가로 구간의 땅 윗선만 봄 (짧으면 더 올라가고, 길면 덜 올라감)
+  const geoAt=mt=>{ const fh_=H-mt-(FMT==="post"?14:24)-FOOT, s_=Math.min(fw/BW,(fh_-6)/EH); return {s:s_,GX:fx+(fw-BW*s_)/2-BB[0]*s_,GY:mt+Math.max(0,fh_-EH*s_)*.4}; };
+  const lines=[]; { x.save(); if(TXT.motto){ x.font=TXT.motto.font; lines.push([TXT.motto.x,TXT.motto.x+x.measureText(TXT.motto.t).width,TXT.motto.y]); } if(TXT.tags){ x.font=TXT.tags.font; lines.push([TXT.tags.x,TXT.tags.x+x.measureText(TXT.tags.t).width,TXT.tags.y]); } x.restore(); }
+  const clear=mt=>{ if(!lines.length||!landTopReady()) return true; const g=geoAt(mt); return lines.every(([a,b,y])=>{ for(let cx=a;cx<=b;cx+=6){ const t=LANDTOP[Math.round((cx-g.GX)/g.s)]; if(t!=null&&g.GY+t*g.s<y+14) return false; } return true; }); };
+  let mapTop=Math.max(LT.py+28,mapTop0-UP); while(mapTop<mapTop0&&!clear(mapTop)) mapTop+=4;
+  const fy=mapTop, fh=H-mapTop-(FMT==="post"?14:24)-FOOT;
   const s=Math.min(fw/BW,(fh-6)/EH);
   const GX=fx+(fw-BW*s)/2-BB[0]*s,GY=fy+Math.max(0,fh-EH*s)*.4; const GEO={ox:GX,oy:GY,s,stk:[]};
   // 지도 층은 사진·즐겨찾기·크기·글꼴·스타일이 바뀔 때만 다시 그림 (이름·한 마디 칠 때는 재사용)
@@ -1568,7 +1573,8 @@ async function makeShare(){
   }
   // 종이 질감
   if(window.__grain){x.save();x.globalAlpha=.9;x.fillStyle=x.createPattern(window.__grain,"repeat");x.fillRect(0,0,W,H);x.restore();}
-  return {c,GEO,Q,TXT,H:LT.H};
+  const jb=GY+(FULL[3]+JDY())*s, fy2=H-(FMT==="post"?14:24)-FOOT/2, FOOTY=jb+(fy2-jb)/2; // 아래 줄: 제주와의 간격을 반으로
+  return {c,GEO,Q,TXT,H:LT.H,FOOTY};
 }
 // ── 화면 = 인스타 이미지 ──
 let cardTimer=null,cardBusy=false,cardAgain=false,BASE=null,IMGC={},AUTOC={};
@@ -1631,12 +1637,10 @@ function compose(live){
     TSTATIC={key:lt.txt,c:sc,w:cv.width,h:cv.height,stk:G.stk.slice(),deco:G.deco.slice(),txt:G.txt.slice()}; drawTxt(x,B,lt.txt,[lt.x,lt.y],G,true); } else TSTATIC=null;
   credit(); x.setTransform(1,0,0,1,0,0); window.__cardGeo=G; shareBlob=null;
   // 만든 사람 (제주 오른쪽, 항상 맨 앞)
-  function credit(){ const jx=G.ox+(223.5+14)*s, jy=Math.min(B.c.height/Q-8, G.oy+(764.3+JDY())*s-2+(FMT==="post"?40:48)); x.setTransform(Q,0,0,Q,0,0); x.textAlign="left"; x.textBaseline="alphabetic";
-    // 9:16·저장·공유 알약과 같은 모양: 반투명 알약 + 회색 글씨, 화면에서 같은 크기. 맨 위에 그려서 아래 정상석을 살짝 가림
-    const cw=cardImg.getBoundingClientRect().width||340, k=Q*1080/cw/Q, fs=10.5*k, px=8*k, py=2*k, T="만든 사람 @youngs.00";
-    x.font=`700 ${fs}px "KoPubDotum","Pretendard",sans-serif`; const tw=x.measureText(T).width, h=fs*1.25+py*2, top=jy-fs*.95-py;
-    x.globalAlpha=.9; x.fillStyle="rgba(239,237,227,.85)"; x.beginPath(); x.roundRect(jx-px,top,tw+px*2,h,h/2); x.fill();
-    x.fillStyle="#8e8c78"; x.textBaseline="alphabetic"; x.fillText(T,jx,jy); x.globalAlpha=1; }
+  function credit(){ x.setTransform(Q,0,0,Q,0,0); const fs=FMT==="post"?24:28, T="my100san.github.io  ·  @youngs.00", cy=B.FOOTY; // 맨 아래 한 줄: 주소 · 만든 사람 (반투명 알약)
+    x.font=`700 ${fs}px "KoPubDotum","Pretendard",sans-serif`; x.textAlign="center"; x.textBaseline="middle"; const tw=x.measureText(T).width, h=fs*1.9;
+    x.fillStyle="rgba(239,237,227,.85)"; x.beginPath(); x.roundRect(540-tw/2-fs*.8,cy-h/2,tw+fs*1.6,h,h/2); x.fill(); x.fillStyle="#8e8c78"; x.fillText(T,540,cy+1);
+    x.textAlign="left"; x.textBaseline="alphabetic"; }
 }
 async function relayout(){ await preloadStk(); AUTOC={}; if(MIGRATE){ POS=Object.assign(autoLayout(n=>HS(n,stkSize())),POS); ls.set("bac100-pos",POS); ls.set("bac100-auto",false); MIGRATE=false; } compose(); }
 async function renderCard(){
@@ -1644,7 +1648,7 @@ async function renderCard(){
   const keepQ=window.__shareQ, cw=document.getElementById("cardImg").getBoundingClientRect().width||360; window.__shareQ=window.__shareQ||Math.min(2,Math.max(1,cw*(window.devicePixelRatio||1)/1080)); // 보이는 픽셀만큼만 (폰: 1배)
   try{ BASE=await makeShare(); }finally{ window.__shareQ=keepQ; }
   await relayout();
-  document.getElementById("cardBusy").hidden=true; cardBusy=false; if(typeof fitCv==="function") fitCv(); if(cardAgain){cardAgain=false;renderCard();}
+  document.getElementById("cardBusy").hidden=true; cardBusy=false; if(cardAgain){cardAgain=false;renderCard();}
 }
 const getShareBlob=async()=>{ if(!BASE) await renderCard(); await cardIdle();
   if(!shareBlob){ const src=document.getElementById("cardImg"), W=1080, H=Math.round(src.height*W/src.width); let out=src;
@@ -1723,16 +1727,6 @@ cardImg.addEventListener("click",e=>{
 });
 const decoSize=f=>{ if(DSEL==null) return; const d=DECOS[DSEL]; d.h=Math.max(20,Math.min(400,d.h*f)); ls.set("bac100-decos",DECOS); compose(); };
 document.getElementById("resetPos").onclick=()=>{POS={}; ls.set("bac100-pos",POS); relayout();};
-document.getElementById("cvReset").onclick=()=>document.getElementById("resetPos").click();
-document.getElementById("cvAuto").onclick=()=>document.getElementById("autoBtn").click();
-const szStep=d=>{ const i=Math.max(0,Math.min(4,SZ+d)); if(i!==SZ) document.querySelectorAll("#szSeg button")[i].click(); syncCv(); };
-document.getElementById("cvMinus").onclick=()=>szStep(-1); document.getElementById("cvPlus").onclick=()=>szStep(1);
-document.querySelectorAll("#szSeg button").forEach(b=>b.addEventListener("click",()=>setTimeout(syncCv,0)));
-document.getElementById("cvFont").onclick=()=>{ const i=FONTS.findIndex(f=>f[0]===FONT); fontSel.value=FONTS[(i+1)%FONTS.length][0]; fontSel.onchange(); syncCv(); };
-fontSel.addEventListener("change",()=>setTimeout(()=>{syncCv();fitCv();},0)); syncCv();
-function fitCv(){ const bar=document.querySelector(".cvbar"); if(!bar) return; bar.classList.remove("tight","mini"); const cw_=e=>[...e.children].reduce((a,c)=>a+c.getBoundingClientRect().width,0)+4*(e.children.length-1), [l,c,r]=[...bar.children].map(cw_), W=bar.getBoundingClientRect().width; if(c+2*Math.max(l,r)+8<=W) return; bar.classList.add("tight"); // 진짜 가운데가 안 되면 양옆 사이에 고르게
-  const c2=cw_(bar.children[1]); if(l+c2+r+8>W) bar.classList.add("mini"); } // 그래도 넘치면(아주 좁은 폰) '잘 보이게'는 스티커 탭에만
-addEventListener("resize",fitCv); fitCv(); document.fonts&&document.fonts.ready.then(fitCv);
 document.getElementById("mkShare").onclick=async e=>{
   const b=e.currentTarget, cb=document.getElementById("cvSave"); b.disabled=cb.disabled=true; b.textContent="만드는 중…"; cb.textContent="만드는 중…";
   try{ await getShareBlob(); } finally{ b.disabled=cb.disabled=false; b.textContent="이미지 저장"; cb.textContent="저장"; }
