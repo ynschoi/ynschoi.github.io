@@ -59,6 +59,8 @@ input,select,textarea{font-size:16px!important}
 .pane{display:grid;gap:8px}
 .ptabs .hrt{display:block;margin:0 auto;overflow:visible}.ptabs .hrt path{fill:#c9c6b6;stroke:#a9a690;stroke-width:1.2;stroke-linejoin:round;transition:fill .15s}
 .ptabs [aria-selected="true"] .hrt path{fill:#5fae4f;stroke:#3f8f3a}
+.trow{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:8px;align-items:center}.trow>.inx,.trow>.search{min-width:0}.trow .search{padding:7px 10px}.trow .tmv{font-size:11.5px;color:#a3a18c}
+.btn.rs{padding:0 10px;min-height:32px;font-size:12.5px;white-space:nowrap}
 .about{padding:6px 4px;font-size:14px;line-height:1.6;color:var(--fg)}.about p{margin:0}.about p+p{margin-top:2px}
 .about dl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:0}.about dt{color:var(--muted);font-weight:700}.about dd{margin:0}
 .about a{color:#4f7a44;font-weight:700;text-underline-offset:2px}
@@ -337,11 +339,9 @@ footer{font-size:12px;color:var(--muted)}
   </div>
 
   <div id="p-text" class="pane" hidden>
-    <label for="nickIn" class="tip">이름</label>
-    <input id="nickIn" class="search" maxlength="16">
-    <label for="mottoIn" class="tip">한 마디</label>
-    <div class="inx"><input id="mottoIn" class="search" maxlength="40" placeholder="안 넣어도 돼요"><button type="button" id="mottoX" class="x" aria-label="한 마디 지우기">×</button></div>
-    <span class="tip">태그 <span id="tagCnt"></span></span>
+    <div class="trow"><label for="nickIn" class="tip">이름</label><input id="nickIn" class="search" maxlength="16"></div>
+    <div class="trow"><label for="mottoIn" class="tip">한 마디</label><div class="inx"><input id="mottoIn" class="search" maxlength="40" placeholder="안 넣어도 돼요"><button type="button" id="mottoX" class="x" aria-label="한 마디 지우기">×</button></div><button type="button" class="btn rs" id="mottoRs" aria-label="한 마디 원위치">원위치</button></div>
+    <div class="trow"><span class="tip">태그 <span id="tagCnt"></span></span><span class="tip tmv">지도에서 끌어서 옮길 수 있어요</span><button type="button" class="btn rs" id="tagsRs" aria-label="태그 원위치">원위치</button></div>
     <div id="tagList" class="tags"></div>
     <form id="tagForm" class="tagadd"><input id="tagIn" class="search" maxlength="20" placeholder="태그 추가 (최대 5개)" aria-label="태그 추가"><button type="submit" class="btn">추가</button></form>
     <label for="fontSel" class="tip">지도 글꼴</label>
@@ -736,6 +736,8 @@ const nickIn=document.getElementById("nickIn"), mottoIn=document.getElementById(
 nickIn.value=NICK; mottoIn.value=MOTTO;
 nickIn.oninput=()=>{NICK=nickIn.value.trim(); ls.set("bac100-nick",NICK||"나"); scheduleCard(); renderBadges();};
 nickIn.onblur=()=>{ if(!nickIn.value.trim()){ nickIn.value="나"; NICK="나"; } };
+document.getElementById("mottoRs").onclick=()=>{ delete TPOS.motto; ls.set("bac100-tpos",TPOS); compose(); };
+document.getElementById("tagsRs").onclick=()=>{ delete TPOS.tags; ls.set("bac100-tpos",TPOS); compose(); };
 document.getElementById("mottoX").onclick=()=>{ mottoIn.value=""; MOTTO=""; ls.set("bac100-motto",""); scheduleCard(); };
 mottoIn.oninput=()=>{MOTTO=mottoIn.value.trim(); ls.set("bac100-motto",MOTTO); scheduleCard();};
 let TAGS=ls.get("bac100-tags",["BAC","블랙야크","100대명산"]);
@@ -1417,7 +1419,7 @@ async function makeShare(){
   const LT=FMT==="post"?{H:1350,oy:106,ofs:26,ty:168,tfs:64,nfs:96,py:200,mt:246,mtfs:31,tt:284,ttfs:26,mapTop:290,fy:150,fh:1076,cy:1114,ch:100,ml:1250,mfs:30,my:1288,mlfs:21,tg:1324,tg0:1250,tgfs:24}:{H:1920,oy:128,ofs:36,ty:232,tfs:92,nfs:140,py:284,mt:360,mtfs:38,tt:414,ttfs:31,mapTop:420,fy:318,fh:1386,cy:1578,ch:106,ml:1744,mfs:36,my:1796,mlfs:26,tg:1856,tg0:1760,tgfs:27};
   const Q=window.__shareQ||1,W=1080,H=LT.H,c=document.createElement("canvas");c.width=W*Q;c.height=H*Q;let x=c.getContext("2d");x.scale(Q,Q);
   const F=fontStack(), ink="#34352b", mute="#87866f", acc="#4f9a45", PAPER="#fbfaf5", SEA="#fbfaf5";
-  const LY=window.__layers||{};
+  const LY=window.__layers||{}, TXT={}; // TXT: 끌어서 옮기는 한 마디·태그 (그리기는 compose에서)
   if(!LY.transparent){x.fillStyle=PAPER;x.fillRect(0,0,W,H);}
   const ST=SK(), FR=ST==="f";
   const done=D.filter(m=>isDone(m.n)), cnt=done.length, alt=done.reduce((a,m)=>a+m.h,0), gs=gStats();
@@ -1436,8 +1438,8 @@ async function makeShare(){
     x.font=`400 ${fs.toFixed(1)}px ${F}`;const pw2=x.measureText(period).width;if(allD.length){x.save();x.translate(L0,LT.py);x.scale(titleW/pw2,1);x.fillText(period,0,0);x.restore();}else{x.font=`400 28px ${F}`;x.fillText(period,L0,LT.py);}}
   // 한 마디 · 태그: 날짜 밑에 한 줄 띄고
   x.textAlign="left"; let ty=LT.mt;
-  if(MOTTO){ const MQ=`“${MOTTO}”`; let fs2=LT.mtfs; x.font=`400 ${fs2}px ${F}`; while(x.measureText(MQ).width>R0-L0&&fs2>16){fs2--;x.font=`400 ${fs2}px ${F}`;} x.fillStyle=ink; x.fillText(MQ,L0-8,ty); ty=LT.tt; }
-  if(TAGS.length){ x.fillStyle=acc; x.font=`600 ${LT.ttfs}px ${F}`; x.fillText(TAGS.map(t=>t.startsWith("@")?t:"#"+t).join("  "),L0,ty); }
+  if(MOTTO){ const MQ=`“${MOTTO}”`; let fs2=LT.mtfs; x.font=`400 ${fs2}px ${F}`; while(x.measureText(MQ).width>R0-L0&&fs2>16){fs2--;x.font=`400 ${fs2}px ${F}`;} TXT.motto={t:MQ,font:x.font,fs:fs2,fill:ink,x:L0-8,y:ty}; ty=LT.tt; }
+  if(TAGS.length){ TXT.tags={t:TAGS.map(t=>t.startsWith("@")?t:"#"+t).join("  "),font:`600 ${LT.ttfs}px ${F}`,fs:LT.ttfs,fill:acc,x:L0,y:ty}; }
   }
   const mapTop=(MOTTO&&TAGS.length)?LT.mapTop:(MOTTO||TAGS.length)?LT.mapTop-(LT.tt-LT.mt):LT.py+28;
   // 지도 액자(바다)
@@ -1545,7 +1547,7 @@ async function makeShare(){
   }
   // 종이 질감
   if(window.__grain){x.save();x.globalAlpha=.9;x.fillStyle=x.createPattern(window.__grain,"repeat");x.fillRect(0,0,W,H);x.restore();}
-  return {c,GEO,Q};
+  return {c,GEO,Q,TXT,H:LT.H};
 }
 // ── 화면 = 인스타 이미지 ──
 let cardTimer=null,cardBusy=false,cardAgain=false,BASE=null,IMGC={},AUTOC={};
@@ -1556,10 +1558,22 @@ async function preloadStk(){ const jobs=[]; for(const n of Object.keys(PH)){ con
 function curPos(){ return Object.assign({},AUTO?AUTOC:{},POS); }
 // 스티커만 다시 그리기 (끌 때 매 프레임)
 let STATIC=null; // 끌기 중: 끌리는 스티커를 뺀 나머지 전부를 한 번 그려둔 층
+let TPOS=ls.get("bac100-tpos",{}); if(!TPOS||typeof TPOS!=="object") TPOS={}; // 한 마디·태그 위치: 카드 안 비율 [가로%, 세로%] → 9:16·4:5 공통
+let TSTATIC=null; // 글자 끌기 중: 끌리는 글자만 뺀 카드
+function txtPos(B,k){ const T=B.TXT[k], v=TPOS[k]; return v?[v[0]*1080,v[1]*B.H]:[T.x,T.y]; }
+function drawTxt(x,B,k,pos,G,lift){ const T=B.TXT[k]; if(!T) return; x.save(); x.font=T.font; x.textAlign="left"; x.textBaseline="alphabetic";
+  const w=x.measureText(T.t).width, px=Math.max(-w*.6,Math.min(1080-w*.4,pos[0])), py=Math.max(T.fs,Math.min(B.H-4,pos[1]));
+  if(lift){ x.shadowColor="rgba(0,0,0,.22)"; x.shadowBlur=10; x.shadowOffsetY=4; }
+  x.lineJoin="round"; x.strokeStyle="rgba(251,250,245,.92)"; x.lineWidth=Math.max(4,T.fs*.2); x.strokeText(T.t,px,py); x.shadowColor="transparent"; // 지도·사진 위에서도 읽히게 흰 테두리
+  x.fillStyle=T.fill; x.fillText(T.t,px,py); x.restore(); G.txt.push({k,x0:px-10,y0:py-T.fs*.95-10,x1:px+w+10,y1:py+T.fs*.3+10}); }
 function compose(live){
   const B=BASE; if(!B) return; const cv=document.getElementById("cardImg");
   if(cv.width!==B.c.width||cv.height!==B.c.height){cv.width=B.c.width;cv.height=B.c.height;}
   const x=cv.getContext("2d"), G=B.GEO, s=G.s, Q=B.Q; G.stk=[];
+  const lt=live&&live.txt?live:null; G.txt=[];
+  if(lt&&TSTATIC&&TSTATIC.key===lt.txt&&TSTATIC.w===cv.width&&TSTATIC.h===cv.height){ // 글자 끌기: 그려둔 카드 위에 글자만
+    x.setTransform(1,0,0,1,0,0); x.drawImage(TSTATIC.c,0,0); G.stk=TSTATIC.stk.slice(); G.deco=TSTATIC.deco.slice(); G.txt=TSTATIC.txt.slice();
+    x.setTransform(Q,0,0,Q,0,0); drawTxt(x,B,lt.txt,[lt.x,lt.y],G,true); credit(); x.setTransform(1,0,0,1,0,0); window.__cardGeo=G; shareBlob=null; return; }
   const SHs=stkSize(), SP=curPos(), ls_=live&&live.n!=null?live:null; if(ls_) SP[ls_.n]={dx:ls_.dx,dy:ls_.dy};
   let ns=Object.keys(PH).map(Number).sort((a,b)=>byN(a).y-byN(b).y); if(ls_){ns=ns.filter(n=>n!==ls_.n);}
   const moved=n=>{const o=SP[n];return o&&(Math.abs(o.dx)>2||Math.abs(o.dy)>2);};
@@ -1590,14 +1604,18 @@ function compose(live){
     x.restore();
     const hx=(w/2+3)*Math.cos(r)-(h/2+3)*Math.sin(r), hy=(w/2+3)*Math.sin(r)+(h/2+3)*Math.cos(r);
     G.deco.push({i,cx:G.ox+s*dx,cy:G.oy+s*dy,w:w*s,h:h*s,rot:r,hx:G.ox+s*(dx+hx),hy:G.oy+s*(dy+hy),xx:G.ox+s*(dx-hx),xy:G.oy+s*(dy-hy),hr:hr*s}); });
+  // 한 마디·태그 (정상석·스티커 위)
+  x.setTransform(Q,0,0,Q,0,0); Object.keys(B.TXT||{}).forEach(k=>{ if(!(lt&&lt.txt===k)) drawTxt(x,B,k,txtPos(B,k),G); });
+  if(lt){ const sc=(TSTATIC&&TSTATIC.c)||document.createElement("canvas"); sc.width=cv.width; sc.height=cv.height; const sx=sc.getContext("2d"); sx.clearRect(0,0,sc.width,sc.height); sx.drawImage(cv,0,0);
+    TSTATIC={key:lt.txt,c:sc,w:cv.width,h:cv.height,stk:G.stk.slice(),deco:G.deco.slice(),txt:G.txt.slice()}; drawTxt(x,B,lt.txt,[lt.x,lt.y],G,true); } else TSTATIC=null;
+  credit(); x.setTransform(1,0,0,1,0,0); window.__cardGeo=G; shareBlob=null;
   // 만든 사람 (제주 오른쪽, 항상 맨 앞)
-  { const jx=G.ox+(223.5+14)*s, jy=Math.min(B.c.height/Q-8, G.oy+(764.3+JDY())*s-2+(FMT==="post"?40:48)); x.setTransform(Q,0,0,Q,0,0); x.textAlign="left"; x.textBaseline="alphabetic";
+  function credit(){ const jx=G.ox+(223.5+14)*s, jy=Math.min(B.c.height/Q-8, G.oy+(764.3+JDY())*s-2+(FMT==="post"?40:48)); x.setTransform(Q,0,0,Q,0,0); x.textAlign="left"; x.textBaseline="alphabetic";
     // 9:16·저장·공유 알약과 같은 모양: 반투명 알약 + 회색 글씨, 화면에서 같은 크기. 맨 위에 그려서 아래 정상석을 살짝 가림
     const cw=cardImg.getBoundingClientRect().width||340, k=Q*1080/cw/Q, fs=10.5*k, px=8*k, py=2*k, T="만든 사람 @youngs.00";
     x.font=`700 ${fs}px "KoPubDotum","Pretendard",sans-serif`; const tw=x.measureText(T).width, h=fs*1.25+py*2, top=jy-fs*.95-py;
     x.globalAlpha=.9; x.fillStyle="rgba(239,237,227,.85)"; x.beginPath(); x.roundRect(jx-px,top,tw+px*2,h,h/2); x.fill();
     x.fillStyle="#8e8c78"; x.textBaseline="alphabetic"; x.fillText(T,jx,jy); x.globalAlpha=1; }
-  x.setTransform(1,0,0,1,0,0); window.__cardGeo=G; shareBlob=null;
 }
 async function relayout(){ await preloadStk(); AUTOC={}; if(MIGRATE){ POS=Object.assign(autoLayout(n=>HS(n,stkSize())),POS); ls.set("bac100-pos",POS); ls.set("bac100-auto",false); MIGRATE=false; } compose(); }
 async function renderCard(){
@@ -1616,6 +1634,7 @@ const getShareBlob=async()=>{ if(!BASE) await renderCard(); await cardIdle();
 const cardImg=document.getElementById("cardImg");
 function showIsland(n){ select(n); document.getElementById("island").scrollIntoView({behavior:"smooth",block:"nearest"}); }
 function cardPt(e){const r=cardImg.getBoundingClientRect(),k=1080/r.width;return {px:(e.clientX-r.left)*k,py:(e.clientY-r.top)*k,k,r};}
+function hitTxt(px,py){const G=window.__cardGeo;if(!G||!G.txt)return null; for(let i=G.txt.length-1;i>=0;i--){const b=G.txt[i]; if(px>=b.x0&&px<=b.x1&&py>=b.y0&&py<=b.y1) return b;} return null;}
 function hitDeco(px,py){const G=window.__cardGeo;if(!G||!G.deco)return null; for(let i=G.deco.length-1;i>=0;i--){const b=G.deco[i],dx=px-b.cx,dy=py-b.cy,c=Math.cos(-b.rot),s2=Math.sin(-b.rot),lx=dx*c-dy*s2,ly=dx*s2+dy*c; if(Math.abs(lx)<=b.w/2&&Math.abs(ly)<=b.h/2) return b;} return null;}
 function hitClose(px,py){const G=window.__cardGeo;if(!G||!G.deco||DSEL==null)return null; const b=G.deco.find(o=>o.i===DSEL); if(b&&Math.hypot(px-b.xx,py-b.xy)<=b.hr*1.6) return b; return null;}
 function hitHandle(px,py){const G=window.__cardGeo;if(!G||!G.deco||DSEL==null)return null; const b=G.deco.find(o=>o.i===DSEL); if(b&&Math.hypot(px-b.hx,py-b.hy)<=b.hr*1.6) return b; return null;}
@@ -1623,7 +1642,7 @@ const PTR=new Map(); let dpinch=null;
 function hitSticker(px,py){const G=window.__cardGeo;if(!G)return null;
   for(let i=G.stk.length-1;i>=0;i--){const b=G.stk[i],dx=px-b.cx,dy=py-b.cy,c=Math.cos(-b.rot),s2=Math.sin(-b.rot),lx=dx*c-dy*s2,ly=dx*s2+dy*c;
     if(Math.abs(lx)<=b.w/2&&Math.abs(ly)<=b.h/2) return b;} return null;}
-cardImg.addEventListener("touchstart",e=>{const t=e.touches[0];if(!t)return;const p=cardPt(t);if(hitClose(p.px,p.py)||hitHandle(p.px,p.py)||hitDeco(p.px,p.py)||hitSticker(p.px,p.py)||(DSEL!=null&&e.touches.length>1))e.preventDefault();},{passive:false});
+cardImg.addEventListener("touchstart",e=>{const t=e.touches[0];if(!t)return;const p=cardPt(t);if(hitClose(p.px,p.py)||hitHandle(p.px,p.py)||hitTxt(p.px,p.py)||hitDeco(p.px,p.py)||hitSticker(p.px,p.py)||(DSEL!=null&&e.touches.length>1))e.preventDefault();},{passive:false});
 cardImg.addEventListener("touchmove",e=>{ if(drag||dpinch) e.preventDefault(); },{passive:false});
 let drag=null, dragRAF=0;
 cardImg.addEventListener("pointerdown",e=>{
@@ -1633,6 +1652,8 @@ cardImg.addEventListener("pointerdown",e=>{
   if(xb){ e.preventDefault(); DECOS.splice(xb.i,1); DSEL=null; ls.set("bac100-decos",DECOS); syncDecoBar(); renderBadges(); compose(); drag={closed:true}; return; }
   const hb=hitHandle(p.px,p.py);
   if(hb){ e.preventDefault(); cardImg.setPointerCapture(e.pointerId); const d=DECOS[hb.i]; drag={rot:hb.i,cx:hb.cx,cy:hb.cy,a0:Math.atan2(p.py-hb.cy,p.px-hb.cx),d0:Math.hypot(p.px-hb.cx,p.py-hb.cy),h0:d.h,r0:d.r||0,moved:true}; return; }
+  const tb=hitTxt(p.px,p.py);
+  if(tb&&BASE&&BASE.TXT[tb.k]){ e.preventDefault(); cardImg.setPointerCapture(e.pointerId); const q=txtPos(BASE,tb.k); drag={txt:tb.k,sx:e.clientX,sy:e.clientY,moved:false,x0:q[0],y0:q[1],live:null}; return; }
   const db=hitDeco(p.px,p.py);
   if(db){ e.preventDefault(); cardImg.setPointerCapture(e.pointerId); const d=DECOS[db.i]; drag={deco:db.i,sx:e.clientX,sy:e.clientY,moved:false,x0:d.x,y0:d.y,live:null}; return; }
   const b=hitSticker(p.px,p.py); if(!b) return;
@@ -1645,6 +1666,9 @@ cardImg.addEventListener("pointermove",e=>{
     if(!dragRAF) dragRAF=requestAnimationFrame(()=>{dragRAF=0; compose();}); return; }
   if(drag&&drag.rot!=null){ const p=cardPt(e), d=DECOS[drag.rot]; d.r=drag.r0+Math.atan2(p.py-drag.cy,p.px-drag.cx)-drag.a0; d.h=Math.max(20,Math.min(400,drag.h0*Math.hypot(p.px-drag.cx,p.py-drag.cy)/(drag.d0||1)));
     if(!dragRAF) dragRAF=requestAnimationFrame(()=>{dragRAF=0; compose();}); return; }
+  if(drag&&drag.txt){ const dx=e.clientX-drag.sx, dy=e.clientY-drag.sy; if(!drag.moved&&Math.hypot(dx,dy)<6) return; drag.moved=true;
+    const k=1080/cardImg.getBoundingClientRect().width; drag.live={txt:drag.txt,x:drag.x0+dx*k,y:drag.y0+dy*k};
+    if(!dragRAF) dragRAF=requestAnimationFrame(()=>{dragRAF=0; if(drag&&drag.live) compose(drag.live);}); return; }
   if(drag&&drag.deco!=null){ const dx=e.clientX-drag.sx, dy=e.clientY-drag.sy; if(!drag.moved&&Math.hypot(dx,dy)<6) return; drag.moved=true;
     const k=1080/cardImg.getBoundingClientRect().width, s=BASE.GEO.s; drag.live={deco:drag.deco,x:drag.x0+dx*k/s,y:drag.y0+dy*k/s};
     if(!dragRAF) dragRAF=requestAnimationFrame(()=>{dragRAF=0; if(drag&&drag.live) compose(drag.live);}); return; }
@@ -1657,6 +1681,10 @@ cardImg.addEventListener("pointermove",e=>{
 function endDrag(e,cancel){
   PTR.delete(e.pointerId); if(drag&&drag.closed){ drag=null; return; } if(dpinch){ if(PTR.size<2){ dpinch=null; ls.set("bac100-decos",DECOS); } return; }
   if(drag&&drag.rot!=null){ drag=null; ls.set("bac100-decos",DECOS); compose(); return; }
+  if(drag&&drag.txt){ const d=drag; drag=null; if(dragRAF){cancelAnimationFrame(dragRAF);dragRAF=0;}
+    if(!d.moved){ if(!cancel) document.querySelector('.ptabs [data-p="text"]').click(); }  // 누르기만 하면 텍스트 탭으로
+    else if(!cancel&&d.live){ TPOS[d.txt]=[d.live.x/1080,d.live.y/BASE.H]; ls.set("bac100-tpos",TPOS); }
+    TSTATIC=null; compose(); return; }
   if(drag&&drag.deco!=null){ const d=drag; drag=null; if(dragRAF){cancelAnimationFrame(dragRAF);dragRAF=0;}
     if(!d.moved){ DSEL=d.deco; } else if(!cancel&&d.live){ DECOS[d.deco].x=d.live.x; DECOS[d.deco].y=d.live.y; DSEL=d.deco; ls.set("bac100-decos",DECOS); }
     syncDecoBar(); compose(); return; }
@@ -1668,7 +1696,7 @@ function endDrag(e,cancel){
 cardImg.addEventListener("pointerup",e=>endDrag(e,false));
 cardImg.addEventListener("pointercancel",e=>endDrag(e,true));
 cardImg.addEventListener("click",e=>{
-  const p=cardPt(e); if(hitHandle(p.px,p.py)||hitDeco(p.px,p.py)) return; if(DSEL!=null){ DSEL=null; syncDecoBar(); compose(); return; } if(hitSticker(p.px,p.py)) return; const G=window.__cardGeo; if(!G) return;
+  const p=cardPt(e); if(hitHandle(p.px,p.py)||hitTxt(p.px,p.py)||hitDeco(p.px,p.py)) return; if(DSEL!=null){ DSEL=null; syncDecoBar(); compose(); return; } if(hitSticker(p.px,p.py)) return; const G=window.__cardGeo; if(!G) return;
   let best=null,bd=22*22; D.forEach(m=>{const mx=G.ox+G.s*m.x,my=G.oy+G.s*MY(m),d=(mx-p.px)**2+(my-p.py)**2; if(d<bd){bd=d;best=m;}});
   if(best) showIsland(best.n);
 });
