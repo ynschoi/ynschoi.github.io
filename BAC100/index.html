@@ -162,7 +162,7 @@ html.crlock,html.crlock body{overflow:hidden;overscroll-behavior:none}.howm,.how
 .b100 .grom.tl{left:.8cqw;top:.8cqw}.b100 .grom.tr{right:.8cqw;top:.8cqw}.b100 .grom.bl{left:.8cqw;bottom:.8cqw}.b100 .grom.br{right:.8cqw;bottom:.8cqw}
 .b100 .hills{position:absolute;left:0;right:0;bottom:0;height:42%;width:100%}
 .b100 .in{position:absolute;inset:0 17cqw;display:grid;grid-template-columns:1fr 17cqw 1fr;align-items:center;z-index:2}
-.b100 .sd{display:grid;min-width:0}.b100 .sd.l{justify-items:end}.b100 .sd.r{justify-items:start}
+.b100 .sd{display:grid;min-width:0;position:relative}.b100 .sm{position:absolute;bottom:calc(50% + 3cqw);font:700 2.1cqw/1 "Noto Sans KR","Pretendard",sans-serif;white-space:nowrap}.b100 .sm.l{right:.2cqw;color:#2f6a2c}.b100 .sm.r{left:.2cqw;color:#555}.b100 .sd.l{justify-items:end}.b100 .sd.r{justify-items:start}
 .b100 .big{font:900 5cqw/1 "Noto Sans KR","Apple SD Gothic Neo",sans-serif;letter-spacing:-.02em;white-space:nowrap}
 .b100 .big.hot{color:#0f6b3a;text-shadow:.3cqw .3cqw 0 rgba(15,107,58,.14)}.b100 .big.ink{color:#111;text-shadow:.3cqw .3cqw 0 rgba(0,0,0,.07)}
 .b100 .ph{position:absolute;left:50%;bottom:0;height:97%;transform:translateX(-50%);z-index:1;filter:drop-shadow(0 0 .6cqw rgba(255,255,255,.9)) drop-shadow(.3cqw .4cqw .6cqw rgba(10,40,20,.22))}
@@ -749,7 +749,7 @@ const nickIn=document.getElementById("nickIn"), mottoIn=document.getElementById(
 nickIn.value=NICK==="나"?"":NICK; mottoIn.value=MOTTO; // 빈칸이면 회색 '나'가 보이고 그대로 '나'로 씀
 // 글자를 칠 때는 반영하지 않고, 확인(또는 키보드 완료)을 눌러야 지도에 반영 → 확인 버튼이 초록이면 아직 반영 전
 const syncOk=()=>{ document.getElementById("nickOk").classList.toggle("on",(nickIn.value.trim()||"나")!==NICK); document.getElementById("mottoOk").classList.toggle("on",mottoIn.value.trim()!==MOTTO); };
-const applyNick=async()=>{ const was=NICK; NICK=nickIn.value.trim()||"나"; ls.set("bac100-nick",NICK); if(was!==NICK&&DIMG[50]){ delete DIMG[50]; if(DECOS.some(d=>d.k===50)) await prepDeco(50); } scheduleCard(); renderBadges(); syncOk(); nickIn.blur(); };
+const applyNick=async()=>{ const was=NICK; NICK=nickIn.value.trim()||"나"; ls.set("bac100-nick",NICK); if(was!==NICK&&DIMG[50]){ delete DIMG[50]; if(DECOS.some(d=>d.k===50)) await prepDeco(50); } if(was!==NICK) await refreshBanner(); scheduleCard(); renderBadges(); syncOk(); nickIn.blur(); };
 const applyMotto=()=>{ MOTTO=mottoIn.value.trim(); ls.set("bac100-motto",MOTTO); scheduleCard(); syncOk(); mottoIn.blur(); };
 document.getElementById("nickForm").addEventListener("submit",e=>{e.preventDefault();applyNick();});
 document.getElementById("mottoForm").addEventListener("submit",e=>{e.preventDefault();applyMotto();});
@@ -821,7 +821,8 @@ function makeEntry(ph,d,bac){
   x.beginPath(); x.arc(S/2,S/2,S/2-12,0,Math.PI*2); x.fillStyle="#fff"; x.fill(); x.shadowColor="transparent";
   x.save(); x.beginPath(); x.arc(S/2,S/2,S/2-20,0,Math.PI*2); x.clip(); x.drawImage(ph,sx,sy,side,side,20,20,S-40,S-40); x.restore();
   return {st:st.toDataURL("image/png"),ph:ph.toDataURL("image/jpeg",.82),w:S,h:S,d:d||"",bac:!!bac}; }
-function afterPhotoChange(){ drawStickers(); updateCount(); refreshAll(); }
+async function refreshBanner(){ if(DIMG[100]){ delete DIMG[100]; if(DECOS.some(d=>d.k===100)){ await prepDeco(100); if(BASE) compose(); } } }
+function afterPhotoChange(){ drawStickers(); updateCount(); refreshAll(); refreshBanner(); }
 const fmtD=t=>{const z=new Date(t);return `${z.getFullYear()}.${String(z.getMonth()+1).padStart(2,"0")}.${String(z.getDate()).padStart(2,"0")}`;};
 
 // ── EXIF: 찍은 곳(GPS)·찍은 날 ──
@@ -1103,7 +1104,7 @@ const short=d=>d?d.replace(/^\d\d(\d\d)/,"$1"):"";
 function rowVal(m,k){ if(k==="fav") return FAV.has(m.n)?1:0; if(k==="name") return m.base; if(k==="city") return m.city; if(k==="h") return m.h;
   if(k==="ph") return PH[m.n]?1:0; if(k==="d"){const g=getD(m.n); return g&&g.d?g.d:null;} return 0; }
 function setDate(n,d){
-  if(!PH[n]) return; PH[n].d=d; savePhoto(n,PH[n]); updateCount(); refreshAll(); }
+  if(!PH[n]) return; PH[n].d=d; savePhoto(n,PH[n]); updateCount(); refreshAll(); refreshBanner(); }
 // 날짜 입력창: '저장'을 눌러야만 바뀜
 const dpop=document.createElement("div"); dpop.className="dpop"; dpop.hidden=true;
 dpop.innerHTML=`<b class="dpt"></b><input type="date" aria-label="날짜"><div class="row2"><button type="button" class="btn share ds">저장</button><button type="button" class="btn dx">취소</button><button type="button" class="btn dc0">지우기</button></div>`;
@@ -1156,6 +1157,8 @@ async function prepDeco(k){ if(DIMG[k]) return DIMG[k];
   else if(k===100){ DIMG[k]=await bannerCanvas(); }
   else DIMG[k]=await loadSrc(MS[k]);
   return DIMG[k]; }
+function bannerInfo(){ const nick=(NICK||"").trim(), ds=Object.values(PH).map(p=>p&&p.d).filter(Boolean).sort();
+  return {nick:nick&&nick!=="나"?nick:"", period:ds.length?(ds[0]===ds[ds.length-1]?ds[0]:ds[0]+" ~ "+ds[ds.length-1]):""}; }
 async function bannerCanvas(){ const W=1040,H=200,c=document.createElement("canvas"); c.width=W; c.height=H; const x=c.getContext("2d");
   try{ await document.fonts.load('900 60px "Noto Sans KR"'); }catch(_){}
   x.fillStyle="#fdfdfb"; x.fillRect(0,0,W,H);
@@ -1170,6 +1173,10 @@ async function bannerCanvas(){ const W=1040,H=200,c=document.createElement("canv
   if(ph){ const h=H*.96, w=h*ph.width/ph.height; x.drawImage(ph,W/2-w/2,H-h,w,h); }
   x.font='900 54px "Noto Sans KR",sans-serif'; x.textBaseline="middle"; x.textAlign="right"; x.fillStyle="#0f6b3a"; x.fillText("100좌 완등",W/2-95,H/2);
   x.textAlign="left"; x.fillStyle="#111"; x.fillText("축하합니다",W/2+95,H/2);
+  // 추가: '100좌 완등' 위에 닉네임, '축하합니다' 위에 기간 (기존 글자·도형 위치는 그대로)
+  { const bi=bannerInfo(); x.textBaseline="alphabetic"; const fit=(t,max,fs)=>{ x.font=`700 ${fs}px "Noto Sans KR","Pretendard",sans-serif`; while(x.measureText(t).width>max&&fs>12){ fs--; x.font=`700 ${fs}px "Noto Sans KR","Pretendard",sans-serif`; } };
+    if(bi.nick){ fit(bi.nick,W/2-97-180,22); x.textAlign="right"; x.fillStyle="#2f6a2c"; x.fillText(bi.nick,W/2-97,H/2-36); }
+    if(bi.period){ fit(bi.period,(W-110-66)-(W/2+97),21); x.textAlign="left"; x.fillStyle="#555"; x.fillText(bi.period,W/2+97,H/2-36); } } // '등' 도장 앞까지만
   x.setLineDash([6,5]); x.strokeStyle="rgba(60,70,65,.4)"; x.lineWidth=2; x.strokeRect(8,8,W-16,H-16);
   return c; }
 async function toggleDeco(k){ const i=DECOS.findIndex(d=>d.k===k);
@@ -1195,14 +1202,14 @@ function ribbonSVG(){ const NSv="http://www.w3.org/2000/svg", svgE=document.crea
   const bow=document.createElementNS(NSv,"image"); bow.setAttribute("href",MS.bow); bow.setAttribute("x",130); bow.setAttribute("y",0); bow.setAttribute("width",220); bow.setAttribute("height",220); svgE.appendChild(bow);
   return svgE; }
 // 100좌 완등 현수막: 가운데에 가장 최근 정상석 누끼
-function banner100(){ const L=Object.keys(PH).map(Number).filter(n=>PH[n]).sort((a,b)=>(PH[b].d||"").localeCompare(PH[a].d||"")), ph=L.length?PH[L[0]].st:"";
+function banner100(){ const bi=bannerInfo(), L=Object.keys(PH).map(Number).filter(n=>PH[n]).sort((a,b)=>(PH[b].d||"").localeCompare(PH[a].d||"")), ph=L.length?PH[L[0]].st:"";
   const seal=t=>`<svg viewBox="0 0 100 100" aria-hidden="true"><g><circle cx="50" cy="52" r="40" fill="#fff" stroke="#1f6f43" stroke-width="6"/><circle cx="50" cy="52" r="33" fill="none" stroke="#2f9e5b" stroke-width="1.4"/><g fill="#d4a82c"><path d="M40 10 l2 4.4 4.8 .5 -3.6 3.2 1 4.7 -4.2 -2.4 -4.2 2.4 1 -4.7 -3.6 -3.2 4.8 -.5 Z" transform="translate(0 -1) scale(.75) translate(13 0)"/><path d="M50 6 l2.4 5 5.4 .6 -4 3.6 1.1 5.3 -4.9 -2.7 -4.9 2.7 1.1 -5.3 -4 -3.6 5.4 -.6 Z"/><path d="M60 10 l2 4.4 4.8 .5 -3.6 3.2 1 4.7 -4.2 -2.4 -4.2 2.4 1 -4.7 -3.6 -3.2 4.8 -.5 Z" transform="translate(0 -1) scale(.75) translate(20 0)"/></g><g fill="#c9a23a" opacity=".9"><ellipse cx="22" cy="62" rx="3" ry="6" transform="rotate(-30 22 62)"/><ellipse cx="25" cy="72" rx="3" ry="6" transform="rotate(-50 25 72)"/><ellipse cx="32" cy="80" rx="3" ry="6" transform="rotate(-70 32 80)"/><ellipse cx="78" cy="62" rx="3" ry="6" transform="rotate(30 78 62)"/><ellipse cx="75" cy="72" rx="3" ry="6" transform="rotate(50 75 72)"/><ellipse cx="68" cy="80" rx="3" ry="6" transform="rotate(70 68 80)"/></g></g><text x="50" y="66" text-anchor="middle" font-size="46" fill="#0f6b3a" style="font-family:'Noto Sans KR',sans-serif;font-weight:900">${t}</text></svg>`;
   return `<div class="b100"><svg class="rope" aria-hidden="true"><line x1="0%" y1="0%" x2="3.9%" y2="28.7%" stroke="#8a8f8b" stroke-width="2" stroke-linecap="round"/><line x1="100%" y1="0%" x2="96.1%" y2="28.7%" stroke="#8a8f8b" stroke-width="2" stroke-linecap="round"/></svg>
     <div class="bn" role="img" aria-label="100대 명산 완등 축하 현수막"><svg class="sw l" viewBox="0 0 150 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0 H62 C40 30 34 62 52 100 H0 Z" fill="#1f6f43"/><path d="M0 0 H40 C24 34 22 66 34 100 H0 Z" fill="#2f9e5b"/><path d="M62 0 H86 C58 28 52 66 76 100 H52 C34 62 40 30 62 0 Z" fill="#8fd19e"/><path d="M86 0 H96 C70 30 64 64 88 100 H76 C52 66 58 28 86 0 Z" fill="#d3f0d9"/><path d="M0 64 L14 44 L26 60 L38 40 L56 72 L56 100 H0 Z" fill="#185c37" opacity=".55"/></svg><svg class="sw r" viewBox="0 0 150 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0 H62 C40 30 34 62 52 100 H0 Z" fill="#1f6f43"/><path d="M0 0 H40 C24 34 22 66 34 100 H0 Z" fill="#2f9e5b"/><path d="M62 0 H86 C58 28 52 66 76 100 H52 C34 62 40 30 62 0 Z" fill="#8fd19e"/><path d="M86 0 H96 C70 30 64 64 88 100 H76 C52 66 58 28 86 0 Z" fill="#d3f0d9"/><path d="M0 64 L14 44 L26 60 L38 40 L56 72 L56 100 H0 Z" fill="#185c37" opacity=".55"/></svg><span class="grom tl"></span><span class="grom tr"></span><span class="grom bl"></span><span class="grom br"></span>
     <div class="seal l">${seal("완")}</div><div class="seal r">${seal("등")}</div>
     <svg class="hills" viewBox="0 0 760 80" preserveAspectRatio="none" aria-hidden="true"><path d="M0 80 L0 58 L70 36 L130 54 L210 20 L300 52 L380 14 L460 50 L540 24 L620 52 L700 34 L760 50 L760 80 Z" fill="#d8efdf"/><path d="M0 80 L0 70 L90 56 L170 68 L260 48 L380 66 L500 46 L600 66 L700 54 L760 64 L760 80 Z" fill="#b6e0c3"/></svg>
     ${ph?`<img class="ph" alt="" src="${ph}">`:""}
-    <div class="in"><div class="sd l"><span class="big hot">100좌 완등</span></div><span></span><div class="sd r"><span class="big ink">축하합니다</span></div></div></div></div><div class="cap">100좌</div>`; }
+    <div class="in"><div class="sd l"><span class="big hot">100좌 완등</span>${bi.nick?`<span class="sm l">${bi.nick.replace(/[<&]/g,"")}</span>`:""}</div><span></span><div class="sd r"><span class="big ink">축하합니다</span>${bi.period?`<span class="sm r">${bi.period}</span>`:""}</div></div></div></div><div class="cap">100좌</div>`; }
 function renderBadges(){ const c=D.filter(m=>isDone(m.n)).length, b=document.getElementById("badgeSlots"); if(!b) return; b.innerHTML="";
   [10,20,30,40,49,50,60,70,80,90,100].forEach(k=>{ const e=document.createElement("div"), open=MS_PREVIEW||c>=k; e.className="slot"+(open?" open":"");
     const pic=document.createElement("div"); pic.className="pic";
