@@ -1,4 +1,6 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>나의 명산 100</title><meta property="og:title" content="나의 명산 지도"><meta property="og:description" content="블랙야크 명산100 완등 지도 만들기">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-180.png">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://ynschoi.github.io/BAC100/">
 <meta property="og:image" content="https://ynschoi.github.io/BAC100/og.jpg">
@@ -1062,7 +1064,7 @@ function openCrop(r){ hideSug(); CR={r,box:(r.cbox||[.08,.08,.92,.98]).slice(),m
 const GC_SITE=location.hostname.startsWith("my100san")?"new":"old"; // 이벤트를 주소별로 구분: new = my100san.github.io, old = ynschoi.github.io/BAC100
 // ── 자동 업데이트: 홈 화면에 추가한 앱도 새 버전이 올라가면 알아서 바뀌게 ──
 // version.json(수십 바이트)만 확인하고, 다르면 새 파일을 받아 다시 연다. 작업 중(사진 반영 전)엔 다음 기회로.
-const APPV="20261102-222541";
+const APPV="20261102-232620";
 (function(){ let last=0;
   async function chk(atStart){ const now=Date.now(); if(!atStart&&now-last<60000) return; last=now;
     try{ const r=await fetch("version.json?t="+now,{cache:"no-store"}); if(!r.ok) return; const v=(await r.json()).v; if(!v||v===APPV) return;
