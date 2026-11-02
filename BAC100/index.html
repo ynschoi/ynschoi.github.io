@@ -772,8 +772,8 @@ renderTags();
 // 받침 있으면 '은', 없으면 '는'
 const josaEunNeun=w=>{const c=(w||"").trim().slice(-1).charCodeAt(0); if(c>=0xAC00&&c<=0xD7A3) return ((c-0xAC00)%28)?"은":"는"; return "는";};
 // ── 글꼴 바꾸기 ──
-const FONTS=[["ChosunGu","조선굴림체 (기본)"],["Pretendard","프리텐다드"],["Songgeul","그리운X국한박 송글송글 감성 흘림체"],["Sarang","그리운X국한박 사랑스러운"],["YoonManse","윤초록우산어린이 만세"],["ChosunNm","조선일보명조체"],["KoPubDotum","KoPub돋움"],["SCoreDream","에스코어드림"]];
-let FONT=ls.get("bac100-font","ChosunGu"); if(!FONTS.some(f=>f[0]===FONT)) FONT="ChosunGu";
+const FONTS=[["YoonManse","윤초록우산어린이 만세 (기본)"],["ChosunGu","조선굴림체"],["Pretendard","프리텐다드"],["Songgeul","그리운X국한박 송글송글 감성 흘림체"],["Sarang","그리운X국한박 사랑스러운"],["ChosunNm","조선일보명조체"],["KoPubDotum","KoPub돋움"],["SCoreDream","에스코어드림"]];
+let FONT=ls.get("bac100-font","YoonManse"); if(!FONTS.some(f=>f[0]===FONT)) FONT="YoonManse";
 const fontStack=()=>`"${FONT}","Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif`;
 function applyFont(){ const st=fontStack(); document.querySelectorAll("#map text").forEach(t=>t.style.fontFamily=st); }
 const fontSel=document.getElementById("fontSel");
