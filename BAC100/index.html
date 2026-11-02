@@ -1433,7 +1433,7 @@ function fontK(x,F){ x.save(); x.font='700 40px "KoPubDotum",sans-serif'; const 
 // 제주를 위로 당겨서 지도 키우기 (지도 단위)
 const JCUT=685; const JDY=()=>FMT==="post"?-48:-30; const MY=m=>m.y+(m.y>JCUT?JDY():0);
 async function makeShare(){
-  try{ await Promise.all([document.fonts.load(`800 80px "${FONT}"`),document.fonts.load(`400 30px "${FONT}"`)]); }catch(e){}
+  try{ await Promise.all([document.fonts.load(`800 80px "${FONT}"`),document.fonts.load(`400 30px "${FONT}"`),document.fonts.load('400 30px "YoonManse"')]); }catch(e){}
   const LT=FMT==="post"?{H:1350,oy:106,ofs:26,ty:168,tfs:64,nfs:96,py:200,mt:246,mtfs:31,tt:284,ttfs:26,mapTop:290,fy:150,fh:1076,cy:1114,ch:100,ml:1250,mfs:30,my:1288,mlfs:21,tg:1324,tg0:1250,tgfs:24}:{H:1920,oy:128,ofs:36,ty:232,tfs:92,nfs:140,py:284,mt:360,mtfs:38,tt:414,ttfs:31,mapTop:420,fy:318,fh:1386,cy:1578,ch:106,ml:1744,mfs:36,my:1796,mlfs:26,tg:1856,tg0:1760,tgfs:27};
   const Q=window.__shareQ||1,W=1080,H=LT.H,c=document.createElement("canvas");c.width=W*Q;c.height=H*Q;let x=c.getContext("2d");x.scale(Q,Q);
   const F=fontStack(), ink="#34352b", mute="#87866f", acc="#4f9a45", PAPER="#fbfaf5", SEA="#fbfaf5";
@@ -1460,7 +1460,7 @@ async function makeShare(){
   if(TAGS.length){ TXT.tags={t:TAGS.map(t=>t.startsWith("@")?t:"#"+t).join("  "),font:`600 ${LT.ttfs}px ${F}`,fs:LT.ttfs,fill:acc,x:L0,y:ty}; }
   }
   // 지도: 한 마디·태그 아래로 적당히 올리고, 맨 아래에 주소·아이디 한 줄 자리
-  const UP=FMT==="post"?44:56, FOOT=FMT==="post"?56:72;
+  const UP=FMT==="post"?44:56, FOOT=FMT==="post"?40:50; // 아래 줄 자리
   const mapTop0=(MOTTO&&TAGS.length)?LT.mapTop:(MOTTO||TAGS.length)?LT.mapTop-(LT.tt-LT.mt):LT.py+28;
   // 지도 액자(바다)
   const BB=[70,0,526,784], BW=BB[2]-BB[0], EH=FULL[3]+JDY(), fx=14,fw=W-28;
@@ -1637,9 +1637,8 @@ function compose(live){
     TSTATIC={key:lt.txt,c:sc,w:cv.width,h:cv.height,stk:G.stk.slice(),deco:G.deco.slice(),txt:G.txt.slice()}; drawTxt(x,B,lt.txt,[lt.x,lt.y],G,true); } else TSTATIC=null;
   credit(); x.setTransform(1,0,0,1,0,0); window.__cardGeo=G; shareBlob=null;
   // 만든 사람 (제주 오른쪽, 항상 맨 앞)
-  function credit(){ x.setTransform(Q,0,0,Q,0,0); const fs=FMT==="post"?24:28, T="my100san.github.io  ·  @youngs.00", cy=B.FOOTY; // 맨 아래 한 줄: 주소 · 만든 사람 (반투명 알약)
-    x.font=`700 ${fs}px "KoPubDotum","Pretendard",sans-serif`; x.textAlign="center"; x.textBaseline="middle"; const tw=x.measureText(T).width, h=fs*1.9;
-    x.fillStyle="rgba(239,237,227,.85)"; x.beginPath(); x.roundRect(540-tw/2-fs*.8,cy-h/2,tw+fs*1.6,h,h/2); x.fill(); x.fillStyle="#8e8c78"; x.fillText(T,540,cy+1);
+  function credit(){ x.setTransform(Q,0,0,Q,0,0); const post=FMT==="post", cy=B.FOOTY, T="✎ 나도 만들기  my100san.github.io  ·  @youngs.00", fs=(post?24:28)*1.1; // 맨 아래 손글씨 한 줄 (글꼴은 만세로 고정)
+    x.textAlign="center"; x.textBaseline="middle"; x.font=`400 ${fs}px "YoonManse","Pretendard",sans-serif`; x.lineJoin="round"; x.strokeStyle="rgba(251,250,245,.9)"; x.lineWidth=5; x.strokeText(T,540,cy); x.fillStyle="#6f6e58"; x.fillText(T,540,cy);
     x.textAlign="left"; x.textBaseline="alphabetic"; }
 }
 async function relayout(){ await preloadStk(); AUTOC={}; if(MIGRATE){ POS=Object.assign(autoLayout(n=>HS(n,stkSize())),POS); ls.set("bac100-pos",POS); ls.set("bac100-auto",false); MIGRATE=false; } compose(); }
