@@ -481,7 +481,7 @@ footer{font-size:12px;color:var(--muted)}
 <div class="shr" id="shr" hidden>
   <div class="in">
     <img id="shrImg" alt="인스타 스토리용 나의 명산 100 이미지">
-    <div class="row"><button type="button" class="btn share" id="shrSave">저장 · 공유</button><button type="button" class="btn" id="shrX">닫기</button></div>
+    <div class="row"><button type="button" class="btn share" id="shrSave">사진 저장</button><button type="button" class="btn" id="shrX">닫기</button></div>
     <p id="shrMsg">스토리 크기(1080×1920)예요. 저장 버튼이 안 되면 이미지를 길게 눌러 저장하세요.</p>
   </div>
 </div>
@@ -750,7 +750,7 @@ function syncFmt(){ document.getElementById("fmtTog").textContent=FMT==="post"?"
 const APP_URL="https://my100san.github.io/"; // 어느 주소에서 열어도 공유는 새 짧은 주소로
 document.getElementById("linkShare").onclick=async()=>{ gc("share-link"); const box=document.getElementById("linkBox"), inp=document.getElementById("linkIn"), msg=document.getElementById("linkMsg");
   inp.value=APP_URL;
-  try{ if(navigator.share){ await navigator.share({title:"나의 명산 지도",text:"내 블랙야크 명산100 지도 만들기",url:APP_URL}); msg.textContent=""; return; } }catch(e){ if(e&&e.name==="AbortError") return; }
+  try{ if(navigator.share){ await navigator.share({url:APP_URL}); msg.textContent=""; return; } }catch(e){ if(e&&e.name==="AbortError") return; }
   box.hidden=false;
   try{ await navigator.clipboard.writeText(APP_URL); msg.textContent="링크를 복사했어요."; }
   catch(_){ inp.focus(); inp.select(); msg.textContent="위 링크를 길게 눌러 복사하세요."; } };
