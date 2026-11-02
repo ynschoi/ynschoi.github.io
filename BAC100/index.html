@@ -749,7 +749,7 @@ const nickIn=document.getElementById("nickIn"), mottoIn=document.getElementById(
 nickIn.value=NICK==="나"?"":NICK; mottoIn.value=MOTTO; // 빈칸이면 회색 '나'가 보이고 그대로 '나'로 씀
 // 글자를 칠 때는 반영하지 않고, 확인(또는 키보드 완료)을 눌러야 지도에 반영 → 확인 버튼이 초록이면 아직 반영 전
 const syncOk=()=>{ document.getElementById("nickOk").classList.toggle("on",(nickIn.value.trim()||"나")!==NICK); document.getElementById("mottoOk").classList.toggle("on",mottoIn.value.trim()!==MOTTO); };
-const applyNick=()=>{ NICK=nickIn.value.trim()||"나"; ls.set("bac100-nick",NICK); scheduleCard(); renderBadges(); syncOk(); nickIn.blur(); };
+const applyNick=async()=>{ const was=NICK; NICK=nickIn.value.trim()||"나"; ls.set("bac100-nick",NICK); if(was!==NICK&&DIMG[50]){ delete DIMG[50]; if(DECOS.some(d=>d.k===50)) await prepDeco(50); } scheduleCard(); renderBadges(); syncOk(); nickIn.blur(); };
 const applyMotto=()=>{ MOTTO=mottoIn.value.trim(); ls.set("bac100-motto",MOTTO); scheduleCard(); syncOk(); mottoIn.blur(); };
 document.getElementById("nickForm").addEventListener("submit",e=>{e.preventDefault();applyNick();});
 document.getElementById("mottoForm").addEventListener("submit",e=>{e.preventDefault();applyMotto();});
@@ -1190,8 +1190,8 @@ function ribbonSVG(){ const NSv="http://www.w3.org/2000/svg", svgE=document.crea
     ch.forEach(c=>{ if(c===" "){y+=step*.5;return;} const t=document.createElementNS(NSv,"text"); t.textContent=c; t.setAttribute("x",0); t.setAttribute("y",y+size*.36); t.setAttribute("text-anchor","middle"); t.setAttribute("font-size",size); t.setAttribute("fill","#1e1a1a");
       t.setAttribute("style",'font-family:"궁서","Gungsuh","GungSeo","궁서체","Song Myung",serif;font-weight:700'); g.appendChild(t); y+=step; });
     G.appendChild(g); };
-  const nick=((NICK||"").trim()||"나");
-  rib(210,150,150,630,56,"벌써 반백좌 "+nick); rib(270,150,330,630,56,"축하드립니다");
+  const nick=(NICK||"").trim(); // 닉네임을 안 정했으면('나') 이름 없이
+  rib(210,150,150,630,56,"벌써 반백좌"+(nick&&nick!=="나"?" "+nick:"")); rib(270,150,330,630,56,"축하드립니다");
   const bow=document.createElementNS(NSv,"image"); bow.setAttribute("href",MS.bow); bow.setAttribute("x",130); bow.setAttribute("y",0); bow.setAttribute("width",220); bow.setAttribute("height",220); svgE.appendChild(bow);
   return svgE; }
 // 100좌 완등 현수막: 가운데에 가장 최근 정상석 누끼
