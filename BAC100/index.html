@@ -1064,7 +1064,7 @@ function openCrop(r){ hideSug(); CR={r,box:(r.cbox||[.08,.08,.92,.98]).slice(),m
 const GC_SITE=location.hostname.startsWith("my100san")?"new":"old"; // 이벤트를 주소별로 구분: new = my100san.github.io, old = ynschoi.github.io/BAC100
 // ── 자동 업데이트: 홈 화면에 추가한 앱도 새 버전이 올라가면 알아서 바뀌게 ──
 // version.json(수십 바이트)만 확인하고, 다르면 새 파일을 받아 다시 연다. 작업 중(사진 반영 전)엔 다음 기회로.
-const APPV="20261102-232620";
+const APPV="20261103-005056";
 (function(){ let last=0;
   async function chk(atStart){ const now=Date.now(); if(!atStart&&now-last<60000) return; last=now;
     try{ const r=await fetch("version.json?t="+now,{cache:"no-store"}); if(!r.ok) return; const v=(await r.json()).v; if(!v||v===APPV) return;
@@ -1128,7 +1128,7 @@ document.getElementById("bulk").addEventListener("change",e=>{ const files=[...e
   const w=document.getElementById("upWarn"); if(files.length>10){ w.textContent=`${files.length}장을 골랐어요. 한 번에 10장까지라 앞의 10장만 올려요. 나머지는 다음에 다시 올려주세요.`; w.hidden=false; } else w.hidden=true;
   addFiles(files,null); });
 // 목록의 올리기 / 교체 → 신규 등록으로
-document.getElementById("file").addEventListener("change",e=>{ const f=e.target.files[0]; e.target.value=""; if(f&&selected) addFiles([f],selected); });
+document.getElementById("file").addEventListener("change",e=>{ const f=e.target.files[0]; e.target.value=""; if(f&&selected){ gc("upload-one"); addFiles([f],selected); } });
 document.getElementById("howBtn").onclick=()=>{ document.getElementById("howM").hidden=false; };
 document.getElementById("howX").onclick=()=>{ document.getElementById("howM").hidden=true; };
 document.getElementById("howM").addEventListener("click",e=>{ if(e.target.id==="howM") e.target.hidden=true; });
