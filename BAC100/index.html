@@ -320,7 +320,6 @@ footer{font-size:12px;color:var(--muted)}
 .about .hver{margin-top:14px;text-align:center;font-size:11.5px;color:#a3a18c}
 .letter{background:#fffefa;border:1px solid var(--line);border-radius:6px;padding:16px 16px 14px;background-image:repeating-linear-gradient(transparent 0 23.4px,#ece8da 23.4px 24.4px);line-height:24.4px;box-shadow:0 2px 8px rgba(60,60,40,.06)}
 .letter p{margin:0}.letter p+p{margin-top:24.4px}.letter .to{font-weight:700;color:#2f6a2c}.letter .from{text-align:right;font-weight:700}
-.letter .cts{font-size:13px;color:var(--muted)}.letter .ct{color:inherit;text-decoration:none}.letter .ct svg{width:14px;height:14px;vertical-align:-2px;margin-right:6px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.letter .ct svg .d{fill:currentColor;stroke:none}
 .h1 p,.h2 p,.h4 p,.h5 p{font-size:14px}
 .post{position:relative;background:#fffefa;border:1.5px dashed #b9cf9c;border-radius:12px;padding:16px 16px 14px;line-height:1.7}
 .post p{margin:0}.post p+p{margin-top:10px}.post .to{font-weight:700;color:#2f6a2c;padding-right:44px}.post .from{text-align:right;font-weight:700}
@@ -397,7 +396,7 @@ footer{font-size:12px;color:var(--muted)}
 
   <div id="p-heart" class="pane about" hidden>
     <p class="again"><button type="button" class="lnk" id="coachAgain">사용법 다시 보기</button></p>
-    <div class="h1 letter"><p class="to">100대 명산 동료 여러분</p><p>안녕하세요!<br>저는 겨우 10좌라서 완등은 먼 훗날 이야기고요,<br>하나씩 쌓이는 소소한 재미를 더해보려고 만들어보았습니다.</p><p>버그 신고, 개선 요청, 재밌는 아이디어<br>DM/이메일 주시면 잽싸게 반영해보겠습니다.<br>예쁘게 써주시고 태그도 환영합니다🤍</p><p class="cts"><a class="ct" href="https://www.instagram.com/youngs.00/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="3.8"/><circle cx="17" cy="7" r="1" class="d"/></svg>@youngs.00</a><br><a class="ct" href="mailto:youngsuchoi12@gmail.com"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="13" rx="2.5"/><path d="M4.5 7l7.5 6 7.5-6"/></svg>youngsuchoi12@gmail.com</a></p></div><p class="safe"><b>🔒 보안 걱정 NO!</b><br>사진은 서버로 보내지 않습니다.<br>누끼, 저장 모두 내 폰 브라우저 안에서 이루어집니다.</p><div class="bk"><b>📦 지도 백업 · 불러오기</b><span>지도는 이 브라우저에만 저장됩니다.<br>필요한 경우, 백업 파일로 옮겨주세요.</span>
+    <div class="h1 letter"><p class="to">100대 명산 동료 여러분</p><p>안녕하세요!<br>저는 겨우 10좌라서 완등은 먼 훗날 이야기고요,<br>하나씩 쌓이는 소소한 재미를 더해보려고 만들어보았습니다.</p><p>버그 신고, 개선 요청, 재밌는 아이디어<br>DM 주시면 잽싸게 반영해보겠습니다.<br>예쁘게 써주시고 태그도 환영합니다🤍</p><p class="from">From. <a href="https://www.instagram.com/youngs.00/" target="_blank" rel="noopener">@youngs.00</a></p></div><p class="safe"><b>🔒 보안 걱정 NO!</b><br>사진은 서버로 보내지 않습니다.<br>누끼, 저장 모두 내 폰 브라우저 안에서 이루어집니다.</p><div class="bk"><b>📦 지도 백업 · 불러오기</b><span>지도는 이 브라우저에만 저장됩니다.<br>필요한 경우, 백업 파일로 옮겨주세요.</span>
       <div class="bkbtn"><button type="button" class="pill2 on" id="bkSave">백업 파일 저장</button><label class="pill2" for="bkIn">백업 불러오기</label></div>
       <input type="file" id="bkIn" accept=".json,application/json" hidden><span class="tip" id="bkMsg" role="status"></span></div><p class="hver">version 1.1 · 2026.11.01</p>
   </div>
@@ -1065,7 +1064,7 @@ function openCrop(r){ hideSug(); CR={r,box:(r.cbox||[.08,.08,.92,.98]).slice(),m
 const GC_SITE=location.hostname.startsWith("my100san")?"new":"old"; // 이벤트를 주소별로 구분: new = my100san.github.io, old = ynschoi.github.io/BAC100
 // ── 자동 업데이트: 홈 화면에 추가한 앱도 새 버전이 올라가면 알아서 바뀌게 ──
 // version.json(수십 바이트)만 확인하고, 다르면 새 파일을 받아 다시 연다. 작업 중(사진 반영 전)엔 다음 기회로.
-const APPV="20261103-051458";
+const APPV="20261103-051654";
 (function(){ let last=0;
   async function chk(atStart){ const now=Date.now(); if(!atStart&&now-last<60000) return; last=now;
     try{ const r=await fetch("version.json?t="+now,{cache:"no-store"}); if(!r.ok) return; const v=(await r.json()).v; if(!v||v===APPV) return;
