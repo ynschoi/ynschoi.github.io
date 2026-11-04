@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>픽셀 영양제 선반</title>
+<meta name="description" content="내 영양제를 픽셀 선반에 올려두고, 성분 겹침·상한·복용 시간을 근거와 함께 확인하는 웹앱. 데이터는 내 기기에만 저장됩니다.">
+<meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="영양제선반">
+<style>
+@font-face{font-family:"Galmuri11";src:url(fonts/Galmuri11.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Galmuri11";src:url(fonts/Galmuri11-Bold.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Pretendard";src:url(../BAC100/fonts/Pretendard.woff2) format("woff2");font-weight:100 900;font-display:swap}
+
+:root{
+  --bg:#fafafa; --card:#ffffff; --ink:#18181b; --ink2:#71717a;
+  --line:#e4e4e7; --line2:#d4d4d8; --accent:#2563eb; --accent-tint:#eff4ff;
+  --ok:#16a34a; --warn:#d97706; --bad:#dc2626;
+  --shelf:#c98b55; --shelf-dark:#8a5a32; --wall:#fdf6ec;
+  --px:#18181b;
+  --pixel:"Galmuri11",ui-monospace,monospace;
+  --font:"Pretendard",-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#000000; --card:#1c1c1e; --ink:#f4f4f5; --ink2:#a1a1aa;
+    --line:#2c2c2e; --line2:#3a3a3c; --accent:#3b82f6; --accent-tint:#14203a;
+    --wall:#2a2119; --shelf:#9a6a40; --shelf-dark:#5e3f22; --px:#000000;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#000000; --card:#1c1c1e; --ink:#f4f4f5; --ink2:#a1a1aa;
+  --line:#2c2c2e; --line2:#3a3a3c; --accent:#3b82f6; --accent-tint:#14203a;
+  --wall:#2a2119; --shelf:#9a6a40; --shelf-dark:#5e3f22; --px:#000000;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font-family:var(--font);font-size:14px;line-height:1.5;-webkit-text-size-adjust:100%;padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+button,input,select{font:inherit;color:inherit}
+a{color:var(--accent)}
+.num{font-family:var(--font);font-variant-numeric:tabular-nums}
+.px{font-family:var(--pixel)}
+svg.sprite{image-rendering:pixelated;shape-rendering:crispEdges;display:block}
+
+.wrap{max-width:480px;margin:0 auto;padding:0 16px}
+header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 80%,transparent);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;gap:10px;height:52px}
+header h1{font-family:var(--pixel);font-weight:700;font-size:16px;margin:0;flex:1;letter-spacing:.5px}
+header .date{font-family:var(--pixel);font-size:11px;color:var(--ink2)}
+
+/* pixel box: square corners + hard shadow */
+.pbox{background:var(--card);border:2px solid var(--px);box-shadow:4px 4px 0 var(--px);margin:16px 0 20px}
+.pbox>h2{font-family:var(--pixel);font-weight:700;font-size:13px;margin:0;padding:10px 12px;border-bottom:2px solid var(--px);display:flex;align-items:center;gap:8px}
+.pbox>h2 .sub{margin-left:auto;font-weight:400;font-size:11px;color:var(--ink2)}
+.pbody{padding:12px}
+
+/* shelf */
+.shelf{background:var(--wall);padding:14px 8px 0}
+.row{display:grid;grid-template-columns:repeat(3,1fr);align-items:end;gap:4px;position:relative;padding:0 4px}
+.row+.row{margin-top:18px}
+.plank{height:10px;background:var(--shelf);border-top:2px solid var(--px);border-bottom:4px solid var(--shelf-dark);margin:0 -8px}
+.item{display:flex;flex-direction:column;align-items:center;cursor:pointer;background:none;border:0;padding:0 0 0;position:relative}
+.item:focus-visible{outline:2px dashed var(--accent);outline-offset:2px}
+.item .bob{animation:bob 1.6s steps(2) infinite}
+.item:nth-child(2) .bob{animation-delay:.4s}.item:nth-child(3) .bob{animation-delay:.8s}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+.eye{transform-box:fill-box;transform-origin:center;animation:blink 4.2s infinite}
+.item:nth-child(2) .eye{animation-delay:1.3s}.item:nth-child(3) .eye{animation-delay:2.6s}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}96%{transform:scaleY(.15)}}
+.tag{font-family:var(--pixel);font-size:11px;margin-top:4px;color:#3f2a18;background:#fff8e7;border:2px solid var(--px);padding:1px 5px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.below{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:6px 4px 10px;background:var(--shelf-dark)}
+.below .meta{display:flex;flex-direction:column;align-items:center;gap:3px}
+.stock{display:flex;gap:1px}
+.stock i{width:6px;height:6px;background:#3b2a1a;display:block}
+.stock i.on{background:#7ee081}
+.stock.low i.on{background:#ffb02e}
+.stock.empty i.on{background:#ff5b5b}
+.days{font-family:var(--pixel);font-size:11px;color:#ffeccc}
+.mood-pop{animation:pop .35s steps(3)}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.18) translateY(-4px)}100%{transform:scale(1)}}
+
+/* today */
+.progress{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.pbar{flex:1;height:14px;border:2px solid var(--px);background:var(--line);display:flex;padding:1px;gap:1px}
+.pbar i{flex:1;background:transparent}
+.pbar i.on{background:var(--accent)}
+.slot{border-top:2px dashed var(--line2);padding:10px 0}
+.slot:first-of-type{border-top:0;padding-top:0}
+.slot h3{font-family:var(--pixel);font-size:12px;margin:0 0 8px;display:flex;align-items:center;gap:6px}
+.slot h3 .t{color:var(--ink2);font-weight:400;font-size:11px}
+.dose{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--card);border:2px solid var(--line2);padding:6px 10px 6px 6px;margin-bottom:6px;cursor:pointer}
+.dose.done{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 8%,var(--card))}
+.dose .nm{font-weight:600}
+.dose .how{font-size:12px;color:var(--ink2)}
+.dose .chk{margin-left:auto;width:22px;height:22px;border:2px solid var(--px);display:grid;place-items:center;font-family:var(--pixel);font-size:12px;flex:none;background:var(--card)}
+.dose.done .chk{background:var(--ok);color:#fff}
+.dose .opt{font-family:var(--pixel);font-size:10px;color:var(--warn);border:1px solid var(--warn);padding:0 4px;margin-left:4px}
+
+/* check */
+.meter{margin:6px 0 14px}
+.meter .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.meter .name{font-weight:600}
+.meter .val{font-size:12px;color:var(--ink2)}
+.mbar{height:12px;border:2px solid var(--px);margin-top:4px;position:relative;background:var(--line)}
+.mbar b{display:block;height:100%;background:var(--ok)}
+.mbar b.warn{background:var(--warn)}.mbar b.bad{background:var(--bad)}
+.mbar .ul{position:absolute;right:-2px;top:-6px;bottom:-6px;width:2px;background:var(--bad)}
+.note{font-size:12px;color:var(--ink2);margin-top:4px}
+.card{border:2px solid var(--line2);padding:10px;margin-bottom:8px;background:var(--card)}
+.card.hit{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 6%,var(--card))}
+.card .hd{display:flex;align-items:center;gap:6px;font-weight:600;margin-bottom:2px;flex-wrap:wrap}
+.grade{font-family:var(--pixel);font-size:10px;border:2px solid currentColor;padding:0 4px;line-height:14px}
+.gA{color:#2563eb}.gB{color:#0f766e}.gC{color:#a16207}.gD{color:#71717a}
+.src{font-size:11px;margin-top:4px;display:flex;flex-wrap:wrap;gap:4px 8px}
+.src a{text-decoration:none;border-bottom:1px dotted currentColor}
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.chip{font-size:12px;border:1px solid var(--line2);padding:0 6px;background:var(--bg)}
+.flag{font-family:var(--pixel);font-size:10px;color:#fff;background:var(--bad);padding:0 4px}
+.legend{display:grid;grid-template-columns:auto 1fr;gap:4px 8px;font-size:12px;align-items:center}
+.disclaimer{font-size:12px;color:var(--ink2);border-top:1px solid var(--line);padding-top:10px;margin-top:6px}
+
+/* nav */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--card);border-top:2px solid var(--px);padding-bottom:env(safe-area-inset-bottom)}
+nav.tabs .wrap{display:grid;grid-template-columns:repeat(4,1fr);height:62px;padding:0 8px}
+nav.tabs button{background:none;border:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-family:var(--pixel);font-size:11px;color:var(--ink2);cursor:pointer}
+nav.tabs button[aria-current="page"]{color:var(--accent)}
+nav.tabs button[aria-current="page"] svg{filter:none}
+nav.tabs svg{width:24px;height:24px}
+
+/* buttons, forms */
+.btn{font-family:var(--pixel);font-size:12px;border:2px solid var(--px);background:var(--card);padding:7px 12px;box-shadow:2px 2px 0 var(--px);cursor:pointer}
+.btn:active{transform:translate(2px,2px);box-shadow:none}
+.btn.primary{background:var(--accent);color:#fff}
+.btn.danger{color:var(--bad)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+label.f{display:block;font-size:12px;color:var(--ink2);margin:10px 0 4px}
+.in{width:100%;border:2px solid var(--line2);background:var(--card);padding:7px 8px;border-radius:0}
+.in:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid3{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:6px;align-items:center}
+.swatches{display:flex;gap:4px;flex-wrap:wrap}
+.swatches button{width:24px;height:24px;border:2px solid var(--px);cursor:pointer;padding:0}
+.swatches button[aria-pressed="true"]{outline:2px solid var(--accent);outline-offset:2px}
+.shapes{display:flex;gap:8px}
+.shapes button{border:2px solid var(--line2);background:var(--card);padding:4px 8px;cursor:pointer;font-size:12px;display:flex;flex-direction:column;align-items:center}
+.shapes button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-tint)}
+.slotrow{display:grid;grid-template-columns:72px 1fr 64px;gap:6px;align-items:center;margin-bottom:6px}
+.slotrow .lb{font-size:13px}
+.toggle{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px}
+.toggle input{width:18px;height:18px;accent-color:var(--accent)}
+
+/* sheet */
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:20;display:none}
+.sheet-bg.open{display:block}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:21;max-height:88vh;overflow:auto;background:var(--card);border-top:2px solid var(--px);transform:translateY(105%);transition:transform .18s steps(4)}
+.sheet.open{transform:none}
+.sheet .wrap{padding-top:14px;padding-bottom:calc(20px + env(safe-area-inset-bottom))}
+.sheet h2{font-family:var(--pixel);font-size:15px;margin:0 0 6px;display:flex;align-items:center;gap:8px}
+.sheet .close{margin-left:auto}
+.detail-top{display:flex;gap:14px;align-items:center}
+.kv{display:grid;grid-template-columns:84px 1fr;gap:4px 8px;font-size:13px;margin-top:10px}
+.kv dt{color:var(--ink2)}.kv dd{margin:0}
+.banner{font-size:12px;background:var(--accent-tint);border:2px solid var(--accent);padding:8px 10px;margin-top:12px;display:flex;gap:8px;align-items:flex-start}
+.empty{font-size:13px;color:var(--ink2);text-align:center;padding:16px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (prefers-reduced-motion:reduce){.bob,.eye,.mood-pop{animation:none!important}.sheet{transition:none}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1>픽셀 영양제 선반</h1><span class="date" id="today"></span></div></header>
+
+<main class="wrap" id="view"></main>
+
+<nav class="tabs" aria-label="메뉴"><div class="wrap">
+  <button data-tab="shelf" aria-current="page"><span id="ic-shelf"></span>선반</button>
+  <button data-tab="today"><span id="ic-today"></span>오늘</button>
+  <button data-tab="check"><span id="ic-check"></span>체크</button>
+  <button data-tab="settings"><span id="ic-set"></span>설정</button>
+</div></nav>
+
+<div class="sheet-bg" id="sheetBg"></div>
+<section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"><div class="wrap" id="sheetBody"></div></section>
+
+<script>
+"use strict";
+/* ================= 설정 ================= */
+const AFFILIATE_ENABLED = false;           // 겸업 규정 확인 전까지 꺼둠
+const STORE_KEY = "pillshelf.v1";
+
+/* ================= 근거 데이터 (myworkout/supplements/evidence 요약본) ================= */
+const SOURCES = {
+  label:{t:"제품 라벨",u:null},
+  kdri2020:{t:"2020 한국인 영양소 섭취기준",u:"https://www.mohw.go.kr/board.es?mid=a10411010100&bid=0019&act=view&list_no=362385"},
+  ods_magnesium:{t:"NIH ODS 마그네슘",u:"https://ods.od.nih.gov/factsheets/Magnesium-HealthProfessional/"},
+  ods_zinc:{t:"NIH ODS 아연",u:"https://ods.od.nih.gov/factsheets/Zinc-HealthProfessional/"},
+  ods_b6:{t:"NIH ODS 비타민B6",u:"https://ods.od.nih.gov/factsheets/VitaminB6-HealthProfessional/"},
+  ods_vitd:{t:"NIH ODS 비타민D",u:"https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/"},
+  ods_calcium:{t:"NIH ODS 칼슘",u:"https://ods.od.nih.gov/factsheets/Calcium-HealthProfessional/"},
+  ods_iron:{t:"NIH ODS 철",u:"https://ods.od.nih.gov/factsheets/Iron-HealthProfessional/"},
+  ods_omega3:{t:"NIH ODS 오메가3",u:"https://ods.od.nih.gov/factsheets/Omega3FattyAcids-HealthProfessional/"},
+  nccih_ashwagandha:{t:"NCCIH 아쉬아간다",u:"https://www.nccih.nih.gov/health/ashwagandha"},
+  livertox_ashwa:{t:"LiverTox 아쉬아간다",u:"https://www.ncbi.nlm.nih.gov/books/NBK548536/"},
+  nccih_ginger:{t:"NCCIH 생강",u:"https://www.nccih.nih.gov/health/ginger"},
+  ema_artichoke:{t:"EMA 아티초크 모노그래프",u:"https://www.ema.europa.eu/en/medicines/herbal/cynarae-folium"},
+  issn_creatine:{t:"ISSN 크레아틴 입장문(2017)",u:"https://doi.org/10.1186/s12970-017-0173-z"},
+  yamadera:{t:"Yamadera 2007 글리신",u:"https://doi.org/10.1111/j.1479-8425.2007.00262.x"}
+};
+const GRADE_TXT = {A:"라벨·공식규격",B:"공공기관 자료",C:"연구 근거",D:"근거 약함"};
+
+/* 성분 사전 */
+const ING = {
+  magnesium:{ko:"마그네슘",nutrient:"magnesium"},
+  zinc:{ko:"아연",nutrient:"zinc"},
+  vitamin_b6:{ko:"비타민B6",nutrient:"vitamin_b6"},
+  vitamin_d:{ko:"비타민D",nutrient:"vitamin_d"},
+  calcium:{ko:"칼슘",nutrient:"calcium"},
+  iron:{ko:"철",nutrient:"iron"},
+  vitamin_c:{ko:"비타민C",nutrient:"vitamin_c"},
+  omega3:{ko:"오메가3(EPA+DHA)",cats:["bleed"]},
+  ashwagandha:{ko:"아쉬아간다",cats:["sleep"]},
+  l_theanine:{ko:"L-테아닌",cats:["sleep"]},
+  lemon_balm:{ko:"레몬밤",cats:["sleep"]},
+  glycine:{ko:"글리신",cats:["sleep"]},
+  creatine:{ko:"크레아틴",cats:["muscle"]},
+  digestive_enzymes:{ko:"소화효소",cats:["digest"]},
+  ginger:{ko:"생강",cats:["digest","bleed"]},
+  artichoke:{ko:"아티초크",cats:["digest"]},
+  probiotics:{ko:"유산균",cats:["digest"]},
+  other:{ko:"기타"}
+};
+const CATS = {sleep:"수면·긴장완화",digest:"소화·더부룩함",muscle:"근육·운동",bleed:"출혈 위험 성분"};
+
+/* 상한 (성인, 보충제 합산 비교) */
+const LIMITS = {
+  magnesium:{ko:"마그네슘",unit:"mg",ul:350,scope:"음식 제외, 보충제 마그네슘만 합산",grade:"B",src:["kdri2020","ods_magnesium"]},
+  zinc:{ko:"아연",unit:"mg",ul:35,scope:"총 섭취 기준",grade:"B",src:["kdri2020","ods_zinc"]},
+  vitamin_b6:{ko:"비타민B6",unit:"mg",ul:100,scope:"2020 기준(2025 개정판은 하향 보고 — 확인 중)",grade:"B",src:["kdri2020","ods_b6"]},
+  vitamin_d:{ko:"비타민D",unit:"μg",ul:100,scope:"1 μg = 40 IU",grade:"B",src:["kdri2020","ods_vitd"]},
+  calcium:{ko:"칼슘",unit:"mg",ul:2500,scope:"총 섭취 기준",grade:"B",src:["kdri2020","ods_calcium"]},
+  iron:{ko:"철",unit:"mg",ul:45,scope:"총 섭취 기준",grade:"B",src:["kdri2020","ods_iron"]},
+  vitamin_c:{ko:"비타민C",unit:"mg",ul:2000,scope:"총 섭취 기준",grade:"B",src:["kdri2020"]}
+};
+
+/* 주의 규칙 (cond: 사용자 설정과 맞으면 '해당' 강조) */
+const CONDS = {
+  anticoag:"항응고제·항혈소판제 복용 (와파린, 아스피린 등)",
+  thyroid:"갑상선 질환 또는 갑상선 약 복용",
+  pregnant:"임신·수유 중",
+  sedative:"수면제·신경안정제 복용",
+  immuno:"면역억제제 복용·자가면역질환",
+  gallbladder:"담석·담도·간 질환",
+  kidney:"신장 질환"
+};
+const CAUTIONS = [
+  {id:"C04",ing:"ashwagandha",grade:"B",cond:["pregnant","thyroid","sedative","immuno"],src:["nccih_ashwagandha","livertox_ashwa"],
+   msg:"임신 중에는 피합니다. 갑상선 약·진정제·면역억제제 복용 시 의사·약사와 상의하세요. 드물게 간 손상이 보고되어, 황달·짙은 소변이 있으면 중단하세요."},
+  {id:"C08",ing:"artichoke",grade:"B",cond:["gallbladder"],src:["ema_artichoke"],
+   msg:"담도폐쇄·담관염·담석 등 담도 질환이나 간 질환이 있으면 피하는 성분입니다."},
+  {id:"C02",ing:"ginger",grade:"B",cond:["anticoag"],src:["nccih_ginger"],
+   msg:"항응고제·항혈소판제와 함께면 출혈 위험이 커질 수 있습니다."},
+  {id:"C02",ing:"omega3",grade:"B",cond:["anticoag"],src:["ods_omega3"],
+   msg:"고용량 오메가3는 항응고제와 함께 출혈 위험이 커질 수 있습니다."},
+  {id:"C14",ing:"creatine",grade:"C",cond:["kidney"],src:["issn_creatine"],
+   msg:"혈중 크레아티닌 수치를 올릴 수 있어 신장 검사 때 복용 사실을 알리세요. 신장 질환이 있으면 상의하세요."},
+  {id:"C13",ing:"magnesium",grade:"B",cond:["kidney"],src:["ods_magnesium"],
+   msg:"보충제 마그네슘이 많으면 설사가 흔합니다. 신장 기능이 떨어져 있으면 마그네슘이 쌓일 수 있습니다."}
+];
+
+/* 시간 근거 설명 */
+const TIMING_WHY = {
+  L00:{grade:"A",src:["label"],t:"라벨에 적힌 복용법을 그대로 배치했습니다."},
+  T05:{grade:"C",src:["issn_creatine"],t:"크레아틴은 시간대보다 매일 꾸준히가 중요합니다. 식사와 함께면 체내 저장에 유리할 수 있습니다."},
+  T06:{grade:"A",src:["label"],t:"소화효소는 식사 시작(첫 숟가락)과 함께 먹도록 라벨에 적혀 있습니다."},
+  T10:{grade:"D",src:["label"],t:"라벨에 시간 지정이 없어, 수면 목적 제품이라 취침 전에 배치했습니다."},
+  T09:{grade:"C",src:["yamadera"],t:"글리신(수면 목적)은 취침 전. 연구 용량은 3 g입니다."}
+};
+
+/* ================= 픽셀 스프라이트 ================= */
+const SHAPES = {
+  bottle:{rows:[
+    "....oooooo....",
+    "...occcccCo...",
+    "...occcccCo...",
+    "...oooooooo...",
+    "..obbbbbbbBo..",
+    ".obhbbbbbbbBo.",
+    ".ohllllllllBo.",
+    ".ohllllllllBo.",
+    ".ohllllllllBo.",
+    ".ohllllllllBo.",
+    ".ohllllllllBo.",
+    ".ohllllllllBo.",
+    ".ohbbbbbbbbBo.",
+    ".obbbbbbbbbBo.",
+    ".oBBBBBBBBBBo.",
+    "..oooooooooo.."],face:{y:8,cx:7}},
+  tub:{rows:[
+    "..oooooooooo..",
+    ".occcccccccCo.",
+    ".occcccccccCo.",
+    ".oooooooooooo.",
+    "ohbbbbbbbbbbBo",
+    "ohllllllllllBo",
+    "ohllllllllllBo",
+    "ohllllllllllBo",
+    "ohllllllllllBo",
+    "ohllllllllllBo",
+    "ohbbbbbbbbbbBo",
+    "obBBBBBBBBBBBo",
+    ".oooooooooooo."],face:{y:6,cx:7}},
+  box:{rows:[
+    "..oooooooooo..",
+    "..occcccccCo..",
+    "..occcccccCo..",
+    "..oooooooooo..",
+    "..ohbbbbbbBo..",
+    "..ollllllllo..",
+    "..ollllllllo..",
+    "..ollllllllo..",
+    "..ollllllllo..",
+    "..ollllllllo..",
+    "..ollllllllo..",
+    "..ohbbbbbbBo..",
+    "..obbbbbbbBo..",
+    "..oBBBBBBBBo..",
+    "..oooooooooo.."],face:{y:7,cx:7}}
+};
+const H = 18; // 공통 높이 (아래 정렬)
+function shade(hex, k){ // k<0 어둡게
+  const n=parseInt(hex.slice(1),16); let r=n>>16,g=n>>8&255,b=n&255;
+  const f=v=>Math.max(0,Math.min(255,Math.round(k<0?v*(1+k):v+(255-v)*k)));
+  return "#"+[f(r),f(g),f(b)].map(v=>v.toString(16).padStart(2,"0")).join("");
+}
+function lum(hex){const n=parseInt(hex.slice(1),16);return (0.299*(n>>16)+0.587*(n>>8&255)+0.114*(n&255))/255}
+function sprite(p, mood="normal", px=5){
+  const s=SHAPES[p.shape]||SHAPES.bottle, rows=s.rows, off=H-rows.length;
+  const c=p.colors, col={o:"var(--px-out)",c:c.cap,C:shade(c.cap,-.25),b:c.body,B:shade(c.body,-.28),l:c.label,h:shade(c.body,.45)};
+  let r="";
+  rows.forEach((line,y)=>{[...line].forEach((ch,x)=>{ if(ch!=="."&&col[ch]) r+=`<rect x="${x}" y="${y+off}" width="1" height="1" fill="${col[ch]}"/>`;});});
+  // face on label
+  const fy=s.face.y+off, cx=s.face.cx, ink=lum(c.label)>.55?"#18181b":"#ffffff";
+  const ex1=cx-2, ex2=cx+1;
+  if(mood==="happy"){
+    r+=`<g fill="${ink}"><rect x="${ex1}" y="${fy}" width="1" height="1"/><rect x="${ex1-1}" y="${fy+1}" width="1" height="1"/><rect x="${ex1+1}" y="${fy+1}" width="1" height="1"/>`+
+       `<rect x="${ex2}" y="${fy}" width="1" height="1"/><rect x="${ex2-1}" y="${fy+1}" width="1" height="1"/><rect x="${ex2+1}" y="${fy+1}" width="1" height="1"/></g>`;
+    r+=`<g fill="${ink}"><rect x="${cx-2}" y="${fy+3}" width="1" height="1"/><rect x="${cx-1}" y="${fy+4}" width="2" height="1"/><rect x="${cx+1}" y="${fy+3}" width="1" height="1"/></g>`;
+  }else{
+    r+=`<g class="eye" fill="${ink}"><rect x="${ex1}" y="${fy}" width="1" height="2"/><rect x="${ex2}" y="${fy}" width="1" height="2"/></g>`;
+    if(mood==="worry") r+=`<rect x="${cx-1}" y="${fy+3}" width="2" height="1" fill="${ink}"/><rect x="${cx+3}" y="${fy-2}" width="1" height="1" fill="#5ac8fa"/><rect x="${cx+3}" y="${fy-1}" width="1" height="2" fill="#5ac8fa"/>`;
+    else r+=`<rect x="${cx-1}" y="${fy+3}" width="2" height="1" fill="${ink}"/>`;
+  }
+  r+=`<rect x="${ex1-1}" y="${fy+2}" width="1" height="1" fill="#ff8fab" opacity=".85"/><rect x="${ex2+1}" y="${fy+2}" width="1" height="1" fill="#ff8fab" opacity=".85"/>`;
+  return `<svg class="sprite" viewBox="0 0 14 ${H}" width="${14*px}" height="${H*px}" aria-hidden="true" style="--px-out:#18181b">${r}</svg>`;
+}
+/* 작은 픽셀 아이콘 */
+const ICONS = {
+  sun:["...y....","..y.y.y.","...yyy..","yyyyyyy.","...yyy..","..y.y.y.","...y....","........"],
+  bowl:["........",".s..s...","..s..s..","oooooooo","owwwwwwo",".owwwwo.","..oooo..","........"],
+  moon:["..mmm...",".mm.....","mm......","mm......","mm......",".mm...m.","..mmmm..","........"],
+  shelf:["oooooooo","o.cc.bbo","o.cc.bbo","oooooooo","o.ll.c.o","o.ll.c.o","oooooooo","o......o"],
+  today:["oooooooo","o.o..o.o","oooooooo","o......o","o.g....o","o.gg.g.o","o..gg..o","oooooooo"],
+  check:["......g.",".....gg.","g...gg..","gg.gg...",".ggg....","..g.....","........","oooooooo"],
+  set:["...oo...",".o.oo.o.","..oooo..","oooccooo","oooccooo","..oooo..",".o.oo.o.","...oo..."]
+};
+const ICOL={y:"#f5b301",s:"#a1a1aa",o:"currentColor",w:"#fef3c7",m:"#facc15",c:"#60a5fa",b:"#f472b6",l:"#4ade80",g:"#16a34a"};
+function icon(name,size=16){
+  let r=""; ICONS[name].forEach((line,y)=>[...line].forEach((ch,x)=>{if(ch!==".") r+=`<rect x="${x}" y="${y}" width="1" height="1" fill="${ICOL[ch]}"/>`;}));
+  return `<svg class="sprite" viewBox="0 0 8 8" width="${size}" height="${size}" aria-hidden="true">${r}</svg>`;
+}
+
+/* ================= 기본 데이터 (사진 속 5개) ================= */
+const SEED = [
+  {id:"ashwa",name:"심플슬립 아쉬아간다",short:"아쉬아간다",brand:"HLB",shape:"box",
+   colors:{cap:"#f29bb5",body:"#2f3577",label:"#e6e3ff"},unit:"정",total:30,remaining:30,
+   schedule:[{slot:"bedtime",qty:1,how:"저녁·취침 전"}],timing:["L00","T10"],
+   labelText:"1일 1회, 1회 1정",purpose:["sleep"],
+   ingredients:[{key:"ashwagandha",amount:null,unit:"mg",note:"Shoden® 추출물 · Withanoside IV 5.664 mg"},{key:"l_theanine",amount:null},{key:"lemon_balm",amount:null},{key:"magnesium",amount:null,note:"산화마그네슘 — 함량 미표기"},{key:"zinc",amount:null,note:"산화아연 — 함량 미표기"},{key:"vitamin_b6",amount:null}]},
+  {id:"bloat",name:"Bloat Relief",short:"블로트",brand:"Life Extension",shape:"bottle",
+   colors:{cap:"#1e2a55",body:"#2448a8",label:"#a9c8ff"},unit:"알",total:60,remaining:60,
+   schedule:[{slot:"lunch",qty:1,how:"식사 전",optional:true},{slot:"dinner",qty:1,how:"식사 전",optional:true}],timing:["L00"],
+   labelText:"1일 2회 1알, 가장 많이 먹는 식사 전",purpose:["digest"],
+   ingredients:[{key:"ginger",amount:null,note:"Prodigest® (생강·아티초크 추출물)"},{key:"artichoke",amount:null}]},
+  {id:"creatine",name:"Micronized Creatine",short:"크레아틴",brand:"Optimum Nutrition",shape:"tub",
+   colors:{cap:"#27272a",body:"#3f3f46",label:"#4cc76a"},unit:"캡슐",total:100,remaining:100,
+   schedule:[{slot:"morning",qty:2,how:"식사와 함께"},{slot:"dinner",qty:2,how:"식사와 함께"}],timing:["L00","T05"],
+   labelText:"1회 2캡슐, 1일 2회, 식사와 함께",purpose:["muscle"],
+   ingredients:[{key:"creatine",amount:5000,unit:"mg",note:"2캡슐 = 2.5 g"}]},
+  {id:"digest",name:"Digest Gold",short:"다이제스트",brand:"Enzymedica",shape:"bottle",
+   colors:{cap:"#e4e4e7",body:"#fafafa",label:"#ffd43b"},unit:"캡슐",total:240,remaining:240,
+   schedule:[{slot:"morning",qty:1,how:"첫 숟가락과"},{slot:"lunch",qty:1,how:"첫 숟가락과"},{slot:"dinner",qty:1,how:"첫 숟가락과"}],timing:["T06"],
+   labelText:"끼니마다 1캡슐",purpose:["digest"],
+   ingredients:[{key:"digestive_enzymes",amount:430,unit:"mg",note:"Digest Gold Enzyme Blend"},{key:"magnesium",amount:null,note:"ATPro(구연산마그네슘 등 25 mg 중 일부)"}]},
+  {id:"magmind",name:"MagMind",short:"맥마인드",brand:"Jarrow Formulas",shape:"bottle",
+   colors:{cap:"#fafafa",body:"#f4f4f5",label:"#e9d9b6"},unit:"캡슐",total:90,remaining:90,
+   schedule:[{slot:"morning",qty:1,how:"낮"},{slot:"lunch",qty:1,how:"낮"},{slot:"bedtime",qty:1,how:"취침 1시간 전"}],timing:["L00"],
+   labelText:"1일 3캡슐: 낮에 2, 취침 1시간 전 1",purpose:["sleep"],
+   ingredients:[{key:"magnesium",amount:144,unit:"mg",note:"L-트레온산마그네슘 2,000 mg 중 원소 마그네슘"}]}
+];
+
+/* ================= 저장 ================= */
+function load(){
+  try{const raw=localStorage.getItem(STORE_KEY); if(raw) return JSON.parse(raw);}catch(e){}
+  return {products:JSON.parse(JSON.stringify(SEED)),log:{},conds:{},seeded:true,stockChecked:false};
+}
+let S=load();
+function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(S));}catch(e){}}
+
+/* ================= 유틸 ================= */
+const SLOTS=[{k:"morning",ko:"아침",ic:"sun"},{k:"lunch",ko:"점심",ic:"bowl"},{k:"dinner",ko:"저녁",ic:"bowl"},{k:"bedtime",ko:"자기 전",ic:"moon"}];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function dkey(d=new Date()){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+const todayLog=()=>S.log[dkey()]||(S.log[dkey()]={});
+function dailyQty(p){return p.schedule.reduce((a,s)=>a+s.qty,0)}
+function daysLeft(p){const q=dailyQty(p);return q?Math.floor(p.remaining/q):Infinity}
+function moodOf(p){
+  const L=todayLog(); const req=p.schedule.filter(s=>!s.optional);
+  if(daysLeft(p)<=7) return "worry";
+  if(req.length && req.every(s=>L[p.id+"|"+s.slot])) return "happy";
+  return "normal";
+}
+function srcLinks(ids){return `<div class="src">${ids.map(i=>{const s=SOURCES[i];if(!s)return"";return s.u?`<a href="${s.u}" target="_blank" rel="noopener">${esc(s.t)} ↗</a>`:`<span>${esc(s.t)}</span>`}).join("")}</div>`}
+function gradeTag(g){return `<span class="grade g${g}" title="${GRADE_TXT[g]}">${g} ${GRADE_TXT[g]}</span>`}
+
+/* ================= 화면: 선반 ================= */
+function viewShelf(){
+  const P=S.products; let h="";
+  if(!S.stockChecked) h+=`<div class="banner">${icon("check",16)}<div>사진 속 5개를 미리 올려뒀어요. 통마다 <b>남은 개수</b>가 실제와 다를 수 있으니 하나씩 눌러서 맞춰주세요. <button class="btn" data-act="stockok" style="margin-top:6px">확인했어요</button></div></div>`;
+  h+=`<section class="pbox"><h2>${icon("shelf")}내 선반<span class="sub num">${P.length}개</span></h2><div class="shelf">`;
+  for(let i=0;i<Math.max(P.length,1);i+=3){
+    const chunk=P.slice(i,i+3);
+    h+=`<div class="row">`+chunk.map(p=>`<button class="item" data-open="${p.id}" aria-label="${esc(p.name)} 자세히"><span class="bob" id="spr-${p.id}">${sprite(p,moodOf(p))}</span><span class="tag">${esc(p.short||p.name)}</span></button>`).join("")+(chunk.length<3?`<span></span>`.repeat(3-chunk.length):"")+`</div><div class="plank"></div>`;
+    h+=`<div class="below">`+chunk.map(p=>{const d=daysLeft(p),f=Math.max(0,Math.min(8,Math.ceil(p.remaining/(p.total||1)*8)));const cls=d<=3?"empty":d<=7?"low":"";return `<div class="meta"><span class="stock ${cls}" aria-label="잔량 ${p.remaining}${esc(p.unit)}">${Array.from({length:8},(_,k)=>`<i class="${k<f?"on":""}"></i>`).join("")}</span><span class="days">${d===Infinity?"-":d+"일 남음"}</span></div>`}).join("")+(chunk.length<3?`<span></span>`.repeat(3-chunk.length):"")+`</div>`;
+  }
+  if(!P.length) h+=`<div class="empty" style="padding:30px 0">선반이 비었어요</div>`;
+  h+=`</div><div class="pbody"><div class="btns" style="margin-top:0"><button class="btn primary" data-act="add">+ 영양제 추가</button></div>
+  <p class="note" style="margin-top:10px">😊 오늘 다 먹으면 웃고, 💧 7일 안에 떨어지면 땀을 흘려요.</p></div></section>`;
+  // 요약
+  const a=analyze(); const warns=a.limits.filter(x=>x.pct>=80).length+a.overlaps.length+a.cautions.filter(c=>c.hit).length;
+  h+=`<section class="pbox"><h2>${icon("check")}한눈에 체크<span class="sub">근거 포함</span></h2><div class="pbody">
+    ${a.overlaps.map(o=>`<div class="card"><div class="hd">🟡 같은 목적 ${o.items.length}개 · ${esc(CATS[o.cat])}</div><div class="chips">${o.items.map(p=>`<span class="chip">${esc(p.short)}</span>`).join("")}</div></div>`).join("")}
+    ${a.limits.map(l=>meter(l)).join("")||'<div class="empty">합산할 영양소가 없어요</div>'}
+    <div class="btns"><button class="btn" data-tab="check">자세히 보기 (${warns})</button></div></div></section>`;
+  return h;
+}
+function meter(l){
+  const pct=Math.round(l.pct), cls=pct>=100?"bad":pct>=80?"warn":"";
+  return `<div class="meter"><div class="top"><span class="name">${esc(l.ko)}</span><span class="val num">${l.known} ${l.unit}${l.unknown.length?" + 미확인 "+l.unknown.length:""} / 상한 ${l.ul} ${l.unit} · ${pct}%</span></div>
+  <div class="mbar"><b class="${cls}" style="width:${Math.min(100,pct)}%"></b><span class="ul"></span></div>
+  ${l.unknown.length?`<div class="note">함량 미표기: ${l.unknown.map(esc).join(", ")} — 실제 합계는 조금 더 높을 수 있어요.</div>`:""}</div>`;
+}
+
+/* ================= 화면: 오늘 ================= */
+function viewToday(){
+  const L=todayLog(); let total=0,done=0;
+  const slots=SLOTS.map(s=>{
+    const items=[];S.products.forEach(p=>p.schedule.forEach(sc=>{if(sc.slot===s.k){items.push({p,sc});if(!sc.optional){total++;if(L[p.id+"|"+s.k])done++;}}}));
+    return {s,items};
+  });
+  let h=`<section class="pbox"><h2>${icon("today")}오늘 먹을 것<span class="sub num">${done} / ${total}</span></h2><div class="pbody">
+  <div class="progress"><div class="pbar" role="progressbar" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${done}">${Array.from({length:Math.max(total,1)},(_,i)=>`<i class="${i<done?"on":""}"></i>`).join("")}</div></div>`;
+  slots.forEach(({s,items})=>{
+    h+=`<div class="slot"><h3>${icon(s.ic)}${s.ko}<span class="t num">${items.length}개</span></h3>`;
+    if(!items.length) h+=`<div class="note">없음</div>`;
+    items.forEach(({p,sc})=>{const k=p.id+"|"+s.k,on=!!L[k];
+      h+=`<button class="dose ${on?"done":""}" data-dose="${k}" aria-pressed="${on}">${sprite(p,on?"happy":"normal",2)}<span><span class="nm">${esc(p.short||p.name)}</span> <span class="num">${sc.qty}${esc(p.unit)}</span>${sc.optional?'<span class="opt">필요할 때</span>':""}<br><span class="how">${esc(sc.how||"")}</span></span><span class="chk">${on?"✓":""}</span></button>`;});
+    h+=`</div>`;
+  });
+  h+=`<p class="note">체크하면 남은 개수가 줄어요. '필요할 때'는 과식한 날만 먹는 제품이라 진행률에서 빠져요.</p></div></section>`;
+  return h;
+}
+
+/* ================= 분석 ================= */
+function analyze(){
+  const P=S.products, lim={}, catMap={}, ingSet={};
+  P.forEach(p=>{
+    (p.purpose||[]).forEach(c=>{(catMap[c]=catMap[c]||[]).push(p)});
+    p.ingredients.forEach(i=>{
+      (ingSet[i.key]=ingSet[i.key]||[]).push(p);
+      const n=ING[i.key]?.nutrient; if(!n||!LIMITS[n]) return;
+      const L=lim[n]=lim[n]||{...LIMITS[n],key:n,known:0,unknown:[],parts:[]};
+      if(i.amount==null) L.unknown.push(p.short||p.name); else {L.known+=+i.amount;L.parts.push({p,amt:+i.amount})}
+    });
+  });
+  Object.values(lim).forEach(l=>l.pct=l.known/l.ul*100);
+  const overlaps=Object.entries(catMap).filter(([c,a])=>a.length>=2&&c!=="bleed").map(([cat,items])=>({cat,items}));
+  const cautions=[];
+  CAUTIONS.forEach(r=>{if(ingSet[r.ing]){const hit=r.cond.some(c=>S.conds[c]);cautions.push({...r,items:[...new Set(ingSet[r.ing])],hit,hitConds:r.cond.filter(c=>S.conds[c])})}});
+  cautions.sort((a,b)=>b.hit-a.hit);
+  return {limits:Object.values(lim).sort((a,b)=>b.pct-a.pct),overlaps,cautions};
+}
+const OVERLAP_NOTE={
+  digest:"성분은 달라도(소화효소 vs 생강·아티초크) 목적이 같아요. 평소엔 하나, 과식한 날만 둘 다 — 처럼 나눠 쓰면 비용을 아낄 수 있어요.",
+  sleep:"서로 다른 성분이라 겹침 자체는 문제가 아니에요. 수면제·신경안정제를 먹고 있다면 진정 효과가 더해질 수 있어요.",
+  muscle:"같은 목적 제품이 여러 개예요. 같은 성분(예: 크레아틴)이 겹치는지 확인하세요."
+};
+function viewCheck(){
+  const a=analyze(); let h="";
+  h+=`<section class="pbox"><h2>📊 상한 대비 합계<span class="sub">하루 기준</span></h2><div class="pbody">`;
+  h+=a.limits.length?a.limits.map(l=>meter(l)+`<div class="card" style="margin-top:-6px"><div class="hd">${gradeTag(l.grade)} <span class="note" style="margin:0">${esc(l.scope)}</span></div>${l.parts.length?`<div class="chips">${l.parts.map(x=>`<span class="chip num">${esc(x.p.short)} ${x.amt}${l.unit}</span>`).join("")}</div>`:""}${srcLinks(l.src)}</div>`).join(""):`<div class="empty">합산할 영양소가 없어요</div>`;
+  h+=`<p class="note">부형제(스테아린산마그네슘 등)는 합산에서 빼요. 라벨의 화합물 무게가 아니라 <b>원소 무게</b>로 계산해요.</p></div></section>`;
+
+  h+=`<section class="pbox"><h2>🟡 같은 목적 (기능 중복)<span class="sub">${a.overlaps.length}건</span></h2><div class="pbody">`;
+  h+=a.overlaps.length?a.overlaps.map(o=>`<div class="card"><div class="hd">${esc(CATS[o.cat])} · ${o.items.length}개 ${gradeTag("D")}</div><div class="chips">${o.items.map(p=>`<span class="chip">${esc(p.short)}</span>`).join("")}</div><div class="note">${esc(OVERLAP_NOTE[o.cat]||"")}</div></div>`).join(""):`<div class="empty">겹치는 목적이 없어요</div>`;
+  h+=`</div></section>`;
+
+  h+=`<section class="pbox"><h2>⚠️ 주의사항<span class="sub">${a.cautions.filter(c=>c.hit).length}건 해당</span></h2><div class="pbody">`;
+  h+=`<p class="note" style="margin-top:0">설정에서 복용 중인 약·질환을 체크하면 해당 항목이 빨갛게 표시돼요.</p>`;
+  h+=a.cautions.map(c=>`<div class="card ${c.hit?"hit":""}"><div class="hd">${c.hit?'<span class="flag">해당</span>':""}${esc(ING[c.ing].ko)} ${gradeTag(c.grade)}</div><div>${esc(c.msg)}</div><div class="chips">${c.items.map(p=>`<span class="chip">${esc(p.short)}</span>`).join("")}${c.hitConds.map(k=>`<span class="chip" style="border-color:var(--bad);color:var(--bad)">${esc(CONDS[k])}</span>`).join("")}</div>${srcLinks(c.src)}</div>`).join("")||`<div class="empty">해당 주의사항이 없어요</div>`;
+  h+=`</div></section>`;
+
+  h+=`<section class="pbox"><h2>📚 근거 등급</h2><div class="pbody"><div class="legend">
+    ${["A","B","C","D"].map(g=>`${gradeTag(g)}<span>${{A:"제품 라벨, 식약처 고시, 의약품 허가사항",B:"NIH·NCCIH·LiverTox·영양소 섭취기준 등 공공기관",C:"논문·학회 입장문",D:"관행이거나 근거가 약함"}[g]}</span>`).join("")}
+  </div><p class="disclaimer">이 정보는 제품 라벨과 공공기관 자료를 정리한 것이며 의학적 조언이 아닙니다. 복용 중인 약이 있거나 질환이 있으면 의사·약사와 상의하세요.</p></div></section>`;
+  return h;
+}
+
+/* ================= 화면: 설정 ================= */
+function viewSettings(){
+  return `<section class="pbox"><h2>🩺 나에게 해당하는 것</h2><div class="pbody">
+    <p class="note" style="margin-top:0">주의사항을 나에게 맞춰 보여주는 데만 써요. 기기 밖으로 나가지 않아요.</p>
+    ${Object.entries(CONDS).map(([k,v])=>`<label class="toggle"><input type="checkbox" data-cond="${k}" ${S.conds[k]?"checked":""}>${esc(v)}</label>`).join("")}
+  </div></section>
+  <section class="pbox"><h2>💾 데이터</h2><div class="pbody">
+    <p class="note" style="margin-top:0">모든 데이터는 <b>이 기기 브라우저에만</b> 저장돼요. 서버로 보내지 않아요. 브라우저 데이터를 지우면 사라지니 가끔 백업해 주세요.</p>
+    <div class="btns"><button class="btn" data-act="export">백업 파일 저장</button><label class="btn" style="display:inline-block">백업 불러오기<input type="file" accept="application/json" id="importFile" class="sr"></label><button class="btn danger" data-act="reset">처음 상태로</button></div>
+  </div></section>
+  <section class="pbox"><h2>🛒 재구매 링크</h2><div class="pbody"><p class="note" style="margin-top:0">${AFFILIATE_ENABLED?"이 링크로 구매하면 운영자가 수수료를 받을 수 있어요.":"준비 중이에요. 켜지면 쇼핑몰별 가격 비교와 함께 ‘수수료를 받을 수 있음’을 표시해요."}</p></div></section>
+  <section class="pbox"><h2>ℹ️ 정보</h2><div class="pbody"><p class="note" style="margin:0">픽셀 폰트: <a href="https://galmuri.quiple.dev/" target="_blank" rel="noopener">Galmuri</a> (SIL OFL 1.1). 근거 DB는 라벨 → 공공기관 → 논문 순으로 우선해요.</p></div></section>`;
+}
+
+/* ================= 시트: 상세 / 편집 ================= */
+function openSheet(html){$("#sheetBody").innerHTML=html;$("#sheet").classList.add("open");$("#sheetBg").classList.add("open");setTimeout(()=>$("#sheet .close")?.focus(),50)}
+function closeSheet(){$("#sheet").classList.remove("open");$("#sheetBg").classList.remove("open")}
+function detail(id){
+  const p=S.products.find(x=>x.id===id); if(!p) return;
+  const d=daysLeft(p);
+  openSheet(`<h2 id="sheetTitle">${esc(p.name)}<button class="btn close" data-act="close" aria-label="닫기">✕</button></h2>
+  <div class="detail-top"><span class="mood-pop">${sprite(p,moodOf(p),6)}</span><div>
+    <div class="note" style="margin:0">${esc(p.brand||"")}</div>
+    <div style="font-weight:600;margin:2px 0">남은 개수</div>
+    <div style="display:flex;align-items:center;gap:6px"><button class="btn" data-adj="-1" data-id="${p.id}" aria-label="하나 빼기">−</button><input class="in num" style="width:72px;text-align:center" inputmode="numeric" data-remain="${p.id}" value="${p.remaining}"><span>${esc(p.unit)}</span><button class="btn" data-adj="1" data-id="${p.id}" aria-label="하나 더하기">+</button></div>
+    <div class="note">${d===Infinity?"":"약 "+d+"일 분량 · 하루 "+dailyQty(p)+esc(p.unit)}</div></div></div>
+  ${d<=7&&d!==Infinity?`<div class="banner">💧 곧 떨어져요. ${AFFILIATE_ENABLED?'<a href="#">가격 비교</a>':'(재구매 링크 준비 중)'}</div>`:""}
+  <dl class="kv"><dt>라벨 복용법</dt><dd>${esc(p.labelText||"-")}</dd>
+  <dt>배치</dt><dd>${p.schedule.map(s=>`${SLOTS.find(x=>x.k===s.slot).ko} ${s.qty}${esc(p.unit)}${s.how?" ("+esc(s.how)+")":""}${s.optional?" · 필요할 때":""}`).join("<br>")}</dd>
+  <dt>성분</dt><dd>${p.ingredients.map(i=>`${esc(ING[i.key]?.ko||i.key)} ${i.amount!=null?`<span class="num">${i.amount}${esc(i.unit||"")}</span>`:'<span class="note">함량 미표기</span>'}${i.note?`<br><span class="note">${esc(i.note)}</span>`:""}`).join("<br>")}</dd></dl>
+  <div style="margin-top:12px;font-weight:600;font-size:13px">왜 이 시간이에요?</div>
+  ${(p.timing||["L00"]).map(t=>{const w=TIMING_WHY[t];return w?`<div class="card"><div class="hd">${gradeTag(w.grade)}</div><div>${esc(w.t)}</div>${srcLinks(w.src)}</div>`:""}).join("")}
+  <div class="btns"><button class="btn" data-act="edit" data-id="${p.id}">수정</button><button class="btn danger" data-act="del" data-id="${p.id}">선반에서 빼기</button></div>`);
+}
+const PALETTE=["#18181b","#3f3f46","#a1a1aa","#fafafa","#2448a8","#2f3577","#60a5fa","#a9c8ff","#16a34a","#4cc76a","#ffd43b","#f59e0b","#ef4444","#f29bb5","#a855f7","#e9d9b6"];
+let draft=null;
+function editForm(id){
+  const src=id?S.products.find(x=>x.id===id):null;
+  draft=src?JSON.parse(JSON.stringify(src)):{id:"p"+Date.now().toString(36),name:"",short:"",brand:"",shape:"bottle",colors:{cap:"#fafafa",body:"#60a5fa",label:"#fafafa"},unit:"캡슐",total:60,remaining:60,schedule:[],timing:["L00"],labelText:"",purpose:[],ingredients:[]};
+  renderForm(!!src);
+}
+function renderForm(isEdit){
+  const d=draft;
+  const slotRow=s=>{const sc=d.schedule.find(x=>x.slot===s.k);return `<div class="slotrow"><label class="lb"><input type="checkbox" data-fslot="${s.k}" ${sc?"checked":""}> ${s.ko}</label><input class="in" placeholder="예: 식사와 함께" data-fhow="${s.k}" value="${esc(sc?.how||"")}" ${sc?"":"disabled"}><input class="in num" inputmode="numeric" data-fqty="${s.k}" value="${sc?.qty||1}" ${sc?"":"disabled"} aria-label="${s.ko} 개수"></div>`};
+  openSheet(`<h2 id="sheetTitle">${isEdit?"수정":"영양제 추가"}<button class="btn close" data-act="close" aria-label="닫기">✕</button></h2>
+  <div style="display:flex;justify-content:center;margin:6px 0" id="preview">${sprite(d,"normal",6)}</div>
+  <label class="f">모양</label><div class="shapes">${[["bottle","병"],["tub","통"],["box","상자"]].map(([k,v])=>`<button data-fshape="${k}" aria-pressed="${d.shape===k}">${sprite({...d,shape:k},"normal",2)}${v}</button>`).join("")}</div>
+  ${["cap","body","label"].map(part=>`<label class="f">${{cap:"뚜껑",body:"몸통",label:"라벨"}[part]} 색</label><div class="swatches">${PALETTE.map(c=>`<button style="background:${c}" data-fcolor="${part}" data-c="${c}" aria-pressed="${d.colors[part]===c}" aria-label="${c}"></button>`).join("")}</div>`).join("")}
+  <label class="f" for="fname">제품명</label><input class="in" id="fname" data-f="name" value="${esc(d.name)}" placeholder="예: 비타민D 2000IU">
+  <div class="grid2"><div><label class="f">선반 이름표 (짧게)</label><input class="in" data-f="short" value="${esc(d.short)}" maxlength="6" placeholder="예: 비타D"></div><div><label class="f">브랜드</label><input class="in" data-f="brand" value="${esc(d.brand)}"></div></div>
+  <div class="grid3" style="margin-top:2px"><div><label class="f">단위</label><select class="in" data-f="unit">${["캡슐","정","알","포","스쿱","ml"].map(u=>`<option ${d.unit===u?"selected":""}>${u}</option>`).join("")}</select></div><div><label class="f">한 통</label><input class="in num" inputmode="numeric" data-f="total" value="${d.total}"></div><div><label class="f">남은 개수</label><input class="in num" inputmode="numeric" data-f="remaining" value="${d.remaining}"></div></div>
+  <label class="f">라벨 복용법 (그대로 적기)</label><input class="in" data-f="labelText" value="${esc(d.labelText)}" placeholder="예: 1일 1회 1정, 식후">
+  <label class="f">언제 먹나요 · 몇 개</label>${SLOTS.map(slotRow).join("")}
+  <label class="f">목적</label><div class="chips">${Object.entries(CATS).filter(([k])=>k!=="bleed").map(([k,v])=>`<label class="chip"><input type="checkbox" data-fpurpose="${k}" ${d.purpose.includes(k)?"checked":""}> ${v}</label>`).join("")}</div>
+  <label class="f">성분 (하루 합계, 모르면 비워두기)</label>
+  <div id="ingRows">${d.ingredients.map((i,n)=>ingRow(i,n)).join("")}</div>
+  <button class="btn" data-act="addIng">+ 성분</button>
+  <div class="btns"><button class="btn primary" data-act="saveForm" data-edit="${isEdit?1:0}">저장</button><button class="btn" data-act="close">취소</button></div>`);
+}
+function ingRow(i,n){return `<div class="grid3" style="margin-bottom:6px"><select class="in" data-ing="${n}" data-k="key">${Object.entries(ING).map(([k,v])=>`<option value="${k}" ${i.key===k?"selected":""}>${v.ko}</option>`).join("")}</select><input class="in num" inputmode="decimal" placeholder="양" data-ing="${n}" data-k="amount" value="${i.amount??""}"><select class="in" data-ing="${n}" data-k="unit">${["mg","μg","g","IU","CFU"].map(u=>`<option ${i.unit===u?"selected":""}>${u}</option>`).join("")}</select></div>`}
+function readForm(){
+  const sb=$("#sheetBody"); const d=draft;
+  sb.querySelectorAll("[data-f]").forEach(el=>{const k=el.dataset.f;d[k]=(k==="total"||k==="remaining")?Math.max(0,parseInt(el.value)||0):el.value.trim()});
+  d.schedule=SLOTS.filter(s=>sb.querySelector(`[data-fslot="${s.k}"]`).checked).map(s=>{const old=(d.schedule||[]).find(x=>x.slot===s.k)||{};return {...old,slot:s.k,qty:Math.max(1,parseInt(sb.querySelector(`[data-fqty="${s.k}"]`).value)||1),how:sb.querySelector(`[data-fhow="${s.k}"]`).value.trim()}});
+  d.purpose=[...sb.querySelectorAll("[data-fpurpose]:checked")].map(x=>x.dataset.fpurpose);
+  d.ingredients=d.ingredients.map((i,n)=>{const g=k=>sb.querySelector(`[data-ing="${n}"][data-k="${k}"]`);const a=g("amount").value.trim();return {...i,key:g("key").value,amount:a===""?null:parseFloat(a),unit:g("unit").value}});
+}
+
+/* ================= 라우팅 / 이벤트 ================= */
+let tab="shelf";
+function render(){
+  $("#view").innerHTML={shelf:viewShelf,today:viewToday,check:viewCheck,settings:viewSettings}[tab]();
+  document.querySelectorAll("nav.tabs button").forEach(b=>b.dataset.tab===tab?b.setAttribute("aria-current","page"):b.removeAttribute("aria-current"));
+  const f=$("#importFile"); if(f) f.onchange=e=>{const file=e.target.files[0];if(!file)return;file.text().then(t=>{try{const j=JSON.parse(t);if(!Array.isArray(j.products))throw 0;S=j;save();render();alert("불러왔어요")}catch(_){alert("백업 파일 형식이 아니에요")}})};
+}
+document.addEventListener("click",e=>{
+  const t=e.target.closest("button,[data-open]"); if(!t) return;
+  if(t.dataset.tab){tab=t.dataset.tab;render();scrollTo(0,0);return}
+  if(t.dataset.open){detail(t.dataset.open);return}
+  if(t.dataset.dose){
+    const [pid,slot]=t.dataset.dose.split("|"),L=todayLog(),p=S.products.find(x=>x.id===pid),sc=p.schedule.find(x=>x.slot===slot);
+    if(L[t.dataset.dose]){delete L[t.dataset.dose];p.remaining+=sc.qty}else{L[t.dataset.dose]=true;p.remaining=Math.max(0,p.remaining-sc.qty)}
+    save();render();return;
+  }
+  if(t.dataset.adj){const p=S.products.find(x=>x.id===t.dataset.id);p.remaining=Math.max(0,p.remaining+ +t.dataset.adj);save();detail(p.id);render();return}
+  if(t.dataset.fshape){readForm();draft.shape=t.dataset.fshape;renderForm($("[data-act=saveForm]").dataset.edit==="1");return}
+  if(t.dataset.fcolor){readForm();draft.colors[t.dataset.fcolor]=t.dataset.c;renderForm($("[data-act=saveForm]").dataset.edit==="1");return}
+  const act=t.dataset.act;
+  if(act==="close"){closeSheet();return}
+  if(act==="stockok"){S.stockChecked=true;save();render();return}
+  if(act==="add"){editForm(null);return}
+  if(act==="edit"){editForm(t.dataset.id);return}
+  if(act==="addIng"){readForm();draft.ingredients.push({key:"other",amount:null,unit:"mg"});renderForm($("[data-act=saveForm]").dataset.edit==="1");return}
+  if(act==="saveForm"){readForm();if(!draft.name){alert("제품명을 적어주세요");return}if(!draft.short)draft.short=draft.name.slice(0,6);
+    const i=S.products.findIndex(x=>x.id===draft.id);if(i>=0)S.products[i]=draft;else S.products.push(draft);save();closeSheet();render();return}
+  if(act==="del"){if(confirm("선반에서 뺄까요?")){S.products=S.products.filter(x=>x.id!==t.dataset.id);save();closeSheet();render()}return}
+  if(act==="export"){const b=new Blob([JSON.stringify(S,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="영양제선반-"+dkey()+".json";a.click();return}
+  if(act==="reset"){if(confirm("모든 기록을 지우고 처음 상태로 돌릴까요?")){try{localStorage.removeItem(STORE_KEY)}catch(_){}S=load();render()}return}
+});
+document.addEventListener("change",e=>{
+  const t=e.target;
+  if(t.dataset.cond){S.conds[t.dataset.cond]=t.checked;save();return}
+  if(t.dataset.remain){const p=S.products.find(x=>x.id===t.dataset.remain);p.remaining=Math.max(0,parseInt(t.value)||0);save();render();detail(p.id);return}
+  if(t.dataset.fslot){const sb=$("#sheetBody");sb.querySelector(`[data-fhow="${t.dataset.fslot}"]`).disabled=!t.checked;sb.querySelector(`[data-fqty="${t.dataset.fslot}"]`).disabled=!t.checked}
+});
+$("#sheetBg").addEventListener("click",closeSheet);
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
+
+$("#today").textContent=new Date().toLocaleDateString("ko-KR",{month:"long",day:"numeric",weekday:"short"});
+$("#ic-shelf").innerHTML=icon("shelf",24);$("#ic-today").innerHTML=icon("today",24);$("#ic-check").innerHTML=icon("check",24);$("#ic-set").innerHTML=icon("set",24);
+render();
+if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body>
+</html>
