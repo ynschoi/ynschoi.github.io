@@ -110,9 +110,9 @@ input,select,textarea{font-size:16px!important}
 .about .bk{margin-top:10px;display:grid;gap:6px;padding:10px 12px;background:#fffefa;border:1px solid var(--line);border-radius:12px;font-size:13.5px}.about .bk b{color:var(--fg)}.about .bkbtn{display:flex;gap:6px;flex-wrap:wrap}
 .pill2{all:unset;cursor:pointer;display:inline-flex;align-items:center;font-size:12.5px;font-weight:700;line-height:1;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:#fffefa;color:var(--fg)}.pill2.on{background:#4f9a45;border-color:#4f9a45;color:#fffefa}.pill2:disabled{opacity:.5}.pill2:focus-visible{outline:2px solid var(--hl);outline-offset:2px}
 .about .safe{margin-top:6px;padding:10px 12px;background:#f4f8ea;border:1px solid #cfe1b4;border-radius:12px;font-size:13.5px}
-.evt{container-type:inline-size;background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(60,60,40,.10);display:grid;grid-template-columns:2.6em 1fr;overflow:hidden;font-size:14px}
+.evt{align-items:stretch;container-type:inline-size;background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(60,60,40,.10);display:grid;grid-template-columns:2.6em 1fr;overflow:hidden;font-size:14px}
 .hof2{margin-top:6px;padding:14px 12px 10px;border:2px solid #e2b75a;border-radius:16px;background:linear-gradient(#fffaf0,#fff4dc);box-shadow:inset 0 0 0 4px #fffaf0,inset 0 0 0 5px #f0d58c}.hof2 .ht{display:flex;justify-content:center;align-items:center;gap:6px;font:400 22px/1 "YoonManse",sans-serif;color:#8a5a00}.hof2 .lr{font-size:18px}.hof2 .lr.r{transform:scaleX(-1)}.hof2 .hd{margin:5px 0 10px;text-align:center;font-size:12.5px;color:#a3854a}.hof2 .g{display:grid;grid-template-columns:repeat(5,1fr);gap:10px 6px}.hof2 .h{text-align:center}.hof2 .md{width:100%;aspect-ratio:1;border-radius:50%;background:radial-gradient(#fff,#fbf0d4);border:2px dashed #e2b75a;display:grid;place-items:center}.hof2 .md span{font:400 20px/1 "YoonManse",sans-serif;color:#dcc07a}.hof2 .rb{margin:5px auto 0;font-size:10px;color:#fff;background:#e2b75a;border-radius:3px;padding:1px 4px;width:fit-content}.hof2 .hcta{margin:10px 0 0;text-align:right}.hof2 .hgo{all:unset;cursor:pointer;font-size:13px;color:#b07a12;text-decoration:underline;text-underline-offset:3px}
-.evt .eside{background:#4f9a45;color:#fff;writing-mode:vertical-rl;text-align:center;font:700 .8em/1 "Pretendard",sans-serif;letter-spacing:.35em;display:grid;place-items:center;position:relative}
+.evt .eside{background:#4f9a45;color:#fff;font:700 .8em/1 "Pretendard",sans-serif;letter-spacing:.35em;display:flex;align-items:center;justify-content:center;align-self:stretch;min-height:100%;position:relative}.evt .eside span{writing-mode:vertical-rl;-webkit-writing-mode:vertical-rl}
 .evt .eside:after{content:"";position:absolute;right:-6px;top:0;bottom:0;width:12px;background:radial-gradient(circle at 6px 8px,var(--page) 4px,transparent 4.5px) 0 0/12px 16px repeat-y}
 .evt .em2{font-size:min(14px,calc(100cqi/28));padding:1.15em 1em .9em 1.3em;white-space:nowrap;line-height:1.45;font-family:"Pretendard",sans-serif;color:var(--fg)} /* 화면 폭에 맞춰 글자 크기를 줄여서 어떤 화면에서도 줄넘김 없음 */
 .evt h3{margin:0;font:400 2.05em/1.1 "YoonManse",sans-serif;color:#2f6a2c}
@@ -386,6 +386,19 @@ footer{font-size:12px;color:var(--muted)}
 .coach .bot{display:flex;align-items:center;gap:10px}.coach .dots{display:flex;gap:5px;flex:1}.coach .dots i{width:6px;height:6px;border-radius:50%;background:#d6d2c2}.coach .dots i.on{background:#4f9a45;width:16px;border-radius:3px}
 .coach .skip{all:unset;cursor:pointer;font-size:13px;color:var(--muted);padding:6px 4px}.coach .next{all:unset;cursor:pointer;font-size:13.5px;font-weight:700;color:#fffefa;background:#4f9a45;border-radius:999px;padding:7px 16px}
 @media (prefers-reduced-motion:reduce){.coach .hole,.coach .bub{transition:none}}
+
+/* 하트 탭 정리: 같은 흰 카드, 간격 통일, 보안+백업은 한 카드 */
+#p-heart{gap:14px}
+#p-heart .again{margin:0 0 -4px}
+#p-heart .evt,#p-heart .safe,#p-heart .bk,#p-heart .h1.letter{margin:0;border-radius:14px;box-shadow:0 1px 6px rgba(60,60,40,.06)}
+#p-heart .safe,#p-heart .bk{padding:14px 16px;font-size:13.5px;line-height:1.6;background:#fffefa;border:1px solid var(--line)}
+#p-heart .safe b,#p-heart .bk>b{display:block;font-size:14.5px;font-weight:600;color:#2f6a2c;margin-bottom:4px}
+#p-heart .safe b+br{display:none}
+#p-heart .bk{gap:6px}
+#p-heart .h1.letter{background:#fffefa;border:1px solid var(--line);padding:16px}
+#p-heart .hver{margin-top:0}
+#p-heart .safe{border-radius:14px 14px 0 0;border-bottom:0;margin-bottom:-14px;box-shadow:none}
+#p-heart .bk{border-radius:0 0 14px 14px;border-top:1px dashed var(--line);box-shadow:none}
 </style>
 
 <div class="wrap">
@@ -443,14 +456,15 @@ footer{font-size:12px;color:var(--muted)}
 
   <div id="p-heart" class="pane about" hidden>
     <p class="again"><button type="button" class="lnk" id="coachAgain">사용법 다시 보기</button></p>
-    <div class="evt"><div class="eside">WEEKLY</div><div class="em2">
+    <div class="evt"><div class="eside"><span>WEEKLY</span></div><div class="em2">
       <h3>🏅 명예 스티커 전당</h3><p class="sub">원하는 등산 아이템을 스티커로 만들어 드려요.<br>스티커 아래에 닉네임이 새겨져요.</p>
       <div class="steps"><div><em>01</em>🗺️ 지도 만들고<br>📤 공유하기</div><div><em>02</em>📸 인스타 태그 <a class="lk" href="https://www.instagram.com/youngs.00/" target="_blank" rel="noopener">@youngs.00</a> <span class="or">또는</span><br>✉️ 캡처해서 <button type="button" class="lk lkb" data-copy="mysanzido@gmail.com" data-toast="메일 주소를 복사했어요 · mysanzido@gmail.com">인증 메일 보내기</button></div></div>
       <dl><dt>🎁 선정</dt><dd>매주 선착순 5명 + 창의적인 지도 5명</dd><dt>📅 일정</dt><dd>11/7(토) 마감 · 11/9(월) 업데이트</dd></dl>
       <p class="rq">💌 원하는 스티커도 같이 알려주세요!<br><span>예) 🐿️ 다람쥐 · 🍁 단풍잎 · 🍶 막걸리 · 참고 사진도 좋아요</span></p></div></div>
-    <div class="h1 letter"><div class="stp" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M6 30 L16 16 L21 23 L26 17 L34 30" fill="none" stroke="#4f9a45" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><text x="20" y="38" text-anchor="middle" font-size="7" fill="#4f9a45" font-family="Pretendard">100</text></svg></div><div class="pm" aria-hidden="true">BAC · 2026</div><p class="to">100대 명산 동료 여러분</p><p>안녕하세요!<br>저는 겨우 10좌라서 완등은 먼 훗날 이야기고요,<br>하나씩 쌓이는 소소한 재미를 더해보려고 만들어보았습니다.</p><p>버그 신고, 개선 요청, 재밌는 아이디어<br>DM 주시면 잽싸게 반영해보겠습니다.<br>예쁘게 써주시고 태그도 환영합니다🤍</p><p class="sg1"><button type="button" data-copy="@youngs.00" data-toast="인스타 아이디를 복사했어요 · @youngs.00">📷 <u>@youngs.00</u></button><br><button type="button" data-copy="mysanzido@gmail.com" data-toast="메일 주소를 복사했어요 · mysanzido@gmail.com">✉️ <u>mysanzido@gmail.com</u></button></p></div><p class="safe"><b>🔒 보안 걱정 NO!</b><br>사진은 서버로 보내지 않습니다.<br>누끼, 저장 모두 내 폰 브라우저 안에서 이루어집니다.</p><div class="bk"><b>📦 지도 백업 · 불러오기</b><span>지도는 이 브라우저에만 저장됩니다.<br>필요한 경우, 백업 파일로 옮겨주세요.</span>
+    <p class="safe"><b>🔒 보안 걱정 NO!</b><br>사진은 서버로 보내지 않습니다.<br>누끼, 저장 모두 내 폰 브라우저 안에서 이루어집니다.</p><div class="bk"><b>📦 지도 백업 · 불러오기</b><span>지도는 이 브라우저에만 저장됩니다.<br>필요한 경우, 백업 파일로 옮겨주세요.</span>
       <div class="bkbtn"><button type="button" class="pill2 on" id="bkSave">백업 파일 저장</button><label class="pill2" for="bkIn">백업 불러오기</label></div>
-      <input type="file" id="bkIn" accept=".json,application/json" hidden><span class="tip" id="bkMsg" role="status"></span></div><p class="hver">version 1.1 · 2026.11.01</p>
+      <input type="file" id="bkIn" accept=".json,application/json" hidden><span class="tip" id="bkMsg" role="status"></span></div>
+    <div class="h1 letter"><div class="stp" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M6 30 L16 16 L21 23 L26 17 L34 30" fill="none" stroke="#4f9a45" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><text x="20" y="38" text-anchor="middle" font-size="7" fill="#4f9a45" font-family="Pretendard">100</text></svg></div><div class="pm" aria-hidden="true">BAC · 2026</div><p class="to">100대 명산 동료 여러분</p><p>안녕하세요!<br>저는 겨우 10좌라서 완등은 먼 훗날 이야기고요,<br>하나씩 쌓이는 소소한 재미를 더해보려고 만들어보았습니다.</p><p>버그 신고, 개선 요청, 재밌는 아이디어<br>DM 주시면 잽싸게 반영해보겠습니다.<br>예쁘게 써주시고 태그도 환영합니다🤍</p><p class="sg1"><button type="button" data-copy="@youngs.00" data-toast="인스타 아이디를 복사했어요 · @youngs.00">📷 <u>@youngs.00</u></button><br><button type="button" data-copy="mysanzido@gmail.com" data-toast="메일 주소를 복사했어요 · mysanzido@gmail.com">✉️ <u>mysanzido@gmail.com</u></button></p></div><p class="hver">version 1.1 · 2026.11.01</p>
   </div>
   <div hidden><button type="button" id="mkShare">이미지 저장</button><button type="button" id="linkShare">링크 공유</button></div>
   <div id="p-sticker" class="pane" hidden>
@@ -462,6 +476,7 @@ footer{font-size:12px;color:var(--muted)}
     </div></div>
     <h3 class="sh3">마일스톤 스티커</h3>
     <div class="slots" id="badgeSlots"></div>
+    <h3 class="sh3">이번 주 스티커</h3>
     <div class="hof2"><div class="ht"><span class="lr">🌿</span>명예 스티커 전당<span class="lr r">🌿</span></div><p class="hd">이번 주 스티커는 11/9 (월) 공개</p>
       <div class="g"><div class="h"><div class="md"><span>?</span></div><div class="rb">닉네임</div></div><div class="h"><div class="md"><span>?</span></div><div class="rb">닉네임</div></div><div class="h"><div class="md"><span>?</span></div><div class="rb">닉네임</div></div><div class="h"><div class="md"><span>?</span></div><div class="rb">닉네임</div></div><div class="h"><div class="md"><span>?</span></div><div class="rb">닉네임</div></div><div class="h"><div class="md"><span>?</span></div><div class="rb">닉네임</div></div><div class="h"><div class="md"><span>?</span></div><div class="rb">닉네임</div></div><div class="h"><div class="md"><span>?</span></div><div class="rb">닉네임</div></div><div class="h"><div class="md"><span>?</span></div><div class="rb">닉네임</div></div><div class="h"><div class="md"><span>?</span></div><div class="rb">닉네임</div></div></div>
       <p class="hcta"><button type="button" class="hgo">내 스티커 신청하기 →</button></p></div>
@@ -1130,7 +1145,7 @@ function openCrop(r){ hideSug(); CR={r,box:(r.cbox||[.08,.08,.92,.98]).slice(),m
 const GC_SITE=location.hostname.startsWith("my100san")?"new":"old"; // 이벤트를 주소별로 구분: new = my100san.github.io, old = ynschoi.github.io/BAC100
 // ── 자동 업데이트: 홈 화면에 추가한 앱도 새 버전이 올라가면 알아서 바뀌게 ──
 // version.json(수십 바이트)만 확인하고, 다르면 새 파일을 받아 다시 연다. 작업 중(사진 반영 전)엔 다음 기회로.
-const APPV="20261104-025618";
+const APPV="20261104-030416";
 (function(){ let last=0;
   async function chk(atStart){ const now=Date.now(); if(!atStart&&now-last<60000) return; last=now;
     try{ const r=await fetch("version.json?t="+now,{cache:"no-store"}); if(!r.ok) return; const v=(await r.json()).v; if(!v||v===APPV) return;
