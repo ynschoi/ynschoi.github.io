@@ -819,14 +819,16 @@ function zoom(f,cx,cy){
 // ── 아래 탭: 업로드 / 텍스트 / 스티커 ──
 // 이벤트 알림: 하트 탭을 한 번 열 때까지 'event' 딱지가 떠 있음 (이벤트가 바뀌면 EVT_ID만 바꾸면 다시 뜸)
 const EVT_ID="hof-2026-11-w1";
-document.querySelector(".hof2 .hgo").onclick=()=>{ document.querySelector('.ptabs [data-p="heart"]').click(); requestAnimationFrame(()=>document.querySelector(".evt").scrollIntoView({behavior:"smooth",block:"start"})); };
+document.querySelector(".evt .lk[href*=instagram]").addEventListener("click",()=>gc("evt-insta"));
+document.querySelector(".hof2 .hgo").onclick=()=>{ gc("evt-from-sticker"); document.querySelector('.ptabs [data-p="heart"]').click(); requestAnimationFrame(()=>document.querySelector(".evt").scrollIntoView({behavior:"smooth",block:"start"})); };
 document.addEventListener("click",async e=>{ const b=e.target.closest("[data-copy]"); if(!b) return; const v=b.dataset.copy, old=b.innerHTML;
+  gc(b.closest(".evt")?"evt-mail":(v.includes("@gmail")?"copy-mail":"copy-insta"));
   try{ await navigator.clipboard.writeText(v); }catch(_){ const t=document.createElement("textarea"); t.value=v; document.body.appendChild(t); t.select(); try{document.execCommand("copy")}catch(__){} t.remove(); }
   if(b.dataset.toast){ let t=document.querySelector(".cptoast"); if(!t){ t=document.createElement("div"); t.className="cptoast"; t.setAttribute("role","status"); document.body.appendChild(t); } t.textContent=b.dataset.toast; t.hidden=false; clearTimeout(t._h); t._h=setTimeout(()=>t.hidden=true,2200); return; }
   b.classList.add("done"); b.textContent="복사했어요"; setTimeout(()=>{ b.innerHTML=old; b.classList.remove("done"); },1400); });
 
 (()=>{ if(ls.get("bac100-evtseen","")===EVT_ID) return; const hb=document.querySelector('.ptabs [data-p="heart"]'); const t=document.createElement("span"); t.className="evtbadge"; t.textContent="event"; t.setAttribute("aria-hidden","true"); hb.appendChild(t);
-  hb.addEventListener("click",()=>{ ls.set("bac100-evtseen",EVT_ID); t.remove(); },{once:true}); })();
+  hb.addEventListener("click",()=>{ ls.set("bac100-evtseen",EVT_ID); t.remove(); gc("evt-seen"); },{once:true}); })();
 document.querySelectorAll(".ptabs button").forEach(b=>b.onclick=()=>{
   document.querySelectorAll(".ptabs button").forEach(x=>{const on=x===b;x.setAttribute("aria-selected",on);document.getElementById("p-"+x.dataset.p).hidden=!on;}); });
 // ── 정상석 크기 5단계 ──
@@ -1145,7 +1147,7 @@ function openCrop(r){ hideSug(); CR={r,box:(r.cbox||[.08,.08,.92,.98]).slice(),m
 const GC_SITE=location.hostname.startsWith("my100san")?"new":"old"; // 이벤트를 주소별로 구분: new = my100san.github.io, old = ynschoi.github.io/BAC100
 // ── 자동 업데이트: 홈 화면에 추가한 앱도 새 버전이 올라가면 알아서 바뀌게 ──
 // version.json(수십 바이트)만 확인하고, 다르면 새 파일을 받아 다시 연다. 작업 중(사진 반영 전)엔 다음 기회로.
-const APPV="20261104-030416";
+const APPV="20261104-031739";
 (function(){ let last=0;
   async function chk(atStart){ const now=Date.now(); if(!atStart&&now-last<60000) return; last=now;
     try{ const r=await fetch("version.json?t="+now,{cache:"no-store"}); if(!r.ok) return; const v=(await r.json()).v; if(!v||v===APPV) return;
