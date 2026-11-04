@@ -72,7 +72,7 @@ svg#map{display:block;width:100%;height:auto;max-height:82vh;touch-action:pan-y;
 }
 .fmtov{all:unset;cursor:pointer;position:absolute;left:6px;top:6px;z-index:3;font-size:calc(10.5px*var(--k,1));opacity:.9;font-weight:700;color:#8e8c78;background:rgba(239,237,227,.85);border-radius:999px;padding:calc(2px*var(--k,1)) calc(8px*var(--k,1))}
 .cvact{display:flex;gap:calc(4px*var(--k,1))}
-.fmtov.kk{color:#2f6a2c;background:#e6f2df;animation:kkglow 2.2s ease-in-out infinite} /* 카톡: 은은하게 빛나는 강조 */
+.fmtov.kk{color:#2f6a2c;background:#e6f2df;animation:kkglow 1.6s ease-in-out 2} /* 카톡: 은은하게 빛나는 강조 */
 @keyframes kkglow{0%,100%{box-shadow:0 0 3px rgba(79,154,69,.3)}50%{box-shadow:0 0 12px 2px rgba(79,154,69,.6)}}
 @media (prefers-reduced-motion:reduce){.fmtov.kk{animation:none;box-shadow:0 0 6px 2px rgba(79,154,69,.45)}}.cvact .fmtov{position:static}
 .cvbar{position:absolute;left:calc(6px*var(--k,1));right:calc(6px*var(--k,1));top:calc(6px*var(--k,1));z-index:3;display:flex;justify-content:space-between;align-items:center;gap:calc(4px*var(--k,1));pointer-events:none}.cvbar>*{pointer-events:auto}
