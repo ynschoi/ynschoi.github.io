@@ -71,7 +71,10 @@ svg#map{display:block;width:100%;height:auto;max-height:82vh;touch-action:pan-y;
   .rcol #ml .mh [data-k=name]::after{grid-column:1;grid-row:1;justify-self:end}
 }
 .fmtov{all:unset;cursor:pointer;position:absolute;left:6px;top:6px;z-index:3;font-size:calc(10.5px*var(--k,1));opacity:.9;font-weight:700;color:#8e8c78;background:rgba(239,237,227,.85);border-radius:999px;padding:calc(2px*var(--k,1)) calc(8px*var(--k,1))}
-.cvact{display:flex;gap:calc(4px*var(--k,1))}.cvact .fmtov{position:static}
+.cvact{display:flex;gap:calc(4px*var(--k,1))}
+.fmtov.kk{color:#2f6a2c;background:#e6f2df;animation:kkglow 2.2s ease-in-out infinite} /* 카톡: 은은하게 빛나는 강조 */
+@keyframes kkglow{0%,100%{box-shadow:0 0 3px rgba(79,154,69,.3)}50%{box-shadow:0 0 12px 2px rgba(79,154,69,.6)}}
+@media (prefers-reduced-motion:reduce){.fmtov.kk{animation:none;box-shadow:0 0 6px 2px rgba(79,154,69,.45)}}.cvact .fmtov{position:static}
 .cvbar{position:absolute;left:calc(6px*var(--k,1));right:calc(6px*var(--k,1));top:calc(6px*var(--k,1));z-index:3;display:flex;justify-content:space-between;align-items:center;gap:calc(4px*var(--k,1));pointer-events:none}.cvbar>*{pointer-events:auto}
 .cvl{display:flex;gap:calc(4px*var(--k,1))}.cvl .fmtov{position:static}
 .fmtov{white-space:nowrap}.fmtov.sq{padding:2px 7px;min-width:10px;text-align:center}.fmtov:disabled{opacity:.35;cursor:default}
@@ -395,23 +398,28 @@ footer{font-size:12px;color:var(--muted)}
 
 /* 하트 탭 정리: 같은 흰 카드, 간격 통일, 보안+백업은 한 카드 */
 #p-heart{gap:14px}
-#p-heart .again2{all:unset;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#fffefa;border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 6px rgba(60,60,40,.06);font-size:14px;color:#2f6a2c}#p-heart .again2 i{font-style:normal;font-size:20px;line-height:1;color:#9cc48a}
+#p-heart .guides{background:#fffefa;border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 6px rgba(60,60,40,.06);overflow:hidden}#p-heart .guides button{all:unset;cursor:pointer;box-sizing:border-box;width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;font-size:14px;color:#2f6a2c}#p-heart .guides button+button{border-top:1px solid #efece2}#p-heart .guides i{font-style:normal;font-size:20px;line-height:1;color:#9cc48a}
+.hsm{position:fixed;inset:0;z-index:92;background:rgba(20,24,18,.72);display:grid;place-items:center;padding:16px;overflow-y:auto}.hsm[hidden]{display:none}.hsb{width:100%;max-width:420px;background:#fffefa;border-radius:20px;padding:18px 16px 14px;box-shadow:0 10px 30px rgba(0,0,0,.25);max-height:calc(100vh - 32px);overflow-y:auto;box-sizing:border-box}
+.hsb h2{margin:0;font:400 24px/1.2 "YoonManse",sans-serif;color:#2f6a2c}.hsb .hld{margin:4px 0 12px;font-size:13px;color:#6f6e58}
+.hseg{display:grid;grid-template-columns:1fr 1fr;background:#efede3;border-radius:999px;padding:3px;margin-bottom:8px}.hseg button{all:unset;cursor:pointer;font-weight:600;font-size:13px;text-align:center;padding:7px 0;border-radius:999px;color:#87866f}.hseg button.on{background:#fff;color:#34352b;box-shadow:0 1px 4px rgba(60,60,40,.12)}
+.hst{display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid #efece2}.hst:first-child{border-top:0}.hill{flex:none;width:92px;border:1.5px dashed #4f9a45;border-radius:10px;padding:4px;background:#fff}.hill svg{display:block;width:100%;height:auto}
+.htx{font-size:14px;line-height:1.55}.htx em{font-style:normal;display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#4f9a45;color:#fff;font:700 11px/1 "Pretendard",sans-serif;margin-right:5px;vertical-align:1px}.htx b{color:#2f6a2c;font-weight:600}.htx small{display:block;font-size:11.5px;color:#9a987f;margin-top:2px}
+.huse{margin-top:6px;background:#f4f8ea;border-radius:12px;padding:10px 12px;font-size:12.5px;line-height:1.65}.huse b{color:#2f6a2c;font-weight:600}.hbot{display:flex;justify-content:flex-end;margin-top:12px}.hbot button{all:unset;cursor:pointer;background:#4f9a45;color:#fff;border-radius:999px;padding:8px 18px;font-size:14px;font-weight:600}
 #p-heart .evt,#p-heart .safe,#p-heart .bk,#p-heart .h1.letter{margin:0;border-radius:14px;box-shadow:0 1px 6px rgba(60,60,40,.06)}
 #p-heart .safe,#p-heart .bk{padding:14px 16px;font-size:13.5px;line-height:1.6;background:#fffefa;border:1px solid var(--line)}
 #p-heart .safe b,#p-heart .bk>b{display:block;font-size:14.5px;font-weight:600;color:#2f6a2c;margin-bottom:4px}
-#p-heart .safe b+br{display:none}
+#p-heart .safe b+br{display:none}#p-heart .safe .kkn{font-size:12px;color:var(--muted)}
 #p-heart .bk{gap:6px}
 #p-heart .h1.letter{background:#fffefa;border:1px solid var(--line);padding:16px}
 #p-heart .hver{margin-top:0}
-#p-heart .safe{border-radius:14px 14px 0 0;border-bottom:0;margin-bottom:-14px;box-shadow:none}
-#p-heart .bk{border-radius:0 0 14px 14px;border-top:1px dashed var(--line);box-shadow:none}
+#bkM .bk{display:grid;gap:8px;margin:4px 0 0;padding:12px 14px;background:#fff;border:1px solid var(--line);border-radius:12px;font-size:13.5px;line-height:1.6}#bkM .bk>b{display:none}#bkM .bkbtn{display:flex;gap:6px;flex-wrap:wrap}
 </style>
 
 <h1 class="srh">나의 명산 100 · 블랙야크 100대 명산(BAC100·명산100) 완등 지도</h1>
 <div class="wrap">
   <div class="lcol">
   <span id="cnt" hidden></span>
-  <div class="cardview"><div class="cvbar"><span class="cvl"><button type="button" class="fmtov" id="fmtTog" aria-label="이미지 비율 바꾸기">9:16</button></span><span class="cvact"><button type="button" class="fmtov" id="cvSave" aria-label="이미지 저장">저장</button><button type="button" class="fmtov" id="cvShare" aria-label="링크 공유">공유</button></span></div><canvas id="cardImg" role="img" aria-label="나의 명산 지도 카드"></canvas><span id="cardBusy" class="tip" hidden>그리는 중…</span></div>
+  <div class="cardview"><div class="cvbar"><span class="cvl"><button type="button" class="fmtov" id="fmtTog" aria-label="이미지 비율 바꾸기">9:16</button></span><span class="cvact"><button type="button" class="fmtov" id="cvSave" aria-label="이미지 저장">저장</button><button type="button" class="fmtov" id="cvShare" aria-label="링크 공유">공유</button><button type="button" class="fmtov kk" id="cvKakao" aria-label="카카오톡으로 내 지도 공유">카톡</button></span></div><canvas id="cardImg" role="img" aria-label="나의 명산 지도 카드"></canvas><span id="cardBusy" class="tip" hidden>그리는 중…</span></div>
   <div id="linkBox" class="linkbox" hidden><input id="linkIn" class="search" readonly aria-label="공유 링크"><span class="tip" id="linkMsg"></span></div>
 
   <div id="island" class="island" hidden></div>
@@ -462,15 +470,14 @@ footer{font-size:12px;color:var(--muted)}
   </div>
 
   <div id="p-heart" class="pane about" hidden>
-    <button type="button" class="again2" id="coachAgain"><span>📖 사용법 다시 보기</span><i aria-hidden="true">›</i></button>
+    <div class="guides"><button type="button" id="coachAgain"><span>📖 지도 사용법</span><i aria-hidden="true">›</i></button><button type="button" id="bkOpen"><span>📦 지도 백업 · 불러오기 방법</span><i aria-hidden="true">›</i></button><button type="button" data-hs="and"><span>📲 홈 화면에 추가하는 방법 (안드로이드)</span><i aria-hidden="true">›</i></button><button type="button" data-hs="ios"><span>🍎 홈 화면에 추가하는 방법 (애플)</span><i aria-hidden="true">›</i></button></div>
+
+    <p class="safe"><b>🔒 보안 걱정 NO!</b><br>사진은 서버로 보내지 않습니다.<br>누끼, 저장 모두 내 폰 브라우저 안에서 이루어집니다.<br><span class="kkn">카톡 공유를 누를 때만 지도 이미지가 카카오로 전송돼요.</span></p>
     <div class="evt"><div class="eside"><span>WEEKLY</span></div><div class="em2">
       <h3>🏅 명예 스티커 전당</h3><p class="sub">원하는 등산 아이템을 스티커로 만들어 드려요.<br>스티커 아래에 닉네임이 새겨져요.</p>
       <div class="steps"><div><em>01</em>🗺️ 지도 만들고<br>📤 공유하기</div><div><em>02</em>📸 인스타 태그 <a class="lk" href="https://www.instagram.com/youngs.00/" target="_blank" rel="noopener">@youngs.00</a> <span class="or">또는</span><br>✉️ 캡처해서 <button type="button" class="lk lkb" data-copy="mysanzido@gmail.com" data-toast="메일 주소를 복사했어요 · mysanzido@gmail.com">인증 메일 보내기</button></div></div>
       <dl><dt>🎁 선정</dt><dd>매주 선착순 5명 + 랜덤 5명</dd><dt>📅 일정</dt><dd>11/7(토) 마감 · 11/9(월) 업데이트</dd></dl>
       <p class="rq">💌 원하는 스티커도 같이 알려주세요!<br><span>예) 🐿️ 다람쥐 · 🍁 단풍잎 · 🍶 막걸리 · 참고 사진도 좋아요</span></p></div></div>
-    <p class="safe"><b>🔒 보안 걱정 NO!</b><br>사진은 서버로 보내지 않습니다.<br>누끼, 저장 모두 내 폰 브라우저 안에서 이루어집니다.</p><div class="bk"><b>📦 지도 백업 · 불러오기</b><span>지도는 이 브라우저에만 저장됩니다.<br>필요한 경우, 백업 파일로 옮겨주세요.</span>
-      <div class="bkbtn"><button type="button" class="pill2 on" id="bkSave">백업 파일 저장</button><label class="pill2" for="bkIn">백업 불러오기</label></div>
-      <input type="file" id="bkIn" accept=".json,application/json" hidden><span class="tip" id="bkMsg" role="status"></span></div>
     <div class="h1 letter"><div class="stp" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M6 30 L16 16 L21 23 L26 17 L34 30" fill="none" stroke="#4f9a45" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><text x="20" y="38" text-anchor="middle" font-size="7" fill="#4f9a45" font-family="Pretendard">100</text></svg></div><div class="pm" aria-hidden="true">BAC · 2026</div><p class="to">100대 명산 동료 여러분</p><p>안녕하세요!<br>저는 겨우 10좌라서 완등은 먼 훗날 이야기고요,<br>하나씩 쌓이는 소소한 재미를 더해보려고 만들어보았습니다.</p><p>버그 신고, 개선 요청, 재밌는 아이디어<br>DM 주시면 잽싸게 반영해보겠습니다.<br>예쁘게 써주시고 태그도 환영합니다🤍</p><p class="sg1"><button type="button" data-copy="@youngs.00" data-toast="인스타 아이디를 복사했어요 · @youngs.00">📷 <u>@youngs.00</u></button><br><button type="button" data-copy="mysanzido@gmail.com" data-toast="메일 주소를 복사했어요 · mysanzido@gmail.com">✉️ <u>mysanzido@gmail.com</u></button></p></div><p class="hver">version 1.1 · 2026.11.01</p>
   </div>
   <div hidden><button type="button" id="mkShare">이미지 저장</button><button type="button" id="linkShare">링크 공유</button></div>
@@ -507,6 +514,19 @@ footer{font-size:12px;color:var(--muted)}
 </div>
 </div>
 
+<div class="hsm" id="bkM" hidden role="dialog" aria-modal="true" aria-label="지도 백업 · 불러오기"><div class="hsb">
+  <h2>지도 백업 · 불러오기</h2><p class="hld">폰을 바꾸거나, 브라우저와 홈 화면 앱 사이에서 지도를 옮길 때 써요.</p>
+  <div class="bk"><b>📦 지도 백업 · 불러오기</b><span>지도는 이 브라우저에만 저장됩니다.<br>필요한 경우, 백업 파일로 옮겨주세요.</span>
+      <div class="bkbtn"><button type="button" class="pill2 on" id="bkSave">백업 파일 저장</button><label class="pill2" for="bkIn">백업 불러오기</label></div>
+      <input type="file" id="bkIn" accept=".json,application/json" hidden><span class="tip" id="bkMsg" role="status"></span></div>
+  <div class="huse"><b>💡 이럴 때 써요</b><br>· 브라우저에서 만든 지도를 <b>홈 화면 앱</b>으로 옮길 때<br>· <b>폰을 바꾸기 전에</b> (백업 파일을 새 폰으로 보내서 불러오기)<br>· 쓰던 곳에서 <b>백업 저장</b> → 옮길 곳에서 <b>불러오기</b></div>
+  <div class="hbot"><button type="button" id="bkX">확인</button></div></div></div>
+<div class="hsm" id="hsM" hidden role="dialog" aria-modal="true" aria-labelledby="hsT"><div class="hsb">
+  <h2 id="hsT">홈 화면에 추가하기</h2><p class="hld">앱처럼 아이콘을 눌러 바로 열 수 있어요.</p>
+  <div class="hseg"><button type="button" data-os="ios">애플 (사파리)</button><button type="button" data-os="and">안드로이드 (삼성 인터넷)</button></div>
+  <div class="hos" data-os="ios"><div class="hst"><div class="hill"><svg viewBox="0 0 120 170" aria-hidden="true"><rect x="2" y="2" width="116" height="166" rx="14" fill="#f6f5ef" stroke="#34352b" stroke-width="2"/><rect x="10" y="14" width="100" height="100" rx="6" fill="#eef5e4"/><text x="60" y="68" text-anchor="middle" font-size="11" fill="#4f9a45" font-family="YoonManse,sans-serif">나의 명산 지도</text><rect x="8" y="128" width="104" height="30" rx="15" fill="#fff" stroke="#d9d6cc"/><text x="52" y="147" text-anchor="middle" font-size="8.5" fill="#777" font-family="Pretendard,sans-serif">ynschoi.github.io</text><path d="M96 146 v-9 m-4 4 l4 -4 l4 4 M91 140 h-1 v9 h12 v-9 h-1" fill="none" stroke="#3b6cc4" stroke-width="1.8" stroke-linecap="round"/><circle cx="96" cy="143" r="10" fill="none" stroke="#e2a13b" stroke-width="3"/></svg></div><div class="htx"><em>1</em>사파리 아래 <b>공유 버튼</b>을 눌러요.<small>버튼이 안 보이면 ··· 를 누르고 공유</small></div></div><div class="hst"><div class="hill"><svg viewBox="0 0 120 170" aria-hidden="true"><rect x="2" y="2" width="116" height="166" rx="14" fill="#f6f5ef" stroke="#34352b" stroke-width="2"/><rect x="8" y="40" width="104" height="122" rx="10" fill="#fff" stroke="#d9d6cc"/><rect x="16" y="52" width="88" height="16" rx="4" fill="#f2f1ea"/><rect x="16" y="74" width="88" height="16" rx="4" fill="#f2f1ea"/><rect x="16" y="96" width="88" height="16" rx="4" fill="#eef5e4"/><rect x="16" y="118" width="88" height="16" rx="4" fill="#f2f1ea"/><rect x="16" y="140" width="88" height="16" rx="4" fill="#f2f1ea"/><text x="22" y="108" font-size="8.5" fill="#2f6a2c" font-family="Pretendard,sans-serif" font-weight="700">홈 화면에 추가</text><rect x="90" y="99" width="9" height="9" rx="2" fill="none" stroke="#2f6a2c" stroke-width="1.2"/><path d="M94.5 101 v5 M92 103.5 h5" stroke="#2f6a2c" stroke-width="1.2"/><rect x="12" y="94" width="96" height="20" rx="6" fill="none" stroke="#e2a13b" stroke-width="2.5"/></svg></div><div class="htx"><em>2</em>목록을 내려서<br><b>홈 화면에 추가</b>를 눌러요.</div></div><div class="hst"><div class="hill"><svg viewBox="0 0 120 170" aria-hidden="true"><rect x="2" y="2" width="116" height="166" rx="14" fill="#f6f5ef" stroke="#34352b" stroke-width="2"/><rect x="14" y="18" width="18" height="18" rx="5" fill="#d9d6cc"/><rect x="38" y="18" width="18" height="18" rx="5" fill="#d9d6cc"/><rect x="62" y="18" width="18" height="18" rx="5" fill="#d9d6cc"/><rect x="86" y="18" width="18" height="18" rx="5" fill="#d9d6cc"/><rect x="14" y="46" width="18" height="18" rx="5" fill="#d9d6cc"/><rect x="38" y="46" width="18" height="18" rx="5" fill="#d9d6cc"/><rect x="62" y="46" width="18" height="18" rx="5" fill="#d9d6cc"/><rect x="86" y="46" width="18" height="18" rx="5" fill="#d9d6cc"/><rect x="14" y="74" width="18" height="18" rx="5" fill="#d9d6cc"/><rect x="38" y="74" width="18" height="18" rx="5" fill="#d9d6cc"/><image href="icon-180.png" x="62" y="74" width="18" height="18"/><text x="71" y="102" text-anchor="middle" font-size="5.5" fill="#34352b" font-family="Pretendard,sans-serif">나의 명산 100</text><circle cx="71" cy="83" r="14" fill="none" stroke="#e2a13b" stroke-width="3"/><rect x="66" y="6" width="44" height="14" rx="7" fill="#3b6cc4"/><text x="88" y="16" text-anchor="middle" font-size="8" fill="#fff" font-family="Pretendard,sans-serif" font-weight="700">추가</text></svg></div><div class="htx"><em>3</em>오른쪽 위 <b>추가</b>를 누르면<br>홈 화면에 아이콘이 생겨요.</div></div></div><div class="hos" data-os="and" hidden><div class="hst"><div class="hill"><svg viewBox="0 0 120 170" aria-hidden="true"><rect x="2" y="2" width="116" height="166" rx="14" fill="#f6f5ef" stroke="#34352b" stroke-width="2"/><rect x="10" y="14" width="100" height="104" rx="6" fill="#eef5e4"/><text x="60" y="70" text-anchor="middle" font-size="11" fill="#4f9a45" font-family="YoonManse,sans-serif">나의 명산 지도</text><rect x="2" y="132" width="116" height="34" fill="#fff" stroke="#d9d6cc"/><rect x="14" y="145" width="10" height="8" rx="2" fill="#bbb"/><rect x="36" y="145" width="10" height="8" rx="2" fill="#bbb"/><rect x="58" y="145" width="10" height="8" rx="2" fill="#bbb"/><rect x="80" y="145" width="10" height="8" rx="2" fill="#bbb"/><path d="M98 144 h10 M98 149 h10 M98 154 h10" stroke="#34352b" stroke-width="1.8" stroke-linecap="round"/><circle cx="103" cy="149" r="10" fill="none" stroke="#e2a13b" stroke-width="3"/></svg></div><div class="htx"><em>1</em>아래 메뉴 <b>≡</b>를 눌러요.</div></div><div class="hst"><div class="hill"><svg viewBox="0 0 120 170" aria-hidden="true"><rect x="2" y="2" width="116" height="166" rx="14" fill="#f6f5ef" stroke="#34352b" stroke-width="2"/><rect x="8" y="56" width="104" height="106" rx="10" fill="#fff" stroke="#d9d6cc"/><rect x="16" y="66" width="16" height="16" rx="4" fill="#f2f1ea"/><rect x="40" y="66" width="16" height="16" rx="4" fill="#f2f1ea"/><rect x="64" y="66" width="16" height="16" rx="4" fill="#f2f1ea"/><rect x="88" y="66" width="16" height="16" rx="4" fill="#f2f1ea"/><rect x="16" y="94" width="16" height="16" rx="4" fill="#f2f1ea"/><rect x="40" y="94" width="16" height="16" rx="4" fill="#eef5e4"/><rect x="64" y="94" width="16" height="16" rx="4" fill="#f2f1ea"/><rect x="88" y="94" width="16" height="16" rx="4" fill="#f2f1ea"/><path d="M44.5 98 v8 M40.5 102 h8" stroke="#2f6a2c" stroke-width="1.6"/><text x="45" y="129" text-anchor="middle" font-size="5.6" fill="#2f6a2c" font-family="Pretendard,sans-serif" font-weight="700">현재 페이지 추가</text><rect x="20" y="88" width="50" height="46" rx="6" fill="none" stroke="#e2a13b" stroke-width="2.5"/></svg></div><div class="htx"><em>2</em><b>현재 페이지 추가</b>를 눌러요.</div></div><div class="hst"><div class="hill"><svg viewBox="0 0 120 170" aria-hidden="true"><rect x="2" y="2" width="116" height="166" rx="14" fill="#f6f5ef" stroke="#34352b" stroke-width="2"/><rect x="14" y="18" width="18" height="18" rx="5" fill="#d9d6cc"/><rect x="38" y="18" width="18" height="18" rx="5" fill="#d9d6cc"/><rect x="62" y="18" width="18" height="18" rx="5" fill="#d9d6cc"/><rect x="86" y="18" width="18" height="18" rx="5" fill="#d9d6cc"/><rect x="14" y="46" width="18" height="18" rx="5" fill="#d9d6cc"/><rect x="38" y="46" width="18" height="18" rx="5" fill="#d9d6cc"/><rect x="62" y="46" width="18" height="18" rx="5" fill="#d9d6cc"/><rect x="86" y="46" width="18" height="18" rx="5" fill="#d9d6cc"/><rect x="14" y="74" width="18" height="18" rx="5" fill="#d9d6cc"/><rect x="38" y="74" width="18" height="18" rx="5" fill="#d9d6cc"/><image href="icon-180.png" x="62" y="74" width="18" height="18"/><text x="71" y="102" text-anchor="middle" font-size="5.5" fill="#34352b" font-family="Pretendard,sans-serif">나의 명산 100</text><circle cx="71" cy="83" r="14" fill="none" stroke="#e2a13b" stroke-width="3"/><rect x="14" y="128" width="92" height="30" rx="8" fill="#fff" stroke="#d9d6cc"/><text x="60" y="147" text-anchor="middle" font-size="8.5" fill="#34352b" font-family="Pretendard,sans-serif" font-weight="700">홈 화면 → 추가</text></svg></div><div class="htx"><em>3</em><b>홈 화면</b> → <b>추가</b>를 누르면<br>홈 화면에 아이콘이 생겨요.<small>크롬이면 ⋮ → 홈 화면에 추가</small></div></div></div>
+  <div class="huse"><b>📲 이렇게 써요</b><br>· 이제 <b>홈 화면 아이콘</b>으로 열면 앱처럼 꽉 찬 화면이에요.<br>· 새 기능은 <b>자동 업데이트</b>돼요.<br>· 홈 화면 앱은 브라우저와 <b>저장 공간이 따로</b>예요. 브라우저에서 만든 지도는 하트 탭 <b>백업 저장 → 불러오기</b>로 옮겨 주세요.</div>
+  <div class="hbot"><button type="button" id="hsX">확인</button></div></div></div>
 <div class="howm" id="howM" hidden role="dialog" aria-modal="true" aria-labelledby="howT">
   <div class="howm-box">
     <div class="upm-h"><b id="howT">블랙야크 인증 사진 올리는 법</b><button type="button" class="x" id="howX" aria-label="닫기">×</button></div>
@@ -825,7 +845,40 @@ function zoom(f,cx,cy){
 // 지도는 고정 (확대·이동 없음)
 // ── 아래 탭: 업로드 / 텍스트 / 스티커 ──
 // 이벤트 알림: 하트 탭을 한 번 열 때까지 'event' 딱지가 떠 있음 (이벤트가 바뀌면 EVT_ID만 바꾸면 다시 뜸)
+
+// ── 카카오톡 공유: 누를 때만 카카오 SDK(약 85KB)를 받고, 내 지도 이미지를 카카오에 올려 카드로 보냄 ──
+const KAKAO_KEY="ceaf0b8b6815d95dcee5438ed73ebec8"; // JavaScript 키(공개용, 등록한 도메인에서만 동작)
+let kakaoP=null;
+function loadKakao(){ if(window.Kakao&&Kakao.isInitialized&&Kakao.isInitialized()) return Promise.resolve(Kakao); if(kakaoP) return kakaoP;
+  kakaoP=new Promise((res,rej)=>{ const sc=document.createElement("script"); sc.src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.6/kakao.min.js"; sc.crossOrigin="anonymous";
+    sc.onload=()=>{ try{ if(!Kakao.isInitialized()) Kakao.init(KAKAO_KEY); res(Kakao); }catch(e){ kakaoP=null; rej(e); } }; sc.onerror=()=>{ kakaoP=null; rej(new Error("kakao-load")); }; document.head.appendChild(sc); });
+  return kakaoP; }
+async function kakaoImage(){ // 카톡 카드용: 4:5 배치로 그리고 맨 아래 주소 줄은 잘라서 지도를 꽉 채움 (링크는 카드 버튼에 있음)
+  const prev=FMT, busy=document.getElementById("cardBusy");
+  try{ if(prev!=="post"){ FMT="post"; shareBlob=null; await renderCard(); busy.hidden=false; busy.textContent="카톡 카드 만드는 중…"; }
+    const blob=await getShareBlob(), im=await createImageBitmap(blob), k=im.width/1080, G=window.__cardGeo||{};
+    // 꾸민 것(정상석·스티커·글자)이 위아래 여백에 있으면 그만큼은 남기고 자름
+    let lo=Infinity, hi=-Infinity; (G.stk||[]).forEach(b=>{ lo=Math.min(lo,b.cy-b.h/2); hi=Math.max(hi,b.cy+b.h/2); }); (G.deco||[]).forEach(b=>{ const r=Math.hypot(b.w,b.h)/2; lo=Math.min(lo,b.cy-r); hi=Math.max(hi,b.cy+r); }); (G.txt||[]).forEach(b=>{ lo=Math.min(lo,b.y0); hi=Math.max(hi,b.y1); });
+    const cut=Math.round(Math.min(im.height/k,BASE.FOOTY-18)*k), top=Math.round(Math.max(0,Math.min(52,lo-14))*k);
+    const c=document.createElement("canvas"); c.width=im.width; c.height=Math.min(im.height,cut)-top; c.getContext("2d").drawImage(im,0,-top);
+    const jb=await new Promise(r=>c.toBlob(r,"image/jpeg",.86)); return {blob:jb,w:c.width,h:c.height}; }
+  finally{ if(prev!=="post"){ FMT=prev; shareBlob=null; await renderCard(); busy.textContent="그리는 중…"; busy.hidden=true; } } }
+function toast(msg){ let t=document.querySelector(".cptoast"); if(!t){ t=document.createElement("div"); t.className="cptoast"; t.setAttribute("role","status"); document.body.appendChild(t); } t.textContent=msg; t.hidden=false; clearTimeout(t._h); t._h=setTimeout(()=>t.hidden=true,2600); }
+document.getElementById("cvKakao").onclick=async e=>{ const b=e.currentTarget; if(b.disabled) return; b.disabled=true; const old=b.textContent; b.textContent="…"; gc("share-kakao");
+  try{ const [K,jb]=await Promise.all([loadKakao(),kakaoImage()]);
+    const up=await K.Share.uploadImage({file:[new File([jb.blob],"my-100-summits.jpg",{type:"image/jpeg"})]});
+    const n=Object.keys(PH).length, who=NICK||"나", link={mobileWebUrl:APP_URL+"?from=kakao",webUrl:APP_URL+"?from=kakao"};
+    K.Share.sendDefault({objectType:"feed",content:{title:`${who}의 명산 지도 · ${n}/100`,description:"블랙야크 명산100 완등 지도",imageUrl:up.infos.original.url,imageWidth:jb.w,imageHeight:jb.h,link},buttons:[{title:"나도 만들기",link}]});
+  }catch(err){ toast("카톡 공유를 열지 못했어요. 잠시 뒤 다시 해주세요."); }
+  finally{ b.disabled=false; b.textContent=old; } };
 const EVT_ID="hof-2026-11-w1";
+(()=>{ const m=document.getElementById("bkM"); document.getElementById("bkOpen").onclick=()=>{ m.querySelector(".hsb").scrollTop=0; m.hidden=false; gc("guide-backup"); };
+  document.getElementById("bkX").onclick=()=>m.hidden=true; m.addEventListener("click",e=>{ if(e.target===m) m.hidden=true; }); })();
+// 홈 화면에 추가하는 방법 안내 (애플 / 안드로이드)
+(()=>{ const m=document.getElementById("hsM"); const show=os=>{ m.querySelectorAll(".hseg button").forEach(b=>b.classList.toggle("on",b.dataset.os===os)); m.querySelectorAll(".hos").forEach(d=>d.hidden=d.dataset.os!==os); m.querySelector(".hsb").scrollTop=0; };
+  document.querySelectorAll("#p-heart [data-hs]").forEach(b=>b.onclick=()=>{ show(b.dataset.hs); m.hidden=false; gc("guide-home-"+b.dataset.hs); });
+  m.querySelectorAll(".hseg button").forEach(b=>b.onclick=()=>show(b.dataset.os));
+  document.getElementById("hsX").onclick=()=>m.hidden=true; m.addEventListener("click",e=>{ if(e.target===m) m.hidden=true; }); })();
 // 숨은 스위치: 하트 탭 맨 아래 version 글자를 3초 안에 5번 누르면 이 기기를 통계에서 빼기/다시 넣기 (표시 없음)
 (()=>{ const v=document.querySelector("#p-heart .hver"); if(!v) return; let n=0,t0=0;
   v.addEventListener("click",()=>{ const now=Date.now(); if(now-t0>3000){ n=0; t0=now; } if(++n<5) return; n=0;
@@ -1722,13 +1775,21 @@ const cardIdle=()=>new Promise(r=>{ const t=()=>{ if(!cardBusy&&!cardTimer) r();
 const stkSize=()=>88*SZL[SZ]*Math.min(1,Math.sqrt(24/Math.max(Object.keys(PH).length,1)))*(FMT==="post"?.8:1);
 async function preloadStk(){ const jobs=[]; for(const n of Object.keys(PH)){ const src=PH[n].st; if(!IMGC[n]||IMGC[n].src!==src) jobs.push(loadImg(src).then(im=>{ IMGC[n]={src,im}; })); } await Promise.all(jobs); }
 function curPos(){ return Object.assign({},AUTO?AUTOC:{},POS); }
+// 카드 밖으로 못 나가게: 정상석 사진은 통째로, 꾸미기는 가운데가 카드 안에
+function clampStk(n,o){ const B=BASE; if(!B||!o||!PH[n]) return o; const G=B.GEO,s=G.s,m=byN(n),p=PH[n],h=HS(n,stkSize()),w=h*p.w/p.h,hw=w*s/2+8,hh=h*s/2+8;
+  const cx=G.ox+s*(m.x+o.dx), cy=G.oy+s*(MY(m)+o.dy-h/2+6), nx=Math.max(hw,Math.min(1080-hw,cx)), ny=Math.max(hh,Math.min(footLim()-hh+8,cy));
+  return nx===cx&&ny===cy?o:{dx:o.dx+(nx-cx)/s,dy:o.dy+(ny-cy)/s}; }
+function clampDeco(x0,y0,d){ const B=BASE; if(!B) return [x0,y0]; const G=B.GEO,s=G.s,mg=40, im=d&&DIMG[d.k];
+  let ey=mg; if(im){ const h=d.h, w=h*im.width/im.height, r=d.r||0; ey=Math.max(mg,(Math.abs(w*Math.sin(r))+Math.abs(h*Math.cos(r)))/2*s); }
+  return [Math.max((mg-G.ox)/s,Math.min((1080-mg-G.ox)/s,x0)), Math.max((mg-G.oy)/s,Math.min((footLim()-ey-G.oy)/s,y0))]; }
+const footLim=()=>BASE.FOOTY-26; // 아래 링크 줄 위까지만 (카톡 이미지에서 잘리는 선)
 // 스티커만 다시 그리기 (끌 때 매 프레임)
 let STATIC=null; // 끌기 중: 끌리는 스티커를 뺀 나머지 전부를 한 번 그려둔 층
 let TPOS=ls.get("bac100-tpos",{}); if(!TPOS||typeof TPOS!=="object") TPOS={}; // 한 마디·태그 위치: 카드 안 비율 [가로%, 세로%] → 9:16·4:5 공통
 let TSTATIC=null; // 글자 끌기 중: 끌리는 글자만 뺀 카드
 function txtPos(B,k){ const T=B.TXT[k], v=TPOS[k]; return v?[v[0]*1080,v[1]*B.H]:[T.x,T.y]; }
 function drawTxt(x,B,k,pos,G,lift){ const T=B.TXT[k]; if(!T) return; x.save(); x.font=T.font; x.textAlign="left"; x.textBaseline="alphabetic";
-  const w=x.measureText(T.t).width, px=Math.max(-w*.6,Math.min(1080-w*.4,pos[0])), py=Math.max(T.fs,Math.min(B.H-4,pos[1]));
+  const w=x.measureText(T.t).width, px=Math.max(-w*.6,Math.min(1080-w*.4,pos[0])), py=Math.max(T.fs,Math.min(B.FOOTY-26-T.fs*.3,pos[1]));
   if(lift){ x.shadowColor="rgba(0,0,0,.22)"; x.shadowBlur=10; x.shadowOffsetY=4; }
   x.lineJoin="round"; x.strokeStyle="rgba(251,250,245,.92)"; x.lineWidth=Math.max(4,T.fs*.2); x.strokeText(T.t,px,py); x.shadowColor="transparent"; // 지도·사진 위에서도 읽히게 흰 테두리
   x.fillStyle=T.fill; x.fillText(T.t,px,py); x.restore(); G.txt.push({k,x0:px-10,y0:py-T.fs*.95-10,x1:px+w+10,y1:py+T.fs*.3+10}); }
@@ -1740,7 +1801,7 @@ function compose(live){
   if(lt&&TSTATIC&&TSTATIC.key===lt.txt&&TSTATIC.w===cv.width&&TSTATIC.h===cv.height){ // 글자 끌기: 그려둔 카드 위에 글자만
     x.setTransform(1,0,0,1,0,0); x.drawImage(TSTATIC.c,0,0); G.stk=TSTATIC.stk.slice(); G.deco=TSTATIC.deco.slice(); G.txt=TSTATIC.txt.slice();
     x.setTransform(Q,0,0,Q,0,0); drawTxt(x,B,lt.txt,[lt.x,lt.y],G,true); credit(); x.setTransform(1,0,0,1,0,0); window.__cardGeo=G; shareBlob=null; return; }
-  const SHs=stkSize(), SP=curPos(), ls_=live&&live.n!=null?live:null; if(ls_) SP[ls_.n]={dx:ls_.dx,dy:ls_.dy};
+  const SHs=stkSize(), SP=curPos(), ls_=live&&live.n!=null?live:null; if(ls_) SP[ls_.n]={dx:ls_.dx,dy:ls_.dy}; Object.keys(SP).forEach(k=>{ SP[k]=clampStk(+k,SP[k]); });
   let ns=Object.keys(PH).map(Number).sort((a,b)=>byN(a).y-byN(b).y); if(ls_){ns=ns.filter(n=>n!==ls_.n);}
   const moved=n=>{const o=SP[n];return o&&(Math.abs(o.dx)>2||Math.abs(o.dy)>2);};
   const lead=n=>{ if(!moved(n)) return; const m=byN(n),o=SP[n]; x.save();x.setLineDash([2.2,1.6]);x.lineCap="round";x.strokeStyle="rgba(70,66,52,.75)";x.lineWidth=.7;
@@ -1758,7 +1819,7 @@ function compose(live){
     else STATIC=null; }
   if(ls_){ lead(ls_.n); stk(ls_.n); }
   // 마일스톤 꾸미기 스티커 (정상석 위에)
-  G.deco=[]; DECOS.forEach((d,i)=>{ const im=DIMG[d.k]; if(!im) return; const lv=live&&live.deco===i?live:null, dx=lv?lv.x:d.x, dy=lv?lv.y:d.y, h=d.h, r=d.r||0, w=h*im.width/im.height;
+  G.deco=[]; DECOS.forEach((d,i)=>{ const im=DIMG[d.k]; if(!im) return; const lv=live&&live.deco===i?live:null, [dx,dy]=clampDeco(lv?lv.x:d.x,lv?lv.y:d.y,d), h=d.h, r=d.r||0, w=h*im.width/im.height;
     x.save(); x.translate(dx,dy); x.rotate(r); if(lv){x.shadowColor="rgba(0,0,0,.28)";x.shadowBlur=10/s;x.shadowOffsetY=5/s;}
     x.drawImage(im,-w/2,-h/2,w,h); x.shadowColor="transparent";
     const hr=34/s; // 손잡이 반지름 (카드 34px)
@@ -1818,10 +1879,10 @@ cardImg.addEventListener("pointerdown",e=>{
   const tb=hitTxt(p.px,p.py);
   if(tb&&BASE&&BASE.TXT[tb.k]){ e.preventDefault(); cardImg.setPointerCapture(e.pointerId); const q=txtPos(BASE,tb.k); drag={txt:tb.k,sx:e.clientX,sy:e.clientY,moved:false,x0:q[0],y0:q[1],live:null}; return; }
   const db=hitDeco(p.px,p.py);
-  if(db){ e.preventDefault(); cardImg.setPointerCapture(e.pointerId); const d=DECOS[db.i]; drag={deco:db.i,sx:e.clientX,sy:e.clientY,moved:false,x0:d.x,y0:d.y,live:null}; return; }
+  if(db){ e.preventDefault(); cardImg.setPointerCapture(e.pointerId); const d=DECOS[db.i], c0=clampDeco(d.x,d.y,d); drag={deco:db.i,sx:e.clientX,sy:e.clientY,moved:false,x0:c0[0],y0:c0[1],live:null}; return; }
   const b=hitSticker(p.px,p.py); if(!b) return;
   e.preventDefault(); cardImg.setPointerCapture(e.pointerId);
-  drag={b,sx:e.clientX,sy:e.clientY,moved:false,p0:curPos()[b.n]||{dx:0,dy:0},live:null};
+  drag={b,sx:e.clientX,sy:e.clientY,moved:false,p0:clampStk(b.n,curPos()[b.n]||{dx:0,dy:0}),live:null};
 });
 cardImg.addEventListener("pointermove",e=>{
   if(PTR.has(e.pointerId)) PTR.set(e.pointerId,{x:e.clientX,y:e.clientY});
@@ -1833,12 +1894,12 @@ cardImg.addEventListener("pointermove",e=>{
     const k=1080/cardImg.getBoundingClientRect().width; drag.live={txt:drag.txt,x:drag.x0+dx*k,y:drag.y0+dy*k};
     if(!dragRAF) dragRAF=requestAnimationFrame(()=>{dragRAF=0; if(drag&&drag.live) compose(drag.live);}); return; }
   if(drag&&drag.deco!=null){ const dx=e.clientX-drag.sx, dy=e.clientY-drag.sy; if(!drag.moved&&Math.hypot(dx,dy)<6) return; drag.moved=true;
-    const k=1080/cardImg.getBoundingClientRect().width, s=BASE.GEO.s; drag.live={deco:drag.deco,x:drag.x0+dx*k/s,y:drag.y0+dy*k/s};
+    const k=1080/cardImg.getBoundingClientRect().width, s=BASE.GEO.s; const cd=clampDeco(drag.x0+dx*k/s,drag.y0+dy*k/s,DECOS[drag.deco]); drag.live={deco:drag.deco,x:cd[0],y:cd[1]};
     if(!dragRAF) dragRAF=requestAnimationFrame(()=>{dragRAF=0; if(drag&&drag.live) compose(drag.live);}); return; }
   if(!drag) return; const dx=e.clientX-drag.sx, dy=e.clientY-drag.sy;
   if(!drag.moved&&Math.hypot(dx,dy)<6) return; drag.moved=true;
   const k=1080/cardImg.getBoundingClientRect().width, s=BASE.GEO.s;
-  drag.live={n:drag.b.n,dx:drag.p0.dx+dx*k/s,dy:drag.p0.dy+dy*k/s};
+  drag.live=Object.assign({n:drag.b.n},clampStk(drag.b.n,{dx:drag.p0.dx+dx*k/s,dy:drag.p0.dy+dy*k/s}));
   if(!dragRAF) dragRAF=requestAnimationFrame(()=>{dragRAF=0; if(drag&&drag.live) compose(drag.live);});
 });
 function endDrag(e,cancel){
@@ -1915,8 +1976,8 @@ if(window.ResizeObserver){ const rc=document.querySelector(".rcol"), tb=document
     rc.style.setProperty("--st1",(t+14)+"px"); rc.style.setProperty("--st2",(t+14+u+g)+"px"); rc.style.setProperty("--st3",(t+14+u+g+document.querySelector("#p-upload .inx").offsetHeight+g)+"px"); }).observe(uh); }
 if(window.ResizeObserver){ const wr=document.querySelector(".wrap"); new ResizeObserver(()=>{ const r=cardImg.getBoundingClientRect(); wr.style.setProperty("--cw",Math.round(r.width+2)+"px"); wr.style.setProperty("--ch",Math.round(r.height+2)+"px"); wr.style.setProperty("--k",Math.max(1,r.width/340).toFixed(3)); }).observe(cardImg); } // --k: 카드 위 알약 버튼도 카드 크기에 비례
 // 공유 링크(?from=share)로 들어온 방문 세기 → 주소창에서는 바로 지움
-(()=>{ const q=new URLSearchParams(location.search); if(q.get("from")!=="share") return; try{ history.replaceState(null,"",location.pathname+location.hash); }catch(_){}
-  let k=0; const go=()=>{ if(window.goatcounter&&goatcounter.count){ gc("visit-from-share"); } else if(++k<20) setTimeout(go,500); }; go(); })();
+(()=>{ const q=new URLSearchParams(location.search), fr=q.get("from"); if(fr!=="share"&&fr!=="kakao") return; try{ history.replaceState(null,"",location.pathname+location.hash); }catch(_){}
+  let k=0; const go=()=>{ if(window.goatcounter&&goatcounter.count){ gc(fr==="kakao"?"visit-from-kakao":"visit-from-share"); } else if(++k<20) setTimeout(go,500); }; go(); })();
 const standalone=navigator.standalone===true||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches);
 // 홈 화면 앱으로 연 사람 세기 — 기기마다 하루 한 번만 (통계 스크립트가 늦게 뜨면 잠깐 기다렸다 보냄)
 if(standalone){ const t=new Date().toISOString().slice(0,10); if(ls.get("bac100-homeday","")!==t){ let k=0; const go=()=>{ if(window.goatcounter&&goatcounter.count){ gc("home-app"); ls.set("bac100-homeday",t); } else if(++k<20) setTimeout(go,500); }; go(); } }
