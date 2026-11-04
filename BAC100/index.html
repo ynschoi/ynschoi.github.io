@@ -2016,6 +2016,11 @@ if(window.ResizeObserver){ const wr=document.querySelector(".wrap"); new ResizeO
   let k=0; const go=()=>{ if(window.goatcounter&&goatcounter.count){ gc(fr==="kakao"?"visit-from-kakao":"visit-from-share"); } else if(++k<20) setTimeout(go,500); }; go(); })();
 const standalone=navigator.standalone===true||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches);
 // 홈 화면 앱으로 연 사람 세기 — 기기마다 하루 한 번만 (통계 스크립트가 늦게 뜨면 잠깐 기다렸다 보냄)
+{ // 어디서 열었나·폰 종류 (기기당 하루 1번)
+  const t=new Date().toISOString().slice(0,10); if(ls.get("bac100-openday","")!==t){ const ua=navigator.userAgent;
+    const where=standalone?"home":/KAKAOTALK/i.test(ua)?"kakao":/Instagram/i.test(ua)?"instagram":/FBAN|FBAV|FB_IAB/i.test(ua)?"facebook":/NAVER\(inapp|NAVER/i.test(ua)?"naver":/DaumApps|DAUM/i.test(ua)?"daum":/Line\//i.test(ua)?"line":/BAND\//i.test(ua)?"band":/SamsungBrowser/i.test(ua)?"samsung":/CriOS|Chrome/i.test(ua)?"chrome":/Safari/i.test(ua)?"safari":"other";
+    const os=/iPhone|iPad|iPod/i.test(ua)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1)?"ios":/Android/i.test(ua)?(/SamsungBrowser|SM-[A-Z0-9]/.test(ua)?"android-galaxy":"android"):"pc";
+    let k=0; const go=()=>{ if(window.goatcounter&&goatcounter.count){ gc("open-"+where); gc("os-"+os); ls.set("bac100-openday",t); } else if(++k<20) setTimeout(go,500); }; go(); } }
 if(standalone){ const t=new Date().toISOString().slice(0,10); if(ls.get("bac100-homeday","")!==t){ let k=0; const go=()=>{ if(window.goatcounter&&goatcounter.count){ gc("home-app"); ls.set("bac100-homeday",t); } else if(++k<20) setTimeout(go,500); }; go(); } }
   document.getElementById("mvTip").hidden=!(standalone&&!Object.keys(PH).length);
   if(!ls.get("bac100-coach",false)&&!Object.keys(PH).length&&!standalone) setTimeout(()=>startCoach(),600); })(); // 처음 온 사람에게만 (정상석이 이미 있으면 안 띄움)
