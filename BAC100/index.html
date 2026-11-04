@@ -585,6 +585,13 @@ footer{font-size:12px;color:var(--muted)}
   </figure>
 </div>
 <input type="file" id="file" accept="image/*" hidden>
+<div class="shr" id="kkM" hidden>
+  <div class="in">
+    <img id="kkImg" alt="카톡으로 보낼 내 지도 이미지">
+    <div class="row"><button type="button" class="btn share" id="kkGo">카카오톡으로 보내기</button><button type="button" class="btn" id="kkX">닫기</button></div>
+    <p>공유 목록에서 카카오톡을 골라주세요.</p>
+  </div>
+</div>
 <div class="shr" id="shr" hidden>
   <div class="in">
     <img id="shrImg" alt="인스타 스토리용 나의 명산 100 이미지">
@@ -864,7 +871,19 @@ async function kakaoImage(){ // 카톡 카드용: 4:5 배치로 그리고 맨 �
     const jb=await new Promise(r=>c.toBlob(r,"image/jpeg",.86)); return {blob:jb,w:c.width,h:c.height}; }
   finally{ if(prev!=="post"){ FMT=prev; shareBlob=null; await renderCard(); busy.textContent="그리는 중…"; busy.hidden=true; } } }
 function toast(msg){ let t=document.querySelector(".cptoast"); if(!t){ t=document.createElement("div"); t.className="cptoast"; t.setAttribute("role","status"); document.body.appendChild(t); } t.textContent=msg; t.hidden=false; clearTimeout(t._h); t._h=setTimeout(()=>t.hidden=true,2600); }
-document.getElementById("cvKakao").onclick=async e=>{ const b=e.currentTarget; if(b.disabled) return; b.disabled=true; const old=b.textContent; b.textContent="…"; gc("share-kakao");
+document.getElementById("kkX").onclick=()=>document.getElementById("kkM").hidden=true;
+document.getElementById("cvKakao").onclick=async e=>{ const b=e.currentTarget; if(b.disabled) return; b.disabled=true; const old=b.textContent; b.textContent="…";
+  const IOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+  const SA=navigator.standalone===true||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches);
+  if(IOS&&SA&&navigator.share){ // 아이폰 홈 화면 앱에서는 카톡 앱을 직접 못 열어서 공유 목록으로 보낸다
+    gc("share-kakao-home");
+    try{ const jb=await kakaoImage(), f=new File([jb.blob],"my-100-summits.jpg",{type:"image/jpeg"}), m=document.getElementById("kkM"), im=document.getElementById("kkImg");
+      const txt=`${NICK||"나"}의 명산 지도 · ${Object.keys(PH).length}/100\n나도 만들기 👉 ${APP_URL}?from=kakao`;
+      if(im.src) URL.revokeObjectURL(im.src); im.src=URL.createObjectURL(jb.blob); m.hidden=false;
+      document.getElementById("kkGo").onclick=async()=>{ try{ await navigator.share({files:[f],text:txt}); m.hidden=true; }catch(err){ if(!err||err.name!=="AbortError") toast("공유를 열지 못했어요. 잠시 뒤 다시 해주세요."); } };
+    }catch(err){ toast("카톡 이미지를 만들지 못했어요. 잠시 뒤 다시 해주세요."); }
+    finally{ b.disabled=false; b.textContent=old; } return; }
+  gc("share-kakao");
   try{ const [K,jb]=await Promise.all([loadKakao(),kakaoImage()]);
     const up=await K.Share.uploadImage({file:[new File([jb.blob],"my-100-summits.jpg",{type:"image/jpeg"})]});
     const n=Object.keys(PH).length, who=NICK||"나", link={mobileWebUrl:APP_URL+"?from=kakao",webUrl:APP_URL+"?from=kakao"};
