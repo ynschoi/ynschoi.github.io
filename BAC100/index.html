@@ -1,4 +1,4 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>나의 명산 100</title><meta property="og:title" content="나의 명산 지도"><meta property="og:description" content="블랙야크 명산100 완등 지도 만들기">
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>나의 명산 100 · 블랙야크 100대 명산(BAC100) 완등 지도</title><meta property="og:title" content="나의 명산 지도 · 블랙야크 100대 명산"><meta property="og:description" content="블랙야크 100대 명산(BAC100) 완등 지도 만들기">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-180.png">
 <meta property="og:type" content="website">
@@ -7,7 +7,10 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="description" content="블랙야크 명산100 완등 지도 만들기"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Song+Myung&family=Noto+Sans+KR:wght@900&display=swap"><script data-goatcounter="https://bac100.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script></head><body>
+<meta name="description" content="블랙야크 100대 명산(BAC100·명산100) 완등 지도 만들기. 다녀온 산을 기록하면 정상석 스티커와 풍선이 지도에 쌓여요. 100대 명산 챌린지 인증 카드를 이미지로 저장하고 공유하세요.">
+<meta name="keywords" content="블랙야크 100대 명산,블랙야크 명산100,100대 명산,BAC100,BAC 100,명산100,명산 100 챌린지,100대 명산 지도,100대 명산 완등,100대 명산 인증,정상석,등산 기록,등산 지도,나의 명산">
+<link rel="canonical" href="https://ynschoi.github.io/BAC100/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"나의 명산 100","alternateName":["나의 명산 지도","블랙야크 100대 명산 완등 지도","BAC100 지도","명산100 지도"],"url":"https://ynschoi.github.io/BAC100/","applicationCategory":"LifestyleApplication","operatingSystem":"Web","inLanguage":"ko","description":"블랙야크 100대 명산(BAC100·명산100) 완등 지도 만들기. 다녀온 산을 기록하면 정상석 스티커와 풍선이 지도에 쌓여요. 100대 명산 챌린지 인증 카드를 이미지로 저장하고 공유하세요.","offers":{"@type":"Offer","price":"0","priceCurrency":"KRW"}}</script><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Song+Myung&family=Noto+Sans+KR:wght@900&display=swap"><script data-goatcounter="https://bac100.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script></head><body>
 <style>
 @font-face{font-family:"Pretendard";src:url(fonts/Pretendard.woff2) format("woff2");font-weight:100 900;font-display:swap}
 @font-face{font-family:"Songgeul";src:url(fonts/Songgeul.woff2) format("woff2");font-weight:100 900;font-display:swap}
@@ -52,7 +55,8 @@ svg#map{display:block;width:100%;height:auto;max-height:82vh;touch-action:pan-y;
   .lcol{display:grid;gap:14px}
   .rcol{display:grid;gap:14px;align-content:start;width:var(--cw,420px);height:var(--ch,auto);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
   .cardview canvas{max-height:calc(100vh - 50px)}
-  .rcol .ptabs{position:sticky;top:0;z-index:6;box-shadow:0 0 0 8px var(--page)} /* 웹: 스크롤해도 탭 유지 */
+  .rcol{box-sizing:border-box;padding-top:14px;margin-top:-14px;height:calc(var(--ch,auto) + 14px)} /* 탭 위 event 딱지가 스크롤 상자에 잘리지 않게 위쪽 여백 */
+  .rcol .ptabs{position:sticky;top:0;z-index:6;box-shadow:0 0 0 8px var(--page),0 -14px 0 8px var(--page)} /* 웹: 스크롤해도 탭 유지 */
   .rcol #p-upload .uphead{position:sticky;top:var(--st1,62px);z-index:5;background:var(--page);box-shadow:0 0 0 8px var(--page)}
   .rcol #p-upload .inx{position:sticky;top:var(--st2,120px);z-index:5;background:var(--page);box-shadow:0 0 0 8px var(--page)}
   .rcol #ml{overflow:visible} .rcol #ml .mh{position:sticky;top:var(--st3,166px);z-index:4;border-radius:11px 11px 0 0;box-shadow:0 -9px 0 var(--page)} /* 목록 머리도 고정 */
@@ -86,6 +90,7 @@ svg#map{display:block;width:100%;height:auto;max-height:82vh;touch-action:pan-y;
 .uphead{flex-wrap:nowrap!important;align-items:center}
 .uphead .upbtn{height:auto!important;flex-direction:column;padding:6px 14px!important;line-height:1.15;gap:1px;flex:none}.upbtn small{font-size:10.5px;opacity:.85;font-weight:500}
 input,select,textarea{font-size:16px!important}
+.srh{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .ptabs .dot{font-size:9px;margin:0 2px;vertical-align:2px}
 .ptabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:4px;background:#efede3;border-radius:999px}
 .ptabs button{all:unset;cursor:pointer;text-align:center;padding:9px 0;border-radius:999px;font-weight:700;color:var(--muted)}
@@ -401,6 +406,7 @@ footer{font-size:12px;color:var(--muted)}
 #p-heart .bk{border-radius:0 0 14px 14px;border-top:1px dashed var(--line);box-shadow:none}
 </style>
 
+<h1 class="srh">나의 명산 100 · 블랙야크 100대 명산(BAC100·명산100) 완등 지도</h1>
 <div class="wrap">
   <div class="lcol">
   <span id="cnt" hidden></span>
@@ -1152,7 +1158,7 @@ function openCrop(r){ hideSug(); CR={r,box:(r.cbox||[.08,.08,.92,.98]).slice(),m
 const GC_SITE=location.hostname.startsWith("my100san")?"new":"old"; // 이벤트를 주소별로 구분: new = my100san.github.io, old = ynschoi.github.io/BAC100
 // ── 자동 업데이트: 홈 화면에 추가한 앱도 새 버전이 올라가면 알아서 바뀌게 ──
 // version.json(수십 바이트)만 확인하고, 다르면 새 파일을 받아 다시 연다. 작업 중(사진 반영 전)엔 다음 기회로.
-const APPV="20261104-040711";
+const APPV="20261104-060232";
 (function(){ let last=0;
   async function chk(atStart){ const now=Date.now(); if(!atStart&&now-last<60000) return; last=now;
     try{ const r=await fetch("version.json?t="+now,{cache:"no-store"}); if(!r.ok) return; const v=(await r.json()).v; if(!v||v===APPV) return;
