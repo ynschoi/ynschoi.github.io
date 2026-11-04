@@ -90,6 +90,10 @@ input,select,textarea{font-size:16px!important}
 .ptabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:4px;background:#efede3;border-radius:999px}
 .ptabs button{all:unset;cursor:pointer;text-align:center;padding:9px 0;border-radius:999px;font-weight:700;color:var(--muted)}
 .ptabs button[aria-selected="true"]{background:#fffefa;color:var(--fg);box-shadow:0 1px 4px rgba(60,60,40,.12)}
+.ptabs button{position:relative}.evtbadge{position:absolute;left:50%;top:-13px;transform:translateX(-50%);font:600 9.5px/1 "Pretendard",sans-serif;letter-spacing:.06em;color:#fff;background:#e2a13b;border-radius:999px;padding:3px 6px;pointer-events:none;animation:evtfloat 1.8s ease-in-out infinite;box-shadow:0 2px 6px rgba(200,150,20,.3)}
+.evtbadge::after{content:"";position:absolute;left:50%;bottom:-3px;margin-left:-3px;border:3px solid transparent;border-bottom:0;border-top-color:#e2a13b}
+@keyframes evtfloat{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,-4px)}}
+@media (prefers-reduced-motion:reduce){.evtbadge{animation:none}}
 .pane{display:grid;gap:8px}
 .ptabs .hrt{display:block;margin:0 auto;overflow:visible}.ptabs .hrt path{fill:#c9c6b6;stroke:#a9a690;stroke-width:1.2;stroke-linejoin:round;transition:fill .15s}
 .ptabs [aria-selected="true"] .hrt path{fill:#5fae4f;stroke:#3f8f3a}
@@ -105,7 +109,20 @@ input,select,textarea{font-size:16px!important}
 .about a{color:#4f7a44;font-weight:700;text-underline-offset:2px}
 .about .bk{margin-top:10px;display:grid;gap:6px;padding:10px 12px;background:#fffefa;border:1px solid var(--line);border-radius:12px;font-size:13.5px}.about .bk b{color:var(--fg)}.about .bkbtn{display:flex;gap:6px;flex-wrap:wrap}
 .pill2{all:unset;cursor:pointer;display:inline-flex;align-items:center;font-size:12.5px;font-weight:700;line-height:1;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:#fffefa;color:var(--fg)}.pill2.on{background:#4f9a45;border-color:#4f9a45;color:#fffefa}.pill2:disabled{opacity:.5}.pill2:focus-visible{outline:2px solid var(--hl);outline-offset:2px}
-.about .safe{margin-top:6px;padding:10px 12px;background:#f4f8ea;border:1px solid #cfe1b4;border-radius:12px;font-size:13.5px}.about .safe b{color:#2f6a2c}
+.about .safe{margin-top:6px;padding:10px 12px;background:#f4f8ea;border:1px solid #cfe1b4;border-radius:12px;font-size:13.5px}
+.evt{container-type:inline-size;background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(60,60,40,.10);display:grid;grid-template-columns:2.6em 1fr;overflow:hidden;font-size:14px}
+.hof2{margin-top:6px;padding:14px 12px 10px;border:2px solid #e2b75a;border-radius:16px;background:linear-gradient(#fffaf0,#fff4dc);box-shadow:inset 0 0 0 4px #fffaf0,inset 0 0 0 5px #f0d58c}.hof2 .ht{display:flex;justify-content:center;align-items:center;gap:6px;font:400 22px/1 "YoonManse",sans-serif;color:#8a5a00}.hof2 .lr{font-size:18px}.hof2 .lr.r{transform:scaleX(-1)}.hof2 .hd{margin:5px 0 10px;text-align:center;font-size:12.5px;color:#a3854a}.hof2 .g{display:grid;grid-template-columns:repeat(5,1fr);gap:10px 6px}.hof2 .h{text-align:center}.hof2 .md{width:100%;aspect-ratio:1;border-radius:50%;background:radial-gradient(#fff,#fbf0d4);border:2px dashed #e2b75a;display:grid;place-items:center}.hof2 .md span{font:400 20px/1 "YoonManse",sans-serif;color:#dcc07a}.hof2 .rb{margin:5px auto 0;font-size:10px;color:#fff;background:#e2b75a;border-radius:3px;padding:1px 4px;width:fit-content}.hof2 .hcta{margin:10px 0 0;text-align:right}.hof2 .hgo{all:unset;cursor:pointer;font-size:13px;color:#b07a12;text-decoration:underline;text-underline-offset:3px}
+.evt .eside{background:#4f9a45;color:#fff;writing-mode:vertical-rl;text-align:center;font:700 .8em/1 "Pretendard",sans-serif;letter-spacing:.35em;display:grid;place-items:center;position:relative}
+.evt .eside:after{content:"";position:absolute;right:-6px;top:0;bottom:0;width:12px;background:radial-gradient(circle at 6px 8px,var(--page) 4px,transparent 4.5px) 0 0/12px 16px repeat-y}
+.evt .em2{font-size:min(14px,calc(100cqi/28));padding:1.15em 1em .9em 1.3em;white-space:nowrap;line-height:1.45;font-family:"Pretendard",sans-serif;color:var(--fg)} /* 화면 폭에 맞춰 글자 크기를 줄여서 어떤 화면에서도 줄넘김 없음 */
+.evt h3{margin:0;font:400 2.05em/1.1 "YoonManse",sans-serif;color:#2f6a2c}
+.evt .sub{font-size:.95em;color:#6f6e58;margin:.45em 0 .9em;line-height:1.55}
+.evt .steps{display:grid;grid-template-columns:max-content 1fr;border-top:1.5px solid #4f9a45;border-bottom:1px solid #e7e4d6;margin-bottom:.75em}
+.evt .steps>div{padding:.7em .5em .7em 0}.evt .steps>div+div{border-left:1px solid #e7e4d6;padding-left:.75em}
+.evt .steps em{display:block;font:400 1.6em/1 "YoonManse",sans-serif;color:#4f9a45;font-style:normal;margin-bottom:.2em}
+.evt .lkb{all:unset;cursor:pointer;color:#2f6a2c;text-decoration:underline;text-underline-offset:2px}.cptoast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:95;background:#2f3a2c;color:#fff;font-size:13px;padding:9px 14px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.2);white-space:nowrap;max-width:calc(100vw - 32px);overflow:hidden;text-overflow:ellipsis}.evt .lk{color:#2f6a2c;font-weight:400;text-decoration:underline;text-underline-offset:2px}.evt .or{font-size:.85em;color:#a3a18c}
+.evt dl{display:grid;grid-template-columns:4.6em 1fr;gap:.35em .6em;margin:0}.evt dt{color:#4f9a45;font-weight:400}.evt dd{margin:0}
+.evt .rq{margin:.75em 0 0;padding:.65em .75em;background:#f4f8ea;border-radius:10px}.evt .rq span{font-size:.82em;color:#7d8f6c}
 .uphead{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.uphead .meta{font-size:13px}
 .inx{position:relative}.inx .search{padding-right:40px}
 .x{all:unset;cursor:pointer;position:absolute;right:4px;top:50%;transform:translateY(-50%);width:32px;height:32px;display:grid;place-items:center;font-size:20px;color:var(--muted)}
@@ -341,6 +358,13 @@ footer{font-size:12px;color:var(--muted)}
 .about .hver{margin-top:14px;text-align:center;font-size:11.5px;color:#a3a18c}
 .letter{background:#fffefa;border:1px solid var(--line);border-radius:6px;padding:16px 16px 14px;background-image:repeating-linear-gradient(transparent 0 23.4px,#ece8da 23.4px 24.4px);line-height:24.4px;box-shadow:0 2px 8px rgba(60,60,40,.06)}
 .letter p{margin:0}.letter p+p{margin-top:24.4px}.letter .to{font-weight:700;color:#2f6a2c}.letter .from{text-align:right;font-weight:700}
+.letter .sg1{font-size:13.5px}.letter .sg1 button{all:unset;cursor:pointer;color:var(--fg)}.letter .sg1 u{text-decoration-color:#b9b6a2;text-underline-offset:3px}
+.h1.letter{position:relative;background:#fffaf0;background-image:none;border:1px solid #e9dcc0;border-radius:4px;padding:20px 18px 16px;box-shadow:0 3px 12px rgba(120,90,30,.12);line-height:1.75} /* 편지: 엽서 */
+.h1.letter p+p{margin-top:14px}.h1.letter .to{font:400 22px/1.2 "YoonManse",sans-serif;color:#2f6a2c;padding-right:60px}
+.h1.letter .stp{position:absolute;top:12px;right:12px;width:46px;height:52px;background:#fff;padding:4px;box-shadow:0 1px 3px rgba(0,0,0,.15);background-image:radial-gradient(circle at 3px 3px,#fffaf0 2.2px,transparent 2.5px);background-size:7px 7px;background-position:-2px -2px}
+.h1.letter .stp svg{width:100%;height:100%;background:#eef5e4;display:block}
+.h1.letter .pm{position:absolute;top:44px;right:46px;transform:rotate(-14deg);font:700 8px/1 "Pretendard",sans-serif;letter-spacing:.1em;color:rgba(160,90,40,.55);border:1.5px solid rgba(160,90,40,.45);border-radius:999px;padding:6px 7px}
+.letter .pills{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:6px}.letter .pl{all:unset;cursor:pointer;display:inline-flex;align-items:center;font-size:12.5px;color:#2f6a2c;background:#eef5e4;border:1px solid #cfe1b4;border-radius:999px;padding:2px 10px;line-height:20px}.letter .pl svg{width:14px;height:14px;margin-right:5px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.letter .pl svg .d{fill:currentColor;stroke:none}
 .h1 p,.h2 p,.h4 p,.h5 p{font-size:14px}
 .post{position:relative;background:#fffefa;border:1.5px dashed #b9cf9c;border-radius:12px;padding:16px 16px 14px;line-height:1.7}
 .post p{margin:0}.post p+p{margin-top:10px}.post .to{font-weight:700;color:#2f6a2c;padding-right:44px}.post .from{text-align:right;font-weight:700}
@@ -419,7 +443,12 @@ footer{font-size:12px;color:var(--muted)}
 
   <div id="p-heart" class="pane about" hidden>
     <p class="again"><button type="button" class="lnk" id="coachAgain">사용법 다시 보기</button></p>
-    <div class="h1 letter"><p class="to">100대 명산 동료 여러분</p><p>안녕하세요!<br>저는 겨우 10좌라서 완등은 먼 훗날 이야기고요,<br>하나씩 쌓이는 소소한 재미를 더해보려고 만들어보았습니다.</p><p>버그 신고, 개선 요청, 재밌는 아이디어<br>DM 주시면 잽싸게 반영해보겠습니다.<br>예쁘게 써주시고 태그도 환영합니다🤍</p><p class="from">From. <a href="https://www.instagram.com/youngs.00/" target="_blank" rel="noopener">@youngs.00</a></p></div><p class="safe"><b>🔒 보안 걱정 NO!</b><br>사진은 서버로 보내지 않습니다.<br>누끼, 저장 모두 내 폰 브라우저 안에서 이루어집니다.</p><div class="bk"><b>📦 지도 백업 · 불러오기</b><span>지도는 이 브라우저에만 저장됩니다.<br>필요한 경우, 백업 파일로 옮겨주세요.</span>
+    <div class="evt"><div class="eside">WEEKLY</div><div class="em2">
+      <h3>🏅 명예 스티커 전당</h3><p class="sub">원하는 등산 아이템을 스티커로 만들어 드려요.<br>스티커 아래에 닉네임이 새겨져요.</p>
+      <div class="steps"><div><em>01</em>🗺️ 지도 만들고<br>📤 공유하기</div><div><em>02</em>📸 인스타 태그 <a class="lk" href="https://www.instagram.com/youngs.00/" target="_blank" rel="noopener">@youngs.00</a> <span class="or">또는</span><br>✉️ 캡처해서 <button type="button" class="lk lkb" data-copy="mysanzido@gmail.com" data-toast="메일 주소를 복사했어요 · mysanzido@gmail.com">인증 메일 보내기</button></div></div>
+      <dl><dt>🎁 선정</dt><dd>매주 선착순 5명 + 창의적인 지도 5명</dd><dt>📅 일정</dt><dd>11/7(토) 마감 · 11/9(월) 업데이트</dd></dl>
+      <p class="rq">💌 원하는 스티커도 같이 알려주세요!<br><span>예) 🐿️ 다람쥐 · 🍁 단풍잎 · 🍶 막걸리 · 참고 사진도 좋아요</span></p></div></div>
+    <div class="h1 letter"><div class="stp" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M6 30 L16 16 L21 23 L26 17 L34 30" fill="none" stroke="#4f9a45" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><text x="20" y="38" text-anchor="middle" font-size="7" fill="#4f9a45" font-family="Pretendard">100</text></svg></div><div class="pm" aria-hidden="true">BAC · 2026</div><p class="to">100대 명산 동료 여러분</p><p>안녕하세요!<br>저는 겨우 10좌라서 완등은 먼 훗날 이야기고요,<br>하나씩 쌓이는 소소한 재미를 더해보려고 만들어보았습니다.</p><p>버그 신고, 개선 요청, 재밌는 아이디어<br>DM 주시면 잽싸게 반영해보겠습니다.<br>예쁘게 써주시고 태그도 환영합니다🤍</p><p class="sg1"><button type="button" data-copy="@youngs.00" data-toast="인스타 아이디를 복사했어요 · @youngs.00">📷 <u>@youngs.00</u></button><br><button type="button" data-copy="mysanzido@gmail.com" data-toast="메일 주소를 복사했어요 · mysanzido@gmail.com">✉️ <u>mysanzido@gmail.com</u></button></p></div><p class="safe"><b>🔒 보안 걱정 NO!</b><br>사진은 서버로 보내지 않습니다.<br>누끼, 저장 모두 내 폰 브라우저 안에서 이루어집니다.</p><div class="bk"><b>📦 지도 백업 · 불러오기</b><span>지도는 이 브라우저에만 저장됩니다.<br>필요한 경우, 백업 파일로 옮겨주세요.</span>
       <div class="bkbtn"><button type="button" class="pill2 on" id="bkSave">백업 파일 저장</button><label class="pill2" for="bkIn">백업 불러오기</label></div>
       <input type="file" id="bkIn" accept=".json,application/json" hidden><span class="tip" id="bkMsg" role="status"></span></div><p class="hver">version 1.1 · 2026.11.01</p>
   </div>
@@ -433,6 +462,9 @@ footer{font-size:12px;color:var(--muted)}
     </div></div>
     <h3 class="sh3">마일스톤 스티커</h3>
     <div class="slots" id="badgeSlots"></div>
+    <div class="hof2"><div class="ht"><span class="lr">🌿</span>명예 스티커 전당<span class="lr r">🌿</span></div><p class="hd">이번 주 스티커는 11/9 (월) 공개</p>
+      <div class="g"><div class="h"><div class="md"><span>?</span></div><div class="rb">닉네임</div></div><div class="h"><div class="md"><span>?</span></div><div class="rb">닉네임</div></div><div class="h"><div class="md"><span>?</span></div><div class="rb">닉네임</div></div><div class="h"><div class="md"><span>?</span></div><div class="rb">닉네임</div></div><div class="h"><div class="md"><span>?</span></div><div class="rb">닉네임</div></div><div class="h"><div class="md"><span>?</span></div><div class="rb">닉네임</div></div><div class="h"><div class="md"><span>?</span></div><div class="rb">닉네임</div></div><div class="h"><div class="md"><span>?</span></div><div class="rb">닉네임</div></div><div class="h"><div class="md"><span>?</span></div><div class="rb">닉네임</div></div><div class="h"><div class="md"><span>?</span></div><div class="rb">닉네임</div></div></div>
+      <p class="hcta"><button type="button" class="hgo">내 스티커 신청하기 →</button></p></div>
   </div>
   <div class="mapbox" hidden>
     <svg id="map" viewBox="0 0 566 784" role="img" aria-label="도 경계가 그려진 남한 지도와 정상석 스티커">
@@ -770,6 +802,16 @@ function zoom(f,cx,cy){
 }
 // 지도는 고정 (확대·이동 없음)
 // ── 아래 탭: 업로드 / 텍스트 / 스티커 ──
+// 이벤트 알림: 하트 탭을 한 번 열 때까지 'event' 딱지가 떠 있음 (이벤트가 바뀌면 EVT_ID만 바꾸면 다시 뜸)
+const EVT_ID="hof-2026-11-w1";
+document.querySelector(".hof2 .hgo").onclick=()=>{ document.querySelector('.ptabs [data-p="heart"]').click(); requestAnimationFrame(()=>document.querySelector(".evt").scrollIntoView({behavior:"smooth",block:"start"})); };
+document.addEventListener("click",async e=>{ const b=e.target.closest("[data-copy]"); if(!b) return; const v=b.dataset.copy, old=b.innerHTML;
+  try{ await navigator.clipboard.writeText(v); }catch(_){ const t=document.createElement("textarea"); t.value=v; document.body.appendChild(t); t.select(); try{document.execCommand("copy")}catch(__){} t.remove(); }
+  if(b.dataset.toast){ let t=document.querySelector(".cptoast"); if(!t){ t=document.createElement("div"); t.className="cptoast"; t.setAttribute("role","status"); document.body.appendChild(t); } t.textContent=b.dataset.toast; t.hidden=false; clearTimeout(t._h); t._h=setTimeout(()=>t.hidden=true,2200); return; }
+  b.classList.add("done"); b.textContent="복사했어요"; setTimeout(()=>{ b.innerHTML=old; b.classList.remove("done"); },1400); });
+
+(()=>{ if(ls.get("bac100-evtseen","")===EVT_ID) return; const hb=document.querySelector('.ptabs [data-p="heart"]'); const t=document.createElement("span"); t.className="evtbadge"; t.textContent="event"; t.setAttribute("aria-hidden","true"); hb.appendChild(t);
+  hb.addEventListener("click",()=>{ ls.set("bac100-evtseen",EVT_ID); t.remove(); },{once:true}); })();
 document.querySelectorAll(".ptabs button").forEach(b=>b.onclick=()=>{
   document.querySelectorAll(".ptabs button").forEach(x=>{const on=x===b;x.setAttribute("aria-selected",on);document.getElementById("p-"+x.dataset.p).hidden=!on;}); });
 // ── 정상석 크기 5단계 ──
@@ -1088,7 +1130,7 @@ function openCrop(r){ hideSug(); CR={r,box:(r.cbox||[.08,.08,.92,.98]).slice(),m
 const GC_SITE=location.hostname.startsWith("my100san")?"new":"old"; // 이벤트를 주소별로 구분: new = my100san.github.io, old = ynschoi.github.io/BAC100
 // ── 자동 업데이트: 홈 화면에 추가한 앱도 새 버전이 올라가면 알아서 바뀌게 ──
 // version.json(수십 바이트)만 확인하고, 다르면 새 파일을 받아 다시 연다. 작업 중(사진 반영 전)엔 다음 기회로.
-const APPV="20261104-011435";
+const APPV="20261104-025618";
 (function(){ let last=0;
   async function chk(atStart){ const now=Date.now(); if(!atStart&&now-last<60000) return; last=now;
     try{ const r=await fetch("version.json?t="+now,{cache:"no-store"}); if(!r.ok) return; const v=(await r.json()).v; if(!v||v===APPV) return;
