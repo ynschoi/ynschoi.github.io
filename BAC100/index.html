@@ -819,6 +819,10 @@ function zoom(f,cx,cy){
 // ── 아래 탭: 업로드 / 텍스트 / 스티커 ──
 // 이벤트 알림: 하트 탭을 한 번 열 때까지 'event' 딱지가 떠 있음 (이벤트가 바뀌면 EVT_ID만 바꾸면 다시 뜸)
 const EVT_ID="hof-2026-11-w1";
+// 숨은 스위치: 하트 탭 맨 아래 version 글자를 3초 안에 5번 누르면 이 기기를 통계에서 빼기/다시 넣기 (표시 없음)
+(()=>{ const v=document.querySelector("#p-heart .hver"); if(!v) return; let n=0,t0=0;
+  v.addEventListener("click",()=>{ const now=Date.now(); if(now-t0>3000){ n=0; t0=now; } if(++n<5) return; n=0;
+    try{ if(localStorage.getItem("skipgc")==="t") localStorage.removeItem("skipgc"); else localStorage.setItem("skipgc","t"); }catch(_){} }); })();
 document.querySelector(".evt .lk[href*=instagram]").addEventListener("click",()=>gc("evt-insta"));
 document.querySelector(".hof2 .hgo").onclick=()=>{ gc("evt-from-sticker"); document.querySelector('.ptabs [data-p="heart"]').click(); requestAnimationFrame(()=>{ const ev=document.querySelector(".evt"); ev.scrollIntoView({behavior:"smooth",block:ev.offsetHeight<innerHeight-60?"center":"start"}); }); }; // 이벤트 상자를 화면 가운데로
 document.addEventListener("click",async e=>{ const b=e.target.closest("[data-copy]"); if(!b) return; const v=b.dataset.copy, old=b.innerHTML;
@@ -840,11 +844,12 @@ let SZ=ls.get("bac100-sz",2); if(!(SZ>=0&&SZ<5)) SZ=2;
 let FMT="story"; // 처음엔 늘 9:16
 function syncFmt(){ document.getElementById("fmtTog").textContent=FMT==="post"?"4:5":"9:16"; }
 const APP_URL="https://ynschoi.github.io/BAC100/"; // 어느 주소에서 열어도 공유는 새 짧은 주소로
+const SHARE_URL=APP_URL+"?from=share"; // 공유 링크로 온 사람을 통계에서 따로 세기 위한 표시
 document.getElementById("linkShare").onclick=async()=>{ gc("share-link"); const box=document.getElementById("linkBox"), inp=document.getElementById("linkIn"), msg=document.getElementById("linkMsg");
-  inp.value=APP_URL;
-  try{ if(navigator.share){ await navigator.share({url:APP_URL}); msg.textContent=""; return; } }catch(e){ if(e&&e.name==="AbortError") return; }
+  inp.value=SHARE_URL;
+  try{ if(navigator.share){ await navigator.share({url:SHARE_URL}); msg.textContent=""; return; } }catch(e){ if(e&&e.name==="AbortError") return; }
   box.hidden=false;
-  try{ await navigator.clipboard.writeText(APP_URL); msg.textContent="링크를 복사했어요."; }
+  try{ await navigator.clipboard.writeText(SHARE_URL); msg.textContent="링크를 복사했어요."; }
   catch(_){ inp.focus(); inp.select(); msg.textContent="위 링크를 길게 눌러 복사하세요."; } };
 document.getElementById("fmtTog").onclick=()=>{FMT=FMT==="post"?"story":"post";ls.set("bac100-fmt",FMT);syncFmt();scheduleCard();}; syncFmt();
 let NICK=ls.get("bac100-nick","나")||"나", MOTTO=ls.get("bac100-motto","");
@@ -1147,7 +1152,7 @@ function openCrop(r){ hideSug(); CR={r,box:(r.cbox||[.08,.08,.92,.98]).slice(),m
 const GC_SITE=location.hostname.startsWith("my100san")?"new":"old"; // 이벤트를 주소별로 구분: new = my100san.github.io, old = ynschoi.github.io/BAC100
 // ── 자동 업데이트: 홈 화면에 추가한 앱도 새 버전이 올라가면 알아서 바뀌게 ──
 // version.json(수십 바이트)만 확인하고, 다르면 새 파일을 받아 다시 연다. 작업 중(사진 반영 전)엔 다음 기회로.
-const APPV="20261104-032442";
+const APPV="20261104-040711";
 (function(){ let last=0;
   async function chk(atStart){ const now=Date.now(); if(!atStart&&now-last<60000) return; last=now;
     try{ const r=await fetch("version.json?t="+now,{cache:"no-store"}); if(!r.ok) return; const v=(await r.json()).v; if(!v||v===APPV) return;
@@ -1161,7 +1166,7 @@ const APPV="20261104-032442";
   document.addEventListener("visibilitychange",()=>{ if(!document.hidden) chk(false); });
   addEventListener("pageshow",e=>{ if(e.persisted) chk(false); });
 })();
-function gc(ev){ try{ if(window.goatcounter&&goatcounter.count){ const k=GC_SITE+"/"+ev; goatcounter.count({path:k,title:k,event:true}); } }catch(_){} }
+function gc(ev){ try{ if(localStorage.getItem("skipgc")==="t") return; if(window.goatcounter&&goatcounter.count){ const k=GC_SITE+"/"+ev; goatcounter.count({path:k,title:k,event:true}); } }catch(_){} }
 function syncApply(){ const k=NEW.filter(r=>r.n&&r.on&&r.st).length; applyBtn.disabled=!k; applyBtn.textContent=k?`반영 (${k})`:"반영"; }
 function renderNew(){ hideSug(); newList.innerHTML=""; NEW.forEach(r=>newList.appendChild(newRowEl(r))); newBox.hidden=!NEW.length; document.getElementById("nbCnt").textContent=NEW.length?NEW.length+"장":""; syncApply(); }
 const ovw=document.getElementById("ovw");
@@ -1902,6 +1907,9 @@ if(window.ResizeObserver){ const rc=document.querySelector(".rcol"), tb=document
   new ResizeObserver(()=>{ const t=tb.offsetHeight, u=uh.offsetHeight, g=parseFloat(getComputedStyle(document.getElementById("p-upload")).rowGap)||10;
     rc.style.setProperty("--st1",(t+14)+"px"); rc.style.setProperty("--st2",(t+14+u+g)+"px"); rc.style.setProperty("--st3",(t+14+u+g+document.querySelector("#p-upload .inx").offsetHeight+g)+"px"); }).observe(uh); }
 if(window.ResizeObserver){ const wr=document.querySelector(".wrap"); new ResizeObserver(()=>{ const r=cardImg.getBoundingClientRect(); wr.style.setProperty("--cw",Math.round(r.width+2)+"px"); wr.style.setProperty("--ch",Math.round(r.height+2)+"px"); wr.style.setProperty("--k",Math.max(1,r.width/340).toFixed(3)); }).observe(cardImg); } // --k: 카드 위 알약 버튼도 카드 크기에 비례
+// 공유 링크(?from=share)로 들어온 방문 세기 → 주소창에서는 바로 지움
+(()=>{ const q=new URLSearchParams(location.search); if(q.get("from")!=="share") return; try{ history.replaceState(null,"",location.pathname+location.hash); }catch(_){}
+  let k=0; const go=()=>{ if(window.goatcounter&&goatcounter.count){ gc("visit-from-share"); } else if(++k<20) setTimeout(go,500); }; go(); })();
 const standalone=navigator.standalone===true||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches);
 // 홈 화면 앱으로 연 사람 세기 — 기기마다 하루 한 번만 (통계 스크립트가 늦게 뜨면 잠깐 기다렸다 보냄)
 if(standalone){ const t=new Date().toISOString().slice(0,10); if(ls.get("bac100-homeday","")!==t){ let k=0; const go=()=>{ if(window.goatcounter&&goatcounter.count){ gc("home-app"); ls.set("bac100-homeday",t); } else if(++k<20) setTimeout(go,500); }; go(); } }
