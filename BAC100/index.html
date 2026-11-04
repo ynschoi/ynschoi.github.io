@@ -49,13 +49,13 @@ svg#map{display:block;width:100%;height:auto;max-height:82vh;touch-action:pan-y;
 .cardview{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#fbfaf5;box-shadow:0 6px 20px rgba(60,60,40,.08)}
 .cardview canvas{display:block;width:100%;height:auto;cursor:pointer;touch-action:pan-y;-webkit-user-drag:none;user-select:none;-webkit-touch-callout:none}
 .lcol,.rcol{display:contents}
-@media (min-width:700px){ .cardview{width:fit-content;max-width:100%;margin-inline:auto} .cardview canvas{width:auto;max-width:100%;max-height:calc(100vh - 112px)} } /* 넓은 화면: 카드 + 아래 탭까지 한 화면에 */
+@media (min-width:700px){ .cvwrap{width:fit-content;max-width:100%;margin-inline:auto} .cardview canvas{width:auto;max-width:100%;max-height:calc(100vh - 140px)} } /* 넓은 화면: 카드 + 아래 탭까지 한 화면에 */
 @media (min-width:960px){ /* 웹: 왼쪽 지도 · 오른쪽 탭, 둘이 같은 크기로 가운데 */
   body{margin:0}
   .wrap{max-width:none;grid-template-columns:auto auto;justify-content:center;align-items:start;column-gap:32px;padding-block:24px}
   .lcol{display:grid;gap:14px}
   .rcol{display:grid;gap:14px;align-content:start;width:var(--cw,420px);height:var(--ch,auto);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
-  .cardview canvas{max-height:calc(100vh - 50px)}
+  .cardview canvas{max-height:calc(100vh - 80px)}
   .rcol{box-sizing:border-box;padding-top:14px;margin-top:-14px;height:calc(var(--ch,auto) + 14px)} /* 탭 위 event 딱지가 스크롤 상자에 잘리지 않게 위쪽 여백 */
   .rcol .ptabs{position:sticky;top:0;z-index:6;box-shadow:0 0 0 8px var(--page),0 -14px 0 8px var(--page)} /* 웹: 스크롤해도 탭 유지 */
   .rcol #p-upload .uphead{position:sticky;top:var(--st1,62px);z-index:5;background:var(--page);box-shadow:0 0 0 8px var(--page)}
@@ -70,12 +70,12 @@ svg#map{display:block;width:100%;height:auto;max-height:82vh;touch-action:pan-y;
   .rcol #ml .mh [data-k=name]::before{content:"봉우리";grid-column:2;grid-row:1}
   .rcol #ml .mh [data-k=name]::after{grid-column:1;grid-row:1;justify-self:end}
 }
-.fmtov{all:unset;cursor:pointer;position:absolute;left:6px;top:6px;z-index:3;font-size:calc(10.5px*var(--k,1));opacity:.9;font-weight:700;color:#8e8c78;background:rgba(239,237,227,.85);border-radius:999px;padding:calc(2px*var(--k,1)) calc(8px*var(--k,1))}
+.fmtov{all:unset;cursor:pointer;position:relative;z-index:3;font-size:calc(10.5px*var(--k,1));opacity:.9;font-weight:700;color:#8e8c78;background:rgba(239,237,227,.85);border-radius:999px;padding:calc(2px*var(--k,1)) calc(8px*var(--k,1))}
 .cvact{display:flex;gap:calc(4px*var(--k,1))}
 .fmtov.kk{color:#2f6a2c;background:#e6f2df;animation:kkglow 1.6s ease-in-out 2} /* 카톡: 은은하게 빛나는 강조 */
 @keyframes kkglow{0%,100%{box-shadow:0 0 3px rgba(79,154,69,.3)}50%{box-shadow:0 0 12px 2px rgba(79,154,69,.6)}}
 @media (prefers-reduced-motion:reduce){.fmtov.kk{animation:none;box-shadow:0 0 6px 2px rgba(79,154,69,.45)}}.cvact .fmtov{position:static}
-.cvbar{position:absolute;left:calc(6px*var(--k,1));right:calc(6px*var(--k,1));top:calc(6px*var(--k,1));z-index:3;display:flex;justify-content:space-between;align-items:center;gap:calc(4px*var(--k,1));pointer-events:none}.cvbar>*{pointer-events:auto}
+.cvbar{position:relative;z-index:3;margin:0 0 3px;display:flex;justify-content:space-between;align-items:center;gap:calc(4px*var(--k,1));pointer-events:none}.cvbar>*{pointer-events:auto}
 .cvl{display:flex;gap:calc(4px*var(--k,1))}.cvl .fmtov{position:static}
 .fmtov{white-space:nowrap}.fmtov.sq{padding:2px 7px;min-width:10px;text-align:center}.fmtov:disabled{opacity:.35;cursor:default}
 
@@ -426,7 +426,7 @@ footer{font-size:12px;color:var(--muted)}
 <div class="wrap">
   <div class="lcol">
   <span id="cnt" hidden></span>
-  <div class="cardview"><div class="cvbar"><span class="cvl"><button type="button" class="fmtov" id="fmtTog" aria-label="이미지 비율 바꾸기">9:16</button></span><span class="cvact"><button type="button" class="fmtov" id="cvSave" aria-label="이미지 저장">저장</button><button type="button" class="fmtov" id="cvShare" aria-label="링크 공유">공유</button><button type="button" class="fmtov kk" id="cvKakao" aria-label="카카오톡으로 내 지도 공유">카톡</button></span></div><canvas id="cardImg" role="img" aria-label="나의 명산 지도 카드"></canvas><span id="cardBusy" class="tip" hidden>그리는 중…</span></div>
+  <div class="cvwrap"><div class="cvbar"><span class="cvl"><button type="button" class="fmtov" id="fmtTog" aria-label="이미지 비율 바꾸기">9:16</button></span><span class="cvact"><button type="button" class="fmtov" id="cvSave" aria-label="이미지 저장">저장</button><button type="button" class="fmtov" id="cvShare" aria-label="링크 공유">공유</button><button type="button" class="fmtov kk" id="cvKakao" aria-label="카카오톡으로 내 지도 공유">카톡</button></span></div><div class="cardview"><canvas id="cardImg" role="img" aria-label="나의 명산 지도 카드"></canvas><span id="cardBusy" class="tip" hidden>그리는 중…</span></div></div>
   <div id="linkBox" class="linkbox" hidden><input id="linkIn" class="search" readonly aria-label="공유 링크"><span class="tip" id="linkMsg"></span></div>
 
   <div id="island" class="island" hidden></div>
@@ -2020,7 +2020,7 @@ drawPeaks(); drawStickers(); renderList(); updateCount(); setView(FULL.slice());
 if(window.ResizeObserver){ const rc=document.querySelector(".rcol"), tb=document.querySelector(".ptabs"), uh=document.querySelector("#p-upload .uphead");
   new ResizeObserver(()=>{ const t=tb.offsetHeight, u=uh.offsetHeight, g=parseFloat(getComputedStyle(document.getElementById("p-upload")).rowGap)||10;
     rc.style.setProperty("--st1",(t+14)+"px"); rc.style.setProperty("--st2",(t+14+u+g)+"px"); rc.style.setProperty("--st3",(t+14+u+g+document.querySelector("#p-upload .inx").offsetHeight+g)+"px"); }).observe(uh); }
-if(window.ResizeObserver){ const wr=document.querySelector(".wrap"); new ResizeObserver(()=>{ const r=cardImg.getBoundingClientRect(); wr.style.setProperty("--cw",Math.round(r.width+2)+"px"); wr.style.setProperty("--ch",Math.round(r.height+2)+"px"); wr.style.setProperty("--k",Math.max(1,r.width/340).toFixed(3)); }).observe(cardImg); } // --k: 카드 위 알약 버튼도 카드 크기에 비례
+if(window.ResizeObserver){ const wr=document.querySelector(".wrap"); new ResizeObserver(()=>{ const r=cardImg.getBoundingClientRect(), rw=document.querySelector(".cvwrap").getBoundingClientRect(); wr.style.setProperty("--cw",Math.round(r.width+2)+"px"); wr.style.setProperty("--ch",Math.round(rw.height)+"px"); wr.style.setProperty("--k",Math.max(1,r.width/340).toFixed(3)); }).observe(cardImg); } // --k: 카드 위 알약 버튼도 카드 크기에 비례
 // 공유 링크(?from=share)로 들어온 방문 세기 → 주소창에서는 바로 지움
 (()=>{ const q=new URLSearchParams(location.search), fr=q.get("from"); if(fr!=="share"&&fr!=="kakao") return; try{ history.replaceState(null,"",location.pathname+location.hash); }catch(_){}
   let k=0; const go=()=>{ if(window.goatcounter&&goatcounter.count){ gc(fr==="kakao"?"visit-from-kakao":"visit-from-share"); } else if(++k<20) setTimeout(go,500); }; go(); })();
