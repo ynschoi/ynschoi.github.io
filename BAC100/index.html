@@ -33,7 +33,7 @@
 }
 html,body{background:var(--page);color:var(--fg)}
 body{font-family:var(--body);line-height:1.5;word-break:keep-all}
-.wrap{max-width:900px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:22px 40px;display:grid;gap:14px}
+.wrap{max-width:900px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:8px 40px;display:grid;gap:14px}body{margin-top:0}
 header{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
 h1{font:800 clamp(28px,7vw,40px)/1.05 var(--display);margin:0;letter-spacing:-.03em}
 .count{font:500 13px var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
@@ -426,7 +426,7 @@ footer{font-size:12px;color:var(--muted)}
 <div class="wrap">
   <div class="lcol">
   <span id="cnt" hidden></span>
-  <div class="cvwrap"><div class="cvbar"><span class="cvl"><button type="button" class="fmtov" id="fmtTog" aria-label="이미지 비율 바꾸기">9:16</button></span><span class="cvact"><button type="button" class="fmtov" id="cvSave" aria-label="이미지 저장">저장</button><button type="button" class="fmtov" id="cvShare" aria-label="링크 공유">공유</button><button type="button" class="fmtov kk" id="cvKakao" aria-label="카카오톡으로 내 지도 공유">카톡</button></span></div><div class="cardview"><canvas id="cardImg" role="img" aria-label="나의 명산 지도 카드"></canvas><span id="cardBusy" class="tip" hidden>그리는 중…</span></div></div>
+  <div class="cvwrap"><div class="cvbar"><span class="cvl"><button type="button" class="fmtov" id="fmtTog" aria-label="이미지 비율 바꾸기">9:16</button><button type="button" class="fmtov" id="fontTog" aria-label="글씨체 바꾸기">폰트 1</button></span><span class="cvact"><button type="button" class="fmtov kk" id="cvKakao" aria-label="카카오톡으로 내 지도 공유">카톡 공유</button><button type="button" class="fmtov" id="cvSave" aria-label="이미지 저장">사진 저장</button><button type="button" class="fmtov" id="cvShare" aria-label="링크 공유">링크 공유</button></span></div><div class="cardview"><canvas id="cardImg" role="img" aria-label="나의 명산 지도 카드"></canvas><span id="cardBusy" class="tip" hidden>그리는 중…</span></div></div>
   <div id="linkBox" class="linkbox" hidden><input id="linkIn" class="search" readonly aria-label="공유 링크"><span class="tip" id="linkMsg"></span></div>
 
   <div id="island" class="island" hidden></div>
@@ -989,7 +989,9 @@ const fontStack=()=>`"${FONT}","Pretendard","Apple SD Gothic Neo","Malgun Gothic
 function applyFont(){ const st=fontStack(); document.querySelectorAll("#map text").forEach(t=>t.style.fontFamily=st); }
 const fontSel=document.getElementById("fontSel");
 FONTS.forEach(([k,n])=>{const o=document.createElement("option");o.value=k;o.textContent=n;o.style.fontFamily=`"${k}",Pretendard,sans-serif`;fontSel.appendChild(o);});
-fontSel.value=FONT; fontSel.onchange=()=>{FONT=fontSel.value; ls.set("bac100-font",FONT); applyFont(); scheduleCard();}; applyFont();
+const fontTog=document.getElementById("fontTog"), syncFontTog=()=>{ fontTog.textContent="폰트 "+(FONTS.findIndex(f=>f[0]===FONT)+1); };
+fontSel.value=FONT; fontSel.onchange=()=>{FONT=fontSel.value; ls.set("bac100-font",FONT); applyFont(); syncFontTog(); scheduleCard();}; applyFont(); syncFontTog();
+fontTog.onclick=()=>{ gcDay("font-tog"); const i=FONTS.findIndex(f=>f[0]===FONT); fontSel.value=FONTS[(i+1)%FONTS.length][0]; fontSel.onchange(); };
 
 // 산 정보 아일랜드 (목록과 같은 줄)
 function select(n){
@@ -1975,7 +1977,7 @@ const decoSize=f=>{ if(DSEL==null) return; const d=DECOS[DSEL]; d.h=Math.max(20,
 document.getElementById("resetPos").onclick=()=>{ gcDay("pos-reset");POS={}; ls.set("bac100-pos",POS); relayout();};
 document.getElementById("mkShare").onclick=async e=>{
   const b=e.currentTarget, cb=document.getElementById("cvSave"); b.disabled=cb.disabled=true; b.textContent="만드는 중…"; cb.textContent="만드는 중…";
-  try{ await getShareBlob(); } finally{ b.disabled=cb.disabled=false; b.textContent="이미지 저장"; cb.textContent="저장"; }
+  try{ await getShareBlob(); } finally{ b.disabled=cb.disabled=false; b.textContent="이미지 저장"; cb.textContent="사진 저장"; }
   const im=document.getElementById("shrImg"); if(im.src.startsWith("blob:"))URL.revokeObjectURL(im.src); im.src=URL.createObjectURL(shareBlob);
   document.getElementById("shrMsg").textContent=FMT==="post"?"게시글 크기(1080×1350)예요. 저장 버튼이 안 되면 이미지를 길게 눌러 저장하세요.":"스토리 크기(1080×1920)예요. 저장 버튼이 안 되면 이미지를 길게 눌러 저장하세요.";
   document.getElementById("shr").hidden=false;
