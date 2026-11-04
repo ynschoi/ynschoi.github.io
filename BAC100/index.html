@@ -860,6 +860,20 @@ function loadKakao(){ if(window.Kakao&&Kakao.isInitialized&&Kakao.isInitialized(
   kakaoP=new Promise((res,rej)=>{ const sc=document.createElement("script"); sc.src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.6/kakao.min.js"; sc.crossOrigin="anonymous";
     sc.onload=()=>{ try{ if(!Kakao.isInitialized()) Kakao.init(KAKAO_KEY); res(Kakao); }catch(e){ kakaoP=null; rej(e); } }; sc.onerror=()=>{ kakaoP=null; rej(new Error("kakao-load")); }; document.head.appendChild(sc); });
   return kakaoP; }
+// 아이폰 홈 화면 앱: 카카오 SDK가 웹 페이지(talk-apps)를 거쳐 카톡을 열면 막혀서, 카톡 인앱처럼 kakaolink:// 로 바로 열게 SDK를 고쳐서 불러온다
+let kakaoDP=null;
+function loadKakaoDirect(){ if(window.__kkDirect&&window.Kakao&&Kakao.isInitialized&&Kakao.isInitialized()) return Promise.resolve(Kakao); if(kakaoDP) return kakaoDP;
+  kakaoDP=fetch("https://t1.kakaocdn.net/kakao_js_sdk/2.7.6/kakao.min.js").then(r=>{ if(!r.ok) throw new Error("kakao-load"); return r.text(); }).then(t=>{
+    const A="!Zr()&&{universalLink:", B="(Zr()||Yr())&&{onAppMissing:mt}";
+    if(t.split(A).length!==2||t.split(B).length!==2) throw new Error("kakao-patch");
+    t=t.replace(A,"!(Zr()||window.__kkDirect)&&{universalLink:").replace(B,"(Zr()||Yr()||window.__kkDirect)&&{onAppMissing:mt}");
+    return new Promise((res,rej)=>{ const u=URL.createObjectURL(new Blob([t],{type:"text/javascript"})), sc=document.createElement("script"); sc.src=u;
+      sc.onload=()=>{ URL.revokeObjectURL(u); try{ window.__kkDirect=true; if(!Kakao.isInitialized()) Kakao.init(KAKAO_KEY); res(Kakao); }catch(e){ rej(e); } }; sc.onerror=()=>rej(new Error("kakao-load")); document.head.appendChild(sc); }); })
+  .catch(e=>{ kakaoDP=null; throw e; });
+  return kakaoDP; }
+async function kakaoCard(K,jb){ const up=await K.Share.uploadImage({file:[new File([jb.blob],"my-100-summits.jpg",{type:"image/jpeg"})]});
+  const n=Object.keys(PH).length, who=NICK||"나", link={mobileWebUrl:APP_URL+"?from=kakao",webUrl:APP_URL+"?from=kakao"};
+  K.Share.sendDefault({objectType:"feed",content:{title:`${who}의 명산 지도 · ${n}/100`,description:"블랙야크 명산100 완등 지도",imageUrl:up.infos.original.url,imageWidth:jb.w,imageHeight:jb.h,link},buttons:[{title:"나도 만들기",link}]}); }
 async function kakaoImage(){ // 카톡 카드용: 4:5 배치로 그리고 맨 아래 주소 줄은 잘라서 지도를 꽉 채움 (링크는 카드 버튼에 있음)
   const prev=FMT, busy=document.getElementById("cardBusy");
   try{ if(prev!=="post"){ FMT="post"; shareBlob=null; await renderCard(); busy.hidden=false; busy.textContent="카톡 카드 만드는 중…"; }
@@ -877,17 +891,20 @@ document.getElementById("cvKakao").onclick=async e=>{ const b=e.currentTarget; i
   const SA=navigator.standalone===true||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches);
   if(IOS&&SA&&navigator.share){ // 아이폰 홈 화면 앱에서는 카톡 앱을 직접 못 열어서 공유 목록으로 보낸다
     gc("share-kakao-home");
-    try{ const jb=await kakaoImage(), f=new File([jb.blob],"my-100-summits.jpg",{type:"image/jpeg"}), m=document.getElementById("kkM"), im=document.getElementById("kkImg");
+    const sheet=jb=>{ const f=new File([jb.blob],"my-100-summits.jpg",{type:"image/jpeg"}), m=document.getElementById("kkM"), im=document.getElementById("kkImg");
       const txt=`${NICK||"나"}의 명산 지도 · ${Object.keys(PH).length}/100\n나도 만들기 👉 ${APP_URL}?from=kakao`;
       if(im.src) URL.revokeObjectURL(im.src); im.src=URL.createObjectURL(jb.blob); m.hidden=false;
-      document.getElementById("kkGo").onclick=async()=>{ try{ await navigator.share({files:[f],text:txt}); m.hidden=true; }catch(err){ if(!err||err.name!=="AbortError") toast("공유를 열지 못했어요. 잠시 뒤 다시 해주세요."); } };
-    }catch(err){ toast("카톡 이미지를 만들지 못했어요. 잠시 뒤 다시 해주세요."); }
+      document.getElementById("kkGo").onclick=async()=>{ try{ await navigator.share({files:[f],text:txt}); m.hidden=true; }catch(err){ if(!err||err.name!=="AbortError") toast("공유를 열지 못했어요. 잠시 뒤 다시 해주세요."); } }; };
+    let jb=null;
+    try{ const r=await Promise.all([loadKakaoDirect().catch(()=>null),kakaoImage()]), K=r[0]; jb=r[1];
+      if(!K){ gc("share-kakao-home-sheet"); sheet(jb); }
+      else{ await kakaoCard(K,jb); let left=false; const vh=()=>{ if(document.hidden) left=true; }; document.addEventListener("visibilitychange",vh);
+        setTimeout(()=>{ document.removeEventListener("visibilitychange",vh); if(left) gc("share-kakao-home-card"); else { gc("share-kakao-home-sheet"); sheet(jb); } },4000); }
+    }catch(err){ if(jb) sheet(jb); else toast("카톡 이미지를 만들지 못했어요. 잠시 뒤 다시 해주세요."); }
     finally{ b.disabled=false; b.textContent=old; } return; }
   gc("share-kakao");
   try{ const [K,jb]=await Promise.all([loadKakao(),kakaoImage()]);
-    const up=await K.Share.uploadImage({file:[new File([jb.blob],"my-100-summits.jpg",{type:"image/jpeg"})]});
-    const n=Object.keys(PH).length, who=NICK||"나", link={mobileWebUrl:APP_URL+"?from=kakao",webUrl:APP_URL+"?from=kakao"};
-    K.Share.sendDefault({objectType:"feed",content:{title:`${who}의 명산 지도 · ${n}/100`,description:"블랙야크 명산100 완등 지도",imageUrl:up.infos.original.url,imageWidth:jb.w,imageHeight:jb.h,link},buttons:[{title:"나도 만들기",link}]});
+    await kakaoCard(K,jb);
   }catch(err){ toast("카톡 공유를 열지 못했어요. 잠시 뒤 다시 해주세요."); }
   finally{ b.disabled=false; b.textContent=old; } };
 const EVT_ID="hof-2026-11-w1";
