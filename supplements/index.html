@@ -48,8 +48,9 @@ svg.sprite{image-rendering:pixelated;shape-rendering:crispEdges;display:block}
 
 .wrap{max-width:480px;margin:0 auto;padding:0 16px}
 header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 80%,transparent);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--line)}
-header .wrap{display:flex;align-items:center;gap:10px;height:52px}
+header .wrap{display:flex;align-items:center;gap:10px;height:56px}
 header h1{font-family:var(--pixel);font-weight:700;font-size:16px;margin:0;flex:1;letter-spacing:.5px}
+header h1 .tagline{display:block;font-weight:400;font-size:10px;color:var(--ink2);letter-spacing:0;margin-top:1px}
 header .date{font-family:var(--pixel);font-size:11px;color:var(--ink2)}
 
 /* pixel box: square corners + hard shadow */
@@ -166,13 +167,21 @@ label.f{display:block;font-size:12px;color:var(--ink2);margin:10px 0 4px}
 .kv{display:grid;grid-template-columns:84px 1fr;gap:4px 8px;font-size:13px;margin-top:10px}
 .kv dt{color:var(--ink2)}.kv dd{margin:0}
 .banner{font-size:12px;background:var(--accent-tint);border:2px solid var(--accent);padding:8px 10px;margin-top:12px;display:flex;gap:8px;align-items:flex-start}
+.verdict{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
+.verdict button{font-family:var(--pixel);font-size:12px;border:2px solid var(--line2);background:var(--card);padding:8px 4px;cursor:pointer}
+.verdict button[aria-pressed="true"]{border-color:var(--px);background:var(--accent);color:#fff;box-shadow:2px 2px 0 var(--px)}
+.item.paused .bob{opacity:.45;filter:grayscale(.8);animation:none}
+.zzz{position:absolute;top:-4px;right:8px;font-family:var(--pixel);font-size:11px;color:#6b5a48}
+.story{font-size:13px;line-height:1.7}
+.story b{font-family:var(--pixel);font-weight:700}
+.tally{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
 .empty{font-size:13px;color:var(--ink2);text-align:center;padding:16px 0}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 @media (prefers-reduced-motion:reduce){.bob,.eye,.mood-pop{animation:none!important}.sheet{transition:none}}
 </style>
 </head>
 <body>
-<header><div class="wrap"><h1>픽셀 영양제 선반</h1><span class="date" id="today"></span></div></header>
+<header><div class="wrap"><h1>픽셀 영양제 선반<small class="tagline">영양제 부자 탈출</small></h1><span class="date" id="today"></span></div></header>
 
 <main class="wrap" id="view"></main>
 
@@ -350,9 +359,12 @@ function sprite(p, mood="normal", px=5){
        `<rect x="${ex2}" y="${fy}" width="1" height="1"/><rect x="${ex2-1}" y="${fy+1}" width="1" height="1"/><rect x="${ex2+1}" y="${fy+1}" width="1" height="1"/></g>`;
     r+=`<g fill="${ink}"><rect x="${cx-2}" y="${fy+3}" width="1" height="1"/><rect x="${cx-1}" y="${fy+4}" width="2" height="1"/><rect x="${cx+1}" y="${fy+3}" width="1" height="1"/></g>`;
   }else{
+    if(mood==="sleep"){r+=`<g fill="${ink}"><rect x="${ex1-1}" y="${fy+1}" width="2" height="1"/><rect x="${ex2}" y="${fy+1}" width="2" height="1"/><rect x="${cx-1}" y="${fy+3}" width="2" height="1"/></g>`;}
+    else{
     r+=`<g class="eye" fill="${ink}"><rect x="${ex1}" y="${fy}" width="1" height="2"/><rect x="${ex2}" y="${fy}" width="1" height="2"/></g>`;
     if(mood==="worry") r+=`<rect x="${cx-1}" y="${fy+3}" width="2" height="1" fill="${ink}"/><rect x="${cx+3}" y="${fy-2}" width="1" height="1" fill="#5ac8fa"/><rect x="${cx+3}" y="${fy-1}" width="1" height="2" fill="#5ac8fa"/>`;
     else r+=`<rect x="${cx-1}" y="${fy+3}" width="2" height="1" fill="${ink}"/>`;
+    }
   }
   r+=`<rect x="${ex1-1}" y="${fy+2}" width="1" height="1" fill="#ff8fab" opacity=".85"/><rect x="${ex2+1}" y="${fy+2}" width="1" height="1" fill="#ff8fab" opacity=".85"/>`;
   return `<svg class="sprite" viewBox="0 0 14 ${H}" width="${14*px}" height="${H*px}" aria-hidden="true" style="--px-out:#18181b">${r}</svg>`;
@@ -416,10 +428,14 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function dkey(d=new Date()){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 const todayLog=()=>S.log[dkey()]||(S.log[dkey()]={});
+const VERDICT={keep:"계속 먹기",asneeded:"필요할 때만",pause:"쉬기"};
+const active=()=>S.products.filter(p=>p.verdict!=="pause");
+const isOpt=(p,sc)=>sc.optional||p.verdict==="asneeded";
 function dailyQty(p){return p.schedule.reduce((a,s)=>a+s.qty,0)}
 function daysLeft(p){const q=dailyQty(p);return q?Math.floor(p.remaining/q):Infinity}
 function moodOf(p){
-  const L=todayLog(); const req=p.schedule.filter(s=>!s.optional);
+  if(p.verdict==="pause") return "sleep";
+  const L=todayLog(); const req=p.schedule.filter(s=>!isOpt(p,s));
   if(daysLeft(p)<=7) return "worry";
   if(req.length && req.every(s=>L[p.id+"|"+s.slot])) return "happy";
   return "normal";
@@ -430,16 +446,29 @@ function gradeTag(g){return `<span class="grade g${g}" title="${GRADE_TXT[g]}">$
 /* ================= 화면: 선반 ================= */
 function viewShelf(){
   const P=S.products; let h="";
+  if(!S.storySeen) h+=`<section class="pbox"><h2>💊 영양제 부자 탈출</h2><div class="pbody story">
+    남들이 좋다는 영양제, 몸이 찌뿌둥하거나 잠이 안 올 때 하나씩 사 모으다 보니 <b>영양제 통만 한가득.</b><br>
+    너무 많이 먹으면 안 될 것 같아서 이러지도 저러지도 못하고, 다시 먹으려니 <b>왜 샀는지도 기억이 안 나요.</b><br><br>
+    그래서 이 선반은 세 가지를 해요.<br>
+    1. 겹치는 성분과 상한을 <b>근거와 함께</b> 확인해요.<br>
+    2. 통마다 <b>왜 샀는지</b> 적어 둬요.<br>
+    3. <b>계속 · 필요할 때만 · 쉬기</b>로 정리해요. 결정은 내가, 근거는 선반이.
+    <div class="btns"><button class="btn primary" data-act="storyok">정리 시작</button></div></div></section>`;
   if(!S.stockChecked) h+=`<div class="banner">${icon("check",16)}<div>사진 속 5개를 미리 올려뒀어요. 통마다 <b>남은 개수</b>가 실제와 다를 수 있으니 하나씩 눌러서 맞춰주세요. <button class="btn" data-act="stockok" style="margin-top:6px">확인했어요</button></div></div>`;
   h+=`<section class="pbox"><h2>${icon("shelf")}내 선반<span class="sub num">${P.length}개</span></h2><div class="shelf">`;
   for(let i=0;i<Math.max(P.length,1);i+=3){
     const chunk=P.slice(i,i+3);
-    h+=`<div class="row">`+chunk.map(p=>`<button class="item" data-open="${p.id}" aria-label="${esc(p.name)} 자세히"><span class="bob" id="spr-${p.id}">${sprite(p,moodOf(p))}</span><span class="tag">${esc(p.short||p.name)}</span></button>`).join("")+(chunk.length<3?`<span></span>`.repeat(3-chunk.length):"")+`</div><div class="plank"></div>`;
+    h+=`<div class="row">`+chunk.map(p=>`<button class="item ${p.verdict==="pause"?"paused":""}" data-open="${p.id}" aria-label="${esc(p.name)} 자세히">${p.verdict==="pause"?'<span class="zzz">zZ</span>':""}<span class="bob" id="spr-${p.id}">${sprite(p,moodOf(p))}</span><span class="tag">${esc(p.short||p.name)}</span></button>`).join("")+(chunk.length<3?`<span></span>`.repeat(3-chunk.length):"")+`</div><div class="plank"></div>`;
     h+=`<div class="below">`+chunk.map(p=>{const d=daysLeft(p),f=Math.max(0,Math.min(8,Math.ceil(p.remaining/(p.total||1)*8)));const cls=d<=3?"empty":d<=7?"low":"";return `<div class="meta"><span class="stock ${cls}" aria-label="잔량 ${p.remaining}${esc(p.unit)}">${Array.from({length:8},(_,k)=>`<i class="${k<f?"on":""}"></i>`).join("")}</span><span class="days">${d===Infinity?"-":d+"일 남음"}</span></div>`}).join("")+(chunk.length<3?`<span></span>`.repeat(3-chunk.length):"")+`</div>`;
   }
   if(!P.length) h+=`<div class="empty" style="padding:30px 0">선반이 비었어요</div>`;
-  h+=`</div><div class="pbody"><div class="btns" style="margin-top:0"><button class="btn primary" data-act="add">+ 영양제 추가</button></div>
-  <p class="note" style="margin-top:10px">😊 오늘 다 먹으면 웃고, 💧 7일 안에 떨어지면 땀을 흘려요.</p></div></section>`;
+  const cnt=k=>P.filter(p=>(p.verdict||null)===k).length, noReason=P.filter(p=>!p.reason).length;
+  h+=`</div><div class="pbody">
+  <div style="font-weight:600;font-size:13px">정리 현황</div>
+  <div class="tally"><span class="chip">계속 ${cnt("keep")}</span><span class="chip">필요할 때 ${cnt("asneeded")}</span><span class="chip">쉬기 ${cnt("pause")}</span><span class="chip" style="${cnt(null)?"border-color:var(--warn);color:var(--warn)":""}">아직 안 정함 ${cnt(null)}</span>${noReason?`<span class="chip" style="border-color:var(--warn);color:var(--warn)">왜 샀는지 모름 ${noReason}</span>`:""}</div>
+  <p class="note">통을 눌러 <b>왜 샀는지</b> 적고 계속·필요할 때만·쉬기를 골라 주세요. 쉬는 통은 오늘 목록과 체크에서 빠져요.</p>
+  <div class="btns"><button class="btn primary" data-act="add">+ 영양제 추가</button></div>
+  <p class="note" style="margin-top:10px">😊 오늘 다 먹으면 웃고, 💧 7일 안에 떨어지면 땀을 흘리고, zZ 쉬는 통은 잠들어요.</p></div></section>`;
   // 요약
   const a=analyze(); const warns=a.limits.filter(x=>x.pct>=80).length+a.overlaps.length+a.cautions.filter(c=>c.hit).length;
   h+=`<section class="pbox"><h2>${icon("check")}한눈에 체크<span class="sub">근거 포함</span></h2><div class="pbody">
@@ -459,7 +488,7 @@ function meter(l){
 function viewToday(){
   const L=todayLog(); let total=0,done=0;
   const slots=SLOTS.map(s=>{
-    const items=[];S.products.forEach(p=>p.schedule.forEach(sc=>{if(sc.slot===s.k){items.push({p,sc});if(!sc.optional){total++;if(L[p.id+"|"+s.k])done++;}}}));
+    const items=[];active().forEach(p=>p.schedule.forEach(sc=>{if(sc.slot===s.k){items.push({p,sc});if(!isOpt(p,sc)){total++;if(L[p.id+"|"+s.k])done++;}}}));
     return {s,items};
   });
   let h=`<section class="pbox"><h2>${icon("today")}오늘 먹을 것<span class="sub num">${done} / ${total}</span></h2><div class="pbody">
@@ -468,7 +497,7 @@ function viewToday(){
     h+=`<div class="slot"><h3>${icon(s.ic)}${s.ko}<span class="t num">${items.length}개</span></h3>`;
     if(!items.length) h+=`<div class="note">없음</div>`;
     items.forEach(({p,sc})=>{const k=p.id+"|"+s.k,on=!!L[k];
-      h+=`<button class="dose ${on?"done":""}" data-dose="${k}" aria-pressed="${on}">${sprite(p,on?"happy":"normal",2)}<span><span class="nm">${esc(p.short||p.name)}</span> <span class="num">${sc.qty}${esc(p.unit)}</span>${sc.optional?'<span class="opt">필요할 때</span>':""}<br><span class="how">${esc(sc.how||"")}</span></span><span class="chk">${on?"✓":""}</span></button>`;});
+      h+=`<button class="dose ${on?"done":""}" data-dose="${k}" aria-pressed="${on}">${sprite(p,on?"happy":"normal",2)}<span><span class="nm">${esc(p.short||p.name)}</span> <span class="num">${sc.qty}${esc(p.unit)}</span>${isOpt(p,sc)?'<span class="opt">필요할 때</span>':""}<br><span class="how">${esc(sc.how||"")}</span></span><span class="chk">${on?"✓":""}</span></button>`;});
     h+=`</div>`;
   });
   h+=`<p class="note">체크하면 남은 개수가 줄어요. '필요할 때'는 과식한 날만 먹는 제품이라 진행률에서 빠져요.</p></div></section>`;
@@ -477,7 +506,7 @@ function viewToday(){
 
 /* ================= 분석 ================= */
 function analyze(){
-  const P=S.products, lim={}, catMap={}, ingSet={};
+  const P=active(), lim={}, catMap={}, ingSet={};
   P.forEach(p=>{
     (p.purpose||[]).forEach(c=>{(catMap[c]=catMap[c]||[]).push(p)});
     p.ingredients.forEach(i=>{
@@ -501,6 +530,8 @@ const OVERLAP_NOTE={
 };
 function viewCheck(){
   const a=analyze(); let h="";
+  const paused=S.products.filter(p=>p.verdict==="pause");
+  if(paused.length) h+=`<div class="banner">zZ 쉬는 통 ${paused.length}개(${paused.map(p=>esc(p.short)).join(", ")})는 계산에서 뺐어요.</div>`;
   h+=`<section class="pbox"><h2>📊 상한 대비 합계<span class="sub">하루 기준</span></h2><div class="pbody">`;
   h+=a.limits.length?a.limits.map(l=>meter(l)+`<div class="card" style="margin-top:-6px"><div class="hd">${gradeTag(l.grade)} <span class="note" style="margin:0">${esc(l.scope)}</span></div>${l.parts.length?`<div class="chips">${l.parts.map(x=>`<span class="chip num">${esc(x.p.short)} ${x.amt}${l.unit}</span>`).join("")}</div>`:""}${srcLinks(l.src)}</div>`).join(""):`<div class="empty">합산할 영양소가 없어요</div>`;
   h+=`<p class="note">부형제(스테아린산마그네슘 등)는 합산에서 빼요. 라벨의 화합물 무게가 아니라 <b>원소 무게</b>로 계산해요.</p></div></section>`;
@@ -547,6 +578,11 @@ function detail(id){
     <div style="display:flex;align-items:center;gap:6px"><button class="btn" data-adj="-1" data-id="${p.id}" aria-label="하나 빼기">−</button><input class="in num" style="width:72px;text-align:center" inputmode="numeric" data-remain="${p.id}" value="${p.remaining}"><span>${esc(p.unit)}</span><button class="btn" data-adj="1" data-id="${p.id}" aria-label="하나 더하기">+</button></div>
     <div class="note">${d===Infinity?"":"약 "+d+"일 분량 · 하루 "+dailyQty(p)+esc(p.unit)}</div></div></div>
   ${d<=7&&d!==Infinity?`<div class="banner">💧 곧 떨어져요. ${AFFILIATE_ENABLED?'<a href="#">가격 비교</a>':'(재구매 링크 준비 중)'}</div>`:""}
+  <div style="margin-top:14px;font-weight:600;font-size:13px">왜 샀어요?</div>
+  <input class="in" data-reason="${p.id}" value="${esc(p.reason||"")}" placeholder="예: 잠이 안 와서 / 유튜브에서 좋다고 해서 / 친구 추천">
+  <div style="margin-top:12px;font-weight:600;font-size:13px">이 통은 앞으로</div>
+  <div class="verdict">${Object.entries(VERDICT).map(([k,v])=>`<button data-verdict="${k}" data-id="${p.id}" aria-pressed="${p.verdict===k}">${v}</button>`).join("")}</div>
+  <p class="note">결정은 내가 해요. 아래 성분·근거를 보고 골라 주세요. 약을 먹고 있다면 의사·약사와 상의하세요.</p>
   <dl class="kv"><dt>라벨 복용법</dt><dd>${esc(p.labelText||"-")}</dd>
   <dt>배치</dt><dd>${p.schedule.map(s=>`${SLOTS.find(x=>x.k===s.slot).ko} ${s.qty}${esc(p.unit)}${s.how?" ("+esc(s.how)+")":""}${s.optional?" · 필요할 때":""}`).join("<br>")}</dd>
   <dt>성분</dt><dd>${p.ingredients.map(i=>`${esc(ING[i.key]?.ko||i.key)} ${i.amount!=null?`<span class="num">${i.amount}${esc(i.unit||"")}</span>`:'<span class="note">함량 미표기</span>'}${i.note?`<br><span class="note">${esc(i.note)}</span>`:""}`).join("<br>")}</dd></dl>
@@ -571,6 +607,7 @@ function renderForm(isEdit){
   <label class="f" for="fname">제품명</label><input class="in" id="fname" data-f="name" value="${esc(d.name)}" placeholder="예: 비타민D 2000IU">
   <div class="grid2"><div><label class="f">선반 이름표 (짧게)</label><input class="in" data-f="short" value="${esc(d.short)}" maxlength="6" placeholder="예: 비타D"></div><div><label class="f">브랜드</label><input class="in" data-f="brand" value="${esc(d.brand)}"></div></div>
   <div class="grid3" style="margin-top:2px"><div><label class="f">단위</label><select class="in" data-f="unit">${["캡슐","정","알","포","스쿱","ml"].map(u=>`<option ${d.unit===u?"selected":""}>${u}</option>`).join("")}</select></div><div><label class="f">한 통</label><input class="in num" inputmode="numeric" data-f="total" value="${d.total}"></div><div><label class="f">남은 개수</label><input class="in num" inputmode="numeric" data-f="remaining" value="${d.remaining}"></div></div>
+  <label class="f">왜 샀어요?</label><input class="in" data-f="reason" value="${esc(d.reason||"")}" placeholder="예: 잠이 안 와서 / 남들이 좋다고 해서">
   <label class="f">라벨 복용법 (그대로 적기)</label><input class="in" data-f="labelText" value="${esc(d.labelText)}" placeholder="예: 1일 1회 1정, 식후">
   <label class="f">언제 먹나요 · 몇 개</label>${SLOTS.map(slotRow).join("")}
   <label class="f">목적</label><div class="chips">${Object.entries(CATS).filter(([k])=>k!=="bleed").map(([k,v])=>`<label class="chip"><input type="checkbox" data-fpurpose="${k}" ${d.purpose.includes(k)?"checked":""}> ${v}</label>`).join("")}</div>
@@ -609,6 +646,8 @@ document.addEventListener("click",e=>{
   if(t.dataset.fcolor){readForm();draft.colors[t.dataset.fcolor]=t.dataset.c;renderForm($("[data-act=saveForm]").dataset.edit==="1");return}
   const act=t.dataset.act;
   if(act==="close"){closeSheet();return}
+  if(t.dataset.verdict){const p=S.products.find(x=>x.id===t.dataset.id);p.verdict=p.verdict===t.dataset.verdict?null:t.dataset.verdict;save();detail(p.id);render();return}
+  if(act==="storyok"){S.storySeen=true;save();render();return}
   if(act==="stockok"){S.stockChecked=true;save();render();return}
   if(act==="add"){editForm(null);return}
   if(act==="edit"){editForm(t.dataset.id);return}
@@ -622,6 +661,7 @@ document.addEventListener("click",e=>{
 document.addEventListener("change",e=>{
   const t=e.target;
   if(t.dataset.cond){S.conds[t.dataset.cond]=t.checked;save();return}
+  if(t.dataset.reason){const p=S.products.find(x=>x.id===t.dataset.reason);p.reason=t.value.trim();save();render();return}
   if(t.dataset.remain){const p=S.products.find(x=>x.id===t.dataset.remain);p.remaining=Math.max(0,parseInt(t.value)||0);save();render();detail(p.id);return}
   if(t.dataset.fslot){const sb=$("#sheetBody");sb.querySelector(`[data-fhow="${t.dataset.fslot}"]`).disabled=!t.checked;sb.querySelector(`[data-fqty="${t.dataset.fslot}"]`).disabled=!t.checked}
 });
