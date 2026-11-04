@@ -49,13 +49,13 @@ svg#map{display:block;width:100%;height:auto;max-height:82vh;touch-action:pan-y;
 .cardview{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#fbfaf5;box-shadow:0 6px 20px rgba(60,60,40,.08)}
 .cardview canvas{display:block;width:100%;height:auto;cursor:pointer;touch-action:pan-y;-webkit-user-drag:none;user-select:none;-webkit-touch-callout:none}
 .lcol,.rcol{display:contents}
-@media (min-width:700px){ .cvwrap{width:fit-content;max-width:100%;margin-inline:auto} .cardview canvas{width:auto;max-width:100%;max-height:calc(100vh - 140px)} } /* 넓은 화면: 카드 + 아래 탭까지 한 화면에 */
+@media (min-width:700px){ .cvwrap{width:fit-content;max-width:100%;margin-inline:auto} .cardview canvas{width:auto;max-width:100%;max-height:calc(100vh - 168px)} } /* 넓은 화면: 카드 + 아래 탭까지 한 화면에 */
 @media (min-width:960px){ /* 웹: 왼쪽 지도 · 오른쪽 탭, 둘이 같은 크기로 가운데 */
   body{margin:0}
   .wrap{max-width:none;grid-template-columns:auto auto;justify-content:center;align-items:start;column-gap:32px;padding-block:24px}
   .lcol{display:grid;gap:14px}
   .rcol{display:grid;gap:14px;align-content:start;width:var(--cw,420px);height:var(--ch,auto);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
-  .cardview canvas{max-height:calc(100vh - 80px)}
+  .cardview canvas{max-height:calc(100vh - 108px)}
   .rcol{box-sizing:border-box;padding-top:14px;margin-top:-14px;height:calc(var(--ch,auto) + 14px)} /* 탭 위 event 딱지가 스크롤 상자에 잘리지 않게 위쪽 여백 */
   .rcol .ptabs{position:sticky;top:0;z-index:6;box-shadow:0 0 0 8px var(--page),0 -14px 0 8px var(--page)} /* 웹: 스크롤해도 탭 유지 */
   .rcol #p-upload .uphead{position:sticky;top:var(--st1,62px);z-index:5;background:var(--page);box-shadow:0 0 0 8px var(--page)}
@@ -77,6 +77,9 @@ svg#map{display:block;width:100%;height:auto;max-height:82vh;touch-action:pan-y;
 .cvact .fmtov{position:static}
 .cvbar{position:relative;z-index:3;margin:0 0 3px;display:flex;justify-content:space-between;align-items:center;gap:calc(4px*var(--k,1));pointer-events:none}.cvbar>*{pointer-events:auto}
 .cvl{display:flex;gap:calc(4px*var(--k,1))}.cvl .fmtov{position:static}
+.cvbot{display:flex;align-items:center;gap:calc(4px*var(--k,1));margin-top:3px}.cvbot .fmtov{position:static}.cvbot .cvlb{font-size:calc(10.5px*var(--k,1));color:#8e8c78;padding:0 1px 0 3px;white-space:nowrap}
+.cbsz{display:flex;gap:calc(3px*var(--k,1))}.cbsz .fmtov{min-width:calc(9px*var(--k,1));text-align:center;padding:calc(2px*var(--k,1)) calc(6px*var(--k,1))}.cbsz .fmtov[aria-pressed="true"]{background:#e6f2df;color:#2f6a2c}
+@media (max-width:360px){.cvbot{gap:3px}.cbsz{gap:2px}.cbsz .fmtov{padding:2px 5px}.cvbot>.fmtov{padding:2px 6px}}
 .fmtov{white-space:nowrap}.fmtov.sq{padding:2px 7px;min-width:10px;text-align:center}.fmtov:disabled{opacity:.35;cursor:default}
 
 .cardview .ghost{position:absolute;pointer-events:none;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25));opacity:.92}
@@ -426,7 +429,7 @@ footer{font-size:12px;color:var(--muted)}
 <div class="wrap">
   <div class="lcol">
   <span id="cnt" hidden></span>
-  <div class="cvwrap"><div class="cvbar"><span class="cvl"><button type="button" class="fmtov" id="fmtTog" aria-label="이미지 비율 바꾸기">9:16</button><button type="button" class="fmtov" id="fontTog" aria-label="글씨체 바꾸기">폰트 1</button></span><span class="cvact"><button type="button" class="fmtov kk" id="cvKakao" aria-label="카카오톡으로 내 지도 공유">카톡 공유</button><button type="button" class="fmtov" id="cvSave" aria-label="이미지 저장">사진 저장</button><button type="button" class="fmtov" id="cvShare" aria-label="링크 공유">링크 공유</button></span></div><div class="cardview"><canvas id="cardImg" role="img" aria-label="나의 명산 지도 카드"></canvas><span id="cardBusy" class="tip" hidden>그리는 중…</span></div></div>
+  <div class="cvwrap"><div class="cvbar"><span class="cvl"><button type="button" class="fmtov" id="fmtTog" aria-label="이미지 비율 바꾸기">9:16</button><button type="button" class="fmtov" id="fontTog" aria-label="글씨체 바꾸기">폰트 1</button></span><span class="cvact"><button type="button" class="fmtov kk" id="cvKakao" aria-label="카카오톡으로 내 지도 공유">카톡 공유</button><button type="button" class="fmtov" id="cvSave" aria-label="이미지 저장">사진 저장</button><button type="button" class="fmtov" id="cvShare" aria-label="링크 공유">링크 공유</button></span></div><div class="cardview"><canvas id="cardImg" role="img" aria-label="나의 명산 지도 카드"></canvas><span id="cardBusy" class="tip" hidden>그리는 중…</span></div><div class="cvbot"><span class="cvlb">정상석</span><button type="button" class="fmtov" id="cbReset">원위치</button><button type="button" class="fmtov" id="cbAuto">잘 보이게</button><span class="cvlb" style="margin-left:auto">크기</span><span class="cbsz" id="cbSz" role="group" aria-label="정상석 크기"></span></div></div>
   <div id="linkBox" class="linkbox" hidden><input id="linkIn" class="search" readonly aria-label="공유 링크"><span class="tip" id="linkMsg"></span></div>
 
   <div id="island" class="island" hidden></div>
@@ -934,15 +937,17 @@ document.addEventListener("click",async e=>{ const b=e.target.closest("[data-cop
   if(b.dataset.toast){ let t=document.querySelector(".cptoast"); if(!t){ t=document.createElement("div"); t.className="cptoast"; t.setAttribute("role","status"); document.body.appendChild(t); } t.textContent=b.dataset.toast; t.hidden=false; clearTimeout(t._h); t._h=setTimeout(()=>t.hidden=true,2200); return; }
   b.classList.add("done"); b.textContent="복사했어요"; setTimeout(()=>{ b.innerHTML=old; b.classList.remove("done"); },1400); });
 
-(()=>{ if(ls.get("bac100-evtseen","")===EVT_ID) return; const hb=document.querySelector('.ptabs [data-p="heart"]'); const t=document.createElement("span"); t.className="evtbadge"; t.textContent="event"; t.setAttribute("aria-hidden","true"); hb.appendChild(t);
-  hb.addEventListener("click",()=>{ ls.set("bac100-evtseen",EVT_ID); t.remove(); gc("evt-seen"); },{once:true}); })();
+(()=>{ if(ls.get("bac100-evtseen","")===EVT_ID) return; const hb=document.querySelector('.ptabs [data-p="heart"]'); 
+  hb.addEventListener("click",()=>{ ls.set("bac100-evtseen",EVT_ID); gc("evt-seen"); },{once:true}); })(); // event 딱지는 없앰
 document.querySelectorAll(".ptabs button").forEach(b=>b.onclick=e=>{ if(!coachEl&&e&&e.isTrusted) gcDay("tab-"+b.dataset.p);
   document.querySelectorAll(".ptabs button").forEach(x=>{const on=x===b;x.setAttribute("aria-selected",on);document.getElementById("p-"+x.dataset.p).hidden=!on;}); });
 // ── 정상석 크기 5단계 ──
 const SZL=[.7,.85,1,1.2,1.4], SZN=["아주 작게","작게","보통","크게","아주 크게"];
 let SZ=ls.get("bac100-sz",2); if(!(SZ>=0&&SZ<5)) SZ=2;
 (function(){const g=document.getElementById("szSeg");SZN.forEach((t,i)=>{const b=document.createElement("button");b.type="button";b.textContent=t;b.setAttribute("aria-pressed",i===SZ);
-  b.onclick=()=>{SZ=i;ls.set("bac100-sz",SZ);g.querySelectorAll("button").forEach((x,j)=>x.setAttribute("aria-pressed",j===SZ));relayout();};g.appendChild(b);});})();
+  b.onclick=()=>setSZ(i);g.appendChild(b);});
+  const c=document.getElementById("cbSz"); SZN.forEach((t,i)=>{ const b=document.createElement("button"); b.type="button"; b.className="fmtov"; b.textContent=i+1; b.setAttribute("aria-label","정상석 크기 "+t); b.setAttribute("aria-pressed",i===SZ); b.onclick=()=>{ gcDay("size-bar"); setSZ(i); }; c.appendChild(b); });})();
+function setSZ(i){ SZ=i; ls.set("bac100-sz",SZ); document.querySelectorAll("#szSeg button,#cbSz button").forEach(x=>x.setAttribute("aria-pressed",x.parentNode.children[i]===x)); relayout(); }
 // ── 스토리 / 게시글 ──
 let FMT="story"; // 처음엔 늘 9:16
 function syncFmt(){ document.getElementById("fmtTog").textContent=FMT==="post"?"4:5":"9:16"; }
@@ -1974,6 +1979,7 @@ cardImg.addEventListener("click",e=>{
   if(best) showIsland(best.n);
 });
 const decoSize=f=>{ if(DSEL==null) return; const d=DECOS[DSEL]; d.h=Math.max(20,Math.min(400,d.h*f)); ls.set("bac100-decos",DECOS); compose(); };
+document.getElementById("cbReset").onclick=()=>document.getElementById("resetPos").click(); document.getElementById("cbAuto").onclick=()=>autoBtn.click();
 document.getElementById("resetPos").onclick=()=>{ gcDay("pos-reset");POS={}; ls.set("bac100-pos",POS); relayout();};
 document.getElementById("mkShare").onclick=async e=>{
   const b=e.currentTarget, cb=document.getElementById("cvSave"); b.disabled=cb.disabled=true; b.textContent="만드는 중…"; cb.textContent="만드는 중…";
