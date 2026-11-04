@@ -395,6 +395,13 @@ footer{font-size:12px;color:var(--muted)}
 .coach .bot{display:flex;align-items:center;gap:10px}.coach .dots{display:flex;gap:5px;flex:1}.coach .dots i{width:6px;height:6px;border-radius:50%;background:#d6d2c2}.coach .dots i.on{background:#4f9a45;width:16px;border-radius:3px}
 .coach .skip{all:unset;cursor:pointer;font-size:13px;color:var(--muted);padding:6px 4px}.coach .next{all:unset;cursor:pointer;font-size:13.5px;font-weight:700;color:#fffefa;background:#4f9a45;border-radius:999px;padding:7px 16px}
 @media (prefers-reduced-motion:reduce){.coach .hole,.coach .bub{transition:none}}
+.iab{position:fixed;inset:0;z-index:96;background:rgba(15,18,12,.62);display:grid;place-items:center;padding:16px}
+.iab .iabc{width:min(400px,100%);background:#fffefa;border-radius:16px;padding:16px 16px 12px;box-shadow:0 10px 30px rgba(0,0,0,.3);display:grid;gap:8px}
+.iab h4{margin:0;font-size:16px;font-weight:400;color:#2f6a2c}.iab p{margin:0;font-size:14px;line-height:1.6;color:var(--fg)}.iab small{display:block;font-size:12px;color:var(--muted);line-height:1.5}
+.iab .go{all:unset;cursor:pointer;text-align:center;background:#4f9a45;color:#fffefa;border-radius:999px;padding:10px 0;font-size:14px;margin-top:4px}
+.iab .cp{all:unset;cursor:pointer;text-align:center;border:1px solid #cfd8c8;color:#2f6a2c;border-radius:999px;padding:9px 0;font-size:14px;background:#fff}
+.iab .st{all:unset;cursor:pointer;text-align:center;font-size:13px;color:var(--muted);padding:6px}
+.iab ol{margin:2px 0 0;padding-left:20px;font-size:13.5px;line-height:1.7;color:var(--fg)}
 
 /* 하트 탭 정리: 같은 흰 카드, 간격 통일, 보안+백업은 한 카드 */
 #p-heart{gap:14px}
@@ -2030,7 +2037,29 @@ const standalone=navigator.standalone===true||(window.matchMedia&&matchMedia("(d
     let k=0; const go=()=>{ if(window.goatcounter&&goatcounter.count){ gc("open-"+where); gc("os-"+os); gc("cnt-"+cb); gc("ret-"+rb); ls.set("bac100-openday",t); } else if(++k<20) setTimeout(go,500); }; go(); } }
 if(standalone){ const t=new Date().toISOString().slice(0,10); if(ls.get("bac100-homeday","")!==t){ let k=0; const go=()=>{ if(window.goatcounter&&goatcounter.count){ gc("home-app"); ls.set("bac100-homeday",t); } else if(++k<20) setTimeout(go,500); }; go(); } }
   document.getElementById("mvTip").hidden=!(standalone&&!Object.keys(PH).length);
-  if(!ls.get("bac100-coach",false)&&!Object.keys(PH).length&&!standalone) setTimeout(()=>startCoach(),600); })(); // 처음 온 사람에게만 (정상석이 이미 있으면 안 띄움)
+  const coachGo=()=>{ if(!ls.get("bac100-coach",false)&&!Object.keys(PH).length&&!standalone) setTimeout(()=>startCoach(),600); };
+  const IAB=standalone?null:inAppInfo(); let seen=false; try{ seen=sessionStorage.getItem("bac100-iab")==="1"; }catch(_){}
+  if(IAB&&!seen) showIab(IAB,coachGo); else coachGo(); })();
+// 카톡·인스타 같은 앱 안 브라우저면: 여기서 만든 지도는 그 앱 안에만 남아서, 기본 브라우저로 넘기기
+function inAppInfo(){ const ua=navigator.userAgent, ios=/iPhone|iPad|iPod/i.test(ua)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1), and=/Android/i.test(ua);
+  const app=/KAKAOTALK/i.test(ua)?["kakao","카톡"]:/Instagram/i.test(ua)?["instagram","인스타"]:/FBAN|FBAV|FB_IAB/i.test(ua)?["facebook","페이스북"]:/NAVER\(inapp|NAVER/i.test(ua)?["naver","네이버 앱"]:/DaumApps|DAUM/i.test(ua)?["daum","다음 앱"]:/Line\//i.test(ua)?["line","라인"]:/BAND\//i.test(ua)?["band","밴드"]:
+    (and&&/; wv\)/.test(ua))||(ios&&!/Safari\//.test(ua))?["other","다른 앱"]:null;
+  return app&&(ios||and)?{key:app[0],name:app[1],ios,and}:null; }
+function showIab(I,done){ gc("iab-show-"+I.key); try{ sessionStorage.setItem("bac100-iab","1"); }catch(_){}
+  const url=location.origin+location.pathname, br=I.ios?"Safari":"기본 브라우저";
+  const auto=I.key==="kakao"||I.key==="line"||I.and; // 버튼으로 바로 넘길 수 있는 곳
+  const el=document.createElement("div"); el.className="iab"; el.setAttribute("role","dialog"); el.setAttribute("aria-modal","true");
+  el.innerHTML=`<div class="iabc"><h4>${I.name} 안에서 열려 있어요</h4><p>여기서 만든 지도는 ${I.name} 안에만 저장돼서 나중에 다시 보기 어려워요. ${br}에서 열어 주세요.<small>${br}에서 열면 지도가 저장되고 홈 화면에도 추가할 수 있어요.</small></p>`+
+    (auto?`<button type="button" class="go">${br}로 열기</button>`:`<ol><li>화면의 ⋯ 메뉴를 눌러요</li><li>'Safari로 열기' 또는 '외부 브라우저로 열기'를 눌러요</li></ol><button type="button" class="cp">링크 복사해서 Safari에 붙여넣기</button>`)+
+    `<button type="button" class="st">그냥 둘러보기</button></div>`;
+  document.body.appendChild(el);
+  const close=()=>{ el.remove(); done&&done(); };
+  el.querySelector(".st").onclick=()=>{ gc("iab-stay-"+I.key); close(); };
+  const go=el.querySelector(".go"); if(go) go.onclick=()=>{ gc("iab-open-"+I.key);
+    if(I.key==="kakao") location.href="kakaotalk://web/openExternal?url="+encodeURIComponent(url);
+    else if(I.key==="line") location.href=url+"?openExternalBrowser=1";
+    else location.href="intent://"+location.host+location.pathname+"#Intent;scheme=https;action=android.intent.action.VIEW;S.browser_fallback_url="+encodeURIComponent(url)+";end"; };
+  const cp=el.querySelector(".cp"); if(cp) cp.onclick=async()=>{ gc("iab-copy-"+I.key); try{ await navigator.clipboard.writeText(url); toast("링크를 복사했어요. Safari 주소창에 붙여넣어 주세요."); }catch(_){ prompt("이 링크를 복사해서 Safari에 붙여넣어 주세요.",url); } }; } // 처음 온 사람에게만 (정상석이 이미 있으면 안 띄움)
 // ── 처음 사용법 안내: 어둡게 덮고 한 곳씩 밝게 ──
 const unionEl=(...q)=>({getBoundingClientRect(){ const R=q.map(x=>document.querySelector(x)).filter(Boolean).map(e=>e.getBoundingClientRect()); const l=Math.min(...R.map(r=>r.left)),t=Math.min(...R.map(r=>r.top)),r_=Math.max(...R.map(r=>r.right)),b=Math.max(...R.map(r=>r.bottom)); return {left:l,top:t,right:r_,bottom:b,width:r_-l,height:b-t}; }});
 const COACH=[
