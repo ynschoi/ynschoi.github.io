@@ -44,10 +44,31 @@ h1{font:800 clamp(28px,7vw,40px)/1.05 var(--display);margin:0;letter-spacing:-.0
 svg#map{display:block;width:100%;height:auto;max-height:82vh;touch-action:pan-y;user-select:none;-webkit-user-select:none}
 .cardview{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#fbfaf5;box-shadow:0 6px 20px rgba(60,60,40,.08)}
 .cardview canvas{display:block;width:100%;height:auto;cursor:pointer;touch-action:pan-y;-webkit-user-drag:none;user-select:none;-webkit-touch-callout:none}
-.fmtov{all:unset;cursor:pointer;position:absolute;left:6px;top:6px;z-index:3;font-size:10.5px;opacity:.9;font-weight:700;color:#8e8c78;background:rgba(239,237,227,.85);border-radius:999px;padding:2px 8px}
-.cvact{display:flex;gap:4px}.cvact .fmtov{position:static}
-.cvbar{position:absolute;left:6px;right:6px;top:6px;z-index:3;display:flex;justify-content:space-between;align-items:center;gap:4px;pointer-events:none}.cvbar>*{pointer-events:auto}
-.cvl{display:flex;gap:4px}.cvl .fmtov{position:static}
+.lcol,.rcol{display:contents}
+@media (min-width:700px){ .cardview{width:fit-content;max-width:100%;margin-inline:auto} .cardview canvas{width:auto;max-width:100%;max-height:calc(100vh - 112px)} } /* 넓은 화면: 카드 + 아래 탭까지 한 화면에 */
+@media (min-width:960px){ /* 웹: 왼쪽 지도 · 오른쪽 탭, 둘이 같은 크기로 가운데 */
+  body{margin:0}
+  .wrap{max-width:none;grid-template-columns:auto auto;justify-content:center;align-items:start;column-gap:32px;padding-block:24px}
+  .lcol{display:grid;gap:14px}
+  .rcol{display:grid;gap:14px;align-content:start;width:var(--cw,420px);height:var(--ch,auto);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+  .cardview canvas{max-height:calc(100vh - 50px)}
+  .rcol .ptabs{position:sticky;top:0;z-index:6;box-shadow:0 0 0 8px var(--page)} /* 웹: 스크롤해도 탭 유지 */
+  .rcol #p-upload .uphead{position:sticky;top:var(--st1,62px);z-index:5;background:var(--page);box-shadow:0 0 0 8px var(--page)}
+  .rcol #p-upload .inx{position:sticky;top:var(--st2,120px);z-index:5;background:var(--page);box-shadow:0 0 0 8px var(--page)}
+  .rcol #ml{overflow:visible} .rcol #ml .mh{position:sticky;top:var(--st3,166px);z-index:4;border-radius:11px 11px 0 0;box-shadow:0 -9px 0 var(--page)} /* 목록 머리도 고정 */
+  .rcol .mr{min-height:46px} /* 웹: 행 높이 줄임 + 산 이름 / 봉우리 칸 분리(각각 가운데) */
+  .rcol #ml .mh,.rcol #mtb .mr{grid-template-columns:22px minmax(0,1fr) minmax(0,1fr) 60px 50px 60px 54px;column-gap:2px;padding:0 4px 0 2px}
+  .rcol #mtb .mr .pc{padding:4px 0;gap:1px} .rcol #mtb .mr .thumb{width:34px;height:34px} .rcol #mtb .mr .thumb img{width:34px;height:34px} .rcol #mtb .mr .dbtn{white-space:nowrap;font-size:11px} .rcol #mtb .mr .pc .lnk{white-space:nowrap;font-size:11px}
+  .rcol #mtb .mr .nm{display:contents}
+  .rcol #mtb .mr .nm b,.rcol #mtb .mr .nm small{text-align:center;padding:4px 0;line-height:1.3}
+  .rcol #ml .mh [data-k=name]{grid-column:span 2;display:grid;grid-template-columns:1fr 1fr;justify-items:center}
+  .rcol #ml .mh [data-k=name]::before{content:"봉우리";grid-column:2;grid-row:1}
+  .rcol #ml .mh [data-k=name]::after{grid-column:1;grid-row:1;justify-self:end}
+}
+.fmtov{all:unset;cursor:pointer;position:absolute;left:6px;top:6px;z-index:3;font-size:calc(10.5px*var(--k,1));opacity:.9;font-weight:700;color:#8e8c78;background:rgba(239,237,227,.85);border-radius:999px;padding:calc(2px*var(--k,1)) calc(8px*var(--k,1))}
+.cvact{display:flex;gap:calc(4px*var(--k,1))}.cvact .fmtov{position:static}
+.cvbar{position:absolute;left:calc(6px*var(--k,1));right:calc(6px*var(--k,1));top:calc(6px*var(--k,1));z-index:3;display:flex;justify-content:space-between;align-items:center;gap:calc(4px*var(--k,1));pointer-events:none}.cvbar>*{pointer-events:auto}
+.cvl{display:flex;gap:calc(4px*var(--k,1))}.cvl .fmtov{position:static}
 .fmtov{white-space:nowrap}.fmtov.sq{padding:2px 7px;min-width:10px;text-align:center}.fmtov:disabled{opacity:.35;cursor:default}
 
 .cardview .ghost{position:absolute;pointer-events:none;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25));opacity:.92}
@@ -344,11 +365,13 @@ footer{font-size:12px;color:var(--muted)}
 </style>
 
 <div class="wrap">
+  <div class="lcol">
   <span id="cnt" hidden></span>
   <div class="cardview"><div class="cvbar"><span class="cvl"><button type="button" class="fmtov" id="fmtTog" aria-label="이미지 비율 바꾸기">9:16</button></span><span class="cvact"><button type="button" class="fmtov" id="cvSave" aria-label="이미지 저장">저장</button><button type="button" class="fmtov" id="cvShare" aria-label="링크 공유">공유</button></span></div><canvas id="cardImg" role="img" aria-label="나의 명산 지도 카드"></canvas><span id="cardBusy" class="tip" hidden>그리는 중…</span></div>
   <div id="linkBox" class="linkbox" hidden><input id="linkIn" class="search" readonly aria-label="공유 링크"><span class="tip" id="linkMsg"></span></div>
 
   <div id="island" class="island" hidden></div>
+  </div><div class="rcol">
 
   <div class="ptabs" role="tablist" aria-label="지도 꾸미기">
     <button type="button" role="tab" data-p="upload" aria-selected="true">업로드</button>
@@ -427,6 +450,7 @@ footer{font-size:12px;color:var(--muted)}
       <g id="stickers"></g>
     </svg>
   </div>
+</div>
 </div>
 
 <div class="howm" id="howM" hidden role="dialog" aria-modal="true" aria-labelledby="howT">
@@ -1064,7 +1088,7 @@ function openCrop(r){ hideSug(); CR={r,box:(r.cbox||[.08,.08,.92,.98]).slice(),m
 const GC_SITE=location.hostname.startsWith("my100san")?"new":"old"; // 이벤트를 주소별로 구분: new = my100san.github.io, old = ynschoi.github.io/BAC100
 // ── 자동 업데이트: 홈 화면에 추가한 앱도 새 버전이 올라가면 알아서 바뀌게 ──
 // version.json(수십 바이트)만 확인하고, 다르면 새 파일을 받아 다시 연다. 작업 중(사진 반영 전)엔 다음 기회로.
-const APPV="20261103-051654";
+const APPV="20261104-011435";
 (function(){ let last=0;
   async function chk(atStart){ const now=Date.now(); if(!atStart&&now-last<60000) return; last=now;
     try{ const r=await fetch("version.json?t="+now,{cache:"no-store"}); if(!r.ok) return; const v=(await r.json()).v; if(!v||v===APPV) return;
@@ -1814,7 +1838,12 @@ document.getElementById("mvGo").onclick=()=>document.getElementById("bkIn").clic
 drawPeaks(); drawStickers(); renderList(); updateCount(); setView(FULL.slice());
 (async()=>{ try{ const old=ls.get("bac100-myphotos",null); if(old){ for(const k in old) await IDB.put(k,old[k]); try{localStorage.removeItem("bac100-myphotos")}catch(e){} }
   const got=await IDB.all(); if(Object.keys(got).length){ Object.assign(PH,got); drawStickers(); renderList(); updateCount(); } }catch(e){}
-  const standalone=navigator.standalone===true||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches);
+  // 웹 2단: 오른쪽 탭 칸을 왼쪽 카드와 같은 크기로
+if(window.ResizeObserver){ const rc=document.querySelector(".rcol"), tb=document.querySelector(".ptabs"), uh=document.querySelector("#p-upload .uphead");
+  new ResizeObserver(()=>{ const t=tb.offsetHeight, u=uh.offsetHeight, g=parseFloat(getComputedStyle(document.getElementById("p-upload")).rowGap)||10;
+    rc.style.setProperty("--st1",(t+14)+"px"); rc.style.setProperty("--st2",(t+14+u+g)+"px"); rc.style.setProperty("--st3",(t+14+u+g+document.querySelector("#p-upload .inx").offsetHeight+g)+"px"); }).observe(uh); }
+if(window.ResizeObserver){ const wr=document.querySelector(".wrap"); new ResizeObserver(()=>{ const r=cardImg.getBoundingClientRect(); wr.style.setProperty("--cw",Math.round(r.width+2)+"px"); wr.style.setProperty("--ch",Math.round(r.height+2)+"px"); wr.style.setProperty("--k",Math.max(1,r.width/340).toFixed(3)); }).observe(cardImg); } // --k: 카드 위 알약 버튼도 카드 크기에 비례
+const standalone=navigator.standalone===true||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches);
 // 홈 화면 앱으로 연 사람 세기 — 기기마다 하루 한 번만 (통계 스크립트가 늦게 뜨면 잠깐 기다렸다 보냄)
 if(standalone){ const t=new Date().toISOString().slice(0,10); if(ls.get("bac100-homeday","")!==t){ let k=0; const go=()=>{ if(window.goatcounter&&goatcounter.count){ gc("home-app"); ls.set("bac100-homeday",t); } else if(++k<20) setTimeout(go,500); }; go(); } }
   document.getElementById("mvTip").hidden=!(standalone&&!Object.keys(PH).length);
@@ -1844,16 +1873,18 @@ function startCoach(){ if(coachEl) return; coachI=0; coachEl=document.createElem
   addEventListener("resize",placeCoach); showCoach(); }
 function waitDemo(n){ const G=window.__cardGeo; if(n>60||(G&&COACH_DEMO&&G.stk&&COACH_DEMO.every(d=>G.stk.some(b=>b.n===d)))) { coachScroll(); return; } setTimeout(()=>waitDemo(n+1),60); }
 function coachScroll(){ const el=COACH[coachI].el(); if(!el) return; const r=el.getBoundingClientRect(), cvT=document.querySelector('.cardview').getBoundingClientRect().top; COACH_FIX=[r.top-cvT,r.bottom-cvT]; const bh=coachEl.querySelector(".bub").offsetHeight;
-  const room=innerHeight-bh-40; scrollTo({top:scrollY+r.top-Math.max(16,(room-r.height)/2),behavior:"instant"}); requestAnimationFrame(()=>{ placeCoach(); requestAnimationFrame(()=>{ placeCoach(); coachEl.classList.remove("wait"); }); }); }
+  const room=innerWidth>=960?innerHeight-40:innerHeight-bh-40; scrollTo({top:scrollY+r.top-Math.max(16,(room-r.height)/2),behavior:"instant"}); requestAnimationFrame(()=>{ placeCoach(); requestAnimationFrame(()=>{ placeCoach(); coachEl.classList.remove("wait"); }); }); }
 function showCoach(){ const st=COACH[coachI]; COACH_FIX=null; if(coachEl) coachEl.querySelector(".bub p").style.minHeight=""; coachEl.classList.toggle("wait",!!st.try); if(st.try){ addCoachDemo(); setTimeout(()=>waitDemo(0),0); } coachEl.classList.toggle("try",!!st.try); if(st.tab) document.querySelector(`.ptabs [data-p="${st.tab}"]`).click();
   coachEl.querySelector(".bub p").innerHTML=st.t; const il=coachEl.querySelector(".ill"); if(st.cap){ il.innerHTML='<div class="capm" aria-hidden="true"><span class="ch">명산100 · 지리산</span><img src="ex/cap.webp" alt=""><span class="ch">2026.11.01 08:17</span></div>'; il.hidden=false; } else { il.innerHTML=""; il.hidden=true; } coachEl.querySelectorAll(".dots i").forEach((d,i)=>d.classList.toggle("on",i===coachI));
   coachEl.querySelector(".next").textContent=coachI===COACH.length-1?"시작하기":"다음";
   const el=st.try?null:st.el(); if(el){ const r=el.getBoundingClientRect(); if(r.top<70||r.bottom>innerHeight-170) scrollTo({top:scrollY+r.top-(r.height>innerHeight*.5?70:Math.max(80,(innerHeight-r.height)/2-60)),behavior:"instant"}); }
   requestAnimationFrame(placeCoach); }
 function placeCoach(){ if(!coachEl) return; const el=COACH[coachI].el(); if(!el) return; const r=el.getBoundingClientRect(), pad=6;
-  const h=coachEl.querySelector(".hole"), b=coachEl.querySelector(".bub"), bh=b.offsetHeight, top=Math.max(8,r.top-pad), bot=Math.min(innerHeight-bh-30,r.bottom+pad,innerHeight-8); // 화면보다 큰 건 말풍선 자리만큼 잘라서 밝힘
+  const h=coachEl.querySelector(".hole"), b=coachEl.querySelector(".bub"), bh=b.offsetHeight, side=innerWidth>=960&&r.right+460<innerWidth, top=Math.max(8,r.top-pad), bot=side?Math.min(r.bottom+pad,innerHeight-8):Math.min(innerHeight-bh-30,r.bottom+pad,innerHeight-8); // 화면보다 큰 건 말풍선 자리만큼 잘라서 밝힘
   Object.assign(h.style,{left:(r.left-pad)+"px",top:top+"px",width:(r.width+pad*2)+"px",height:Math.max(0,bot-top)+"px"});
   const bl=coachEl.querySelectorAll(".blk"), L=r.left-pad, R=r.right+pad; [[0,0,innerWidth,top],[0,bot,innerWidth,innerHeight-bot],[0,top,L,bot-top],[R,top,innerWidth-R,bot-top]].forEach(([a,b2,w,hh],i)=>Object.assign(bl[i].style,{left:a+"px",top:b2+"px",width:Math.max(0,w)+"px",height:Math.max(0,hh)+"px"}));
+  if(side){ Object.assign(b.style,{left:(R+22)+"px",right:"auto",margin:"0",width:"400px"}); b.style.top=Math.max(8,Math.min(innerHeight-bh-8,(top+bot)/2-bh/2))+"px"; return; } // 넓은 화면: 말풍선을 옆에
+  Object.assign(b.style,{left:"",right:"",margin:"",width:""});
   b.style.top=(innerHeight-bot>bh+24?bot+14:top-bh-14>8?top-bh-14:innerHeight-bh-16)+"px"; }
 function endCoach(){ if(!coachEl) return; removeCoachDemo(); coachEl.remove(); coachEl=null; removeEventListener("resize",placeCoach); ls.set("bac100-coach",true); document.querySelector('.ptabs [data-p="upload"]').click(); scrollTo({top:0,behavior:"instant"}); }
 document.getElementById("coachAgain").onclick=()=>startCoach();
