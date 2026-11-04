@@ -466,7 +466,7 @@ footer{font-size:12px;color:var(--muted)}
     <div class="evt"><div class="eside"><span>WEEKLY</span></div><div class="em2">
       <h3>🏅 명예 스티커 전당</h3><p class="sub">원하는 등산 아이템을 스티커로 만들어 드려요.<br>스티커 아래에 닉네임이 새겨져요.</p>
       <div class="steps"><div><em>01</em>🗺️ 지도 만들고<br>📤 공유하기</div><div><em>02</em>📸 인스타 태그 <a class="lk" href="https://www.instagram.com/youngs.00/" target="_blank" rel="noopener">@youngs.00</a> <span class="or">또는</span><br>✉️ 캡처해서 <button type="button" class="lk lkb" data-copy="mysanzido@gmail.com" data-toast="메일 주소를 복사했어요 · mysanzido@gmail.com">인증 메일 보내기</button></div></div>
-      <dl><dt>🎁 선정</dt><dd>매주 선착순 5명 + 창의적인 지도 5명</dd><dt>📅 일정</dt><dd>11/7(토) 마감 · 11/9(월) 업데이트</dd></dl>
+      <dl><dt>🎁 선정</dt><dd>매주 선착순 5명 + 랜덤 5명</dd><dt>📅 일정</dt><dd>11/7(토) 마감 · 11/9(월) 업데이트</dd></dl>
       <p class="rq">💌 원하는 스티커도 같이 알려주세요!<br><span>예) 🐿️ 다람쥐 · 🍁 단풍잎 · 🍶 막걸리 · 참고 사진도 좋아요</span></p></div></div>
     <p class="safe"><b>🔒 보안 걱정 NO!</b><br>사진은 서버로 보내지 않습니다.<br>누끼, 저장 모두 내 폰 브라우저 안에서 이루어집니다.</p><div class="bk"><b>📦 지도 백업 · 불러오기</b><span>지도는 이 브라우저에만 저장됩니다.<br>필요한 경우, 백업 파일로 옮겨주세요.</span>
       <div class="bkbtn"><button type="button" class="pill2 on" id="bkSave">백업 파일 저장</button><label class="pill2" for="bkIn">백업 불러오기</label></div>
@@ -1159,7 +1159,7 @@ function openCrop(r){ hideSug(); CR={r,box:(r.cbox||[.08,.08,.92,.98]).slice(),m
 const GC_SITE=location.hostname.startsWith("my100san")?"new":"old"; // 이벤트를 주소별로 구분: new = my100san.github.io, old = ynschoi.github.io/BAC100
 // ── 자동 업데이트: 홈 화면에 추가한 앱도 새 버전이 올라가면 알아서 바뀌게 ──
 // version.json(수십 바이트)만 확인하고, 다르면 새 파일을 받아 다시 연다. 작업 중(사진 반영 전)엔 다음 기회로.
-const APPV="20261104-062429";
+const APPV="20261104-081653";
 (function(){ let last=0;
   async function chk(atStart){ const now=Date.now(); if(!atStart&&now-last<60000) return; last=now;
     try{ const r=await fetch("version.json?t="+now,{cache:"no-store"}); if(!r.ok) return; const v=(await r.json()).v; if(!v||v===APPV) return;
