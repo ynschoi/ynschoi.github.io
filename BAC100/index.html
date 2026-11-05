@@ -2097,7 +2097,7 @@ function showIab(I,done){ gc("iab-show-"+I.key); try{ sessionStorage.setItem("ba
   const auto=I.key==="kakao"||I.key==="line"||I.and; // 버튼으로 바로 넘길 수 있는 곳
   const el=document.createElement("div"); el.className="iab"; el.setAttribute("role","dialog"); el.setAttribute("aria-modal","true");
   el.innerHTML=`<div class="iabc"><h4>${I.name} 안에서 열려 있어요</h4><p>여기서 만든 지도는 ${I.name} 안에서만 저장됩니다.<br>나중에 다시 보려면 ${br}에서 열어주세요.</p>`+
-    (auto?`<button type="button" class="go">${br}로 열기</button>`:`<ol><li>화면의 ⋯ 메뉴 클릭</li><li>'Safari로 열기' 또는 '외부 브라우저로 열기' 클릭</li></ol><button type="button" class="cp">링크 복사해서 Safari에 붙여넣기</button>`)+
+    (auto?`<button type="button" class="go">${br}로 열기</button>`:`<button type="button" class="go xs">Safari로 열기</button><div class="iabfb" hidden><ol><li>화면의 ⋯ 메뉴 클릭</li><li>'Safari로 열기' 또는 '외부 브라우저로 열기' 클릭</li></ol><button type="button" class="cp">링크 복사해서 Safari에 붙여넣기</button></div>`)+
     `<button type="button" class="st">그냥 둘러보기</button></div>`;
   document.body.appendChild(el);
   const close=()=>{ el.remove(); done&&done(); };
@@ -2105,6 +2105,10 @@ function showIab(I,done){ gc("iab-show-"+I.key); try{ sessionStorage.setItem("ba
   const go=el.querySelector(".go"); if(go) go.onclick=()=>{ gc("iab-open-"+I.key);
     if(I.key==="kakao") location.href="kakaotalk://web/openExternal?url="+encodeURIComponent(url);
     else if(I.key==="line") location.href=url+"?openExternalBrowser=1";
+    else if(I.ios){ // 아이폰 인스타·네이버 등: x-safari-https:// 로 Safari를 바로 엶 (iOS 17+). 안 열리면 아래 방법을 보여줌
+      let left=false; const vh=()=>{ if(document.hidden) left=true; }; document.addEventListener("visibilitychange",vh);
+      location.href="x-safari-"+url;
+      setTimeout(()=>{ document.removeEventListener("visibilitychange",vh); if(!left){ gc("iab-xsafari-fail-"+I.key); const fb=el.querySelector(".iabfb"); if(fb){ fb.hidden=false; go.hidden=true; } } },1500); }
     else location.href="intent://"+location.host+location.pathname+"#Intent;scheme=https;action=android.intent.action.VIEW;S.browser_fallback_url="+encodeURIComponent(url)+";end"; };
   const cp=el.querySelector(".cp"); if(cp) cp.onclick=async()=>{ gc("iab-copy-"+I.key); try{ await navigator.clipboard.writeText(url); toast("링크를 복사했어요. Safari 주소창에 붙여넣어 주세요."); }catch(_){ prompt("이 링크를 복사해서 Safari에 붙여넣어 주세요.",url); } }; } // 처음 온 사람에게만 (정상석이 이미 있으면 안 띄움)
 // ── 처음 사용법 안내: 어둡게 덮고 한 곳씩 밝게 ──
