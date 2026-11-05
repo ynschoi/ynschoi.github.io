@@ -1,0 +1,16 @@
+{
+  "name": "나의 명산 지도",
+  "short_name": "명산 지도",
+  "description": "블랙야크 명산100 완등 지도",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fbfaf5",
+  "theme_color": "#4f9a45",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}

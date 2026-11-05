@@ -11,6 +11,6 @@ echo "{\"v\":\"$V\"}" > BAC100/version.json
 grep -q "const APPV=\"$V\"" BAC100/index.html
 git add -A BAC100 bac100-deploy.sh && git commit -q -m "$1" && git push -q origin main
 N=../my100san.github.io
-if [ -d "$N" ]; then (cd "$N" && git pull -q origin main) ; cp BAC100/index.html BAC100/version.json BAC100/og.jpg BAC100/icon-180.png "$N"/; for d in ex fonts ms nk ocr; do [ -d BAC100/$d ] && cp -r BAC100/$d "$N"/; done
+if [ -d "$N" ]; then (cd "$N" && git pull -q origin main) ; cp BAC100/index.html BAC100/version.json BAC100/og.jpg BAC100/icon-180.png BAC100/icon-192.png BAC100/icon-512.png BAC100/manifest.webmanifest BAC100/sw.js "$N"/; for d in ex fonts ms nk ocr; do [ -d BAC100/$d ] && cp -r BAC100/$d "$N"/; done
   (cd "$N" && git add -A && git -c user.name="ynschoi" -c user.email="youngsuchoi12@gmail.com" commit -q -m "$1" && git push -q origin main); fi
 echo "배포 버전 $V"

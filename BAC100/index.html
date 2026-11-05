@@ -1,5 +1,7 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>나의 명산 100 · 블랙야크 100대 명산(BAC100) 완등 지도</title><meta property="og:title" content="나의 명산 지도 · 블랙야크 100대 명산"><meta property="og:description" content="블랙야크 100대 명산(BAC100) 완등 지도 만들기">
 <link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#fbfaf5">
 <link rel="icon" type="image/png" href="icon-180.png">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://ynschoi.github.io/BAC100/">
@@ -404,6 +406,9 @@ footer{font-size:12px;color:var(--muted)}
 .iab .go{all:unset;cursor:pointer;text-align:center;background:#4f9a45;color:#fffefa;border-radius:999px;padding:10px 0;font-size:14px;margin-top:4px}
 .iab .cp{all:unset;cursor:pointer;text-align:center;border:1px solid #cfd8c8;color:#2f6a2c;border-radius:999px;padding:9px 0;font-size:14px;background:#fff}
 .iab .st{all:unset;cursor:pointer;text-align:center;font-size:13px;color:var(--muted);padding:6px}
+.pwa{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:95;box-sizing:border-box;width:min(340px,calc(100vw - 56px));background:rgba(255,254,250,.78);-webkit-backdrop-filter:blur(10px) saturate(1.2);backdrop-filter:blur(10px) saturate(1.2);border:1px solid rgba(255,255,255,.6);border-radius:18px;padding:14px 16px 10px;box-shadow:0 10px 30px rgba(0,0,0,.18);display:grid;gap:8px}
+.pwa .pt{display:flex;gap:12px;align-items:center}.pwa img{width:44px;height:44px;border-radius:10px;flex:none}.pwa p{margin:0;font-size:13.5px;line-height:1.55;color:var(--fg)}
+.pwa .go{all:unset;cursor:pointer;text-align:center;background:#4f9a45;color:#fffefa;border-radius:999px;padding:9px 0;font-size:14px}.pwa .st{all:unset;cursor:pointer;text-align:center;font-size:13px;color:var(--muted);padding:4px}
 .iab ol{margin:2px 0 0;padding-left:20px;font-size:13.5px;line-height:1.7;color:var(--fg)}
 
 /* 하트 탭 정리: 같은 흰 카드, 간격 통일, 보안+백업은 한 카드 */
@@ -922,7 +927,7 @@ const EVT_ID="hof-2026-11-w1";
   document.getElementById("bkX").onclick=()=>m.hidden=true; m.addEventListener("click",e=>{ if(e.target===m) m.hidden=true; }); })();
 // 홈 화면에 추가하는 방법 안내 (애플 / 안드로이드)
 (()=>{ const m=document.getElementById("hsM"); const show=os=>{ m.querySelectorAll(".hseg button").forEach(b=>b.classList.toggle("on",b.dataset.os===os)); m.querySelectorAll(".hos").forEach(d=>d.hidden=d.dataset.os!==os); m.querySelector(".hsb").scrollTop=0; };
-  document.querySelectorAll("#p-heart [data-hs]").forEach(b=>b.onclick=()=>{ show(b.dataset.hs); m.hidden=false; gc("guide-home-"+b.dataset.hs); });
+  document.querySelectorAll("#p-heart [data-hs]").forEach(b=>b.onclick=async()=>{ if(b.dataset.hs==="and"&&await pwaInstall("guide")) return; show(b.dataset.hs); m.hidden=false; gc("guide-home-"+b.dataset.hs); });
   m.querySelectorAll(".hseg button").forEach(b=>b.onclick=()=>show(b.dataset.os));
   document.getElementById("hsX").onclick=()=>m.hidden=true; m.addEventListener("click",e=>{ if(e.target===m) m.hidden=true; }); })();
 // 숨은 스위치: 하트 탭 맨 아래 version 글자를 3초 안에 5번 누르면 이 기기를 통계에서 빼기/다시 넣기 (표시 없음)
@@ -1287,7 +1292,7 @@ applyBtn.onclick=()=>{ const L=NEW.filter(r=>r.n&&r.on&&r.st), dup=L.filter(r=>P
   ovw.innerHTML=`<div><b>${dup.map(r=>byN(r.n).base).join(", ")}</b>은(는) 이미 정상석 사진이 있어요. 새 사진으로 덮어쓸까요?</div>
     <div class="row2"><button type="button" class="btn share" data-a="all">덮어쓰기</button><button type="button" class="btn" data-a="skip">그건 빼고 반영</button><button type="button" class="btn" data-a="no">취소</button></div>`;
   ovw.hidden=false; ovw.querySelectorAll("button").forEach(b=>b.onclick=()=>{ ovw.hidden=true; if(b.dataset.a==="all") doApply(L); else if(b.dataset.a==="skip") doApply(L.filter(r=>!PH[r.n])); }); };
-function doApply(L){ if(L.length){ gc("apply"); try{ if(!localStorage.getItem("bac100-firstmap")){ const f0=+localStorage.getItem("bac100-firstts")||0; localStorage.setItem("bac100-firstmap","1"); if(f0){ const m=(Date.now()-f0)/60000; gc("first-map-"+(m<1?"under1m":m<3?"1to3m":m<10?"3to10m":m<60?"10to60m":"later")); } } }catch(_){} } L.forEach(r=>{ savePhoto(r.n,entryFrom(r.st,r.ph,r.d,r.bac)); }); NEW=NEW.filter(r=>!L.includes(r)); renderNew(); afterPhotoChange();
+function doApply(L){ if(L.length){ gc("apply"); setTimeout(()=>pwaNudge("apply"),2500); try{ if(!localStorage.getItem("bac100-firstmap")){ const f0=+localStorage.getItem("bac100-firstts")||0; localStorage.setItem("bac100-firstmap","1"); if(f0){ const m=(Date.now()-f0)/60000; gc("first-map-"+(m<1?"under1m":m<3?"1to3m":m<10?"3to10m":m<60?"10to60m":"later")); } } }catch(_){} } L.forEach(r=>{ savePhoto(r.n,entryFrom(r.st,r.ph,r.d,r.bac)); }); NEW=NEW.filter(r=>!L.includes(r)); renderNew(); afterPhotoChange();
   aiNote.textContent=L.length?`${L.length}개 반영했어요`:""; }
 // 날짜 입력창(신규 등록용으로도 씀)
 function openDateFor(anchor,cur,cb,title){ dpCb=cb; dpN=null; dpop.querySelector(".dpt").textContent=title+" 오른 날"; const inp=dpop.querySelector("input"); inp.value=cur?cur.replace(/\./g,"-"):""; dpop.hidden=false; placeDpop(anchor); }
@@ -1990,7 +1995,7 @@ document.getElementById("mkShare").onclick=async e=>{
 };
 document.getElementById("cvSave").onclick=()=>document.getElementById("mkShare").click();
 document.getElementById("cvShare").onclick=()=>{ document.getElementById("linkShare").click(); };
-document.getElementById("shrX").onclick=()=>document.getElementById("shr").hidden=true;
+document.getElementById("shrX").onclick=()=>{ document.getElementById("shr").hidden=true; setTimeout(()=>pwaNudge("save"),600); };
 document.getElementById("shrSave").onclick=async()=>{ gc("save-image-"+FMT);
   const msg=document.getElementById("shrMsg");
   const fname=FMT==="post"?"my-100-summits-post.png":"my-100-summits-story.png";
@@ -2048,6 +2053,18 @@ if(standalone){ const t=new Date().toISOString().slice(0,10); if(ls.get("bac100-
   const coachGo=()=>{ if(!ls.get("bac100-coach",false)&&!Object.keys(PH).length&&!standalone) setTimeout(()=>startCoach(),600); };
   const IAB=standalone?null:inAppInfo(); let seen=false; try{ seen=sessionStorage.getItem("bac100-iab")==="1"; }catch(_){}
   if(IAB&&!seen) showIab(IAB,coachGo); else coachGo(); })();
+// 갤럭시·크롬: 홈 화면 설치 창을 직접 띄움 (아이폰은 이 기능이 없음)
+let PWA_EVT=null;
+if("serviceWorker" in navigator&&location.protocol==="https:") navigator.serviceWorker.register("sw.js").catch(()=>{});
+addEventListener("beforeinstallprompt",e=>{ e.preventDefault(); PWA_EVT=e; gcDay("pwa-avail"); });
+addEventListener("appinstalled",()=>{ gc("pwa-installed"); PWA_EVT=null; document.querySelector(".pwa")?.remove(); });
+async function pwaInstall(from){ if(!PWA_EVT) return false; const e=PWA_EVT; PWA_EVT=null; gc("pwa-click-"+from); try{ await e.prompt(); const r=await e.userChoice; gc("pwa-"+(r&&r.outcome==="accepted"?"accept":"dismiss")); }catch(_){} return true; }
+function pwaNudge(from){ // 지도 반영·사진 저장 뒤, 한 사람에게 최대 2번
+  if(!PWA_EVT||document.querySelector(".pwa,.iab,.coach")) return; let n=0; try{ n=+localStorage.getItem("bac100-pwan")||0; }catch(_){} if(n>=2) return;
+  try{ localStorage.setItem("bac100-pwan",String(n+1)); }catch(_){} gc("pwa-nudge-"+from);
+  const el=document.createElement("div"); el.className="pwa"; el.setAttribute("role","dialog");
+  el.innerHTML='<div class="pt"><img src="icon-192.png" alt=""><p>홈 화면에 추가하면<br>아이콘으로 바로 열립니다.</p></div><button type="button" class="go">홈 화면에 추가</button><button type="button" class="st">나중에</button>';
+  document.body.appendChild(el); el.querySelector(".st").onclick=()=>{ gc("pwa-later"); el.remove(); }; el.querySelector(".go").onclick=async()=>{ el.remove(); await pwaInstall("nudge"); }; }
 // 카톡·인스타 같은 앱 안 브라우저면: 여기서 만든 지도는 그 앱 안에만 남아서, 기본 브라우저로 넘기기
 function inAppInfo(){ const ua=navigator.userAgent, ios=/iPhone|iPad|iPod/i.test(ua)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1), and=/Android/i.test(ua);
   const app=/KAKAOTALK/i.test(ua)?["kakao","카톡"]:/Instagram/i.test(ua)?["instagram","인스타"]:/FBAN|FBAV|FB_IAB/i.test(ua)?["facebook","페이스북"]:/NAVER\(inapp|NAVER/i.test(ua)?["naver","네이버 앱"]:/DaumApps|DAUM/i.test(ua)?["daum","다음 앱"]:/Line\//i.test(ua)?["line","라인"]:/BAND\//i.test(ua)?["band","밴드"]:
