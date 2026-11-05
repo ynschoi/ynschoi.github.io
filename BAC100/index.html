@@ -504,12 +504,11 @@ footer{font-size:12px;color:var(--muted)}
   </div>
   <div hidden><button type="button" id="mkShare">이미지 저장</button><button type="button" id="linkShare">링크 공유</button></div>
   <div id="p-sticker" class="pane" hidden>
-    <h3 class="sh3">정상석</h3>
-    <div class="kv"><span class="tip">크기</span><div class="seg" id="szSeg" role="group" aria-label="정상석 크기"></div></div>
-    <div class="kv"><span class="tip">위치</span><div class="row2">
+    <div hidden><!-- 정상석 크기·위치는 카드 아래 알약 줄로 옮김 (동작은 이 버튼들을 그대로 씀) -->
+      <div class="seg" id="szSeg" role="group" aria-label="정상석 크기"></div>
       <button type="button" class="btn" id="resetPos">원위치</button>
       <button type="button" class="btn" id="autoBtn">잘 보이게</button>
-    </div></div>
+    </div>
     <h3 class="sh3">마일스톤 스티커</h3>
     <div class="slots" id="badgeSlots"></div>
     <h3 class="sh3">이번 주 스티커</h3>
