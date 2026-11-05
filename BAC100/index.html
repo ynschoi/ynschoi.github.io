@@ -53,6 +53,10 @@ svg#map{display:block;width:100%;height:auto;max-height:82vh;touch-action:pan-y;
 .cardview{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#fbfaf5;box-shadow:0 6px 20px rgba(60,60,40,.08)}
 .cardview canvas{display:block;width:100%;height:auto;cursor:pointer;touch-action:pan-y;-webkit-user-drag:none;user-select:none;-webkit-touch-callout:none}
 .lcol,.rcol{display:contents}
+@media (max-width:699px){ /* 폰: 첫 화면에 카드 + 아래 알약 줄까지 다 보이게, 화면이 낮으면 카드를 살짝 줄임 */
+  .cvwrap{width:fit-content;max-width:100%;margin-inline:auto} .cardview{width:fit-content;max-width:100%;margin-inline:auto}
+  .cardview canvas{width:auto;max-width:100%;max-height:calc(100svh - 78px)} html.sa .cardview canvas{max-height:calc(100svh - 108px)} }
+@media (max-width:699px) and (display-mode:standalone){ .cardview canvas{max-height:calc(100svh - 108px)} }
 @media (min-width:700px){ .cvwrap{width:fit-content;max-width:100%;margin-inline:auto} .cardview canvas{width:auto;max-width:100%;max-height:calc(100vh - 168px)} } /* 넓은 화면: 카드 + 아래 탭까지 한 화면에 */
 @media (min-width:960px){ /* 웹: 왼쪽 지도 · 오른쪽 탭, 둘이 같은 크기로 가운데 */
   body{margin:0}
