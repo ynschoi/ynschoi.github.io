@@ -81,7 +81,7 @@ svg#map{display:block;width:100%;height:auto;max-height:82vh;touch-action:pan-y;
 .cvl{display:flex;gap:calc(4px*var(--k,1))}.cvl .fmtov{position:static}
 .cvbot{display:flex;align-items:center;gap:calc(4px*var(--k,1));margin-top:3px}.cvbot .fmtov{position:static}.cvbot .cvlb{font-size:calc(10.5px*var(--k,1));color:#8e8c78;padding:0 1px 0 3px;white-space:nowrap}
 .cbsz{display:flex;gap:calc(3px*var(--k,1))}.cbsz .fmtov{min-width:calc(9px*var(--k,1));text-align:center;padding:calc(2px*var(--k,1)) calc(6px*var(--k,1))}.cbsz .fmtov[aria-pressed="true"]{background:#e6f2df;color:#2f6a2c}
-@media (max-width:360px){.cvbot{gap:3px}.cbsz{gap:2px}.cbsz .fmtov{padding:2px 5px}.cvbot>.fmtov{padding:2px 6px}}
+@media (max-width:360px){.cvbot{gap:2px}.cbsz{gap:1px}.cbsz .fmtov{padding:2px 4px;min-width:7px}.cvbot>.fmtov{padding:2px 5px}.cvbot .cvlb{padding:0 1px;font-size:10px}.cvbot .fmtov{font-size:10px}}
 .fmtov{white-space:nowrap}.fmtov.sq{padding:2px 7px;min-width:10px;text-align:center}.fmtov:disabled{opacity:.35;cursor:default}
 
 .cardview .ghost{position:absolute;pointer-events:none;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25));opacity:.92}
@@ -419,6 +419,7 @@ footer{font-size:12px;color:var(--muted)}
 .hseg{display:grid;grid-template-columns:1fr 1fr;background:#efede3;border-radius:999px;padding:3px;margin-bottom:8px}.hseg button{all:unset;cursor:pointer;font-weight:600;font-size:13px;text-align:center;padding:7px 0;border-radius:999px;color:#87866f}.hseg button.on{background:#fff;color:#34352b;box-shadow:0 1px 4px rgba(60,60,40,.12)}
 .hst{display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid #efece2}.hst:first-child{border-top:0}.hill{flex:none;width:92px;border:1.5px dashed #4f9a45;border-radius:10px;padding:4px;background:#fff}.hill svg{display:block;width:100%;height:auto}
 .htx{font-size:14px;line-height:1.55}.htx em{font-style:normal;display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#4f9a45;color:#fff;font:700 11px/1 "Pretendard",sans-serif;margin-right:5px;vertical-align:1px}.htx b{color:#2f6a2c;font-weight:600}.htx small{display:block;font-size:11.5px;color:#9a987f;margin-top:2px}
+.hsinst{all:unset;cursor:pointer;display:block;box-sizing:border-box;width:100%;text-align:center;background:#4f9a45;color:#fffefa;border-radius:999px;padding:11px 0;font-size:15px;margin:2px 0 8px}
 .hbk{display:flex;gap:10px;align-items:center;justify-content:space-between;margin:2px 0 6px;padding:10px 12px;border:1.5px solid #e2b75a;background:#fffaf0;border-radius:12px}.hbk p{margin:0;font-size:13px;line-height:1.55;color:var(--fg)}.hbk small{display:block;font-size:11.5px;color:var(--muted)}.hbk .pill2{flex:none}
 #hsM[data-os=ios] .hand,#hsM[data-os=and] .hios{display:none}
 .huse{margin-top:6px;background:#f4f8ea;border-radius:12px;padding:10px 12px;font-size:12.5px;line-height:1.65}.huse b{color:#2f6a2c;font-weight:600}.hbot{display:flex;justify-content:flex-end;margin-top:12px}.hbot button{all:unset;cursor:pointer;background:#4f9a45;color:#fff;border-radius:999px;padding:8px 18px;font-size:14px;font-weight:600}
@@ -436,7 +437,7 @@ footer{font-size:12px;color:var(--muted)}
 <div class="wrap">
   <div class="lcol">
   <span id="cnt" hidden></span>
-  <div class="cvwrap"><div class="cvbar"><span class="cvl"><button type="button" class="fmtov" id="fmtTog" aria-label="이미지 비율 바꾸기">9:16</button><button type="button" class="fmtov" id="fontTog" aria-label="글씨체 바꾸기">폰트 1</button></span><span class="cvact"><button type="button" class="fmtov kk" id="cvKakao" aria-label="카카오톡으로 내 지도 공유">카톡 공유</button><button type="button" class="fmtov" id="cvSave" aria-label="이미지 저장">사진 저장</button><button type="button" class="fmtov" id="cvShare" aria-label="링크 공유">링크 공유</button></span></div><div class="cardview"><canvas id="cardImg" role="img" aria-label="나의 명산 지도 카드"></canvas><span id="cardBusy" class="tip" hidden>그리는 중…</span></div><div class="cvbot"><span class="cvlb">정상석</span><button type="button" class="fmtov" id="cbReset">원위치</button><button type="button" class="fmtov" id="cbAuto">잘 보이게</button><span class="cvlb" style="margin-left:auto">크기</span><span class="cbsz" id="cbSz" role="group" aria-label="정상석 크기"></span></div></div>
+  <div class="cvwrap"><div class="cvbar"><span class="cvl"><button type="button" class="fmtov" id="fmtTog" aria-label="이미지 비율 바꾸기">9:16</button><button type="button" class="fmtov" id="fontTog" aria-label="글씨체 바꾸기">폰트 1</button></span><span class="cvact"><button type="button" class="fmtov kk" id="cvKakao" aria-label="카카오톡으로 내 지도 공유">카톡 공유</button><button type="button" class="fmtov" id="cvSave" aria-label="이미지 저장">사진 저장</button><button type="button" class="fmtov" id="cvShare" aria-label="링크 공유">링크 공유</button></span></div><div class="cardview"><canvas id="cardImg" role="img" aria-label="나의 명산 지도 카드"></canvas><span id="cardBusy" class="tip" hidden>그리는 중…</span></div><div class="cvbot"><span class="cvlb">정상석</span><button type="button" class="fmtov" id="cbReset">원위치</button><button type="button" class="fmtov" id="cbAuto">잘 보이게</button><span class="cvlb" style="margin-left:auto">정상석 크기</span><span class="cbsz" id="cbSz" role="group" aria-label="정상석 크기"></span></div></div>
   <div id="linkBox" class="linkbox" hidden><input id="linkIn" class="search" readonly aria-label="공유 링크"><span class="tip" id="linkMsg"></span></div>
 
   <div id="island" class="island" hidden></div>
@@ -487,7 +488,7 @@ footer{font-size:12px;color:var(--muted)}
   </div>
 
   <div id="p-heart" class="pane about" hidden>
-    <div class="guides"><button type="button" id="coachAgain"><span>📖 지도 사용법</span><i aria-hidden="true">›</i></button><button type="button" id="bkOpen"><span>📦 지도 백업 · 불러오기 방법</span><i aria-hidden="true">›</i></button><button type="button" data-hs="and"><span>📲 홈 화면에 추가하는 방법 (안드로이드)</span><i aria-hidden="true">›</i></button><button type="button" data-hs="ios"><span>🍎 홈 화면에 추가하는 방법 (애플)</span><i aria-hidden="true">›</i></button></div>
+    <div class="guides"><button type="button" id="coachAgain"><span>📖 지도 사용법</span><i aria-hidden="true">›</i></button><button type="button" id="bkOpen"><span>📦 지도 백업 · 불러오기 방법</span><i aria-hidden="true">›</i></button><button type="button" data-hs="and"><span>📲 홈 화면에 추가하기 (안드로이드)</span><i aria-hidden="true">›</i></button><button type="button" data-hs="ios"><span>🍎 홈 화면에 추가하기 (애플)</span><i aria-hidden="true">›</i></button></div>
 
     <p class="safe"><b>🔒 보안 걱정 NO!</b><br>사진은 서버로 보내지 않습니다.<br>누끼, 저장 모두 내 폰 브라우저 안에서 이루어집니다.<br><span class="kkn">카톡 공유를 누를 때만 지도 이미지가 카카오로 전송돼요.</span></p>
     <div class="evt"><div class="eside"><span>WEEKLY</span></div><div class="em2">
@@ -928,7 +929,11 @@ const EVT_ID="hof-2026-11-w1";
 (()=>{ const m=document.getElementById("bkM"); document.getElementById("bkOpen").onclick=()=>{ m.querySelector(".hsb").scrollTop=0; m.hidden=false; gc("guide-backup"); };
   document.getElementById("bkX").onclick=()=>m.hidden=true; m.addEventListener("click",e=>{ if(e.target===m) m.hidden=true; }); })();
 // 홈 화면에 추가하는 방법 안내 (애플 / 안드로이드)
-(()=>{ const m=document.getElementById("hsM"); const show=os=>{ m.dataset.os=os; document.getElementById("hsBk").hidden=!Object.keys(PH).length; m.querySelectorAll(".hseg button").forEach(b=>b.classList.toggle("on",b.dataset.os===os)); m.querySelectorAll(".hos").forEach(d=>d.hidden=d.dataset.os!==os); m.querySelector(".hsb").scrollTop=0; };
+(()=>{ const m=document.getElementById("hsM"), ua=navigator.userAgent, DEV=/iPhone|iPad|iPod/i.test(ua)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1)?"ios":/Android/i.test(ua)?"and":"pc";
+  if(DEV!=="pc"){ document.querySelectorAll("#p-heart [data-hs]").forEach(b=>{ if(b.dataset.hs!==DEV) b.hidden=true; else b.querySelector("span").textContent="📲 홈 화면에 추가하기"; }); m.querySelector(".hseg").hidden=true; } // 폰이면 그 기종 것만
+  const inst=document.createElement("button"); inst.type="button"; inst.className="hsinst"; inst.textContent="홈 화면에 추가"; inst.hidden=true; m.querySelector('.hos[data-os="and"]').prepend(inst);
+  inst.onclick=async()=>{ if(await pwaInstall("guide-btn")) m.hidden=true; };
+  const show=os=>{ m.dataset.os=os; inst.hidden=!(os==="and"&&PWA_EVT); document.getElementById("hsBk").hidden=!Object.keys(PH).length; m.querySelectorAll(".hseg button").forEach(b=>b.classList.toggle("on",b.dataset.os===os)); m.querySelectorAll(".hos").forEach(d=>d.hidden=d.dataset.os!==os); m.querySelector(".hsb").scrollTop=0; };
   document.querySelectorAll("#p-heart [data-hs]").forEach(b=>b.onclick=async()=>{ if(b.dataset.hs==="and"&&await pwaInstall("guide")) return; show(b.dataset.hs); m.hidden=false; gc("guide-home-"+b.dataset.hs); });
   m.querySelectorAll(".hseg button").forEach(b=>b.onclick=()=>show(b.dataset.os));
   document.getElementById("hsX").onclick=()=>m.hidden=true; m.addEventListener("click",e=>{ if(e.target===m) m.hidden=true; }); })();
@@ -1294,7 +1299,7 @@ applyBtn.onclick=()=>{ const L=NEW.filter(r=>r.n&&r.on&&r.st), dup=L.filter(r=>P
   ovw.innerHTML=`<div><b>${dup.map(r=>byN(r.n).base).join(", ")}</b>은(는) 이미 정상석 사진이 있어요. 새 사진으로 덮어쓸까요?</div>
     <div class="row2"><button type="button" class="btn share" data-a="all">덮어쓰기</button><button type="button" class="btn" data-a="skip">그건 빼고 반영</button><button type="button" class="btn" data-a="no">취소</button></div>`;
   ovw.hidden=false; ovw.querySelectorAll("button").forEach(b=>b.onclick=()=>{ ovw.hidden=true; if(b.dataset.a==="all") doApply(L); else if(b.dataset.a==="skip") doApply(L.filter(r=>!PH[r.n])); }); };
-function doApply(L){ if(L.length){ gc("apply"); setTimeout(()=>pwaNudge("apply"),2500); try{ if(!localStorage.getItem("bac100-firstmap")){ const f0=+localStorage.getItem("bac100-firstts")||0; localStorage.setItem("bac100-firstmap","1"); if(f0){ const m=(Date.now()-f0)/60000; gc("first-map-"+(m<1?"under1m":m<3?"1to3m":m<10?"3to10m":m<60?"10to60m":"later")); } } }catch(_){} } L.forEach(r=>{ savePhoto(r.n,entryFrom(r.st,r.ph,r.d,r.bac)); }); NEW=NEW.filter(r=>!L.includes(r)); renderNew(); afterPhotoChange();
+function doApply(L){ if(L.length){ gc("apply"); try{ if(!localStorage.getItem("bac100-firstmap")){ const f0=+localStorage.getItem("bac100-firstts")||0; localStorage.setItem("bac100-firstmap","1"); if(f0){ const m=(Date.now()-f0)/60000; gc("first-map-"+(m<1?"under1m":m<3?"1to3m":m<10?"3to10m":m<60?"10to60m":"later")); } } }catch(_){} } L.forEach(r=>{ savePhoto(r.n,entryFrom(r.st,r.ph,r.d,r.bac)); }); NEW=NEW.filter(r=>!L.includes(r)); renderNew(); afterPhotoChange();
   aiNote.textContent=L.length?`${L.length}개 반영했어요`:""; }
 // 날짜 입력창(신규 등록용으로도 씀)
 function openDateFor(anchor,cur,cb,title){ dpCb=cb; dpN=null; dpop.querySelector(".dpt").textContent=title+" 오른 날"; const inp=dpop.querySelector("input"); inp.value=cur?cur.replace(/\./g,"-"):""; dpop.hidden=false; placeDpop(anchor); }
@@ -2070,7 +2075,7 @@ function pwaNudge(from){ // 지도 반영·사진 저장 뒤, 한 사람에게 �
   document.body.appendChild(el); el.querySelector(".st").onclick=()=>{ gc("pwa-later"); el.remove(); }; el.querySelector(".go").onclick=async()=>{ el.remove(); await pwaInstall("nudge"); }; }
 // 카톡·인스타 같은 앱 안 브라우저면: 여기서 만든 지도는 그 앱 안에만 남아서, 기본 브라우저로 넘기기
 function inAppInfo(){ const ua=navigator.userAgent, ios=/iPhone|iPad|iPod/i.test(ua)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1), and=/Android/i.test(ua);
-  const app=/KAKAOTALK/i.test(ua)?["kakao","카톡"]:/Instagram/i.test(ua)?["instagram","인스타"]:/FBAN|FBAV|FB_IAB/i.test(ua)?["facebook","페이스북"]:/NAVER\(inapp|NAVER/i.test(ua)?["naver","네이버 앱"]:/DaumApps|DAUM/i.test(ua)?["daum","다음 앱"]:/Line\//i.test(ua)?["line","라인"]:/BAND\//i.test(ua)?["band","밴드"]:
+  const app=/KAKAOTALK/i.test(ua)?["kakao","카카오톡"]:/Instagram/i.test(ua)?["instagram","인스타그램"]:/FBAN|FBAV|FB_IAB/i.test(ua)?["facebook","페이스북"]:/NAVER\(inapp|NAVER/i.test(ua)?["naver","네이버 앱"]:/DaumApps|DAUM/i.test(ua)?["daum","다음 앱"]:/Line\//i.test(ua)?["line","라인"]:/BAND\//i.test(ua)?["band","밴드"]:
     (and&&/; wv\)/.test(ua))||(ios&&!/Safari\//.test(ua))?["other","다른 앱"]:null;
   return app&&(ios||and)?{key:app[0],name:app[1],ios,and}:null; }
 function showIab(I,done){ gc("iab-show-"+I.key); try{ sessionStorage.setItem("bac100-iab","1"); }catch(_){}
