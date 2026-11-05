@@ -1,6 +1,7 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>나의 명산 100 · 블랙야크 100대 명산(BAC100) 완등 지도</title><meta property="og:title" content="나의 명산 지도 · 블랙야크 100대 명산"><meta property="og:description" content="블랙야크 100대 명산(BAC100) 완등 지도 만들기">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="manifest" href="manifest.webmanifest">
+<script>if(navigator.standalone===true)document.documentElement.classList.add("sa");</script>
 <meta name="theme-color" content="#fbfaf5">
 <link rel="icon" type="image/png" href="icon-180.png">
 <meta property="og:type" content="website">
@@ -36,6 +37,7 @@
 html,body{background:var(--page);color:var(--fg)}
 body{font-family:var(--body);line-height:1.5;word-break:keep-all}
 .wrap{max-width:900px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:8px 40px;display:grid;gap:14px}body{margin-top:0}
+@media (display-mode:standalone){.wrap{padding-top:calc(env(safe-area-inset-top,0px) + 30px)}}html.sa .wrap{padding-top:calc(env(safe-area-inset-top,0px) + 30px)} /* 홈 화면 앱: 맨 위 상태 표시줄 근처는 아이폰이 터치를 가져가서 버튼을 아래로 */
 header{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
 h1{font:800 clamp(28px,7vw,40px)/1.05 var(--display);margin:0;letter-spacing:-.03em}
 .count{font:500 13px var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
