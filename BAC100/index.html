@@ -1297,7 +1297,11 @@ const APPV="20261105-024848";
   document.addEventListener("visibilitychange",()=>{ if(!document.hidden) chk(false); });
   addEventListener("pageshow",e=>{ if(e.persisted) chk(false); });
 })();
-let GC_ERR=0; addEventListener("error",()=>{ if(GC_ERR++<3) gc("err"); }); addEventListener("unhandledrejection",()=>{ if(GC_ERR++<3) gc("err-promise"); });
+// 앱 오류: 어디서 났는지 짧게 남김 (사진·이름 같은 내용은 안 보냄 — 오류 문구 앞 40자와 줄 번호만)
+let GC_ERR=0; const errSlug=t=>String(t||"").slice(0,40).replace(/[^A-Za-z0-9가-힣]+/g,"-").replace(/^-|-$/g,"")||"unknown";
+addEventListener("error",e=>{ if(e.target&&e.target!==window&&e.target.tagName){ if(GC_ERR++<3) gc("err-load-"+e.target.tagName.toLowerCase()); return; } // 파일·이미지 못 불러옴
+  if(GC_ERR++>=3) return; const f=e.filename?(e.filename.split("/").pop().split("?")[0]||"page"):"none"; gc(`err-${f}-L${e.lineno||0}-${errSlug(e.message)}`); },true);
+addEventListener("unhandledrejection",e=>{ if(GC_ERR++>=3) return; const r=e.reason; gc("err-promise-"+errSlug(r&&(r.name?r.name+" "+(r.message||""):r))); });
 function gcDay(ev){ try{ const t=new Date().toISOString().slice(0,10), k="bac100-gcd"; let m=JSON.parse(localStorage.getItem(k)||"{}"); if(m.d!==t) m={d:t,e:[]}; if(m.e.includes(ev)) return; m.e.push(ev); localStorage.setItem(k,JSON.stringify(m)); }catch(_){ } gc(ev); } // 기기당 하루 1번만
 function gc(ev){ try{ if(localStorage.getItem("skipgc")==="t") return; if(window.goatcounter&&goatcounter.count){ const k=GC_SITE+"/"+ev; goatcounter.count({path:k,title:k,event:true}); } }catch(_){} }
 function syncApply(){ const k=NEW.filter(r=>r.n&&r.on&&r.st).length; applyBtn.disabled=!k; applyBtn.textContent=k?`반영 (${k})`:"반영"; }
