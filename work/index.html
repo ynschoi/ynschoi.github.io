@@ -37,19 +37,7 @@
 
   /* 배경 파노라마: 로비 → 63빌딩 노을 → 다시 로비 (카드가 한 바퀴 돌 때 함께 이동) */
   .pano{position:fixed;top:0;left:0;height:calc(var(--u)*100);display:flex;z-index:0;will-change:transform}
-  .panel{flex:none;position:relative;height:100%;background-size:auto 100%;background-repeat:no-repeat;background-position:left bottom}
-  .p-desk{width:calc(var(--u)*300);background-image:url(assets/desk.webp)}
-  .p-office{width:calc(var(--u)*300);background-image:url(assets/office.webp);margin-left:calc(var(--u)*-156);   /* 벽은 넓게 섞고, 화분은 아래 .pplant 한 장만 */
-     -webkit-mask-image:linear-gradient(to right,transparent calc(var(--u)*2),#000 calc(var(--u)*48));mask-image:linear-gradient(to right,transparent calc(var(--u)*2),#000 calc(var(--u)*48))}
-  .p-city{width:calc(var(--u)*260);margin-left:calc(var(--u)*-100);background:var(--sunset);
-     -webkit-mask-image:linear-gradient(to right,transparent,#000 calc(var(--u)*100));mask-image:linear-gradient(to right,transparent,#000 calc(var(--u)*100))}
-  .p-city img{position:absolute;bottom:0;left:50%;transform:translateX(-50%);height:100%;
-     -webkit-mask-image:linear-gradient(to right,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(to right,transparent,#000 14%,#000 86%,transparent)}
-  .p-desk.again{margin-left:calc(var(--u)*-60);-webkit-mask-image:linear-gradient(to right,transparent,#000 calc(var(--u)*12));mask-image:linear-gradient(to right,transparent,#000 calc(var(--u)*12))}
-  .pplant{position:absolute;left:calc(var(--u)*149.52);top:calc(var(--u)*34.53);width:calc(var(--u)*31.77);height:calc(var(--u)*52.49);z-index:1;pointer-events:none}  /* 사무실 그림의 화분만 오려서 위에 얹음 */
-  /* 노을빛이 실내에 번지기 */
-  .p-office::after{content:"";position:absolute;inset:0;background:var(--sunset);opacity:.8}
-  .p-office::after{-webkit-mask-image:linear-gradient(to right,transparent 60%,#000 100%);mask-image:linear-gradient(to right,transparent 60%,#000 100%)}
+  .pano img{height:100%;width:auto;display:block;max-width:none}   /* 한 장으로 이어 붙인 고해상도 배경 */
   header,.stage,footer{position:relative;z-index:1}
   .floor{position:relative;height:var(--tileH)}
   .track{display:flex;gap:6px;will-change:transform;height:100%}
@@ -226,7 +214,7 @@
   <div class="right"><span class="blink">PLAYER 1 READY</span></div>
 </header>
 
-<div class="pano" id="pano"><div class="panel p-desk"></div><div class="panel p-office"></div><div class="panel p-city"><img src="assets/han63.webp" alt=""></div><div class="panel p-desk again"></div><img class="pplant" src="assets/plant.webp" alt=""><img class="pplant" id="plant2" src="assets/plant.webp" alt=""></div>
+<div class="pano" id="pano"><img src="assets/pano.webp" alt=""></div>
 <section class="stage" id="stage">
     <div class="floor" id="floor">
     <div class="track" id="track"></div>
@@ -302,15 +290,15 @@ let x=0,paused=false,speed=.5,TW=266;
 function build(){TW=(innerWidth<900?196:266);const html=P.map(tile).join('');const one=P.length*TW;
   track.innerHTML=html.repeat(Math.max(2,Math.ceil(innerWidth*2/one)+1));track.dataset.one=one;}
 const pano=document.getElementById('pano'),place=document.getElementById('place');let outside=false;
-const PN=[...pano.querySelectorAll('.panel')];
+const PM={"W": 8480, "H": 1024, "P0": 5780, "start": 150, "office": 2692, "city": 4684, "desk2": 5900};  /* 배경 이음 지점(원본 px) */
 const U=()=>pano.offsetHeight/100;
+const SC=()=>pano.offsetHeight/PM.H;
 const setHead=()=>{const h=document.getElementById('hud');const el=h.offsetHeight?h:document.querySelector('header');document.documentElement.style.setProperty('--headH',el.offsetHeight+'px');};setHead();addEventListener('resize',setHead);  /* 배경 1단위(px) */
-const placePlant2=()=>{document.getElementById('plant2').style.left=(PN[3].offsetLeft+149.52*U())+'px';};placePlant2();addEventListener('resize',placePlant2);  /* 다시 돌아온 내 자리에도 같은 화분 */
 let dist=0,lastPlace='';
 function loop(){if(!paused){x-=speed;dist+=speed*.8;}const one=+track.dataset.one;while(-x>=one)x+=one;while(x>0)x-=one;
-  const vh0=U(), max=PN[3].offsetLeft, off=13*vh0+dist%max;  /* 명판이 다 보이는 지점에서 이어 붙여 끊김 없음 */ pano.style.transform=`translateX(${-off}px)`;
-  const c=off+innerWidth/2, vh=U();
-  const p=c<PN[1].offsetLeft+75*vh?'내 자리':c<PN[2].offsetLeft+90*vh?'사무실':c<PN[3].offsetLeft+60*vh?'한강 노을':'내 자리';
+  const sc=SC(), max=PM.P0*sc, off=PM.start*sc+dist%max;  /* 명판이 다 보이는 지점에서 이어 붙여 끊김 없음 */ pano.style.transform=`translateX(${-off}px)`;
+  const c=(off+innerWidth/2)/sc;
+  const p=c<PM.office?'내 자리':c<PM.city?'사무실':c<PM.desk2?'한강 노을':'내 자리';
   if(p!==lastPlace){lastPlace=p;outside=p=='한강 노을';place.textContent='여의도 63 · '+p;}
   track.style.transform=`translateX(${x}px)`;requestAnimationFrame(loop);}
 track.onmouseover=()=>paused=true; track.onmouseout=e=>{if(!e.relatedTarget?.closest?.('.tile'))paused=false;};
@@ -370,7 +358,7 @@ async function brain(){
 const dlg=document.getElementById('dlg');
 let dragX=null,dragged=0;
 track.addEventListener('pointerdown',e=>{dragX=e.clientX;dragged=0;});
-addEventListener('pointermove',e=>{if(dragX==null)return;const dx=e.clientX-dragX;dragged+=Math.abs(dx);x+=dx;dist+=dx*-.8;if(dist<0)dist+=PN[3].offsetLeft;dragX=e.clientX;});
+addEventListener('pointermove',e=>{if(dragX==null)return;const dx=e.clientX-dragX;dragged+=Math.abs(dx);x+=dx;dist+=dx*-.8;if(dist<0)dist+=PM.P0*SC();dragX=e.clientX;});
 addEventListener('pointerup',()=>{dragX=null;});
 track.style.touchAction='pan-y';
 track.onclick=async e=>{const t=e.target.closest('.tile');if(!t||dragged>8)return;
