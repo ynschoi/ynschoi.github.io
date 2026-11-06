@@ -2097,7 +2097,7 @@ function showIab(I,done){ gc("iab-show-"+I.key); try{ sessionStorage.setItem("ba
   const auto=I.key==="kakao"||I.key==="line"||I.and; // 버튼으로 바로 넘길 수 있는 곳
   const el=document.createElement("div"); el.className="iab"; el.setAttribute("role","dialog"); el.setAttribute("aria-modal","true");
   el.innerHTML=`<div class="iabc"><h4>${I.name} 안에서 열려 있어요</h4><p>여기서 만든 지도는 ${I.name} 안에서만 저장됩니다.<br>나중에 다시 보려면 ${br}에서 열어주세요.</p>`+
-    (auto?`<button type="button" class="go">${br}로 열기</button>`:`<button type="button" class="go xs">Safari로 열기</button><div class="iabfb" hidden><ol><li>화면의 ⋯ 메뉴 클릭</li><li>'Safari로 열기' 또는 '외부 브라우저로 열기' 클릭</li></ol><button type="button" class="cp">링크 복사해서 Safari에 붙여넣기</button></div>`)+
+    (auto?`<button type="button" class="go">${br}로 열기</button>`:`<div class="iabfb"><ol><li>화면의 ⋯ 메뉴 클릭</li><li>'Safari로 열기' 또는 '외부 브라우저로 열기' 클릭</li></ol><button type="button" class="cp">링크 복사해서 Safari에 붙여넣기</button></div>`)+
     `<button type="button" class="st">그냥 둘러보기</button></div>`;
   document.body.appendChild(el);
   const close=()=>{ el.remove(); done&&done(); };
