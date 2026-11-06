@@ -159,7 +159,7 @@
 <section class="stage" id="stage">
     <div class="floor" id="floor">
     <div class="track" id="track"></div>
-    <div class="hero idle" id="hero">
+    <div class="hero idle right" id="hero">
       <div class="bubble" id="bubble"></div>
       <div class="flip"><div id="spr" class="sprite" role="img" aria-label="최영수 캐릭터"></div></div>
       <div class="shadow"></div>
@@ -258,6 +258,7 @@ async function walkTo(tx,my){
   const hw=heroW()/2+8; tx=Math.max(hw,Math.min(innerWidth-hw,tx));
   setMode('walk');const dir=tx>hx?1:-1;hero.classList.toggle('right',dir>0);
   while(Math.abs(tx-hx)>3){if(my!==token)return false;hx+=dir*Math.min(2.1,Math.abs(tx-hx));hero.style.left=(hx-heroW()/2)+'px';await sleep(16);}
+  hero.classList.add('right');   // 멈추면 늘 오른쪽(흐름 방향)을 봄
   setMode('idle');return true;
 }
 async function act(kind,my){
