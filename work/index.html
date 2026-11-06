@@ -13,7 +13,7 @@
     --pixel:'Galmuri11','Galmuri9',var(--mono);
     --font:'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif;
     --tileH:200px;
-    --sunset:linear-gradient(to bottom,#3a3f8a 0%,#55489a 22%,#8a4a98 42%,#c4527f 60%,#ec6a52 78%,#8a5aa0 100%); --heroH:220px;
+    --sunset:linear-gradient(to bottom,#2b2a88 0%,#4e3498 20%,#a74da5 40%,#f65057 55%,#f96068 62%,#d98034 70%,#3e2d84 85%,#2c2872 100%); --heroH:220px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
@@ -36,19 +36,20 @@
   .sun{position:absolute;left:18%;bottom:14%;width:64px;height:64px;border-radius:50%;background:#ffd36b;box-shadow:0 0 40px #ffb547;opacity:.9}
 
   /* 배경 파노라마: 로비 → 63빌딩 노을 → 다시 로비 (카드가 한 바퀴 돌 때 함께 이동) */
-  .pano{position:fixed;inset:0 auto 0 0;display:flex;width:300vw;z-index:0;will-change:transform}
-  .panel{flex:none;position:relative;width:100vw;height:100%;background-size:cover;background-repeat:no-repeat}
-  .panel.lobby{background-image:url(assets/lobby.webp);background-position:center 70px}
-  /* 노을빛이 로비 벽에 서서히 번지게 (63 쪽 가장자리) */
-  .panel.lobby::after{content:"";position:absolute;inset:0;background:var(--sunset);opacity:.85}
-  .panel.lobby.a::after{-webkit-mask-image:linear-gradient(to right,transparent 62%,#000 100%);mask-image:linear-gradient(to right,transparent 62%,#000 100%)}
-  .panel.lobby.b::after{-webkit-mask-image:linear-gradient(to left,transparent 62%,#000 100%);mask-image:linear-gradient(to left,transparent 62%,#000 100%)}
-  .panel.city{width:200vw;margin-left:-50vw;background:var(--sunset);
-     -webkit-mask-image:linear-gradient(to right,transparent,#000 25%);mask-image:linear-gradient(to right,transparent,#000 25%)}
-  .panel.lobby.b{margin-left:-50vw;-webkit-mask-image:linear-gradient(to right,transparent,#000 50%);mask-image:linear-gradient(to right,transparent,#000 50%)}
-  .panel.city img{position:absolute;bottom:0;left:50%;transform:translateX(-50%);height:96%;image-rendering:pixelated;
-     -webkit-mask-image:linear-gradient(to right,transparent,#000 22%,#000 78%,transparent),linear-gradient(to bottom,transparent,#000 18%);-webkit-mask-composite:source-in;
-     mask-image:linear-gradient(to right,transparent,#000 22%,#000 78%,transparent),linear-gradient(to bottom,transparent,#000 18%);mask-composite:intersect}
+  .pano{position:fixed;top:0;left:0;height:100vh;display:flex;z-index:0;will-change:transform}
+  .panel{flex:none;position:relative;height:100%;background-size:auto 100%;background-repeat:no-repeat;background-position:left bottom}
+  .p-desk{width:300vh;background-image:url(assets/desk.webp)}
+  .p-office{width:300vh;background-image:url(assets/office.webp);margin-left:-154.8vh;   /* 화분 위치를 맞춰 겹침 */
+     -webkit-mask-image:linear-gradient(to right,transparent 2vh,#000 48vh);mask-image:linear-gradient(to right,transparent 2vh,#000 48vh)}
+  .p-city{width:260vh;margin-left:-100vh;background:var(--sunset);
+     -webkit-mask-image:linear-gradient(to right,transparent,#000 100vh);mask-image:linear-gradient(to right,transparent,#000 100vh)}
+  .p-city img{position:absolute;bottom:0;left:50%;transform:translateX(-50%);height:100%;
+     -webkit-mask-image:linear-gradient(to right,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(to right,transparent,#000 14%,#000 86%,transparent)}
+  .p-desk.again{margin-left:-100vh;-webkit-mask-image:linear-gradient(to right,transparent,#000 100vh);mask-image:linear-gradient(to right,transparent,#000 100vh)}
+  /* 노을빛이 실내에 번지기 */
+  .p-office::after,.p-desk.again::after{content:"";position:absolute;inset:0;background:var(--sunset);opacity:.8}
+  .p-office::after{-webkit-mask-image:linear-gradient(to right,transparent 60%,#000 100%);mask-image:linear-gradient(to right,transparent 60%,#000 100%)}
+  .p-desk.again::after{-webkit-mask-image:linear-gradient(to right,#000,transparent 45%);mask-image:linear-gradient(to right,#000,transparent 45%)}
   header,.stage,footer{position:relative;z-index:1}
   .floor{position:relative;height:var(--tileH)}
   .track{display:flex;gap:6px;will-change:transform;height:100%}
@@ -126,7 +127,7 @@
   <div class="right"><span class="blink">PLAYER 1 READY</span></div>
 </header>
 
-<div class="pano" id="pano"><div class="panel lobby a"></div><div class="panel city"><img src="assets/bg63.webp" alt=""></div><div class="panel lobby b"></div></div>
+<div class="pano" id="pano"><div class="panel p-desk"></div><div class="panel p-office"></div><div class="panel p-city"><img src="assets/han63.webp" alt=""></div><div class="panel p-desk again"></div></div>
 <section class="stage" id="stage">
     <div class="floor" id="floor">
     <div class="track" id="track"></div>
@@ -194,20 +195,23 @@ function spark(d,color){const w=260,h=70,m=Math.max(...d)||1;
 function tile(p,i){const fg=(p.cls=='t-white'||p.cls=='t-grey')?'#111':'#fff';
   return `<div class="tile ${p.cls}" data-i="${i}"><span class="num mono">${String(i+1).padStart(2,'0')}</span><span class="meta mono">${p.meta}</span>
   <div class="big">${p.big}</div>${p.data?spark(p.data,fg):''}<div class="cap"><b>${p.name}</b></div></div>`;}
-let x=0,paused=false,speed=.35,TW=266;
+let x=0,paused=false,speed=.5,TW=266;
 function build(){TW=(innerWidth<900?196:266);const html=P.map(tile).join('');const one=P.length*TW;
   track.innerHTML=html.repeat(Math.max(2,Math.ceil(innerWidth*2/one)+1));track.dataset.one=one;}
 const pano=document.getElementById('pano'),place=document.getElementById('place');let outside=false;
-function loop(){if(!paused){x-=speed;}const one=+track.dataset.one;while(-x>=one)x+=one;while(x>0)x-=one;
-  const prog=-x/one; pano.style.transform=`translateX(${-prog*200}vw)`;
-  const o=prog>.3&&prog<.85; if(o!==outside){outside=o;place.textContent=o?'여의도 63 · 한강 노을':'여의도 63 · 로비';}
+const PN=[...pano.children];let dist=0,lastPlace='';
+function loop(){if(!paused){x-=speed;dist+=speed*.8;}const one=+track.dataset.one;while(-x>=one)x+=one;while(x>0)x-=one;
+  const max=PN[3].offsetLeft, off=dist%max; pano.style.transform=`translateX(${-off}px)`;
+  const c=off+innerWidth/2, vh=innerHeight/100;
+  const p=c<PN[1].offsetLeft+75*vh?'내 자리':c<PN[2].offsetLeft+90*vh?'사무실':c<PN[3].offsetLeft+60*vh?'한강 노을':'내 자리';
+  if(p!==lastPlace){lastPlace=p;outside=p=='한강 노을';place.textContent='여의도 63 · '+p;}
   track.style.transform=`translateX(${x}px)`;requestAnimationFrame(loop);}
 track.onmouseover=()=>paused=true; track.onmouseout=e=>{if(!e.relatedTarget?.closest?.('.tile'))paused=false;};
 
 /* 캐릭터 */
 const hero=document.getElementById('hero'),spr=document.getElementById('spr'),bubble=document.getElementById('bubble');
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-let hx=innerWidth*.3, token=0;
+let hx=innerWidth*.62, token=0;
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 function setMode(m){hero.classList.remove('idle','walk','nod','punch','think','cross');void hero.offsetWidth;hero.classList.add(m);
   spr.src=SPR[m]||SPR.idle;}
