@@ -121,6 +121,47 @@
   .m-info{display:none;padding:18px 16px 8px;color:var(--ink);overflow:auto}
   .m-info p{margin-bottom:12px}
   .m-info .g{color:var(--ink2)}
+
+  /* ── 모바일 게임 화면: INSERT COIN · 선수 선택 · 게이지 ── */
+  .m-only{display:none}
+  .coin{position:fixed;inset:0;z-index:50;background:#0b0820;color:#fff;flex-direction:column;align-items:center;justify-content:center;gap:18px;font-family:var(--pixel);cursor:pointer;text-align:center}
+  .coin .logo{font-size:30px;line-height:1.1;color:#ffd400;text-shadow:3px 3px 0 #d92d20;letter-spacing:.04em}
+  .coin .sub{font-size:12px;color:#b9b3ff}
+  .coin .ins{font-size:18px;animation:blink 1s steps(1) infinite}
+  .coin .who{width:150px;aspect-ratio:257/258;background:url(assets/punch.webp) 0 0/1600% 100% no-repeat;transform:scaleX(-1)}
+  .coin .cr{position:absolute;bottom:22px;font-size:11px;color:#8d86c9}
+  .coin.off{animation:coinOff .45s forwards}
+  @keyframes coinOff{to{opacity:0;transform:scale(1.15);visibility:hidden}}
+  .hud{background:#0b0820;color:#fff;font-family:var(--pixel);padding:10px 12px 8px;position:relative;z-index:3;border-bottom:3px solid #111}
+  .hud .r1{display:flex;align-items:center;gap:8px}
+  .hud .face{width:38px;height:38px;border:2px solid #ffd400;background:#2a2050 url(assets/face.webp) center/cover;image-rendering:auto;flex:none}
+  .hud .who{font-size:11px;color:#ffd400;line-height:1.3}
+  .hud .who b{color:#fff;font-weight:400}
+  .bars{flex:1;display:grid;gap:4px}
+  .bar{display:flex;align-items:center;gap:5px;font-size:9px}
+  .bar .lbl{width:30px;color:#ffd400}
+  .bar .tr{flex:1;height:9px;background:#3a1020;border:1.5px solid #fff;position:relative;overflow:hidden}
+  .bar .fill{position:absolute;inset:0 auto 0 0;width:0;transition:width 1.4s cubic-bezier(.2,.8,.2,1)}
+  .bar.hp .fill{background:linear-gradient(#ffe066,#f5a623)}
+  .bar.pw .fill{background:repeating-linear-gradient(90deg,#4cc3ff 0 8px,#2b7fff 8px 10px)}
+  .bar .n{width:34px;text-align:right;color:#fff}
+  .hud .time{text-align:center;line-height:1;flex:none;width:40px}
+  .hud .time small{display:block;font-size:8px;color:#ffd400}
+  .hud .time b{font-size:22px;color:#ffd400;font-weight:400;text-shadow:2px 2px 0 #d92d20}
+  .hud .score{font-size:9px;color:#b9b3ff;margin-top:6px;display:flex;justify-content:space-between}
+  .sel{margin-top:8px}
+  .sel .t{font-size:10px;color:#fff;letter-spacing:.06em;margin-bottom:5px}
+  .sel .t span{color:#d92d20;animation:blink 1s steps(1) infinite}
+  .slots{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+  .slot{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 0 4px;border:2px solid #4a3f8a;background:#1a1440;font-size:10px;color:#b9b3ff;position:relative}
+  .slot i{width:30px;height:30px;background:#2a2050 url(assets/face.webp) center/cover;font-style:normal;display:grid;place-items:center;font-size:16px}
+  .slot.on{border-color:#ffd400;color:#ffd400;box-shadow:0 0 0 2px #d92d20 inset}
+  .slot.on::before{content:"1P";position:absolute;top:-8px;left:-4px;font-size:8px;background:#d92d20;color:#fff;padding:1px 3px}
+  .slot.lock i{background:#2a2050;filter:none;color:#6d64b0}
+  .slot.lock{color:#6d64b0}
+  .slot.shake{animation:shake .35s}
+  .toast{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%) scale(.6);opacity:0;z-index:60;font-family:var(--pixel);font-size:20px;color:#ffd400;-webkit-text-stroke:1px #111;text-shadow:3px 3px 0 #d92d20;transition:.2s;pointer-events:none;white-space:nowrap}
+  .toast.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
   /* ── 모바일(세로 화면) ── */
   @media (max-width:700px){
     body{height:100dvh}
@@ -131,7 +172,8 @@
     .stage{justify-content:flex-start;padding:var(--sceneH) 0 0 !important;overflow:hidden}
     .floor{margin-top:0;box-shadow:0 -2px 0 #111}
     .m-info{display:block !important}
-    header{grid-template-columns:1fr auto;gap:10px;padding:12px 16px 10px;font-size:10px}
+    header{display:none !important}
+    .hud{display:block}.coin{display:flex}.coin.gone{display:none}
     header .h-about,header .h-now{display:none}
     .show-m{display:inline}
     .tile{width:168px}
@@ -148,6 +190,35 @@
 </style>
 </head>
 <body>
+<div class="coin m-only" id="coin">
+  <div class="sub">YOUNGSU CHOI · PORTFOLIO</div>
+  <div class="logo">SF FIGHTER<br>2026</div>
+  <div class="who" id="coinWho"></div>
+  <div class="ins">INSERT COIN</div>
+  <div class="sub">화면을 눌러 시작</div>
+  <div class="cr">CREDIT 0 · © 여의도 63</div>
+</div>
+<div class="hud m-only" id="hud">
+  <div class="r1">
+    <div class="face"></div>
+    <div class="bars">
+      <div class="who">1P <b>YOUNGSU</b> · 구조화금융</div>
+      <div class="bar hp"><span class="lbl">HP</span><span class="tr"><span class="fill" data-v="160" data-max="200"></span></span><span class="n" data-c="160">0</span></div>
+      <div class="bar pw"><span class="lbl">POW</span><span class="tr"><span class="fill" data-v="6" data-max="8"></span></span><span class="n" data-c="6">0</span></div>
+    </div>
+    <div class="time"><small>TIME</small><b id="time">99</b></div>
+  </div>
+  <div class="score"><span>HP = 커밋 160 · POW = 업무 도구 6</span><span>SCORE <b id="score" style="font-weight:400;color:#fff">000000</b></span></div>
+  <div class="sel"><div class="t">SELECT YOUR PLAYER <span>▶</span></div>
+    <div class="slots">
+      <button class="slot on" data-k="work"><i></i>업무</button>
+      <button class="slot lock" data-k="gym"><i>🔒</i>운동</button>
+      <button class="slot lock" data-k="hike"><i>🔒</i>하이킹</button>
+      <button class="slot lock" data-k="q"><i>?</i>???</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast">COMING SOON</div>
 <header class="mono">
   <div><b>최영수.</b><br><span class="g">구조화금융 평가</span><br>— 여의도 63빌딩<br><span class="g">반복 업무는 도구로</span><span class="show-m g"><br>코딩은 AI와 함께</span></div>
   <div class="h-about">보고서를 읽고, 리스트를 만들고, 표를 그리는 일.<br>매일 반복되는 부분은 직접 도구로 만들었습니다.<br><span class="g">기획 · 디자인 · 테스트는 직접, 코딩은 AI와 함께.</span></div>
@@ -233,7 +304,7 @@ function build(){TW=(innerWidth<900?196:266);const html=P.map(tile).join('');con
 const pano=document.getElementById('pano'),place=document.getElementById('place');let outside=false;
 const PN=[...pano.querySelectorAll('.panel')];
 const U=()=>pano.offsetHeight/100;
-const setHead=()=>document.documentElement.style.setProperty('--headH',document.querySelector('header').offsetHeight+'px');setHead();addEventListener('resize',setHead);  /* 배경 1단위(px) */
+const setHead=()=>{const h=document.getElementById('hud');const el=h.offsetHeight?h:document.querySelector('header');document.documentElement.style.setProperty('--headH',el.offsetHeight+'px');};setHead();addEventListener('resize',setHead);  /* 배경 1단위(px) */
 const placePlant2=()=>{document.getElementById('plant2').style.left=(PN[3].offsetLeft+149.52*U())+'px';};placePlant2();addEventListener('resize',placePlant2);  /* 다시 돌아온 내 자리에도 같은 화분 */
 let dist=0,lastPlace='';
 function loop(){if(!paused){x-=speed;dist+=speed*.8;}const one=+track.dataset.one;while(-x>=one)x+=one;while(x>0)x-=one;
@@ -321,6 +392,25 @@ function open(p){
 
 const clk=document.getElementById('clock');
 setInterval(()=>clk.textContent=new Date().toLocaleTimeString('ko-KR',{hour12:false,timeZone:'Asia/Seoul'}),1000);
+
+/* ── 모바일 게임 화면 ── */
+(function(){
+  const coin=document.getElementById('coin'),who=document.getElementById('coinWho');
+  let k=0;const t=setInterval(()=>{who.style.backgroundPosition=([0,1,2,1][k++%4]/15*100)+'% 0';},230);
+  const fillBars=()=>{document.querySelectorAll('.hud .fill').forEach(f=>f.style.width=(f.dataset.v/f.dataset.max*100)+'%');
+    document.querySelectorAll('.hud .n').forEach(n=>{const to=+n.dataset.c;let v=0;const st=setInterval(()=>{v=Math.min(to,v+Math.ceil(to/30));n.textContent=v;if(v>=to)clearInterval(st);},40);});
+    const sc=document.getElementById('score');let v=0;const st=setInterval(()=>{v=Math.min(261*100,v+870);sc.textContent=String(v).padStart(6,'0');if(v>=26100)clearInterval(st);},40);};
+  const start=()=>{if(coin.classList.contains('off'))return;coin.classList.add('off');clearInterval(t);
+    setTimeout(()=>{coin.classList.add('gone');setHead();},460);fillBars();showToast('FIGHT!',900);};
+  coin.addEventListener('click',start);
+  if(getComputedStyle(coin).display==='none')fillBars();
+  let tm=99;setInterval(()=>{tm=tm>0?tm-1:99;document.getElementById('time').textContent=String(tm).padStart(2,'0');},1000);
+  const toast=document.getElementById('toast');let tt;
+  function showToast(msg,ms){toast.textContent=msg;toast.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('on'),ms||1100);}
+  document.querySelectorAll('.slot').forEach(b=>b.addEventListener('click',()=>{
+    if(b.classList.contains('lock')){b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake');showToast('COMING SOON');return;}
+    showToast('업무 SELECTED',800);}));
+})();
 build();loop();hero.style.left=(hx-80)+'px';brain();
 addEventListener('resize',build);
 </script>
