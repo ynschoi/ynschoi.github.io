@@ -118,16 +118,22 @@
     .tile{width:190px}
     }
   .show-m{display:none}
+  .m-info{display:none;padding:18px 16px 8px;color:var(--ink);overflow:auto}
+  .m-info p{margin-bottom:12px}
+  .m-info .g{color:var(--ink2)}
   /* ── 모바일(세로 화면) ── */
   @media (max-width:700px){
     body{height:100dvh}
-    :root{--tileH:150px;--heroH:170px;--u:.72dvh}
-    body{background:#4d388f}
-    .pano{top:auto;bottom:0}
+    /* 폰: 그림은 위쪽 가로 띠로(덜 확대), 카드는 그림 아래로 */
+    :root{--tileH:128px;--heroH:150px;--sceneH:min(40dvh,300px);--u:calc(var(--sceneH) / 100)}
+    body{background:var(--bg)}
+    .pano{top:var(--headH,90px);height:var(--sceneH)}
+    .stage{justify-content:flex-start;padding:var(--sceneH) 0 0 !important;overflow:hidden}
+    .floor{margin-top:0;box-shadow:0 -2px 0 #111}
+    .m-info{display:block !important}
     header{grid-template-columns:1fr auto;gap:10px;padding:12px 16px 10px;font-size:10px}
     header .h-about,header .h-now{display:none}
     .show-m{display:inline}
-    .stage{padding-bottom:3vh}
     .tile{width:168px}
     .tile .big{font-size:24px}
     .bubble{font-size:12px;padding:6px 9px}
@@ -158,6 +164,10 @@
       <div class="flip"><div id="spr" class="sprite" role="img" aria-label="최영수 캐릭터"></div></div>
       <div class="shadow"></div>
     </div>
+  </div>
+  <div class="m-info mono">
+    <p>보고서를 읽고, 리스트를 만들고, 표를 그리는 일.<br>매일 반복되는 부분은 직접 도구로 만들었습니다.<br><span class="g">기획 · 디자인 · 테스트는 직접, 코딩은 AI와 함께.</span></p>
+    <p>지금 만드는 것<br><span class="dot"></span>SFG 리스트 — API 단계<br><span class="dot"></span>SFG Word — 실환경 검증</p>
   </div>
 </section>
 
@@ -222,7 +232,8 @@ function build(){TW=(innerWidth<900?196:266);const html=P.map(tile).join('');con
   track.innerHTML=html.repeat(Math.max(2,Math.ceil(innerWidth*2/one)+1));track.dataset.one=one;}
 const pano=document.getElementById('pano'),place=document.getElementById('place');let outside=false;
 const PN=[...pano.querySelectorAll('.panel')];
-const U=()=>pano.offsetHeight/100;  /* 배경 1단위(px) */
+const U=()=>pano.offsetHeight/100;
+const setHead=()=>document.documentElement.style.setProperty('--headH',document.querySelector('header').offsetHeight+'px');setHead();addEventListener('resize',setHead);  /* 배경 1단위(px) */
 const placePlant2=()=>{document.getElementById('plant2').style.left=(PN[3].offsetLeft+149.52*U())+'px';};placePlant2();addEventListener('resize',placePlant2);  /* 다시 돌아온 내 자리에도 같은 화분 */
 let dist=0,lastPlace='';
 function loop(){if(!paused){x-=speed;dist+=speed*.8;}const one=+track.dataset.one;while(-x>=one)x+=one;while(x>0)x-=one;
