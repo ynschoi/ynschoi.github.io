@@ -82,7 +82,7 @@
   @keyframes punch{30%{transform:translateX(-22px) scale(1.04)}100%{transform:none}}
   .hero.think .sprite{animation:think 2.4s ease-in-out}
   @keyframes think{30%,70%{transform:rotate(-4deg) translateX(-4px)}}
-  .hero.cross .sprite{animation:cross 2.2s ease-in-out}
+  .hero.cross .sprite{}
   @keyframes cross{20%,80%{transform:scale(1.03) rotate(2deg)}}
 
   .bubble{position:absolute;bottom:100%;left:50%;transform:translate(-50%,-6px) scale(.6);opacity:0;transition:.18s;
@@ -172,8 +172,10 @@
 /* ── 캐릭터 동작 그림 ──
    assets/punch.webp = 16칸 가로 한 줄(파이팅 자세 → 펀치 → 원위치). 칸 번호로 보여줍니다.
    새 동작 그림이 생기면 같은 방식으로 칸 시트를 추가하면 됩니다. */
-const FR={idle:[0,1,2,1],walk:[0,1],punch:[...Array(16).keys()],still:[0]};
+const FR={idle:[0,1,2,1],walk:[0,1],punch:[...Array(16).keys()],still:[0],crossIn:[...Array(16).keys()],crossOut:[11,9,7,5,3,1,0]};
 let frameTimer=null;
+const SHEETS={punch:'assets/punch.webp',cross:'assets/cross.webp'};let curSheet='punch';
+function useSheet(n){if(n!==curSheet){curSheet=n;spr.style.backgroundImage=`url(${SHEETS[n]})`;}}
 function frame(i){spr.style.backgroundPosition=(i/15*100)+'% 0';}
 function playLoop(seq,ms){clearInterval(frameTimer);let k=0;frame(seq[0]);frameTimer=setInterval(()=>frame(seq[++k%seq.length]),ms);}
 function playOnce(seq,ms,onFrame){clearInterval(frameTimer);return new Promise(res=>{let k=0;frame(seq[0]);
@@ -237,7 +239,8 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 let hx=innerWidth*.62, token=0;
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 function setMode(m){hero.classList.remove('idle','walk','nod','punch','think','cross');void hero.offsetWidth;hero.classList.add(m);
-  if(m=='idle')playLoop(FR.idle,230); else if(m=='walk')playLoop(FR.walk,180); else if(m!='punch')playLoop(FR.still,1000);}
+  if(m!=='cross')useSheet('punch');
+  if(m=='idle')playLoop(FR.idle,230); else if(m=='walk')playLoop(FR.walk,180); else if(m!='punch'&&m!='cross')playLoop(FR.still,1000);}
 function say(t,ms){bubble.textContent=t;bubble.classList.add('on');return sleep(ms).then(()=>bubble.classList.remove('on'));}
 function heroW(){return spr.getBoundingClientRect().width||150;}
 async function walkTo(tx,my){
@@ -259,6 +262,12 @@ async function act(kind,my){
       const fr=floor.getBoundingClientRect();const el=document.elementFromPoint(r.left+r.width/2,fr.top+30)?.closest('.tile');
       if(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');}});
     await sayP;
+  } else if(kind=='cross'){
+    useSheet('cross');
+    await playOnce(FR.crossIn,90);                       // 팔짱 끼고 윙크
+    await say(outside&&Math.random()<.5?pick(CITY):pick(LINES.cross),1800);
+    await playOnce(FR.crossOut,70);                      // 다시 파이팅 자세로
+    useSheet('punch');
   } else if(kind=='think'){ await say('…',700); await say(pick(LINES.think),1700); }
   else await say(outside&&Math.random()<.6?pick(CITY):pick(LINES[kind]),kind=='nod'?1500:2200);
   setMode('idle');
