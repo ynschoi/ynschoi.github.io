@@ -12,7 +12,7 @@
     --mono:'SF Mono','JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
     --pixel:'Galmuri11','Galmuri9',var(--mono);
     --font:'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif;
-    --tileH:200px;
+    --tileH:200px; --u:1vh;
     --sunset:linear-gradient(to bottom,#2b2a88 0%,#4e3498 20%,#a74da5 40%,#f65057 55%,#f96068 62%,#d98034 70%,#3e2d84 85%,#2c2872 100%); --heroH:220px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
@@ -36,17 +36,17 @@
   .sun{position:absolute;left:18%;bottom:14%;width:64px;height:64px;border-radius:50%;background:#ffd36b;box-shadow:0 0 40px #ffb547;opacity:.9}
 
   /* 배경 파노라마: 로비 → 63빌딩 노을 → 다시 로비 (카드가 한 바퀴 돌 때 함께 이동) */
-  .pano{position:fixed;top:0;left:0;height:100vh;display:flex;z-index:0;will-change:transform}
+  .pano{position:fixed;top:0;left:0;height:calc(var(--u)*100);display:flex;z-index:0;will-change:transform}
   .panel{flex:none;position:relative;height:100%;background-size:auto 100%;background-repeat:no-repeat;background-position:left bottom}
-  .p-desk{width:300vh;background-image:url(assets/desk.webp)}
-  .p-office{width:300vh;background-image:url(assets/office.webp);margin-left:-156vh;   /* 벽은 넓게 섞고, 화분은 아래 .pplant 한 장만 */
-     -webkit-mask-image:linear-gradient(to right,transparent 2vh,#000 48vh);mask-image:linear-gradient(to right,transparent 2vh,#000 48vh)}
-  .p-city{width:260vh;margin-left:-100vh;background:var(--sunset);
-     -webkit-mask-image:linear-gradient(to right,transparent,#000 100vh);mask-image:linear-gradient(to right,transparent,#000 100vh)}
+  .p-desk{width:calc(var(--u)*300);background-image:url(assets/desk.webp)}
+  .p-office{width:calc(var(--u)*300);background-image:url(assets/office.webp);margin-left:calc(var(--u)*-156);   /* 벽은 넓게 섞고, 화분은 아래 .pplant 한 장만 */
+     -webkit-mask-image:linear-gradient(to right,transparent calc(var(--u)*2),#000 calc(var(--u)*48));mask-image:linear-gradient(to right,transparent calc(var(--u)*2),#000 calc(var(--u)*48))}
+  .p-city{width:calc(var(--u)*260);margin-left:calc(var(--u)*-100);background:var(--sunset);
+     -webkit-mask-image:linear-gradient(to right,transparent,#000 calc(var(--u)*100));mask-image:linear-gradient(to right,transparent,#000 calc(var(--u)*100))}
   .p-city img{position:absolute;bottom:0;left:50%;transform:translateX(-50%);height:100%;
      -webkit-mask-image:linear-gradient(to right,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(to right,transparent,#000 14%,#000 86%,transparent)}
-  .p-desk.again{margin-left:-60vh;-webkit-mask-image:linear-gradient(to right,transparent,#000 12vh);mask-image:linear-gradient(to right,transparent,#000 12vh)}
-  .pplant{position:absolute;left:149.52vh;top:34.53vh;width:31.77vh;height:52.49vh;z-index:1;pointer-events:none}  /* 사무실 그림의 화분만 오려서 위에 얹음 */
+  .p-desk.again{margin-left:calc(var(--u)*-60);-webkit-mask-image:linear-gradient(to right,transparent,#000 calc(var(--u)*12));mask-image:linear-gradient(to right,transparent,#000 calc(var(--u)*12))}
+  .pplant{position:absolute;left:calc(var(--u)*149.52);top:calc(var(--u)*34.53);width:calc(var(--u)*31.77);height:calc(var(--u)*52.49);z-index:1;pointer-events:none}  /* 사무실 그림의 화분만 오려서 위에 얹음 */
   /* 노을빛이 실내에 번지기 */
   .p-office::after{content:"";position:absolute;inset:0;background:var(--sunset);opacity:.8}
   .p-office::after{-webkit-mask-image:linear-gradient(to right,transparent 60%,#000 100%);mask-image:linear-gradient(to right,transparent 60%,#000 100%)}
@@ -71,7 +71,7 @@
   .hero .flip{height:100%;transform-origin:50% 100%;transition:transform .15s}
   .hero.right .flip{transform:scaleX(-1)}
   .hero .sprite{height:100%;aspect-ratio:257/258;display:block;transform-origin:50% 100%;filter:drop-shadow(0 4px 0 rgba(0,0,0,.25));
-     background:url(assets/punch.webp) 0 0/1600% 100% no-repeat;image-rendering:pixelated}
+     background:url(assets/punch.webp) 0 0/1600% 100% no-repeat;image-rendering:auto}
   .hero .shadow{position:absolute;left:15%;right:15%;bottom:-4px;height:10px;border-radius:50%;background:rgba(0,0,0,.25);filter:blur(2px)}
   .hero.walk .sprite{animation:step .36s steps(2) infinite}
   @keyframes step{0%{transform:translateY(0) rotate(-1.5deg)}50%{transform:translateY(-7px) rotate(1.5deg)}}
@@ -121,7 +121,9 @@
   /* ── 모바일(세로 화면) ── */
   @media (max-width:700px){
     body{height:100dvh}
-    :root{--tileH:150px;--heroH:180px}
+    :root{--tileH:150px;--heroH:170px;--u:.72dvh}
+    body{background:#4d388f}
+    .pano{top:auto;bottom:0}
     header{grid-template-columns:1fr auto;gap:10px;padding:12px 16px 10px;font-size:10px}
     header .h-about,header .h-now{display:none}
     .show-m{display:inline}
@@ -218,11 +220,12 @@ function build(){TW=(innerWidth<900?196:266);const html=P.map(tile).join('');con
   track.innerHTML=html.repeat(Math.max(2,Math.ceil(innerWidth*2/one)+1));track.dataset.one=one;}
 const pano=document.getElementById('pano'),place=document.getElementById('place');let outside=false;
 const PN=[...pano.querySelectorAll('.panel')];
-const placePlant2=()=>{document.getElementById('plant2').style.left=(PN[3].offsetLeft+149.52*innerHeight/100)+'px';};placePlant2();addEventListener('resize',placePlant2);  /* 다시 돌아온 내 자리에도 같은 화분 */
+const U=()=>pano.offsetHeight/100;  /* 배경 1단위(px) */
+const placePlant2=()=>{document.getElementById('plant2').style.left=(PN[3].offsetLeft+149.52*U())+'px';};placePlant2();addEventListener('resize',placePlant2);  /* 다시 돌아온 내 자리에도 같은 화분 */
 let dist=0,lastPlace='';
 function loop(){if(!paused){x-=speed;dist+=speed*.8;}const one=+track.dataset.one;while(-x>=one)x+=one;while(x>0)x-=one;
-  const vh0=innerHeight/100, max=PN[3].offsetLeft, off=13*vh0+dist%max;  /* 명판이 다 보이는 지점에서 이어 붙여 끊김 없음 */ pano.style.transform=`translateX(${-off}px)`;
-  const c=off+innerWidth/2, vh=innerHeight/100;
+  const vh0=U(), max=PN[3].offsetLeft, off=13*vh0+dist%max;  /* 명판이 다 보이는 지점에서 이어 붙여 끊김 없음 */ pano.style.transform=`translateX(${-off}px)`;
+  const c=off+innerWidth/2, vh=U();
   const p=c<PN[1].offsetLeft+75*vh?'내 자리':c<PN[2].offsetLeft+90*vh?'사무실':c<PN[3].offsetLeft+60*vh?'한강 노을':'내 자리';
   if(p!==lastPlace){lastPlace=p;outside=p=='한강 노을';place.textContent='여의도 63 · '+p;}
   track.style.transform=`translateX(${x}px)`;requestAnimationFrame(loop);}
