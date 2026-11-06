@@ -39,13 +39,14 @@
   .pano{position:fixed;top:0;left:0;height:100vh;display:flex;z-index:0;will-change:transform}
   .panel{flex:none;position:relative;height:100%;background-size:auto 100%;background-repeat:no-repeat;background-position:left bottom}
   .p-desk{width:300vh;background-image:url(assets/desk.webp)}
-  .p-office{width:300vh;background-image:url(assets/office.webp);margin-left:-156vh;   /* 화분 왼쪽 벽 줄눈에서 바로 바뀜(겹침 없음) */
-     -webkit-mask-image:linear-gradient(to right,transparent 3.3vh,#000 3.9vh);mask-image:linear-gradient(to right,transparent 3.3vh,#000 3.9vh)}
+  .p-office{width:300vh;background-image:url(assets/office.webp);margin-left:-156vh;   /* 벽은 넓게 섞고, 화분은 아래 .pplant 한 장만 */
+     -webkit-mask-image:linear-gradient(to right,transparent 2vh,#000 48vh);mask-image:linear-gradient(to right,transparent 2vh,#000 48vh)}
   .p-city{width:260vh;margin-left:-100vh;background:var(--sunset);
      -webkit-mask-image:linear-gradient(to right,transparent,#000 100vh);mask-image:linear-gradient(to right,transparent,#000 100vh)}
   .p-city img{position:absolute;bottom:0;left:50%;transform:translateX(-50%);height:100%;
      -webkit-mask-image:linear-gradient(to right,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(to right,transparent,#000 14%,#000 86%,transparent)}
   .p-desk.again{margin-left:-60vh;-webkit-mask-image:linear-gradient(to right,transparent,#000 12vh);mask-image:linear-gradient(to right,transparent,#000 12vh)}
+  .pplant{position:absolute;left:149.52vh;top:34.53vh;width:31.77vh;height:52.49vh;z-index:1;pointer-events:none}  /* 사무실 그림의 화분만 오려서 위에 얹음 */
   /* 노을빛이 실내에 번지기 */
   .p-office::after{content:"";position:absolute;inset:0;background:var(--sunset);opacity:.8}
   .p-office::after{-webkit-mask-image:linear-gradient(to right,transparent 60%,#000 100%);mask-image:linear-gradient(to right,transparent 60%,#000 100%)}
@@ -126,7 +127,7 @@
   <div class="right"><span class="blink">PLAYER 1 READY</span></div>
 </header>
 
-<div class="pano" id="pano"><div class="panel p-desk"></div><div class="panel p-office"></div><div class="panel p-city"><img src="assets/han63.webp" alt=""></div><div class="panel p-desk again"></div></div>
+<div class="pano" id="pano"><div class="panel p-desk"></div><div class="panel p-office"></div><div class="panel p-city"><img src="assets/han63.webp" alt=""></div><div class="panel p-desk again"></div><img class="pplant" src="assets/plant.webp" alt=""><img class="pplant" id="plant2" src="assets/plant.webp" alt=""></div>
 <section class="stage" id="stage">
     <div class="floor" id="floor">
     <div class="track" id="track"></div>
@@ -198,7 +199,9 @@ let x=0,paused=false,speed=.5,TW=266;
 function build(){TW=(innerWidth<900?196:266);const html=P.map(tile).join('');const one=P.length*TW;
   track.innerHTML=html.repeat(Math.max(2,Math.ceil(innerWidth*2/one)+1));track.dataset.one=one;}
 const pano=document.getElementById('pano'),place=document.getElementById('place');let outside=false;
-const PN=[...pano.children];let dist=0,lastPlace='';
+const PN=[...pano.querySelectorAll('.panel')];
+const placePlant2=()=>{document.getElementById('plant2').style.left=(PN[3].offsetLeft+149.52*innerHeight/100)+'px';};placePlant2();addEventListener('resize',placePlant2);  /* 다시 돌아온 내 자리에도 같은 화분 */
+let dist=0,lastPlace='';
 function loop(){if(!paused){x-=speed;dist+=speed*.8;}const one=+track.dataset.one;while(-x>=one)x+=one;while(x>0)x-=one;
   const vh0=innerHeight/100, max=PN[3].offsetLeft, off=13*vh0+dist%max;  /* 명판이 다 보이는 지점에서 이어 붙여 끊김 없음 */ pano.style.transform=`translateX(${-off}px)`;
   const c=off+innerWidth/2, vh=innerHeight/100;
