@@ -54,18 +54,9 @@
   .t-blue{background:var(--accent);color:#fff}
   .t-red{background:#d92d20;color:#fff}
 
-  /* 걷는 사람 */
-  .walker{position:absolute;left:50%;top:50%;transform:translate(-50%,-46%);width:120px;height:260px;pointer-events:none;z-index:5}
-  .walker svg{width:100%;height:100%;overflow:visible}
-  .walker .body{animation:bob .9s ease-in-out infinite}
-  .walker .legL{transform-origin:60px 150px;animation:swing .9s ease-in-out infinite}
-  .walker .legR{transform-origin:60px 150px;animation:swing .9s ease-in-out infinite reverse}
-  .walker .armL{transform-origin:60px 78px;animation:swing .9s ease-in-out infinite reverse}
-  .walker .armR{transform-origin:60px 78px;animation:swing .9s ease-in-out infinite}
-  .paused .walker *{animation-play-state:paused}
-  @keyframes swing{0%,100%{transform:rotate(18deg)}50%{transform:rotate(-18deg)}}
-  @keyframes bob{0%,100%{transform:translateY(0)}25%,75%{transform:translateY(-3px)}}
 
+  .me{position:absolute;left:50%;bottom:0;transform:translateX(-50%);height:min(96%,640px);z-index:5;pointer-events:none;
+      -webkit-mask-image:linear-gradient(to bottom,#000 80%,transparent);mask-image:linear-gradient(to bottom,#000 80%,transparent)}
   footer{display:flex;justify-content:space-between;align-items:center;padding:0 32px 18px;color:var(--ink2)}
   footer span+span{margin-left:22px}
   .hint{color:var(--ink2)}
@@ -89,7 +80,6 @@
     header{grid-template-columns:1fr 1fr;padding:18px 16px 0}
     nav,footer{padding-left:16px;padding-right:16px}
     .tile{width:200px;height:160px}
-    .walker{width:90px;height:200px}
     footer .hide-m{display:none}
   }
 </style>
@@ -106,22 +96,7 @@
 
 <section class="stage" id="stage">
   <div class="track" id="track"></div>
-  <div class="walker" aria-hidden="true">
-    <!-- 실제 사진·3D 아바타로 바꿀 수 있는 자리 -->
-    <svg viewBox="0 0 120 260">
-      <ellipse cx="60" cy="252" rx="34" ry="5" fill="#000" opacity=".12"/>
-      <g class="body">
-        <g class="armL"><rect x="54" y="76" width="12" height="70" rx="6" fill="#2a2a2a"/></g>
-        <g class="legL"><rect x="52" y="146" width="15" height="92" rx="6" fill="#1c1c1c"/><rect x="50" y="232" width="28" height="11" rx="5" fill="#e9e9e9"/></g>
-        <rect x="40" y="70" width="40" height="86" rx="14" fill="#111"/>
-        <g class="legR"><rect x="53" y="146" width="15" height="92" rx="6" fill="#111"/><rect x="51" y="232" width="28" height="11" rx="5" fill="#fff" stroke="#ccc"/></g>
-        <rect x="55" y="56" width="11" height="16" fill="#c99a7c"/>
-        <circle cx="61" cy="42" r="17" fill="#d8a989"/>
-        <path d="M43 38 a18 18 0 0 1 36 -2 h12 v5 h-48z" fill="#111"/><circle cx="71" cy="45" r="1.8" fill="#111"/><path d="M77 47 l3 4 l-3 1" fill="none" stroke="#a87a5e" stroke-width="1.5"/>
-        <g class="armR"><rect x="54" y="76" width="12" height="70" rx="6" fill="#111"/><circle cx="60" cy="148" r="6" fill="#d8a989"/></g>
-      </g>
-    </svg>
-  </div>
+  <img class="me" src="me.webp" alt="최영수">
 </section>
 
 <footer class="mono">
@@ -200,8 +175,8 @@ function loop(){
   if(!paused){x-=speed; const one=+track.dataset.one; if(-x>=one) x+=one; track.style.transform=`translateX(${x}px)`;}
   requestAnimationFrame(loop);
 }
-stage.onmouseover=e=>{if(e.target.closest('.tile')){paused=true;document.body.classList.add('paused');}};
-stage.onmouseout=e=>{if(e.target.closest('.tile')&&!e.relatedTarget?.closest?.('.tile')){paused=false;document.body.classList.remove('paused');}};
+stage.onmouseover=e=>{if(e.target.closest('.tile')){paused=true;}};
+stage.onmouseout=e=>{if(e.target.closest('.tile')&&!e.relatedTarget?.closest?.('.tile')){paused=false;}};
 /* 휠·드래그로 직접 넘기기 */
 stage.addEventListener('wheel',e=>{x-=(e.deltaY+e.deltaX)*.6;e.preventDefault();},{passive:false});
 let dragX=null,moved=0;
