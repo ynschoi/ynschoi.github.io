@@ -16,13 +16,13 @@
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
-  body{background:var(--bg);color:var(--ink);font-family:var(--font);overflow:hidden;word-break:keep-all;
+  body{background:#e9c6a6 url(assets/lobby.webp) center 70px/cover no-repeat;image-rendering:auto;color:var(--ink);font-family:var(--font);overflow:hidden;word-break:keep-all;
        display:grid;grid-template-rows:auto 1fr auto;height:100vh}
   a{color:inherit;text-decoration:none}
   .mono{font-family:var(--mono);font-size:10.5px;line-height:1.55;letter-spacing:.02em;text-transform:uppercase}
 
   /* 머리 4단 */
-  header{display:grid;grid-template-columns:1.1fr 1.6fr 1.3fr .8fr;gap:24px;padding:22px 32px 0;position:relative;z-index:3}
+  header{display:grid;grid-template-columns:1.1fr 1.6fr 1.3fr .8fr;gap:24px;padding:16px 32px 14px;position:relative;z-index:3;background:rgba(250,246,240,.82);backdrop-filter:blur(6px);border-bottom:2px solid #111}
   header b{font-weight:700}
   header .g{color:var(--ink2)}
   .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#16a34a;margin-right:6px;vertical-align:1px}
@@ -32,12 +32,6 @@
 
   /* 무대 */
   .stage{position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:6vh;overflow:hidden}
-  .sky{position:absolute;left:0;right:0;top:0;bottom:calc(6vh + var(--tileH)/2);
-       background:linear-gradient(to bottom,var(--bg) 0%,#3d428c 20%,#7a4a98 40%,#b84a86 58%,#ec6a52 80%,#9a5aa0 100%);
-       -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 18%);mask-image:linear-gradient(to bottom,transparent 0,#000 18%)}
-  .b63{position:absolute;bottom:0;right:12%;height:88%;image-rendering:pixelated;
-       -webkit-mask-image:linear-gradient(to right,transparent,#000 22%,#000 78%,transparent),linear-gradient(to bottom,transparent,#000 22%);
-       -webkit-mask-composite:source-in;mask-image:linear-gradient(to right,transparent,#000 22%,#000 78%,transparent),linear-gradient(to bottom,transparent,#000 22%);mask-composite:intersect}
   .sun{position:absolute;left:18%;bottom:14%;width:64px;height:64px;border-radius:50%;background:#ffd36b;box-shadow:0 0 40px #ffb547;opacity:.9}
 
   .floor{position:relative;height:var(--tileH)}
@@ -83,7 +77,7 @@
        text-shadow:3px 3px 0 #d92d20;pointer-events:none;z-index:7;animation:pow .7s ease-out forwards}
   @keyframes pow{0%{transform:scale(.3) rotate(-12deg);opacity:1}40%{transform:scale(1.25) rotate(-6deg)}100%{transform:scale(1) translateY(-30px);opacity:0}}
 
-  footer{display:flex;justify-content:space-between;align-items:center;padding:0 32px 18px;color:var(--ink2)}
+  footer{display:flex;justify-content:space-between;align-items:center;padding:10px 32px;color:#f4ece4;background:rgba(40,28,30,.55)}
   footer span+span{margin-left:22px}
 
   /* 상세 */
@@ -105,8 +99,7 @@
     header{grid-template-columns:1fr 1fr;padding:18px 16px 0}
     footer{padding:0 16px 14px} footer .hide-m{display:none}
     .tile{width:190px}
-    .b63{right:0;height:70%}
-  }
+    }
 </style>
 </head>
 <body>
@@ -118,8 +111,7 @@
 </header>
 
 <section class="stage" id="stage">
-  <div class="sky"><img class="b63" src="assets/bg63.webp" alt=""></div>
-  <div class="floor" id="floor">
+    <div class="floor" id="floor">
     <div class="track" id="track"></div>
     <div class="hero idle" id="hero">
       <div class="bubble" id="bubble"></div>
@@ -130,7 +122,7 @@
 </section>
 
 <footer class="mono">
-  <div><span id="clock">--:--:--</span><span>여의도 · KST</span><span class="hide-m">카드를 누르면 캐릭터가 가서 펀치!</span></div>
+  <div><span id="clock">--:--:--</span><span>여의도 63 · 로비</span><span class="hide-m">카드를 누르면 캐릭터가 가서 펀치!</span></div>
   <div><span>업무 도구 6</span><span>커밋 160</span><span class="hide-m">업데이트 2026.11.06</span></div>
 </footer>
 
