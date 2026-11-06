@@ -12,7 +12,8 @@
     --mono:'SF Mono','JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
     --pixel:'Galmuri11','Galmuri9',var(--mono);
     --font:'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif;
-    --tileH:200px; --heroH:220px;
+    --tileH:200px;
+    --sunset:linear-gradient(to bottom,#3a3f8a 0%,#55489a 22%,#8a4a98 42%,#c4527f 60%,#ec6a52 78%,#8a5aa0 100%); --heroH:220px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
@@ -36,14 +37,18 @@
 
   /* 배경 파노라마: 로비 → 63빌딩 노을 → 다시 로비 (카드가 한 바퀴 돌 때 함께 이동) */
   .pano{position:fixed;inset:0 auto 0 0;display:flex;width:300vw;z-index:0;will-change:transform}
-  .panel{flex:none;width:100vw;height:100%;background-size:cover;background-repeat:no-repeat}
+  .panel{flex:none;position:relative;width:100vw;height:100%;background-size:cover;background-repeat:no-repeat}
   .panel.lobby{background-image:url(assets/lobby.webp);background-position:center 70px}
-  .panel{position:relative}
-  .panel.city{width:150vw}
-  .panel.city{background:linear-gradient(to bottom,#2f3780 0%,#3d428c 18%,#7a4a98 38%,#b84a86 55%,#ec6a52 75%,#9a5aa0 100%)}
+  /* 노을빛이 로비 벽에 서서히 번지게 (63 쪽 가장자리) */
+  .panel.lobby::after{content:"";position:absolute;inset:0;background:var(--sunset);opacity:.85}
+  .panel.lobby.a::after{-webkit-mask-image:linear-gradient(to right,transparent 62%,#000 100%);mask-image:linear-gradient(to right,transparent 62%,#000 100%)}
+  .panel.lobby.b::after{-webkit-mask-image:linear-gradient(to left,transparent 62%,#000 100%);mask-image:linear-gradient(to left,transparent 62%,#000 100%)}
+  .panel.city{width:200vw;margin-left:-50vw;background:var(--sunset);
+     -webkit-mask-image:linear-gradient(to right,transparent,#000 25%);mask-image:linear-gradient(to right,transparent,#000 25%)}
+  .panel.lobby.b{margin-left:-50vw;-webkit-mask-image:linear-gradient(to right,transparent,#000 50%);mask-image:linear-gradient(to right,transparent,#000 50%)}
   .panel.city img{position:absolute;bottom:0;left:50%;transform:translateX(-50%);height:96%;image-rendering:pixelated;
-     -webkit-mask-image:linear-gradient(to right,transparent,#000 20%,#000 80%,transparent);mask-image:linear-gradient(to right,transparent,#000 20%,#000 80%,transparent)}
-  .panel+.panel{margin-left:-25vw;-webkit-mask-image:linear-gradient(to right,transparent,#000 25%);mask-image:linear-gradient(to right,transparent,#000 25%)}
+     -webkit-mask-image:linear-gradient(to right,transparent,#000 22%,#000 78%,transparent),linear-gradient(to bottom,transparent,#000 18%);-webkit-mask-composite:source-in;
+     mask-image:linear-gradient(to right,transparent,#000 22%,#000 78%,transparent),linear-gradient(to bottom,transparent,#000 18%);mask-composite:intersect}
   header,.stage,footer{position:relative;z-index:1}
   .floor{position:relative;height:var(--tileH)}
   .track{display:flex;gap:6px;will-change:transform;height:100%}
@@ -121,7 +126,7 @@
   <div class="right"><span class="blink">PLAYER 1 READY</span></div>
 </header>
 
-<div class="pano" id="pano"><div class="panel lobby"></div><div class="panel city"><img src="assets/bg63.webp" alt=""></div><div class="panel lobby"></div></div>
+<div class="pano" id="pano"><div class="panel lobby a"></div><div class="panel city"><img src="assets/bg63.webp" alt=""></div><div class="panel lobby b"></div></div>
 <section class="stage" id="stage">
     <div class="floor" id="floor">
     <div class="track" id="track"></div>
