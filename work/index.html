@@ -45,11 +45,10 @@
      -webkit-mask-image:linear-gradient(to right,transparent,#000 100vh);mask-image:linear-gradient(to right,transparent,#000 100vh)}
   .p-city img{position:absolute;bottom:0;left:50%;transform:translateX(-50%);height:100%;
      -webkit-mask-image:linear-gradient(to right,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(to right,transparent,#000 14%,#000 86%,transparent)}
-  .p-desk.again{margin-left:-100vh;-webkit-mask-image:linear-gradient(to right,transparent,#000 100vh);mask-image:linear-gradient(to right,transparent,#000 100vh)}
+  .p-desk.again{margin-left:-60vh;-webkit-mask-image:linear-gradient(to right,transparent,#000 12vh);mask-image:linear-gradient(to right,transparent,#000 12vh)}
   /* 노을빛이 실내에 번지기 */
-  .p-office::after,.p-desk.again::after{content:"";position:absolute;inset:0;background:var(--sunset);opacity:.8}
+  .p-office::after{content:"";position:absolute;inset:0;background:var(--sunset);opacity:.8}
   .p-office::after{-webkit-mask-image:linear-gradient(to right,transparent 60%,#000 100%);mask-image:linear-gradient(to right,transparent 60%,#000 100%)}
-  .p-desk.again::after{-webkit-mask-image:linear-gradient(to right,#000,transparent 45%);mask-image:linear-gradient(to right,#000,transparent 45%)}
   header,.stage,footer{position:relative;z-index:1}
   .floor{position:relative;height:var(--tileH)}
   .track{display:flex;gap:6px;will-change:transform;height:100%}
@@ -201,7 +200,7 @@ function build(){TW=(innerWidth<900?196:266);const html=P.map(tile).join('');con
 const pano=document.getElementById('pano'),place=document.getElementById('place');let outside=false;
 const PN=[...pano.children];let dist=0,lastPlace='';
 function loop(){if(!paused){x-=speed;dist+=speed*.8;}const one=+track.dataset.one;while(-x>=one)x+=one;while(x>0)x-=one;
-  const max=PN[3].offsetLeft, off=dist%max; pano.style.transform=`translateX(${-off}px)`;
+  const vh0=innerHeight/100, max=PN[3].offsetLeft, off=13*vh0+dist%max;  /* 명판이 다 보이는 지점에서 이어 붙여 끊김 없음 */ pano.style.transform=`translateX(${-off}px)`;
   const c=off+innerWidth/2, vh=innerHeight/100;
   const p=c<PN[1].offsetLeft+75*vh?'내 자리':c<PN[2].offsetLeft+90*vh?'사무실':c<PN[3].offsetLeft+60*vh?'한강 노을':'내 자리';
   if(p!==lastPlace){lastPlace=p;outside=p=='한강 노을';place.textContent='여의도 63 · '+p;}
