@@ -241,9 +241,9 @@
 /* ── 캐릭터 동작 그림 ──
    assets/punch.webp = 16칸 가로 한 줄(파이팅 자세 → 펀치 → 원위치). 칸 번호로 보여줍니다.
    새 동작 그림이 생기면 같은 방식으로 칸 시트를 추가하면 됩니다. */
-const FR={idle:[0,1,2,1],walk:[1,2,3,4,5,6,7,8,9,10],punch:[...Array(16).keys()],still:[0],crossIn:[...Array(16).keys()],crossOut:[11,9,7,5,3,1,0]};
+const FR={idle:[0,1,2,1],walk:[0,1,2,3,4,5,6,7],punch:[...Array(16).keys()],still:[0],crossIn:[...Array(16).keys()],crossOut:[11,9,7,5,3,1,0]};
 let frameTimer=null;
-const SHEETS={punch:['assets/punch.webp',16],cross:['assets/cross.webp',16],walk:['assets/walk.webp',12]};let curSheet='punch';
+const SHEETS={punch:['assets/punch.webp',16],cross:['assets/cross.webp',16],walk:['assets/walk.webp',8]};let curSheet='punch';
 function useSheet(n){if(n!==curSheet){curSheet=n;spr.style.backgroundImage=`url(${SHEETS[n][0]})`;spr.style.backgroundSize=`${SHEETS[n][1]*100}% 100%`;}}
 function frame(i){spr.style.backgroundPosition=(i/(SHEETS[curSheet][1]-1)*100)+'% 0';}
 function playLoop(seq,ms){clearInterval(frameTimer);let k=0;frame(seq[0]);frameTimer=setInterval(()=>frame(seq[++k%seq.length]),ms);}
@@ -310,7 +310,7 @@ let hx=innerWidth*.62, token=0;
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 function setMode(m){hero.classList.remove('idle','walk','nod','punch','think','cross');void hero.offsetWidth;hero.classList.add(m);
   if(m=='walk')useSheet('walk'); else if(m!=='cross')useSheet('punch');
-  if(m=='idle')playLoop(FR.idle,230); else if(m=='walk')playLoop(FR.walk,95); else if(m!='punch'&&m!='cross')playLoop(FR.still,1000);}
+  if(m=='idle')playLoop(FR.idle,230); else if(m=='walk')playLoop(FR.walk,105); else if(m!='punch'&&m!='cross')playLoop(FR.still,1000);}
 function say(t,ms){bubble.textContent=t;bubble.classList.add('on');return sleep(ms).then(()=>bubble.classList.remove('on'));}
 function heroW(){return spr.getBoundingClientRect().width||150;}
 async function walkTo(tx,my){
