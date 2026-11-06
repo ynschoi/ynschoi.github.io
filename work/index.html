@@ -70,19 +70,19 @@
   .hero{position:absolute;bottom:calc(100% - 6px);left:0;height:var(--heroH);z-index:6;pointer-events:none;will-change:left}
   .hero .flip{height:100%;transform-origin:50% 100%;transition:transform .15s}
   .hero.right .flip{transform:scaleX(-1)}
-  .hero img{height:100%;display:block;transform-origin:50% 100%;filter:drop-shadow(0 4px 0 rgba(0,0,0,.25))}
+  .hero .sprite{height:100%;aspect-ratio:257/258;display:block;transform-origin:50% 100%;filter:drop-shadow(0 4px 0 rgba(0,0,0,.25));
+     background:url(assets/punch.webp) 0 0/1600% 100% no-repeat;image-rendering:pixelated}
   .hero .shadow{position:absolute;left:15%;right:15%;bottom:-4px;height:10px;border-radius:50%;background:rgba(0,0,0,.25);filter:blur(2px)}
-  .hero.walk img{animation:step .36s steps(2) infinite}
+  .hero.walk .sprite{animation:step .36s steps(2) infinite}
   @keyframes step{0%{transform:translateY(0) rotate(-1.5deg)}50%{transform:translateY(-7px) rotate(1.5deg)}}
-  .hero.idle img{animation:breathe 1.6s ease-in-out infinite}
+  .hero.idle .sprite{}
   @keyframes breathe{50%{transform:scaleY(.985) translateY(1px)}}
-  .hero.nod img{animation:nod .5s ease-in-out 3}
+  .hero.nod .sprite{animation:nod .5s ease-in-out 3}
   @keyframes nod{40%{transform:scaleY(.94) translateY(5px) rotate(-1deg)}}
-  .hero.punch img{animation:punch .45s cubic-bezier(.2,.8,.3,1)}
   @keyframes punch{30%{transform:translateX(-22px) scale(1.04)}100%{transform:none}}
-  .hero.think img{animation:think 2.4s ease-in-out}
+  .hero.think .sprite{animation:think 2.4s ease-in-out}
   @keyframes think{30%,70%{transform:rotate(-4deg) translateX(-4px)}}
-  .hero.cross img{animation:cross 2.2s ease-in-out}
+  .hero.cross .sprite{animation:cross 2.2s ease-in-out}
   @keyframes cross{20%,80%{transform:scale(1.03) rotate(2deg)}}
 
   .bubble{position:absolute;bottom:100%;left:50%;transform:translate(-50%,-6px) scale(.6);opacity:0;transition:.18s;
@@ -133,7 +133,7 @@
     <div class="track" id="track"></div>
     <div class="hero idle" id="hero">
       <div class="bubble" id="bubble"></div>
-      <div class="flip"><img id="spr" src="assets/fighter.webp" alt="최영수 캐릭터"></div>
+      <div class="flip"><div id="spr" class="sprite" role="img" aria-label="최영수 캐릭터"></div></div>
       <div class="shadow"></div>
     </div>
   </div>
@@ -148,16 +148,14 @@
 
 <script>
 /* ── 캐릭터 동작 그림 ──
-   지금은 파이팅 자세 한 장(fighter)으로 움직임을 흉내 냅니다.
-   Kling 등에서 같은 캐릭터로 자세별 그림을 뽑으면 아래에 파일 이름만 넣으세요. (배경 없는 PNG/WebP) */
-const SPR = {
-  idle:'assets/fighter.webp',
-  walk:null,   // 걷는 자세
-  cross:null,  // 팔짱 (전문가 척)
-  nod:null,    // 끄덕
-  punch:null,  // 펀치
-  think:null,  // 고민 (턱 괴기)
-};
+   assets/punch.webp = 16칸 가로 한 줄(파이팅 자세 → 펀치 → 원위치). 칸 번호로 보여줍니다.
+   새 동작 그림이 생기면 같은 방식으로 칸 시트를 추가하면 됩니다. */
+const FR={idle:[0,1,2,1],walk:[0,1],punch:[...Array(16).keys()],still:[0]};
+let frameTimer=null;
+function frame(i){spr.style.backgroundPosition=(i/15*100)+'% 0';}
+function playLoop(seq,ms){clearInterval(frameTimer);let k=0;frame(seq[0]);frameTimer=setInterval(()=>frame(seq[++k%seq.length]),ms);}
+function playOnce(seq,ms,onFrame){clearInterval(frameTimer);return new Promise(res=>{let k=0;frame(seq[0]);
+  frameTimer=setInterval(()=>{k++;if(k>=seq.length){clearInterval(frameTimer);res();return;}frame(seq[k]);onFrame&&onFrame(seq[k]);},ms);});}
 
 const P=[
   {name:'SFG 리스트',cls:'t-navy',big:'SFG<br>LIST',meta:'2026 · 진행 중',
@@ -216,7 +214,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 let hx=innerWidth*.62, token=0;
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 function setMode(m){hero.classList.remove('idle','walk','nod','punch','think','cross');void hero.offsetWidth;hero.classList.add(m);
-  spr.src=SPR[m]||SPR.idle;}
+  if(m=='idle')playLoop(FR.idle,230); else if(m=='walk')playLoop(FR.walk,180); else if(m!='punch')playLoop(FR.still,1000);}
 function say(t,ms){bubble.textContent=t;bubble.classList.add('on');return sleep(ms).then(()=>bubble.classList.remove('on'));}
 function heroW(){return spr.getBoundingClientRect().width||150;}
 async function walkTo(tx,my){
@@ -228,13 +226,15 @@ async function act(kind,my){
   if(my!==token)return;
   setMode(kind);
   if(kind=='punch'){
-    const r=hero.getBoundingClientRect();const facingRight=hero.classList.contains('right');
-    const px=facingRight?r.right-20:r.left+20;
-    const pw=document.createElement('div');pw.className='pow';pw.textContent='POW!';
-    pw.style.left=(px-40)+'px';pw.style.top=(r.top+r.height*.15)+'px';pw.style.position='fixed';document.body.appendChild(pw);setTimeout(()=>pw.remove(),700);
-    const fr=floor.getBoundingClientRect();const el=document.elementFromPoint(r.left+r.width/2,fr.top+30)?.closest('.tile');
-    if(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');}
-    await say(pick(LINES.punch),1100);
+    const sayP=say(pick(LINES.punch),1300);
+    await playOnce(FR.punch,65,i=>{ if(i!==8)return;   // 팔이 다 뻗은 칸에서 POW
+      const r=hero.getBoundingClientRect();const facingRight=hero.classList.contains('right');
+      const px=facingRight?r.right-10:r.left+10;
+      const pw=document.createElement('div');pw.className='pow';pw.textContent='POW!';
+      pw.style.left=(px-40)+'px';pw.style.top=(r.top+r.height*.18)+'px';pw.style.position='fixed';document.body.appendChild(pw);setTimeout(()=>pw.remove(),700);
+      const fr=floor.getBoundingClientRect();const el=document.elementFromPoint(r.left+r.width/2,fr.top+30)?.closest('.tile');
+      if(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');}});
+    await sayP;
   } else if(kind=='think'){ await say('…',700); await say(pick(LINES.think),1700); }
   else await say(outside&&Math.random()<.6?pick(CITY):pick(LINES[kind]),kind=='nod'?1500:2200);
   setMode('idle');
@@ -271,7 +271,7 @@ function open(p){
 
 const clk=document.getElementById('clock');
 setInterval(()=>clk.textContent=new Date().toLocaleTimeString('ko-KR',{hour12:false,timeZone:'Asia/Seoul'}),1000);
-build();loop();hero.style.left=(hx-80)+'px';spr.onload=()=>{};brain();
+build();loop();hero.style.left=(hx-80)+'px';brain();
 addEventListener('resize',build);
 </script>
 </body>
