@@ -13,7 +13,7 @@
     --pixel:'Galmuri11','Galmuri9',var(--mono);
     --font:'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif;
     --tileH:200px; --u:1vh;
-    --sunset:linear-gradient(to bottom,#2b2a88 0%,#4e3498 20%,#a74da5 40%,#f65057 55%,#f96068 62%,#d98034 70%,#3e2d84 85%,#2c2872 100%); --heroH:220px;
+    --sunset:linear-gradient(to bottom,#2b2a88 0%,#4e3498 20%,#a74da5 40%,#f65057 55%,#f96068 62%,#d98034 70%,#3e2d84 85%,#2c2872 100%); --heroH:154px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
@@ -101,7 +101,7 @@
   .d-chart text{font-family:var(--mono);font-size:9px;fill:var(--ink2)}
 
   @media (max-width:900px){
-    :root{--tileH:150px;--heroH:160px}
+    :root{--tileH:150px;--heroH:112px}
     header{grid-template-columns:1fr 1fr;padding:18px 16px 0}
     footer{padding:0 16px 14px} footer .hide-m{display:none}
     .tile{width:190px}
@@ -155,7 +155,7 @@
   @media (max-width:700px){
     body{height:100dvh}
     /* 폰: 그림은 위쪽 가로 띠로(덜 확대), 카드는 그림 아래로 */
-    :root{--tileH:128px;--heroH:150px;--sceneH:min(40dvh,300px);--u:calc(var(--sceneH) / 100)}
+    :root{--tileH:128px;--heroH:105px;--sceneH:min(40dvh,300px);--u:calc(var(--sceneH) / 100)}
     body{background:var(--bg)}
     .pano{top:var(--headH,90px);height:var(--sceneH)}
     .stage{justify-content:flex-start;padding:var(--sceneH) 0 0 !important;overflow:hidden}
