@@ -310,14 +310,14 @@ let hx=innerWidth*.62, token=0;
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 function setMode(m){hero.classList.remove('idle','walk','nod','punch','think','cross');void hero.offsetWidth;hero.classList.add(m);
   if(m=='walk')useSheet('walk'); else if(m!=='cross')useSheet('punch');
-  if(m=='idle')playLoop(FR.idle,230); else if(m=='walk')playLoop(FR.walk,110); else if(m!='punch'&&m!='cross')playLoop(FR.still,1000);}
+  if(m=='idle')playLoop(FR.idle,230); else if(m=='walk')playLoop(FR.walk,120); else if(m!='punch'&&m!='cross')playLoop(FR.still,1000);}
 function say(t,ms){bubble.textContent=t;bubble.classList.add('on');return sleep(ms).then(()=>bubble.classList.remove('on'));}
 function heroW(){return spr.getBoundingClientRect().width||150;}
 async function walkTo(tx,my){
   const hw=heroW()/2+8; tx=Math.max(hw,Math.min(innerWidth-hw,tx));
   setMode('walk');const dir=tx>hx?1:-1;hero.classList.toggle('right',dir>0);
   /* 발이 바닥에서 미끄러지지 않게: 걸음 그림 속도에 맞춘 이동 속도(시간 기준) */
-  const v=hero.offsetHeight*0.00105; let t0=performance.now();
+  const v=hero.offsetHeight*0.0009; let t0=performance.now();
   while(Math.abs(tx-hx)>3){if(my!==token)return false;const now=performance.now(),dt=Math.min(50,now-t0);t0=now;
     hx+=dir*Math.min(v*dt,Math.abs(tx-hx));hero.style.left=(hx-heroW()/2)+'px';await new Promise(r=>requestAnimationFrame(r));}
   hero.classList.add('right');   // 멈추면 늘 오른쪽(흐름 방향)을 봄
