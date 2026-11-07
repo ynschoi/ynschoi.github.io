@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>최영수 — SF FIGHTER</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/galmuri.css">
+<style>
+  :root{
+    --night:#0b0820; --ink:#18181b; --ink2:#71717a; --line:#e4e4e7; --gold:#ffd400; --red:#d92d20; --violet:#8d86c9;
+    --px:'Galmuri11','Galmuri9',ui-monospace,monospace; --font:'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif;
+    --sceneH:300px; --heroH:118px; --c:#ffd400;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:#1b1636;font-family:var(--font);color:var(--ink);overflow:hidden;word-break:keep-all;-webkit-tap-highlight-color:transparent}
+  .app{position:relative;max-width:440px;height:100dvh;margin:0 auto;overflow:hidden;background:#f4f4f2}
+  .px{font-family:var(--px)}
+  .gold{color:var(--gold)}
+  button{all:unset;cursor:pointer}
+  .screen{position:absolute;inset:0;display:none;flex-direction:column}
+  .screen.on{display:flex}
+
+  /* ── 언어 토글 ── */
+  .lang{display:flex;border:2px solid var(--gold);font:12px var(--px)}
+  .lang button{padding:5px 9px;color:#fff;background:#0b0820aa}
+  .lang button.on{background:var(--gold);color:var(--night)}
+
+  /* ── 1. INSERT COIN ── */
+  #coin{background:var(--night);color:#fff;align-items:center;justify-content:center;gap:14px;text-align:center}
+  #coin .sub{font:12px var(--px);color:var(--violet)}
+  #coin .logo{font:34px/1.1 var(--px);font-weight:700;color:var(--gold);text-shadow:3px 3px 0 var(--red)}
+  #coin .who{width:230px;height:230px;margin:-22px 0 -12px;background:url(assets/work.webp) 0 0/800% 100% no-repeat}
+  #coin .ins{font:20px var(--px);animation:blink 1s steps(1) infinite}
+  #coin .langs{display:flex;gap:10px;margin-top:8px}
+  #coin .langs button{border:3px solid var(--gold);color:var(--gold);padding:12px 22px;font:16px var(--px)}
+  #coin .langs button:active,#coin .langs button.on{background:var(--gold);color:var(--night)}
+  #coin .cr{position:absolute;bottom:24px;font:11px var(--px);color:var(--violet)}
+  @keyframes blink{50%{opacity:0}}
+
+  /* ── 2. SELECT STAGE ── */
+  #select{background:radial-gradient(circle at 50% 25%,#2a1f66,var(--night) 70%);color:#fff;padding:calc(env(safe-area-inset-top) + 14px) 14px 18px}
+  #select .top{display:flex;justify-content:flex-end}
+  #select h1{font:24px var(--px);font-weight:700;color:var(--gold);text-shadow:3px 3px 0 var(--red);text-align:center;margin:10px 0 14px}
+  .stages{flex:1;display:flex;flex-direction:column;gap:12px;min-height:0}
+  .stage{flex:1;position:relative;overflow:hidden;border:4px solid #4a3f8a;background-size:cover;background-position:center;min-height:120px;transition:transform .15s}
+  .stage:active{transform:scale(.98)}
+  .stage.hot{border-color:var(--gold);box-shadow:0 0 0 3px var(--red)}
+  .stage .shade{position:absolute;inset:0;background:linear-gradient(90deg,#0b0820dd,#0b082022 65%)}
+  .stage .ch{position:absolute;right:6px;bottom:-8px;height:115%;aspect-ratio:1;background-size:800% 100%;background-repeat:no-repeat}
+  .stage .t{position:absolute;left:14px;bottom:12px;text-shadow:2px 2px 0 #000}
+  .stage .no{font:12px var(--px)}
+  .stage .nm{font:26px var(--px);font-weight:700;margin-top:4px}
+  .stage .ds{font:11px var(--px);margin-top:6px;opacity:.9}
+  .stage .p1{position:absolute;top:-2px;left:-2px;background:var(--red);padding:3px 8px;font:12px var(--px);display:none}
+  .stage.hot .p1{display:block}
+  #select .hint{text-align:center;font:13px var(--px);margin-top:12px}
+
+  /* ── 3. PLAY ── */
+  #play{background:#f4f4f2}
+  .hud{background:var(--night);color:#fff;padding:calc(env(safe-area-inset-top) + 8px) 12px 10px;display:flex;gap:10px;align-items:center;border-bottom:3px solid var(--c);flex:none}
+  .hud .face{width:46px;height:46px;border:2px solid var(--c);background:#2a2050 center/cover;flex:none}
+  .hud .mid{flex:1;min-width:0}
+  .hud .nm{font:14px var(--px);font-weight:700;color:var(--c);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hud .nm small{font:11px var(--px);color:var(--violet);font-weight:400}
+  .gauge{display:flex;gap:6px;align-items:center;margin-top:6px;font:10px var(--px);font-weight:700}
+  .gauge .lb{color:var(--c);width:30px}
+  .gauge .tr{flex:1;height:10px;border:2px solid #fff;background:#3a1020;position:relative;overflow:hidden}
+  .gauge .fl{position:absolute;inset:0 auto 0 0;width:0;background:var(--c);transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+  .gauge .n{min-width:34px;text-align:right}
+  .hud .back{font:11px var(--px);border:2px solid var(--c);color:var(--c);padding:6px 7px;flex:none}
+
+  .scene{position:relative;height:var(--sceneH);flex:none;overflow:hidden;background:#222}
+  .bg{position:absolute;inset:0 auto 0 0;height:100%;will-change:transform}
+  .bg img{height:100%;width:auto;display:block;max-width:none}
+  .scene .lang{position:absolute;top:10px;right:10px;z-index:7}
+  .scene .place{position:absolute;left:10px;top:10px;z-index:7;font:11px var(--px);color:#fff;background:#0b0820aa;padding:5px 8px}
+  .floorline{position:absolute;left:0;right:0;bottom:0;height:16px;background:linear-gradient(transparent,#0003)}
+
+  .hero{position:absolute;bottom:10px;left:0;height:var(--heroH);width:calc(var(--heroH)*.62);z-index:6;pointer-events:none;will-change:left}
+  .hero .flip{position:absolute;inset:0;transform-origin:50% 100%}
+  .hero.left .flip{transform:scaleX(-1)}
+  .hero .spr{position:absolute;bottom:0;left:50%;height:156.25%;aspect-ratio:1;transform:translateX(-50%);background-size:800% 100%;background-repeat:no-repeat;filter:drop-shadow(0 3px 0 rgba(0,0,0,.25))}
+  .hero .sh{position:absolute;left:12%;right:12%;bottom:-3px;height:8px;border-radius:50%;background:rgba(0,0,0,.28);filter:blur(2px)}
+  .hero.walk .spr{animation:step .36s steps(2) infinite}
+  @keyframes step{0%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-5px)}}
+  .bubble{position:absolute;bottom:105%;left:50%;transform:translate(-50%,-4px) scale(.6);opacity:0;transition:.18s;z-index:8;
+          font:13px var(--px);white-space:nowrap;background:#fff;color:#111;padding:7px 10px;box-shadow:0 0 0 2px #111,3px 3px 0 2px #111}
+  .bubble.on{opacity:1;transform:translate(-50%,-12px) scale(1)}
+  .pow{position:fixed;z-index:30;pointer-events:none;font:28px var(--px);font-weight:700;color:var(--gold);-webkit-text-stroke:2px #111;text-shadow:3px 3px 0 var(--red);animation:pow .7s ease-out forwards}
+  @keyframes pow{0%{transform:scale(.3) rotate(-12deg)}40%{transform:scale(1.25) rotate(-6deg)}100%{transform:translateY(-30px);opacity:0}}
+
+  .strip{flex:none;height:118px;overflow:hidden;position:relative;background:#111;touch-action:pan-y}
+  .track{display:flex;gap:6px;height:100%;will-change:transform}
+  .tile{flex:none;width:156px;height:100%;position:relative;color:#fff;cursor:pointer;display:grid;place-items:center;text-align:center;font:800 21px/1.05 var(--font);padding:10px}
+  .tile i{position:absolute;top:8px;left:10px;font:10px var(--px);opacity:.7;font-style:normal}
+  .tile u{position:absolute;bottom:8px;left:10px;right:10px;text-align:left;font:10px var(--px);opacity:.8;text-decoration:none}
+  .tile.shake{animation:shake .35s}
+  @keyframes shake{25%{transform:translate(-4px,2px)}50%{transform:translate(4px,-2px)}75%{transform:translate(-2px,1px)}}
+
+  .body{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding-bottom:16px}
+  .tabs{display:flex;gap:6px;padding:12px 14px 0;position:sticky;top:0;background:#f4f4f2;z-index:2;padding-bottom:4px}
+  .tab{flex:1;text-align:center;padding:10px 0;font:13px var(--px);font-weight:700;border:2px solid #d4d4d8;background:#fff;color:var(--ink2)}
+  .tab.on{border-color:var(--ink);background:var(--ink);color:var(--c)}
+  .sec{padding:14px 16px 0}
+  .h{font:15px var(--px);font-weight:700;margin-bottom:8px;display:flex;justify-content:space-between;align-items:baseline}
+  .h small{font:11px var(--px);color:#a1a1aa;font-weight:400}
+  .row{display:flex;gap:12px;padding:11px 0;border-top:1px solid var(--line);font:14px/1.5 var(--font)}
+  .row .when{width:66px;flex:none;font:12px var(--px);color:var(--ink2)}
+  .row b{font-weight:700}.row p{color:var(--ink2);font-size:13px}
+  .todo{color:var(--red) !important;font:11px var(--px) !important}
+  .chip{display:inline-block;font:12px var(--px);font-weight:700;border:2px solid var(--ink);padding:6px 9px;margin:0 6px 6px 0;background:#fff}
+  .box{background:#fff;border:2px solid var(--ink);padding:12px;font:14px/1.6 var(--font)}
+  .ba{display:flex;gap:8px}.ba div{flex:1;height:140px;background:repeating-linear-gradient(45deg,#e4e4e7 0 10px,#f4f4f5 10px 20px);border:2px dashed #d4d4d8;display:grid;place-items:center;font:12px var(--px);color:#a1a1aa}
+  .go{display:inline-block;margin-top:10px;background:var(--ink);color:var(--gold);padding:9px 12px;font:12px var(--px)}
+
+  .foot{flex:none;background:var(--night);color:#b9b3ff;font:10.5px var(--px);padding:8px 14px calc(env(safe-area-inset-bottom) + 8px);display:flex;justify-content:space-between}
+
+  /* 상세 시트 */
+  .sheet{position:absolute;inset:0;z-index:40;display:none}
+  .sheet.on{display:block}
+  .sheet .dim{position:absolute;inset:0;background:#0b082088}
+  .sheet .card{position:absolute;left:0;right:0;bottom:0;max-height:80%;overflow:auto;background:#fff;border-top:4px solid var(--ink);padding:16px 18px calc(env(safe-area-inset-bottom) + 24px);animation:up .25s ease-out}
+  @keyframes up{from{transform:translateY(100%)}}
+  .sheet .hd{display:flex;justify-content:space-between;font:12px var(--px);margin-bottom:10px}
+  .sheet h3{font:800 22px var(--font)}
+  .sheet p{color:#52525b;font:14px/1.65 var(--font);margin:8px 0 14px}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .stats div{border-top:2px solid var(--ink);padding-top:6px;font:11px var(--px);color:var(--ink2)}
+  .stats b{display:block;font:700 17px var(--font);color:var(--ink)}
+
+  /* 전환 연출 */
+  .wipe{position:absolute;inset:0;z-index:50;pointer-events:none}
+  .wipe .a,.wipe .b{position:absolute;left:0;right:0;height:50%;background:var(--night);transform:scaleY(0);transition:transform .28s ease-in}
+  .wipe .a{top:0;transform-origin:top}.wipe .b{bottom:0;transform-origin:bottom}
+  .wipe.close .a,.wipe.close .b{transform:scaleY(1)}
+  .wipe .msg{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%) scale(.5);opacity:0;text-align:center;font:34px var(--px);font-weight:700;color:var(--gold);text-shadow:4px 4px 0 var(--red);transition:.2s}
+  .wipe .msg small{display:block;font:13px var(--px);color:#fff;text-shadow:none;margin-bottom:8px;font-weight:400}
+  .wipe.say .msg{opacity:1;transform:translateY(-50%) scale(1)}
+
+  @media (min-height:800px){:root{--sceneH:330px;--heroH:126px}}
+  @media (max-height:700px){:root{--sceneH:250px;--heroH:100px}.strip{height:100px}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- 1 INSERT COIN -->
+  <section class="screen on" id="coin">
+    <div class="sub">YOUNGSU CHOI · PROFILE</div>
+    <div class="logo">SF FIGHTER<br>2026</div>
+    <div class="who" id="coinWho"></div>
+    <div class="ins">INSERT COIN</div>
+    <div class="langs"><button data-l="ko">한국어</button><button data-l="en">ENGLISH</button></div>
+    <div class="cr">CREDIT 0 · © YEOUIDO 63</div>
+  </section>
+
+  <!-- 2 SELECT STAGE -->
+  <section class="screen" id="select">
+    <div class="top"><div class="lang"><button data-l="ko">한</button><button data-l="en">EN</button></div></div>
+    <h1>SELECT YOUR STAGE</h1>
+    <div class="stages" id="stages"></div>
+    <div class="hint" data-t="pickHint"></div>
+  </section>
+
+  <!-- 3 PLAY -->
+  <section class="screen" id="play">
+    <div class="hud">
+      <div class="face" id="hFace"></div>
+      <div class="mid">
+        <div class="nm" id="hName"></div>
+        <div class="gauge"><span class="lb" id="gLb"></span><span class="tr"><span class="fl" id="gFl"></span></span><span class="n" id="gN"></span></div>
+      </div>
+      <button class="back" id="back">↩ SELECT</button>
+    </div>
+    <div class="scene" id="scene">
+      <div class="bg" id="bg"><img id="bgImg" alt=""></div>
+      <div class="place" id="place"></div>
+      <div class="lang"><button data-l="ko">한</button><button data-l="en">EN</button></div>
+      <div class="floorline"></div>
+      <div class="hero" id="hero"><div class="bubble" id="bubble"></div><div class="flip"><div class="spr" id="spr"></div></div><div class="sh"></div></div>
+    </div>
+    <div class="strip" id="strip"><div class="track" id="track"></div></div>
+    <div class="body" id="body"><div class="tabs" id="tabs"></div><div id="panel"></div></div>
+    <div class="foot"><span id="clock">--:--:--</span><span data-t="tapHint"></span></div>
+  </section>
+
+  <div class="sheet" id="sheet"><div class="dim" id="sheetDim"></div><div class="card"><div class="hd"><span id="sCat"></span><button id="sClose">✕</button></div><div id="sBody"></div></div></div>
+  <div class="wipe" id="wipe"><div class="a"></div><div class="b"></div><div class="msg" id="wipeMsg"></div></div>
+</div>
+
+<script>
+/* ════════ 문구 (한/영) ════════
+   ※ 표시는 아직 받지 못한 정보 자리입니다. 실제 내용으로 바꿔 넣으세요. */
+const TXT={
+  ko:{pickHint:'장소를 눌러 입장 ▶',tapHint:'카드 탭 → 공격!',back:'↩ 선택',todo:'※ 입력 필요'},
+  en:{pickHint:'TAP A STAGE ▶',tapHint:'TAP A CARD → ATTACK!',back:'↩ SELECT',todo:'※ TO BE ADDED'},
+};
+const STAGES={
+  work:{
+    color:'#ffd400',sheet:'assets/work.webp',face:'assets/face_work.webp',bg:'assets/pano.webp',pano:{H:1024,P0:5780,start:150},
+    no:'STAGE 1',place:{ko:'여의도 63 · 사무실',en:'YEOUIDO 63 · OFFICE'},
+    name:{ko:'💼 회사',en:'💼 WORK'},fighter:{ko:'회사 FIGHTER',en:'WORK FIGHTER'},
+    desc:{ko:'경력 · 자격증 · AI 작업',en:'Career · Certs · AI work'},
+    gauge:{lb:'EXP',v:160,max:200,n:'160'},
+    lines:{ko:['😎 전문가 모드','이건 본평가네요','수작업 KO!','리스트 완성 ✔'],en:['😎 Expert mode','Rating: AAA','Manual work KO!','List done ✔']},
+    cards:[
+      {c:'#1e3a8a',t:'SFG<br>LIST',m:'2026',k:{ko:'SFG 리스트',en:'SFG List'},d:{ko:'신용평가 보고서 PDF를 읽어 업무 리스트를 자동으로 채우는 앱.',en:'Reads rating-report PDFs and fills the team deal list automatically.'},s:[['커밋|Commits','59'],['상태|Status','API']]},
+      {c:'#000',t:'PDF<br>수집기',m:'2026',k:{ko:'SF PDF 수집기',en:'SF PDF Collector'},d:{ko:'신용평가 3사의 구조화금융 보고서를 날짜만 고르면 한 번에 내려받는 프로그램.',en:'Downloads structured-finance reports from 3 rating agencies by date.'},s:[['커밋|Commits','79'],['대상|Sources','3']]},
+      {c:'#fff',fg:'#111',t:'W+',m:'2026',k:{ko:'SFG Word 추가기능',en:'SFG Word Add-in'},d:{ko:'Word 안에서 보고서 표와 구조도를 버튼 하나로 넣는 추가기능.',en:'Inserts report tables and structure charts in Word with one click.'},s:[['커밋|Commits','20'],['형태|Type','Add-in']]},
+      {c:'#9f3b45',t:'SEIBRO',m:'2026',k:{ko:'SEIBRO 조회',en:'SEIBRO Lookup'},d:{ko:'SPC명만 넣으면 발행 종목을 표로 정리해 주는 웹앱. 팀원들이 링크 하나로 씁니다.',en:'Enter an SPC name and get its issuance records as a table. Used by the team.'},s:[['상태|Status','LIVE'],['형태|Type','Web']]},
+      {c:'#a8a8a8',fg:'#111',t:'📁<br>TOOLS',m:'2026',k:{ko:'ExplorerTools',en:'ExplorerTools'},d:{ko:'윈도우 탐색기의 반복 파일 작업 5가지를 버튼으로 만든 도구.',en:'Five repetitive Windows Explorer tasks turned into buttons.'},s:[['기능|Features','5']]},
+      {c:'#2563eb',t:'RATING<br>CRAWL',m:'2022',k:{ko:'신용등급 크롤러',en:'Rating Crawler'},d:{ko:'처음 만든 업무 자동화. 지금 도구들의 출발점입니다.',en:'My first work automation — where it all started.'},s:[['만든 해|Year','2022']]},
+    ],
+    tabs:[
+      {k:{ko:'경력',en:'Resume'},html:L=>`<div class="sec"><div class="h">RESUME<small>${L=='ko'?'경력':'Career'}</small></div>
+        <div class="row"><span class="when">20○○ –<br>${L=='ko'?'현재':'Now'}</span><div><b>${L=='ko'?'한국신용평가 · 구조화금융 평가':'Korea Investors Service · Structured Finance'}</b><p>${L=='ko'?'ABS·ABCP 본평가, SFG 리스트 관리':'ABS/ABCP initial ratings, SFG deal list'}</p><p class="todo">${TXT[L].todo}</p></div></div>
+        <div class="row"><span class="when">20○○</span><div><b>${L=='ko'?'이전 경력':'Previous'}</b><p class="todo">${TXT[L].todo}</p></div></div>
+        <div class="row"><span class="when">20○○</span><div><b>${L=='ko'?'학력':'Education'}</b><p class="todo">${TXT[L].todo}</p></div></div></div>`},
+      {k:{ko:'자격증',en:'Certs'},html:L=>`<div class="sec"><div class="h">${L=='ko'?'자격증':'CERTIFICATES'}<small>CERT</small></div><span class="chip">+ ${L=='ko'?'입력':'add'}</span><p class="todo">${TXT[L].todo}</p></div>`},
+      {k:{ko:'AI 작업',en:'AI Work'},html:L=>`<div class="sec"><div class="h">${L=='ko'?'AI로 만든 업무 도구':'AI-BUILT TOOLS'}<small>${L=='ko'?'6개 · 커밋 160':'6 tools · 160 commits'}</small></div>
+        <p style="font:14px/1.6 var(--font);color:#52525b">${L=='ko'?'기획·디자인·테스트는 직접, 코딩은 AI와 함께. 위 카드를 누르면 자세히 볼 수 있어요.':'I plan, design and test; AI writes the code. Tap a card above for details.'}</p></div>`},
+    ]},
+  gym:{
+    color:'#ff8a8a',sheet:'assets/gym.webp',face:'assets/face_gym.webp',bg:'assets/gym_bg.webp',
+    no:'STAGE 2',place:{ko:'GYM · 헬스장',en:'GYM'},
+    name:{ko:'🏋️ 운동',en:'🏋️ FITNESS'},fighter:{ko:'운동 FIGHTER',en:'FITNESS FIGHTER'},
+    desc:{ko:'생체 자격증 · 수상 · 비포애프터',en:'Certificate · Awards · Before/After'},
+    gauge:{lb:'STR',v:85,max:100,n:'MAX'},
+    lines:{ko:['💪 오늘은 하체','한 세트 더!','근손실 KO!','보디빌딩 모드'],en:['💪 Leg day','One more set!','Muscle loss KO!','Bodybuilding mode']},
+    cards:[
+      {c:'#3a1020',t:'🏅<br>자격증',m:'CERT',k:{ko:'생활스포츠지도사',en:'Sports Instructor'},d:{ko:'생활스포츠지도사 자격 (종목·급수 입력 필요)',en:'Certified sports instructor (details to be added)'},s:[['종목|Sport','?']]},
+      {c:'#d92d20',t:'🏆<br>AWARD',m:'20○○',k:{ko:'보디빌딩 수상',en:'Bodybuilding award'},d:{ko:'대회명 · 부문 · 순위 입력 필요',en:'Contest · category · place to be added'},s:[['순위|Place','?']]},
+      {c:'#111',t:'BEFORE<br>AFTER',m:'',k:{ko:'비포 · 애프터',en:'Before · After'},d:{ko:'사진 두 장을 넣으면 나란히 비교해서 보여줘요.',en:'Add two photos to compare side by side.'},s:[]},
+      {c:'#2563eb',t:'MY<br>WHOOP',m:'2026',k:{ko:'MyWhoop',en:'MyWhoop'},d:{ko:'WHOOP 몸 상태를 2시간마다 모아 아침마다 텔레그램 브리핑. 서버비 0원.',en:'Collects WHOOP data every 2 hours and sends a morning briefing. $0 server cost.'},s:[['수집|Every','2h']]},
+    ],
+    tabs:[
+      {k:{ko:'자격증',en:'Certificate'},html:L=>`<div class="sec"><div class="h">${L=='ko'?'자격증':'CERTIFICATE'}</div><span class="chip" style="border-color:#16a34a;color:#16a34a">✔ ${L=='ko'?'생활스포츠지도사':'Sports Instructor'}</span><p class="todo">${TXT[L].todo}</p></div>`},
+      {k:{ko:'수상',en:'Awards'},html:L=>`<div class="sec"><div class="h">${L=='ko'?'보디빌딩 수상':'AWARDS'}</div>
+        <div class="row"><span class="when">20○○</span><div><b>🏆 ${L=='ko'?'대회명 · 부문':'Contest · Category'}</b><p class="todo">${TXT[L].todo}</p></div></div>
+        <div class="row"><span class="when">20○○</span><div><b>🏆 ${L=='ko'?'대회명 · 부문':'Contest · Category'}</b><p class="todo">${TXT[L].todo}</p></div></div></div>`},
+      {k:{ko:'비포애프터',en:'Before/After'},html:L=>`<div class="sec"><div class="h">BEFORE → AFTER</div><div class="ba"><div>BEFORE</div><div>AFTER</div></div></div>`},
+    ]},
+  adv:{
+    color:'#4ade80',sheet:'assets/hike.webp',face:'assets/face_hike.webp',bg:'assets/jungle.webp',
+    no:'STAGE 3',place:{ko:'보르네오 정글',en:'BORNEO JUNGLE'},
+    name:{ko:'⛰️ 모험',en:'⛰️ ADVENTURE'},fighter:{ko:'모험 FIGHTER',en:'ADVENTURE FIGHTER'},
+    desc:{ko:'하이킹 · 여행 · 인도네시아어',en:'Hiking · Travel · Bahasa Indonesia'},
+    gauge:{lb:'MAP',v:30,max:100,n:'?/100'},
+    lines:{ko:['정상까지 가보자!','Selamat pagi!','오랑우탄 발견 🦧','다음 산은 어디?'],en:["Let's reach the top!",'Selamat pagi!','Orangutan spotted 🦧','Next mountain?']},
+    cards:[
+      {c:'#14532d',t:'⛰️<br>명산 지도',m:'2026',href:'/BAC100/',k:{ko:'나의 명산 지도',en:'My 100 Mountains'},d:{ko:'블랙야크 명산100 인증 사진을 올리면 완등 지도 카드를 만들어 주는 웹앱. 사진은 폰 안에서만 처리해요.',en:'Upload Blackyak 100 summit photos and get a completion map card. Photos never leave your phone.'},s:[['방문|Visits','196'],['사진|Photos','112']]},
+      {c:'#0e7490',t:'✈️<br>TRAVEL',m:'',k:{ko:'여행',en:'Travel'},d:{ko:'다녀온 나라와 기억에 남는 곳 (입력 필요)',en:'Countries visited (to be added)'},s:[]},
+      {c:'#b91c1c',t:'🇮🇩<br>BAHASA',m:'',k:{ko:'인도네시아어',en:'Bahasa Indonesia'},d:{ko:'인도네시아어 수준·시험 점수 (입력 필요)',en:'Level / test score (to be added)'},s:[]},
+      {c:'#78350f',t:'🚌<br>BAC 버스',m:'WIP',k:{ko:'BAC 버스',en:'BAC Bus'},d:{ko:'안내산악회 버스를 모아 원하는 산이 뜨면 알려주는 앱. 만드는 중.',en:'Collects hiking-club buses and alerts you when your mountain appears. In progress.'},s:[]},
+    ],
+    tabs:[
+      {k:{ko:'하이킹',en:'Hiking'},html:L=>`<div class="sec"><div class="h">${L=='ko'?'명산 100 도전':'BLACKYAK 100'}</div>
+        <div class="box"><b>${L=='ko'?'나의 명산 지도':'My 100 Mountains'}</b><br><span style="color:#71717a;font-size:13px">${L=='ko'?'완등 지도 카드를 만드는 웹앱 · 방문 196':'Summit-map card web app · 196 visits'}</span><br><a class="go" href="/BAC100/" target="_blank" rel="noopener">${L=='ko'?'열기 ▶':'OPEN ▶'}</a></div>
+        <p class="todo" style="margin-top:8px">${L=='ko'?'완등 ○○ / 100 — ':'Summits ○○ / 100 — '}${TXT[L].todo}</p></div>`},
+      {k:{ko:'여행',en:'Travel'},html:L=>`<div class="sec"><div class="h">${L=='ko'?'여행':'TRAVEL'}</div><span class="chip">🇮🇩 ${L=='ko'?'인도네시아':'Indonesia'}</span><span class="chip">+ ${L=='ko'?'입력':'add'}</span><p class="todo">${TXT[L].todo}</p></div>`},
+      {k:{ko:'인니어',en:'Bahasa'},html:L=>`<div class="sec"><div class="h">${L=='ko'?'인도네시아어':'BAHASA INDONESIA'}</div><div class="box">"Selamat datang!" <span style="color:#a1a1aa">· ${L=='ko'?'환영합니다':'Welcome'}</span></div><p class="todo" style="margin-top:8px">${TXT[L].todo}</p></div>`},
+    ]},
+};
+
+/* ════════ 상태 ════════ */
+let lang='ko', cur=null, tabIdx=0;
+const $=id=>document.getElementById(id);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+[...Object.values(STAGES)].forEach(s=>{[s.sheet,s.bg,s.face].forEach(u=>{const i=new Image();i.src=u;});});
+
+/* 언어 */
+function setLang(l){lang=l;document.documentElement.lang=l;
+  document.querySelectorAll('.lang button,#coin .langs button').forEach(b=>b.classList.toggle('on',b.dataset.l===l));
+  document.querySelectorAll('[data-t]').forEach(e=>e.textContent=TXT[l][e.dataset.t]);
+  $('back').textContent=TXT[l].back;
+  renderStages(); if(cur) renderPlay(false);}
+document.addEventListener('click',e=>{const b=e.target.closest('.lang button');if(b){e.stopPropagation();setLang(b.dataset.l);}});
+
+/* 전환 연출 */
+async function go(screenId,msg){
+  const w=$('wipe');w.classList.add('close');await sleep(300);
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===screenId));
+  if(msg){$('wipeMsg').innerHTML=msg;w.classList.add('say');await sleep(750);w.classList.remove('say');await sleep(120);}
+  w.classList.remove('close');await sleep(280);
+}
+
+/* 1 INSERT COIN */
+let ck=0;setInterval(()=>{$('coinWho').style.backgroundPosition=([0,0,7,7][ck++%4]/7*100)+'% 0';},300);
+document.querySelectorAll('#coin .langs button').forEach(b=>b.onclick=e=>{e.stopPropagation();setLang(b.dataset.l);go('select');});
+$('coin').onclick=()=>go('select');
+
+/* 2 SELECT STAGE */
+function renderStages(){
+  $('stages').innerHTML=Object.entries(STAGES).map(([id,s],i)=>`<button class="stage${i==0?' hot':''}" data-id="${id}" style="background-image:url(${s.bg});${s.pano?'background-position:37% 100%;background-size:auto 100%':''}">
+    <div class="shade"></div><div class="ch" style="background-image:url(${s.sheet})" data-ch></div><div class="p1">1P</div>
+    <div class="t"><div class="no" style="color:${s.color}">${s.no} · ${s.place[lang]}</div><div class="nm">${s.name[lang]}</div><div class="ds">${s.desc[lang]}</div></div></button>`).join('');
+}
+let sk=0;setInterval(()=>{sk++;document.querySelectorAll('.stage .ch').forEach((c,i)=>{c.style.backgroundPosition=([0,0,7,7][(sk+i)%4]/7*100)+'% 0';});},300);
+$('stages').addEventListener('pointerover',e=>{const s=e.target.closest('.stage');if(!s)return;document.querySelectorAll('.stage').forEach(x=>x.classList.toggle('hot',x===s));});
+$('stages').addEventListener('click',async e=>{const s=e.target.closest('.stage');if(!s)return;
+  document.querySelectorAll('.stage').forEach(x=>x.classList.toggle('hot',x===s));
+  const st=STAGES[s.dataset.id];cur=s.dataset.id;tabIdx=0;
+  stopPlay();await go('play',`<small>${st.no}</small>${st.name[lang].replace(/^\S+\s/,'')}<br>FIGHT!`);startPlay();});
+$('back').onclick=async()=>{stopPlay();await go('select');};
+
+/* 3 PLAY ── 그리기 */
+function renderPlay(fresh=true){
+  const s=STAGES[cur];document.documentElement.style.setProperty('--c',s.color);
+  $('hFace').style.backgroundImage=`url(${s.face})`;
+  $('hName').innerHTML=`${s.fighter[lang]} <small>· ${lang=='ko'?'최영수':'Youngsu Choi'}</small>`;
+  $('gLb').textContent=s.gauge.lb;$('gN').textContent=s.gauge.n;
+  if(fresh){$('gFl').style.width='0';setTimeout(()=>$('gFl').style.width=(s.gauge.v/s.gauge.max*100)+'%',400);}
+  $('place').textContent=s.place[lang];
+  $('spr').style.backgroundImage=`url(${s.sheet})`;
+  if(fresh){$('bgImg').src=s.bg;}
+  const one=s.cards.map((c,i)=>`<div class="tile" data-i="${i}" style="background:${c.c};color:${c.fg||'#fff'}"><i>${String(i+1).padStart(2,'0')}</i>${c.t}<u>${c.m||''}</u></div>`).join('');
+  $('track').innerHTML=one.repeat(Math.max(3,Math.ceil(900/(s.cards.length*162))+1));$('track').dataset.one=s.cards.length*162;
+  $('tabs').innerHTML=s.tabs.map((t,i)=>`<button class="tab${i==tabIdx?' on':''}" data-i="${i}">${t.k[lang]}</button>`).join('');
+  $('panel').innerHTML=s.tabs[tabIdx].html(lang);
+}
+$('tabs').onclick=e=>{const b=e.target.closest('.tab');if(!b)return;tabIdx=+b.dataset.i;renderPlay(false);};
+
+/* 배경·카드 흐름 */
+let raf=0,x=0,dist=0,paused=false,speed=.45;
+function loop(){
+  const s=STAGES[cur];
+  if(!paused){x-=speed;dist+=speed*.6;}
+  const one=+$('track').dataset.one;while(-x>=one)x+=one;while(x>0)x-=one;$('track').style.transform=`translateX(${x}px)`;
+  const img=$('bgImg'),H=$('scene').offsetHeight,W=img.naturalWidth?img.naturalWidth*H/img.naturalHeight:0,vw=$('scene').offsetWidth;
+  if(W){
+    if(s.pano){const sc=H/s.pano.H,max=s.pano.P0*sc;$('bg').style.transform=`translateX(${-(s.pano.start*sc+dist%max)}px)`;}
+    else{const room=Math.max(0,W-vw);const t=(Math.sin(dist/260)+1)/2;$('bg').style.transform=`translateX(${-room*t}px)`;}
+  }
+  raf=requestAnimationFrame(loop);
+}
+$('track').addEventListener('pointerover',()=>paused=true);$('track').addEventListener('pointerout',()=>paused=false);
+let dragX=null,dragged=0;
+$('strip').addEventListener('pointerdown',e=>{dragX=e.clientX;dragged=0;});
+addEventListener('pointermove',e=>{if(dragX==null)return;const d=e.clientX-dragX;dragged+=Math.abs(d);x+=d;dist-=d*.6;if(dist<0)dist+=1e6;dragX=e.clientX;});
+addEventListener('pointerup',()=>dragX=null);
+
+/* 캐릭터 */
+const hero=$('hero'),spr=$('spr'),bubble=$('bubble');
+let hx=0,token=0,ft=null;
+function frame(i){spr.style.backgroundPosition=(i/7*100)+'% 0';}
+function loopF(seq,ms){clearInterval(ft);let k=0;frame(seq[0]);ft=setInterval(()=>frame(seq[++k%seq.length]),ms);}
+function once(seq,ms,on){clearInterval(ft);return new Promise(r=>{let k=0;frame(seq[0]);ft=setInterval(()=>{k++;if(k>=seq.length){clearInterval(ft);r();return;}frame(seq[k]);on&&on(seq[k]);},ms);});}
+/* 8칸: 0 자세 · 1 잽 · 2 낮은 자세 · 3 팔짱 · 4 팔짱 윙크 · 5 웃음 · 6 반대 잽 · 7 자세 */
+const ACT={cross:{seq:[3,3,4,4,5,5,4,3],ms:230},punch:{seq:[0,1,0,6,7],ms:120,hit:6},laugh:{seq:[3,5,5,5,3],ms:220}};
+const hw=()=>hero.offsetWidth||70;
+function setIdle(){hero.classList.remove('walk');loopF([0,0,7,7,2,2],260);}
+function say(t,ms){bubble.textContent=t;bubble.classList.add('on');return sleep(ms).then(()=>bubble.classList.remove('on'));}
+async function walkTo(tx,my){
+  const W=$('scene').offsetWidth,h=hw()/2+6;tx=Math.max(h,Math.min(W-h,tx));
+  const dir=tx>hx?1:-1;hero.classList.toggle('left',dir<0);hero.classList.add('walk');loopF([0,7],180);
+  const v=hero.offsetHeight*.0011;let t0=performance.now();
+  while(Math.abs(tx-hx)>2){if(my!==token)return false;const n=performance.now(),dt=Math.min(50,n-t0);t0=n;
+    hx+=dir*Math.min(v*dt,Math.abs(tx-hx));hero.style.left=(hx-hw()/2)+'px';await new Promise(r=>requestAnimationFrame(r));}
+  hero.classList.remove('left');setIdle();return true;
+}
+function boom(){const r=hero.getBoundingClientRect(),R=!hero.classList.contains('left');
+  const p=document.createElement('div');p.className='pow';p.textContent='POW!';p.style.left=(R?r.right:r.left-80)+'px';p.style.top=(r.top+r.height*.1)+'px';document.body.appendChild(p);setTimeout(()=>p.remove(),700);
+  const sr=$('strip').getBoundingClientRect();const el=document.elementFromPoint(r.left+r.width/2,sr.top+20)?.closest('.tile');
+  if(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');}}
+async function act(k,my){if(my!==token)return;const A=ACT[k];const s=STAGES[cur];
+  const sp=say(pick(s.lines[lang]),Math.max(1300,A.seq.length*A.ms+400));
+  await once(A.seq,A.ms,i=>{if(i===A.hit)boom();});await sp;if(my===token)setIdle();}
+async function brain(){const my=++token;
+  setIdle();await sleep(500);if(my!==token)return;await act('laugh',my);
+  while(my===token){const W=$('scene').offsetWidth,m=hw()/2+10;
+    if(await walkTo(m+Math.random()*(W-2*m),my)===false)return;await sleep(300+Math.random()*500);
+    await act(pick(['cross','punch','cross','laugh']),my);await sleep(600+Math.random()*900);}}
+
+/* 카드 → 걸어가서 펀치 → 상세 */
+$('track').addEventListener('click',async e=>{const t=e.target.closest('.tile');if(!t||dragged>8)return;
+  const my=++token;paused=true;const r=t.getBoundingClientRect(),sr=$('scene').getBoundingClientRect();
+  await walkTo(r.left+r.width/2-sr.left,my);if(my!==token)return;await act('punch',my);openSheet(STAGES[cur].cards[+t.dataset.i]);});
+function openSheet(c){const L=lang=='ko'?0:1;
+  $('sCat').textContent=STAGES[cur].name[lang]+(c.m?' · '+c.m:'');
+  $('sBody').innerHTML=`<h3>${c.k[lang]}</h3><p>${c.d[lang]}</p>${c.s.length?`<div class="stats">${c.s.map(s=>`<div>${s[0].split('|')[L]}<b>${s[1]}</b></div>`).join('')}</div>`:''}${c.href?`<a class="go" href="${c.href}" target="_blank" rel="noopener">${lang=='ko'?'열기 ▶':'OPEN ▶'}</a>`:''}`;
+  $('sheet').classList.add('on');}
+function closeSheet(){$('sheet').classList.remove('on');paused=false;brain();}
+$('sClose').onclick=closeSheet;$('sheetDim').onclick=closeSheet;
+
+function startPlay(){renderPlay(true);x=0;dist=0;paused=false;hx=$('scene').offsetWidth*.3;hero.style.left=(hx-hw()/2)+'px';cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);brain();}
+function stopPlay(){token++;cancelAnimationFrame(raf);clearInterval(ft);$('sheet').classList.remove('on');}
+
+setInterval(()=>$('clock').textContent=new Date().toLocaleTimeString(lang=='ko'?'ko-KR':'en-GB',{hour12:false,timeZone:'Asia/Seoul'}),1000);
+setLang('ko');
+</script>
+</body>
+</html>
