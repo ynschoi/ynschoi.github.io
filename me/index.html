@@ -82,6 +82,8 @@
   .hero .flip{position:absolute;inset:0;transform-origin:50% 100%}
   .hero.left .flip{transform:scaleX(-1)}
   .hero .spr{position:absolute;bottom:0;left:50%;height:156.25%;aspect-ratio:1;transform:translateX(-50%);background-size:800% 100%;background-repeat:no-repeat;filter:drop-shadow(0 3px 0 rgba(0,0,0,.25))}
+  .hero .fx{position:absolute;bottom:0;left:50%;height:156.25%;aspect-ratio:2;transform:translateX(-25%);background:url(assets/paper_fx.webp) 0 0/800% 100% no-repeat;opacity:0;pointer-events:none}
+  .hero .fx.on{opacity:1}
   .hero .sh{position:absolute;left:12%;right:12%;bottom:-3px;height:8px;border-radius:50%;background:rgba(0,0,0,.28);filter:blur(2px)}
   .hero.walk .spr{animation:step .36s steps(2) infinite}
   @keyframes step{0%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-5px)}}
@@ -179,7 +181,7 @@
       <div class="place" id="place"></div>
       <div class="lang"><button data-l="ko">한</button><button data-l="en">EN</button></div>
       <div class="floorline"></div>
-      <div class="hero" id="hero"><div class="bubble" id="bubble"></div><div class="flip"><div class="spr" id="spr"></div></div><div class="sh"></div></div>
+      <div class="hero" id="hero"><div class="bubble" id="bubble"></div><div class="flip"><div class="spr" id="spr"></div><div class="fx" id="fx"></div></div><div class="sh"></div></div>
     </div>
     <div class="strip" id="strip"><div class="track" id="track"></div></div>
     <div class="body" id="body"><div class="tabs" id="tabs"></div><div id="panel"></div></div>
@@ -199,7 +201,7 @@ const TXT={
 };
 const STAGES={
   work:{
-    color:'#ffd400',sheet:'assets/work.webp',face:'assets/face_work.webp',bg:'assets/pano.webp',pano:{H:1024,P0:5780,start:150},
+    color:'#ffd400',sheet:'assets/work.webp',extra:['paper'],face:'assets/face_work.webp',bg:'assets/pano.webp',pano:{H:1024,P0:5780,start:150},
     no:'STAGE 1',place:{ko:'여의도 63 · 사무실',en:'YEOUIDO 63 · OFFICE'},
     name:{ko:'💼 회사',en:'💼 WORK'},fighter:{ko:'회사 FIGHTER',en:'WORK FIGHTER'},
     desc:{ko:'경력 · 자격증 · AI 작업',en:'Career · Certs · AI work'},
@@ -349,7 +351,11 @@ function frame(i){spr.style.backgroundPosition=(i/7*100)+'% 0';}
 function loopF(seq,ms){clearInterval(ft);let k=0;frame(seq[0]);ft=setInterval(()=>frame(seq[++k%seq.length]),ms);}
 function once(seq,ms,on){clearInterval(ft);return new Promise(r=>{let k=0;frame(seq[0]);ft=setInterval(()=>{k++;if(k>=seq.length){clearInterval(ft);r();return;}frame(seq[k]);on&&on(seq[k]);},ms);});}
 /* 8칸: 0 자세 · 1 잽 · 2 낮은 자세 · 3 팔짱 · 4 팔짱 윙크 · 5 웃음 · 6 반대 잽 · 7 자세 */
-const ACT={cross:{seq:[3,3,4,4,5,5,4,3],ms:230},punch:{seq:[0,1,0,6,7],ms:120,hit:6},laugh:{seq:[3,5,5,5,3],ms:220}};
+const ACT={cross:{seq:[3,3,4,4,5,5,4,3],ms:230},punch:{seq:[0,1,0,6,7],ms:120,hit:6},laugh:{seq:[3,5,5,5,3],ms:220},
+  /* 서류 던지기: 캐릭터 8칸 + 날아가는 서류 효과 8칸 (같은 위치에 맞춰 겹침) */
+  paper:{sheet:'assets/work_paper.webp',seq:[0,1,2,3,3,4,5,6,7,7,7,7],fx:[-1,-1,-1,-1,-1,1,2,3,4,5,6,7],ms:115,hit:5,
+         lines:{ko:['보고서 제출 완료 📄','서류 끝!','결재 올립니다!'],en:['Report submitted 📄','Paperwork done!','Sent for approval!']}}};
+const fxEl=$('fx');
 const hw=()=>hero.offsetWidth||70;
 function setIdle(){hero.classList.remove('walk');loopF([0,0,7,7,2,2],260);}
 function say(t,ms){bubble.textContent=t;bubble.classList.add('on');return sleep(ms).then(()=>bubble.classList.remove('on'));}
@@ -361,23 +367,28 @@ async function walkTo(tx,my){
     hx+=dir*Math.min(v*dt,Math.abs(tx-hx));hero.style.left=(hx-hw()/2)+'px';await new Promise(r=>requestAnimationFrame(r));}
   hero.classList.remove('left');setIdle();return true;
 }
-function boom(){const r=hero.getBoundingClientRect(),R=!hero.classList.contains('left');
-  const p=document.createElement('div');p.className='pow';p.textContent='POW!';p.style.left=(R?r.right:r.left-80)+'px';p.style.top=(r.top+r.height*.1)+'px';document.body.appendChild(p);setTimeout(()=>p.remove(),700);
+function boom(txt='POW!'){const r=hero.getBoundingClientRect(),R=!hero.classList.contains('left');
+  const p=document.createElement('div');p.className='pow';p.textContent=txt;p.style.left=(R?r.right:r.left-80)+'px';p.style.top=(r.top+r.height*.1)+'px';document.body.appendChild(p);setTimeout(()=>p.remove(),700);
   const sr=$('strip').getBoundingClientRect();const el=document.elementFromPoint(r.left+r.width/2,sr.top+20)?.closest('.tile');
   if(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');}}
 async function act(k,my){if(my!==token)return;const A=ACT[k];const s=STAGES[cur];
-  const sp=say(pick(s.lines[lang]),Math.max(1300,A.seq.length*A.ms+400));
-  await once(A.seq,A.ms,i=>{if(i===A.hit)boom();});await sp;if(my===token)setIdle();}
+  const sp=say(pick((A.lines||s.lines)[lang]),Math.max(1300,A.seq.length*A.ms+400));
+  if(A.sheet)spr.style.backgroundImage=`url(${A.sheet})`;
+  let n=0;
+  await once(A.seq,A.ms,i=>{n++;if(A.fx){const f=A.fx[n];fxEl.classList.toggle('on',f>=0);if(f>=0)fxEl.style.backgroundPosition=(f/7*100)+'% 0';}
+    if(n===A.hit||(!A.fx&&i===A.hit))boom(A.fx?'PAPER!':'POW!');});
+  fxEl.classList.remove('on');if(A.sheet)spr.style.backgroundImage=`url(${s.sheet})`;
+  await sp;if(my===token)setIdle();}
 async function brain(){const my=++token;
   setIdle();await sleep(500);if(my!==token)return;await act('laugh',my);
   while(my===token){const W=$('scene').offsetWidth,m=hw()/2+10;
     if(await walkTo(m+Math.random()*(W-2*m),my)===false)return;await sleep(300+Math.random()*500);
-    await act(pick(['cross','punch','cross','laugh']),my);await sleep(600+Math.random()*900);}}
+    await act(pick(['cross','punch','cross','laugh',...(STAGES[cur].extra||[]),...(STAGES[cur].extra||[])]),my);await sleep(600+Math.random()*900);}}
 
 /* 카드 → 걸어가서 펀치 → 상세 */
 $('track').addEventListener('click',async e=>{const t=e.target.closest('.tile');if(!t||dragged>8)return;
   const my=++token;paused=true;const r=t.getBoundingClientRect(),sr=$('scene').getBoundingClientRect();
-  await walkTo(r.left+r.width/2-sr.left,my);if(my!==token)return;await act('punch',my);openSheet(STAGES[cur].cards[+t.dataset.i]);});
+  await walkTo(r.left+r.width/2-sr.left-(STAGES[cur].extra?40:0),my);if(my!==token)return;await act(STAGES[cur].extra&&Math.random()<.6?'paper':'punch',my);openSheet(STAGES[cur].cards[+t.dataset.i]);});
 function openSheet(c){const L=lang=='ko'?0:1;
   $('sCat').textContent=STAGES[cur].name[lang]+(c.m?' · '+c.m:'');
   $('sBody').innerHTML=`<h3>${c.k[lang]}</h3><p>${c.d[lang]}</p>${c.s.length?`<div class="stats">${c.s.map(s=>`<div>${s[0].split('|')[L]}<b>${s[1]}</b></div>`).join('')}</div>`:''}${c.href?`<a class="go" href="${c.href}" target="_blank" rel="noopener">${lang=='ko'?'열기 ▶':'OPEN ▶'}</a>`:''}`;
