@@ -69,6 +69,7 @@
   .bubble{position:absolute;bottom:118%;left:50%;transform:translate(-50%,-4px) scale(.6);opacity:0;transition:.16s;z-index:8;font-size:12px;white-space:nowrap;background:#fff;color:#111;padding:6px 9px;box-shadow:0 0 0 2px #111,3px 3px 0 2px #111}
   .bubble.on{opacity:1;transform:translate(-50%,-10px) scale(1)}
 
+  .front{position:absolute;left:0;z-index:7;pointer-events:none;background-repeat:no-repeat}   /* 명판 칸막이: 캐릭터 앞에 한 겹 */
   .item{position:absolute;bottom:34%;width:40px;height:40px;margin-left:-20px;z-index:5;animation:bob 1.2s ease-in-out infinite}
   .item .box{position:absolute;inset:0;border:3px solid #fff;box-shadow:0 0 0 2px #111,0 0 14px #fff8;display:grid;place-items:center;font-size:10px;font-weight:700;color:#fff;text-shadow:1px 1px 0 #000}
   .item::after{content:"";position:absolute;left:8px;right:8px;bottom:-26px;height:6px;border-radius:50%;background:#0004;filter:blur(2px)}
@@ -136,6 +137,7 @@
   <section class="game" id="game">
     <div class="world" id="world">
       <img id="pano" src="../work/assets/pano.webp" alt="">
+      <div class="front" id="front"></div>
       <div class="hero right" id="hero"><div class="bubble" id="bubble"></div><div class="flip"><div class="spr" id="spr"></div></div><div class="sh"></div></div>
     </div>
     <div class="hud2" id="hud2"></div>
@@ -185,7 +187,7 @@ const T={
 };
 /* 아이템 = 업무 도구. x 는 배경 원본(높이 1024) 기준 위치 */
 const ITEMS=[
-  {x:1000,c:'#1e3a8a',ic:'SFG',k:{ko:'SFG 리스트',en:'SFG List'},m:'2026 · 진행 중|2026 · in progress',
+  {x:1280,c:'#1e3a8a',ic:'SFG',k:{ko:'SFG 리스트',en:'SFG List'},m:'2026 · 진행 중|2026 · in progress',
    d:{ko:'신용평가 보고서 PDF를 읽어 업무 리스트를 자동으로 채우는 앱. 분류 규칙을 데이터로 정리해 사람이 고치는 부분만 남깁니다.',en:'Reads rating-report PDFs and fills the team deal list automatically. Rules live in data, so people only fix the exceptions.'},
    s:[['커밋|Commits','59'],['상태|Status','API']],data:[0,0,0,0,0,0,0,0,0,0,0,10,10,10,11,12,12,12,12,12,16,18,23,27,27,31,37,37,37,45,59]},
   {x:1750,c:'#000',ic:'PDF',k:{ko:'SF PDF 수집기',en:'SF PDF Collector'},m:'2026 · 운영|2026 · live',
@@ -204,7 +206,7 @@ const ITEMS=[
    d:{ko:'처음 만든 업무 자동화. 신용등급 공시를 모아 정리하는 프로그램으로, 지금 도구들의 출발점입니다.',en:'My first work automation — it gathers rating disclosures. Where all of this started.'},
    s:[['만든 해|Year','2022'],['버전|Version','2.0']]},
 ];
-const PANO={H:1024,W:5930,office:2692,city:4684};
+const PANO={H:1024,W:5930,FULLW:8480,office:2692,city:4684,PART:{x1:676,y0:412},HIDE:520,OUT:830};
 
 /* ═════════ 동작 그림 (각 8칸, 칸 400px, 왼쪽을 보는 그림) ═════════ */
 const SHEETS=['idle','walk','punch','kick','flykick','power','flip','hop','cheer','wave','paper','cross'];
@@ -262,7 +264,9 @@ const itemEls=ITEMS.map((it,i)=>{const d=document.createElement('div');d.classNa
 $('mini').innerHTML=ITEMS.map(it=>`<i style="left:${it.x/PANO.W*100}%"></i>`).join('')+'<u id="me"></u>';
 let firstLayout=true;
 function layout(){
-  const s=sc();if(firstLayout&&game.clientHeight){hx=520*s;firstLayout=false;}document.documentElement.style.setProperty('--heroH',heroH()+'px');
+  const s=sc();if(firstLayout&&game.clientHeight){hx=PANO.HIDE*s;firstLayout=false;}
+  const f=$('front'),P=PANO.PART;f.style.top=(P.y0*s)+'px';f.style.width=(P.x1*s)+'px';f.style.height=((PANO.H-P.y0)*s)+'px';
+  f.style.backgroundImage=`url(${$('pano').src})`;f.style.backgroundSize=`${PANO.FULLW*s}px ${PANO.H*s}px`;f.style.backgroundPosition=`0 ${-P.y0*s}px`;document.documentElement.style.setProperty('--heroH',heroH()+'px');
   ITEMS.forEach((it,i)=>itemEls[i].style.left=(it.x*s)+'px');
   place();}
 function worldW(){return PANO.W*sc();}
@@ -348,8 +352,12 @@ $('emo').innerHTML=[['wave','👋'],['cheer','🙌'],['paper','📄'],['flip','�
 $('emo').addEventListener('pointerdown',e=>{const b=e.target.closest('button');if(!b)return;e.preventDefault();if(!started)return start();act(b.dataset.e);});
 
 /* ═════════ 시작 · 언어 ═════════ */
-async function start(){if(started)return;started=true;$('cover').classList.add('hide');banner('FIGHT!',900);
-  busy=true;await once('wave',ACT.wave.seq,110);busy=false;idle();}
+async function start(){if(started)return;started=true;$('cover').classList.add('hide');busy=true;
+  /* 명판 칸막이 뒤에서 걸어 나와서 시작 */
+  face=1;hx=PANO.HIDE*sc();place();loopF('walk',110);
+  const to=PANO.OUT*sc();let t0=performance.now();
+  await new Promise(r=>{const step=t=>{const dt=Math.min(50,t-t0);t0=t;hx+=hero.offsetHeight*.0011*dt;place();if(hx<to)requestAnimationFrame(step);else r();};requestAnimationFrame(step);});
+  banner('FIGHT!',900);await once('wave',ACT.wave.seq,110);busy=false;idle();}
 function setLang(l){lang=l;document.documentElement.lang=l;const t=T[l];
   document.querySelectorAll('[data-t]').forEach(e=>e.textContent=t[e.dataset.t]);
   $('helpBody').innerHTML=t.help.map(([k,v])=>`<b>${k}</b>${v}`).join('<br>');
