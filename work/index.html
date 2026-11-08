@@ -300,7 +300,7 @@ let x=0,paused=false,speed=.5,TW=266;
 function build(){TW=(innerWidth<900?196:266);const html=P.map(tile).join('');const one=P.length*TW;
   track.innerHTML=html.repeat(Math.max(2,Math.ceil(innerWidth*2/one)+1));track.dataset.one=one;}
 const pano=document.getElementById('pano'),place=document.getElementById('place');let outside=false;
-const PM={"W": 8480, "H": 1024, "P0": 5780, "start": 150, "office": 2692, "city": 4684, "desk2": 5900};  /* 배경 이음 지점(원본 px) */
+const PM={"W": 7629, "H": 1024, "P0": 4929, "start": 150, "office": 1809, "city": 3833, "desk2": 5049};  /* 배경 이음 지점(원본 px) */
 const U=()=>pano.offsetHeight/100;
 const SC=()=>pano.offsetHeight/PM.H;
 const setHead=()=>{const h=document.getElementById('hud');const el=h.offsetHeight?h:document.querySelector('header');document.documentElement.style.setProperty('--headH',el.offsetHeight+'px');};setHead();addEventListener('resize',setHead);  /* 배경 1단위(px) */
