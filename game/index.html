@@ -71,6 +71,16 @@
 
   .front{position:absolute;left:0;z-index:7;pointer-events:none;background-repeat:no-repeat}   /* 명판 칸막이: 캐릭터 앞에 한 겹 */
   .item.sky{bottom:56%}
+  .plate{position:absolute;z-index:8;cursor:pointer}
+  .plate::after{content:"";position:absolute;inset:-4px;border:2px solid var(--gold);opacity:0;transition:.2s}
+  .plate:hover::after,.plate.hint::after{opacity:1;animation:blink .8s steps(1) infinite}
+  .plate .arw{position:absolute;left:50%;top:115%;transform:translateX(-50%);background:#0b0820cc;padding:3px 6px;font-size:11px;color:var(--gold);white-space:nowrap;text-shadow:1px 1px 0 #000;display:none;animation:bob 1s ease-in-out infinite}
+  .plate.hint .arw{display:block}
+  .cv{margin-top:8px;display:grid;gap:0}
+  .cv div{display:flex;gap:10px;padding:6px 0;border-top:1px solid #2d2560;font:12.5px/1.45 var(--font);color:#ddd8ff}
+  .cv div span{width:62px;flex:none;font:10px var(--px);color:var(--violet);padding-top:2px}
+  .cv b{color:#fff;font-weight:700}
+  .cv em{display:block;font-style:normal;font:10px var(--px);color:#ff8a8a}
   .spk{position:absolute;z-index:12;width:120px;height:120px;margin:-60px 0 0 -60px;cursor:pointer;display:none;animation:twk 1.4s ease-in-out infinite}
   .spk.on{display:block}
   .spk i{position:absolute;left:50%;top:50%;background:linear-gradient(90deg,transparent,#fff 45%,#fff 55%,transparent);transform:translate(-50%,-50%)}
@@ -79,8 +89,8 @@
   .spk b{position:absolute;inset:34px;border-radius:50%;border:2px solid transparent;border-left-color:#fffd;border-right-color:#fffd;transform:rotate(-20deg)}
   .spk u{position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px;border-radius:50%;background:#fff;box-shadow:0 0 14px 6px #fff,0 0 30px 10px #9fd8ff}
   @keyframes twk{0%,100%{transform:scale(.85) rotate(0)}50%{transform:scale(1.15) rotate(8deg)}}
-  .flash{position:absolute;inset:0;z-index:25;background:#fff;opacity:0;pointer-events:none;transition:opacity .35s}
-  .flash.on{opacity:1}
+  .wflash{position:absolute;inset:0;z-index:25;background:#fff;opacity:0;pointer-events:none;transition:opacity .35s}
+  .wflash.on{opacity:1}
   .item{position:absolute;bottom:34%;width:40px;height:40px;margin-left:-20px;z-index:5;animation:bob 1.2s ease-in-out infinite}
   .item .box{position:absolute;inset:0;border:3px solid #fff;box-shadow:0 0 0 2px #111,0 0 14px #fff8;display:grid;place-items:center;font-size:10px;font-weight:700;color:#fff;text-shadow:1px 1px 0 #000}
   .item::after{content:"";position:absolute;left:8px;right:8px;bottom:-26px;height:6px;border-radius:50%;background:#0004;filter:blur(2px)}
@@ -149,13 +159,14 @@
     <div class="world" id="world">
       <img id="pano" src="../work/assets/pano.webp" alt="">
       <div class="front" id="front"></div>
+      <div class="plate" id="plate"><span class="arw" id="plateArw"></span></div>
       <div class="spk" id="spk"><i class="h"></i><i class="v"></i><b></b><u></u></div>
       <div class="hero right" id="hero"><div class="bubble" id="bubble"></div><div class="flip"><div class="spr" id="spr"></div></div><div class="sh"></div></div>
     </div>
     <div class="hud2" id="hud2"></div>
     <div class="mini" id="mini"></div>
     <div class="banner" id="banner"></div>
-    <div class="flash" id="flash"></div>
+    <div class="wflash" id="flash"></div>
     <div class="cover" id="cover">
       <div style="font-size:11px;color:var(--violet)">YOUNGSU CHOI · STAGE 1</div>
       <div class="lg">SF FIGHTER<br>여의도 63</div>
@@ -188,17 +199,17 @@
 /* ═════════ 문구 (한/영) ═════════ */
 const T={
   ko:{a:'펀치',b:'발차기',x:'날아차기',y:'기 모으기',up:'점프',down:'몸풀기',sel:'SELECT = 한/EN',
-      hello:'◀ ▶ 로 걸어가서 아이템 상자를 모아 보세요. 부딪히거나 공격하면 열려요.',welcome:'STAGE 1 · 여의도 63',
+      hello:'◀ ▶ 로 걸어가서 아이템 상자를 모아 보세요. 부딪히거나 공격하면 열려요. 내 명판을 누르면 이력서가 나와요.',plateArw:'▲ 이력서 보기',welcome:'STAGE 1 · 여의도 63',
       get:'ITEM GET!',clear:'ALL CLEAR! 업무 도구 6개를 모두 모았어요 🎉',place:{desk:'내 자리',office:'사무실',city:'한강 노을'},
       help:[['◀ ▶','걷기'],['▲','앞으로 점프 (한강 앞: 슈퍼 점프!)'],['▼','몸풀기'],['A','펀치'],['B','발차기'],['X','날아차기'],['Y','기 모으기'],['SELECT','한 / EN'],['START','도움말']],
       lines:{hit:['수작업 KO!','반복 업무 OUT','POW!'],get:['득템!','이건 쓸만해','자동화 획득!']},
-      river:'한강물은 추워요 🥶',riverHint:'▲ 점프로 건너 볼까?',fly:'63빌딩 48층까지 슈퍼 점프!',arrive:'여의도 63 · 48층',arriveTxt:'48층 도착 ✨ 반짝이를 누르면 내 자리로 돌아가요.',back:'다시 출근!'},
+      river:'한강물은 추워요 🥶',riverHint:'▲ 점프로 건너 볼까?',fly:'63빌딩 48층까지 슈퍼 점프!',arrive:'여의도 63 · 48층',arriveTxt:'48층 도착 ✨ 반짝이를 누르면 내 자리로 돌아가요.',back:'다시 출근! 명판을 눌러 보세요'},
   en:{a:'Punch',b:'Kick',x:'Fly kick',y:'Power',up:'Jump',down:'Warm-up',sel:'SELECT = KO/EN',
-      hello:'Walk with ◀ ▶ and collect the item boxes. Touch or hit them to open.',welcome:'STAGE 1 · YEOUIDO 63',
+      hello:'Walk with ◀ ▶ and collect the item boxes. Touch or hit them to open. Tap my nameplate to see my resume.',plateArw:'▲ RESUME',welcome:'STAGE 1 · YEOUIDO 63',
       get:'ITEM GET!',clear:'ALL CLEAR! You collected all 6 work tools 🎉',place:{desk:'MY DESK',office:'OFFICE',city:'HAN RIVER'},
       help:[['◀ ▶','Walk'],['▲','Jump forward (at the river: SUPER JUMP!)'],['▼','Warm-up'],['A','Punch'],['B','Kick'],['X','Fly kick'],['Y','Power up'],['SELECT','KO / EN'],['START','Help']],
       lines:{hit:['Manual work KO!','Repetition OUT','POW!'],get:['Got it!','Useful!','Automation get!']},
-      river:'The Han River is cold 🥶',riverHint:'Try ▲ to jump?',fly:'SUPER JUMP to the 48th floor!',arrive:'YEOUIDO 63 · 48F',arriveTxt:'Arrived at 48F ✨ Tap the sparkle to go back to my desk.',back:'Back to work!'},
+      river:'The Han River is cold 🥶',riverHint:'Try ▲ to jump?',fly:'SUPER JUMP to the 48th floor!',arrive:'YEOUIDO 63 · 48F',arriveTxt:'Arrived at 48F ✨ Tap the sparkle to go back to my desk.',back:'Back to work! Tap my nameplate'},
 };
 /* 아이템 = 업무 도구. x 는 배경 원본(높이 1024) 기준 위치 */
 const ITEMS=[
@@ -221,7 +232,7 @@ const ITEMS=[
    d:{ko:'처음 만든 업무 자동화. 신용등급 공시를 모아 정리하는 프로그램으로, 지금 도구들의 출발점입니다.',en:'My first work automation — it gathers rating disclosures. Where all of this started.'},
    s:[['만든 해|Year','2022'],['버전|Version','2.0']]},
 ];
-const PANO={H:1024,W:5079,FULLW:7629,office:1809,city:3833,PART:{x1:676,y0:412},HIDE:520,OUT:830,RIVER:3860,TOWER:{x:4590,y48:320}};
+const PANO={H:1024,W:4920,FULLW:7629,office:1809,city:3833,PART:{x1:676,y0:412},PLATE:{x0:165,y0:418,x1:492,y1:505},HIDE:520,OUT:830,RIVER:3860,TOWER:{x:4590,y48:320}};
 
 /* ═════════ 동작 그림 (각 8칸, 칸 400px, 왼쪽을 보는 그림) ═════════ */
 const SHEETS=['idle','walk','punch','kick','flykick','power','flip','hop','cheer','wave','paper','cross'];
@@ -283,6 +294,7 @@ function layout(){
   const f=$('front'),P=PANO.PART;f.style.top=(P.y0*s)+'px';f.style.width=(P.x1*s)+'px';f.style.height=((PANO.H-P.y0)*s)+'px';
   f.style.backgroundImage=`url(${$('pano').src})`;f.style.backgroundSize=`${PANO.FULLW*s}px ${PANO.H*s}px`;f.style.backgroundPosition=`0 ${-P.y0*s}px`;document.documentElement.style.setProperty('--heroH',heroH()+'px');
   ITEMS.forEach((it,i)=>itemEls[i].style.left=(it.x*s)+'px');
+  const pl=$('plate'),Q=PANO.PLATE;pl.style.left=(Q.x0*s)+'px';pl.style.top=(Q.y0*s)+'px';pl.style.width=((Q.x1-Q.x0)*s)+'px';pl.style.height=((Q.y1-Q.y0)*s)+'px';
   place();}
 function worldW(){return PANO.W*sc();}
 function place(){
@@ -369,6 +381,28 @@ document.addEventListener('gesturestart',e=>e.preventDefault());
 $('emo').innerHTML=[['wave','👋'],['cheer','🙌'],['cross','😎'],['paper','📄'],['flip','🤸']].map(([n,e])=>`<button data-e="${n}">${e}</button>`).join('');
 $('emo').addEventListener('pointerdown',e=>{const b=e.target.closest('button');if(!b)return;e.preventDefault();if(!started)return start();act(b.dataset.e);});
 
+/* ═════════ 명판 → 이력서 ═════════
+   ※ 표시는 아직 받지 못한 정보 자리입니다. */
+const CV={
+  ko:{ttl:'RESUME · 이력서',name:'최영수',role:'구조화금융 평가 · 여의도 63',rows:[
+    ['경력','<b>한국신용평가</b> · 구조화금융 평가<br>ABS·ABCP 본평가, SFG 리스트 관리<em>※ 입사 연도·직급 입력 필요</em>'],
+    ['이전 경력','<em>※ 입력 필요</em>'],
+    ['학력','<em>※ 학교·전공 입력 필요</em>'],
+    ['자격증','<em>※ 입력 필요</em>'],
+    ['AI 작업','업무 도구 6개 · 커밋 160<br>기획·디자인·테스트는 직접, 코딩은 AI와 함께']]},
+  en:{ttl:'RESUME',name:'Youngsu Choi',role:'Structured Finance Ratings · Yeouido 63',rows:[
+    ['Career','<b>Korea Investors Service</b> · Structured Finance<br>ABS/ABCP initial ratings, SFG deal list<em>※ Start year / title to be added</em>'],
+    ['Previous','<em>※ To be added</em>'],
+    ['Education','<em>※ To be added</em>'],
+    ['Certs','<em>※ To be added</em>'],
+    ['AI work','6 work tools · 160 commits<br>I plan, design and test; AI writes the code']]},
+};
+function showCV(){const c=CV[lang];sel=-1;renderSlots();$('plate').classList.remove('hint');
+  $('win').innerHTML=`<div class="ttl"><span>${c.ttl}</span><span>1P</span></div><h2><i style="background:#f4f4f5;color:#111">ID</i>${c.name}</h2><p style="min-height:0">${c.role}</p>
+   <div class="cv">${c.rows.map(r=>`<div><span>${r[0]}</span><p style="min-height:0;font:inherit;color:inherit">${r[1]}</p></div>`).join('')}</div>`;
+  $('win').classList.remove('flash');void $('win').offsetWidth;$('win').classList.add('flash');}
+$('plate').addEventListener('pointerdown',e=>{e.stopPropagation();if(!started)return start();showCV();});
+
 /* ═════════ 점프 ═════════
    점프 그림(jump.webp, 8칸)이 생기면 SH.jump 로 씁니다. 없으면 몸풀기(hop) 그림으로 대신해요. */
 const JUMPSHEET=()=>SH.jump?'jump':'hop';
@@ -399,7 +433,7 @@ async function superJump(){
   hero.style.opacity='0';const sp=$('spk');sp.style.left=x1+'px';sp.style.top=(PANO.TOWER.y48*s)+'px';sp.classList.add('on');
   pop('✨',x1-14,PANO.TOWER.y48*s-50);
   $('win').innerHTML=`<div class="ttl"><span>${T[lang].arrive}</span><span>${got.size}/6</span></div><h2>✨ 48F</h2><p id="wp"></p>`;typeText($('wp'),T[lang].arriveTxt);
-  backTimer=setTimeout(goBack,4200);
+  backTimer=setTimeout(goBack,1300);
 }
 let backTimer=0;
 async function goBack(){
@@ -409,7 +443,7 @@ async function goBack(){
   fl.classList.remove('on');await sleep(200);
   loopF('walk',110);const to=PANO.OUT*sc();let t0=performance.now();
   await new Promise(r=>{const step=t=>{const dt=Math.min(50,t-t0);t0=t;hx+=hero.offsetHeight*.0011*dt;place();if(hx<to)requestAnimationFrame(step);else r();};requestAnimationFrame(step);});
-  say(T[lang].back,1200);busy=false;idle();
+  say(T[lang].back,1800);busy=false;idle();$('plateArw').textContent=T[lang].plateArw;$('plate').classList.add('hint');
   if(got.size===ITEMS.length&&!clearShown)allClear();else if(sel>=0)showItem(sel,false);else showHome();
 }
 
@@ -419,7 +453,7 @@ async function start(){if(started)return;started=true;$('cover').classList.add('
   face=1;hx=PANO.HIDE*sc();place();loopF('walk',110);
   const to=PANO.OUT*sc();let t0=performance.now();
   await new Promise(r=>{const step=t=>{const dt=Math.min(50,t-t0);t0=t;hx+=hero.offsetHeight*.0011*dt;place();if(hx<to)requestAnimationFrame(step);else r();};requestAnimationFrame(step);});
-  banner('FIGHT!',900);await once('wave',ACT.wave.seq,110);busy=false;idle();}
+  banner('FIGHT!',900);await once('wave',ACT.wave.seq,110);busy=false;idle();$('plateArw').textContent=T[lang].plateArw;$('plate').classList.add('hint');setTimeout(()=>$('plate').classList.remove('hint'),5000);}
 function setLang(l){lang=l;document.documentElement.lang=l;const t=T[l];
   document.querySelectorAll('[data-t]').forEach(e=>e.textContent=t[e.dataset.t]);
   $('helpBody').innerHTML=t.help.map(([k,v])=>`<b>${k}</b>${v}`).join('<br>');
