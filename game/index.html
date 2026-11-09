@@ -223,13 +223,13 @@ const T={
       get:'ITEM GET!',clear:'ALL CLEAR! 업무 도구 6개를 모두 모았어요 🎉',place:{desk:'내 자리',office:'사무실',city:'한강 노을'},
       help:[['◀ ▶','걷기'],['▲','앞으로 점프 (한강 앞: 슈퍼 점프!)'],['▼','몸풀기'],['A','펀치'],['B','발차기'],['X','날아차기'],['Y','기 모으기'],['SELECT','한 / EN'],['START','도움말']],
       lines:{hit:['수작업 KO!','반복 업무 OUT','POW!'],get:['득템!','이건 쓸만해','자동화 획득!']},
-      river:'한강물은 추워요 🥶 바로 점프해 볼까? ▲',gift:{k:'63 슈퍼 점프권',d:'한강 앞에서 ▲ 를 누르면 63빌딩 48층까지 날아가요!',m:'SPECIAL'},riverNo:'선물 상자를 먼저 열어 보세요 🎁',fly:'63빌딩 48층까지 슈퍼 점프!',arrive:'여의도 63 · 48층',arriveTxt:'48층 도착 ✨ 반짝이를 누르면 내 자리로 돌아가요.',back:'다시 출근 😎',ask:'제 이력서 보실래요? 👈'},
+      river:'한강물은 추워요 🥶 바로 점프해 볼까? ▲',gift:{k:'63 슈퍼 점프권',d:'한강 앞에서 ▲ 를 누르면 63빌딩 48층까지 날아가요!',m:'SPECIAL'},riverNo:'선물 상자를 먼저 열어 보세요 🎁',fly:'63빌딩 48층까지 슈퍼 점프!',arrive:'여의도 63 · 48층',arriveTxt:'48층 도착 ✨ 반짝이를 누르면 내 자리로 돌아가요.',back:'다시 출근 😎',ask:'제 이력서 보실래요? 👈',how:'저 어때요? 😎'},
   en:{a:'Punch',b:'Kick',x:'Fly kick',y:'Power',up:'Jump',down:'Warm-up',sel:'SELECT = KO/EN',
       hello:'Walk with ◀ ▶ and collect the item boxes. Touch or hit them to open.',plateArw:'▲ RESUME',welcome:'STAGE 1 · YEOUIDO 63',
       get:'ITEM GET!',clear:'ALL CLEAR! You collected all 6 work tools 🎉',place:{desk:'MY DESK',office:'OFFICE',city:'HAN RIVER'},
       help:[['◀ ▶','Walk'],['▲','Jump forward (at the river: SUPER JUMP!)'],['▼','Warm-up'],['A','Punch'],['B','Kick'],['X','Fly kick'],['Y','Power up'],['SELECT','KO / EN'],['START','Help']],
       lines:{hit:['Manual work KO!','Repetition OUT','POW!'],get:['Got it!','Useful!','Automation get!']},
-      river:'The Han River is cold 🥶 Jump right over? ▲',gift:{k:'63 Super Jump Pass',d:'Press ▲ at the river to fly to the 48th floor of the 63 Building!',m:'SPECIAL'},riverNo:'Open the gift box first 🎁',fly:'SUPER JUMP to the 48th floor!',arrive:'YEOUIDO 63 · 48F',arriveTxt:'Arrived at 48F ✨ Tap the sparkle to go back to my desk.',back:'Back to work 😎',ask:'Want to see my resume? 👈'},
+      river:'The Han River is cold 🥶 Jump right over? ▲',gift:{k:'63 Super Jump Pass',d:'Press ▲ at the river to fly to the 48th floor of the 63 Building!',m:'SPECIAL'},riverNo:'Open the gift box first 🎁',fly:'SUPER JUMP to the 48th floor!',arrive:'YEOUIDO 63 · 48F',arriveTxt:'Arrived at 48F ✨ Tap the sparkle to go back to my desk.',back:'Back to work 😎',ask:'Want to see my resume? 👈',how:'How am I? 😎'},
 };
 /* 아이템 = 업무 도구. x 는 배경 원본(높이 1024) 기준 위치 */
 const ITEMS=[
@@ -424,7 +424,9 @@ const CV={
     ['Certs','<em>※ To be added</em>'],
     ['AI work','6 work tools · 160 commits<br>I plan, design and test; AI writes the code']]},
 };
-function showCV(){const c=CV[lang];sel=-1;renderSlots();endPose();idle();
+function showCV(){const c=CV[lang];sel=-1;renderSlots();const keepCam=camLock;endPose();camLock=keepCam;
+  /* 이력서 볼 때: 웃으며 "저 어때요?" — 방향·동작 버튼 누를 때까지 유지 */
+  if(started&&!busy&&!flying){posing=true;poseTok++;face=1;place();sheet('cross');clearInterval(ft);let pk=0;frame(4);ft=setInterval(()=>frame([4,4,5,5][++pk%4]),260);say(T[lang].how,600000);}
   $('win').innerHTML=`<div class="ttl"><span>${c.ttl}</span><span>1P</span></div><h2><i style="background:#f4f4f5;color:#111">ID</i>${c.name}</h2><p style="min-height:0">${c.role}</p>
    <div class="cv">${c.rows.map(r=>`<div><span>${r[0]}</span><p style="min-height:0;font:inherit;color:inherit">${r[1]}</p></div>`).join('')}</div>`;
   $('win').classList.remove('flash');void $('win').offsetWidth;$('win').classList.add('flash');}
@@ -480,7 +482,7 @@ async function goBack(){
   loopF('walk',110);const to=Math.max(PANO.OUT*sc()*.8,camLock+game.clientWidth/2);let t0=performance.now();
   await new Promise(r=>{const step=t=>{const dt=Math.min(50,t-t0);t0=t;hx+=hero.offsetHeight*.0011*dt;place();if(hx<to)requestAnimationFrame(step);else r();};requestAnimationFrame(step);});
   hero.style.zIndex=9;showHome();
-  if(got.size===ITEMS.length&&!clearShown){clearShown=true;banner('ALL CLEAR!',1500);await sleep(1600);}
+  if(got.size===ITEMS.length&&!clearShown){clearShown=true;banner('ALL CLEAR!',700);await sleep(750);}
   say(T[lang].back,600000);await once('cross',[0,1,2,3,4,5],140);
   posing=true;sheet('cross');clearInterval(ft);let pk=0;frame(4);ft=setInterval(()=>frame([4,4,5,5][++pk%4]),260);busy=false;
   const pl=$('plate');pl.classList.add('s1');
