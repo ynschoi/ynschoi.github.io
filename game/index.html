@@ -337,7 +337,7 @@ const two=(s,i)=>s.split('|')[i]??s.split('|')[0];
 function spark(d){const w=300,h=44,m=Math.max(...d)||1;const p=d.map((v,i)=>`${i*w/(d.length-1)},${h-3-v/m*(h-8)}`).join(' ');
   return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><polyline points="0,${h} ${p} ${w},${h}" fill="#4cc3ff22" stroke="none"/><polyline points="${p}" fill="none" stroke="#4cc3ff" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`;}
 function showHome(){$('win').classList.remove('idw');document.querySelector('.info').classList.remove('cvmode');const t=T[lang];sel=-1;renderSlots();
-  $('win').innerHTML=`<div class="ttl"><span>${t.welcome}</span><span>${got.size}/6</span></div><h2>1P YOUNGSU</h2><p id="wp"></p>`;typeText($('wp'),got.size===6?t.clear:t.hello);}
+  const done=got.size===6;$('win').innerHTML=`<div class="ttl"><span>${done?'All Clear (6/6)':t.welcome}</span><span>${done?'':got.size+'/6'}</span></div><h2>1P YOUNGSU</h2><p id="wp"></p>`;typeText($('wp'),got.size===6?t.clear:t.hello);}
 function showItem(i,fresh){$('win').classList.remove('idw');document.querySelector('.info').classList.remove('cvmode');const it=ITEMS[i],L=lang=='ko'?0:1;sel=i;renderSlots();
   $('win').innerHTML=`<div class="ttl"><span>${fresh?T[lang].get:'ITEM '+(i+1)}</span><span>${two(it.m,L)}</span></div>
    <h2><i style="background:${it.c};color:${it.fg||'#fff'}">${it.ic}</i>${it.k[lang]}</h2><p id="wp"></p>
