@@ -93,7 +93,13 @@
   @keyframes lift{50%{transform:translateY(-4px);filter:brightness(1.15)}}
   .plate .arw{position:absolute;left:50%;top:115%;transform:translateX(-50%);background:#0b0820cc;padding:3px 6px;font-size:11px;color:var(--gold);white-space:nowrap;text-shadow:1px 1px 0 #000;display:none;animation:bob 1s ease-in-out infinite}
   .plate.hint .arw{display:block}
-  .info.cvmode .inv{display:none}
+  .info.cvmode .inv,.info.cvmode .bar1{display:none}
+  .info.cvmode{padding-top:8px;padding-bottom:8px}
+  .app.cvapp{grid-template-rows:minmax(0,1fr) 31% auto}
+  .idc{transform-origin:0 0}
+  .info.cvmode .win.idw{overflow:hidden;padding:6px}
+  .idc{display:flex;flex-direction:column}
+  .idc .rows{flex:1;align-content:space-evenly}
   .win.idw{padding:8px;background:linear-gradient(#1d1650,#120d33)}
   .idc{background:#fff;color:#18181b;border-radius:12px;overflow:hidden;position:relative;min-height:100%;box-shadow:0 6px 18px #0008;animation:idIn .45s cubic-bezier(.2,.8,.2,1)}
   @keyframes idIn{from{transform:perspective(600px) rotateY(80deg);opacity:0}}
@@ -101,14 +107,14 @@
   .idc .hd i{width:14px;height:14px;background:#fff;transform:rotate(45deg);flex:none}
   .idc .hd span{margin-left:auto;font:9px var(--px);opacity:.8}
   .idc .ph{position:absolute;left:12px;top:38px;width:54px;height:64px;border:3px solid #fff;border-radius:8px;background:#2a2050 url(../work/assets/face.webp) center/cover;box-shadow:0 2px 6px #0004}
-  .idc .who{padding:8px 12px 0 78px;min-height:72px}
+  .idc .who{padding:6px 12px 0 78px;min-height:68px}
   .idc .who b{display:block;font:800 18px var(--font);line-height:1.2}
   .idc .who small{font:11px var(--font);color:#71717a}
   .idc .chip{display:inline-block;margin:4px 0 0;font:600 10px var(--font);background:#eff4ff;color:#2563eb;padding:3px 8px;border-radius:99px}
-  .idc .rows{padding:6px 12px 24px;display:grid;gap:3px}
-  .idc .rows div{display:flex;gap:8px;font:11.5px/1.45 var(--font);color:#3f3f46;border-top:1px solid #f0f0f3;padding-top:3px}
+  .idc .rows{padding:4px 12px 20px;display:grid;gap:2px}
+  .idc .rows div{display:flex;gap:8px;font:11px/1.35 var(--font);color:#3f3f46;border-top:1px solid #f0f0f3;padding-top:3px}
   .idc .rows span{width:52px;flex:none;font:9.5px var(--px);color:#a1a1aa;padding-top:2px}
-  .idc .rows p{color:#3f3f46;font:11.5px/1.45 var(--font);margin:0;min-height:0}
+  .idc .rows p{color:#3f3f46;font:11px/1.35 var(--font);margin:0;min-height:0}
   .idc .rows b{color:#18181b}
   .idc .rows em{font-style:normal;font:9.5px var(--px);color:#d92d20}
   .idc .no{position:absolute;right:12px;bottom:6px;font:9px var(--px);color:#a1a1aa}
@@ -317,9 +323,9 @@ function typeText(el,txt){clearInterval(typeT);let i=0;el.innerHTML='<span class
 const two=(s,i)=>s.split('|')[i]??s.split('|')[0];
 function spark(d){const w=300,h=44,m=Math.max(...d)||1;const p=d.map((v,i)=>`${i*w/(d.length-1)},${h-3-v/m*(h-8)}`).join(' ');
   return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><polyline points="0,${h} ${p} ${w},${h}" fill="#4cc3ff22" stroke="none"/><polyline points="${p}" fill="none" stroke="#4cc3ff" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`;}
-function showHome(){$('win').classList.remove('idw');document.querySelector('.info').classList.remove('cvmode');const t=T[lang];sel=-1;renderSlots();
+function showHome(){$('win').classList.remove('idw');document.querySelector('.info').classList.remove('cvmode');if($('app').classList.contains('cvapp')){$('app').classList.remove('cvapp');requestAnimationFrame(layout);}const t=T[lang];sel=-1;renderSlots();
   $('win').innerHTML=`<div class="ttl"><span>${t.welcome}</span><span>${got.size}/6</span></div><h2>1P YOUNGSU</h2><p id="wp"></p>`;typeText($('wp'),got.size===6?t.clear:t.hello);}
-function showItem(i,fresh){$('win').classList.remove('idw');document.querySelector('.info').classList.remove('cvmode');const it=ITEMS[i],L=lang=='ko'?0:1;sel=i;renderSlots();
+function showItem(i,fresh){$('win').classList.remove('idw');document.querySelector('.info').classList.remove('cvmode');if($('app').classList.contains('cvapp')){$('app').classList.remove('cvapp');requestAnimationFrame(layout);}const it=ITEMS[i],L=lang=='ko'?0:1;sel=i;renderSlots();
   $('win').innerHTML=`<div class="ttl"><span>${fresh?T[lang].get:'ITEM '+(i+1)}</span><span>${two(it.m,L)}</span></div>
    <h2><i style="background:${it.c};color:${it.fg||'#fff'}">${it.ic}</i>${it.k[lang]}</h2><p id="wp"></p>
    <div class="st">${it.s.map(s=>`<span>${two(s[0],L)} <b>${two(s[1],L)}</b></span>`).join('')}</div>${it.data?spark(it.data):''}`;
@@ -447,14 +453,17 @@ const CV={
     ['Certs','<em>※ To be added</em>'],
     ['AI work','6 work tools · 160 commits<br>I plan, design and test; AI writes the code']]},
 };
+function fitCV(){const w=$('win'),k=w.querySelector('.idc');if(!k)return;k.style.transform='';k.style.width='';
+  const avail=w.clientHeight-12,need=k.scrollHeight;if(need>avail){const r=avail/need;k.style.transform=`scale(${r})`;k.style.width=(100/r)+'%';k.style.minHeight='0';}}
+addEventListener('resize',()=>{if(document.querySelector('.info.cvmode'))fitCV();});
 function showCV(){const c=CV[lang];sel=-1;renderSlots();const keepCam=camLock;endPose();camLock=keepCam;
   /* 이력서 볼 때: 웃으며 "저 어때요?" — 방향·동작 버튼 누를 때까지 유지 */
   if(started&&!busy&&!flying){posing=true;const tk=++poseTok;face=-1;place();say(T[lang].how,600000);
     once('thumb',[0,1,2],120).then(()=>{if(!posing||tk!==poseTok)return;let pk=0;ft=setInterval(()=>frame([3,4,5,6,7,6,4,5][++pk%8]),220);});}   /* 정면 엄지척 (그림이 정면이라 좌우 반전 없이) */   /* 엄지척 그림이 생기면 sheet('thumb')로 교체 */
-  $('win').classList.add('idw');document.querySelector('.info').classList.add('cvmode');
+  $('win').classList.add('idw');document.querySelector('.info').classList.add('cvmode');$('app').classList.add('cvapp');requestAnimationFrame(()=>{layout();fitCV();});
   $('win').innerHTML=`<div class="idc"><div class="hd"><i></i>Korea Investors Service<span>${lang=='ko'?'사원증':'STAFF ID'}</span></div><div class="ph"></div>
    <div class="who"><b>${c.name}</b><small>${lang=='ko'?'Youngsu Choi':'최영수'}</small><br><span class="chip">${lang=='ko'?'구조화금융 평가':'Structured Finance'}</span></div>
-   <div class="rows">${c.rows.map(r=>`<div><span>${r[0]}</span><p>${r[1].replace(/<em>/g,'<br><em>')}</p></div>`).join('')}</div>
+   <div class="rows">${c.rows.map(r=>`<div><span>${r[0]}</span><p>${r[1].replace(/<br><em>/g,' <em>')}</p></div>`).join('')}</div>
    <div class="bar"></div><div class="no">ID · 2026-63</div></div>`;}
 $('plate').addEventListener('pointerdown',e=>{e.stopPropagation();if(!started)return start();showCV();});
 
@@ -497,7 +506,7 @@ async function superJump(){
   backTimer=setTimeout(goBack,1300);
 }
 let backTimer=0,posing=false,poseTok=0,camLock=null;
-function endPose(){document.querySelector('.info')?.classList.remove('cvmode');hero.classList.remove('thumbs');camLock=null;if(!posing)return;posing=false;poseTok++;$('bubble').classList.remove('on');clearTimeout(say.t);$('plate').classList.remove('s1','s2');}
+function endPose(){document.querySelector('.info')?.classList.remove('cvmode');if($('app').classList.contains('cvapp')){$('app').classList.remove('cvapp');requestAnimationFrame(layout);}hero.classList.remove('thumbs');camLock=null;if(!posing)return;posing=false;poseTok++;$('bubble').classList.remove('on');clearTimeout(say.t);$('plate').classList.remove('s1','s2');}
 function trail(x,y){const d=document.createElement('div');d.className='pop';d.textContent=pick(['✦','✧','★','✨']);d.style.fontSize=(10+Math.random()*12)+'px';d.style.left=(x-10+Math.random()*30)+'px';d.style.top=y+'px';world.appendChild(d);setTimeout(()=>d.remove(),800);}
 async function goBack(){
   clearTimeout(backTimer);const sp=$('spk');if(!sp.classList.contains('on'))return;sp.classList.remove('on');
