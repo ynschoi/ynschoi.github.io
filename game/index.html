@@ -78,6 +78,9 @@
   .plate{position:absolute;z-index:8;cursor:pointer}
   .plate::after{content:"";position:absolute;inset:-4px;border:2px solid var(--gold);opacity:0;transition:.2s}
   .plate:hover::after{opacity:0}
+  .thumb{position:absolute;right:-18%;top:30%;font-size:calc(var(--heroH,120px)*.28);filter:drop-shadow(2px 2px 0 #111);display:none;animation:thumb .8s ease-in-out infinite;z-index:9}
+  .hero.thumbs .thumb{display:block}
+  @keyframes thumb{0%,100%{transform:rotate(-8deg) scale(1)}50%{transform:rotate(6deg) scale(1.15)}}
   .plate .tri{position:absolute;left:50%;bottom:118%;width:0;height:0;border:9px solid transparent;border-top:12px solid #ffd400;border-bottom:0;margin-left:-9px;filter:drop-shadow(0 2px 0 #111);display:none;animation:triB .7s ease-in-out infinite}
   @keyframes triB{50%{transform:translateY(-6px)}}
   .plate .sweep{position:absolute;inset:0;overflow:hidden;display:none}
@@ -181,7 +184,7 @@
       <div class="front" id="front"></div>
       <div class="plate" id="plate"><span class="tri"></span><span class="sweep"><i></i></span><span class="stars"><b style="left:0;top:0">✦</b><b style="right:0;top:4px;animation-delay:.3s">✧</b><b style="left:45%;top:-6px;animation-delay:.6s">✦</b><b style="right:8px;bottom:0;animation-delay:.9s">✧</b><b style="left:6px;bottom:2px;animation-delay:.5s">✧</b></span><span class="arw" id="plateArw"></span></div>
       <div class="spk" id="spk"><i class="h"></i><i class="v"></i><b></b><u></u></div>
-      <div class="hero right" id="hero"><div class="bubble" id="bubble"></div><div class="flip"><div class="spr" id="spr"></div></div><div class="sh"></div></div>
+      <div class="hero right" id="hero"><div class="bubble" id="bubble"></div><div class="flip"><div class="spr" id="spr"></div></div><span class="thumb">👍</span><div class="sh"></div></div>
     </div>
     <div class="hud2" id="hud2"></div>
     <div class="mini" id="mini"></div>
@@ -223,13 +226,13 @@ const T={
       get:'ITEM GET!',clear:'ALL CLEAR! 업무 도구 6개를 모두 모았어요 🎉',place:{desk:'내 자리',office:'사무실',city:'한강 노을'},
       help:[['◀ ▶','걷기'],['▲','앞으로 점프 (한강 앞: 슈퍼 점프!)'],['▼','몸풀기'],['A','펀치'],['B','발차기'],['X','날아차기'],['Y','기 모으기'],['SELECT','한 / EN'],['START','도움말']],
       lines:{hit:['수작업 KO!','반복 업무 OUT','POW!'],get:['득템!','이건 쓸만해','자동화 획득!']},
-      river:'한강물은 추워요 🥶 바로 점프해 볼까? ▲',gift:{k:'63 슈퍼 점프권',d:'한강 앞에서 ▲ 를 누르면 63빌딩 48층까지 날아가요!',m:'SPECIAL'},riverNo:'선물 상자를 먼저 열어 보세요 🎁',fly:'63빌딩 48층까지 슈퍼 점프!',arrive:'여의도 63 · 48층',arriveTxt:'48층 도착 ✨ 반짝이를 누르면 내 자리로 돌아가요.',back:'다시 출근 😎',ask:'제 이력서 보실래요? 👈',how:'저 어때요? 😎'},
+      river:'한강물은 추워요 🥶 바로 점프해 볼까? ▲',gift:{k:'63 슈퍼 점프권',d:'한강 앞에서 ▲ 를 누르면 63빌딩 48층까지 날아가요!',m:'SPECIAL'},riverNo:'선물 상자를 먼저 열어 보세요 🎁',fly:'63빌딩 48층까지 슈퍼 점프!',arrive:'여의도 63 · 48층',arriveTxt:'48층 도착 ✨ 반짝이를 누르면 내 자리로 돌아가요.',back:'다시 출근 😎',ask:'제 이력서 보실래요? 👈',how:'저 어때요? 👍'},
   en:{a:'Punch',b:'Kick',x:'Fly kick',y:'Power',up:'Jump',down:'Warm-up',sel:'SELECT = KO/EN',
       hello:'Walk with ◀ ▶ and collect the item boxes. Touch or hit them to open.',plateArw:'▲ RESUME',welcome:'STAGE 1 · YEOUIDO 63',
       get:'ITEM GET!',clear:'ALL CLEAR! You collected all 6 work tools 🎉',place:{desk:'MY DESK',office:'OFFICE',city:'HAN RIVER'},
       help:[['◀ ▶','Walk'],['▲','Jump forward (at the river: SUPER JUMP!)'],['▼','Warm-up'],['A','Punch'],['B','Kick'],['X','Fly kick'],['Y','Power up'],['SELECT','KO / EN'],['START','Help']],
       lines:{hit:['Manual work KO!','Repetition OUT','POW!'],get:['Got it!','Useful!','Automation get!']},
-      river:'The Han River is cold 🥶 Jump right over? ▲',gift:{k:'63 Super Jump Pass',d:'Press ▲ at the river to fly to the 48th floor of the 63 Building!',m:'SPECIAL'},riverNo:'Open the gift box first 🎁',fly:'SUPER JUMP to the 48th floor!',arrive:'YEOUIDO 63 · 48F',arriveTxt:'Arrived at 48F ✨ Tap the sparkle to go back to my desk.',back:'Back to work 😎',ask:'Want to see my resume? 👈',how:'How am I? 😎'},
+      river:'The Han River is cold 🥶 Jump right over? ▲',gift:{k:'63 Super Jump Pass',d:'Press ▲ at the river to fly to the 48th floor of the 63 Building!',m:'SPECIAL'},riverNo:'Open the gift box first 🎁',fly:'SUPER JUMP to the 48th floor!',arrive:'YEOUIDO 63 · 48F',arriveTxt:'Arrived at 48F ✨ Tap the sparkle to go back to my desk.',back:'Back to work 😎',ask:'Want to see my resume? 👈',how:'How am I? 👍'},
 };
 /* 아이템 = 업무 도구. x 는 배경 원본(높이 1024) 기준 위치 */
 const ITEMS=[
@@ -426,7 +429,7 @@ const CV={
 };
 function showCV(){const c=CV[lang];sel=-1;renderSlots();const keepCam=camLock;endPose();camLock=keepCam;
   /* 이력서 볼 때: 웃으며 "저 어때요?" — 방향·동작 버튼 누를 때까지 유지 */
-  if(started&&!busy&&!flying){posing=true;poseTok++;face=1;place();sheet('cross');clearInterval(ft);let pk=0;frame(4);ft=setInterval(()=>frame([4,4,5,5][++pk%4]),260);say(T[lang].how,600000);}
+  if(started&&!busy&&!flying){posing=true;poseTok++;face=1;place();sheet('cross');clearInterval(ft);let pk=0;frame(4);ft=setInterval(()=>frame([4,4,5,5][++pk%4]),260);say(T[lang].how,600000);hero.classList.add('thumbs');}   /* 엄지척 그림이 생기면 sheet('thumb')로 교체 */
   $('win').innerHTML=`<div class="ttl"><span>${c.ttl}</span><span>1P</span></div><h2><i style="background:#f4f4f5;color:#111">ID</i>${c.name}</h2><p style="min-height:0">${c.role}</p>
    <div class="cv">${c.rows.map(r=>`<div><span>${r[0]}</span><p style="min-height:0;font:inherit;color:inherit">${r[1]}</p></div>`).join('')}</div>`;
   $('win').classList.remove('flash');void $('win').offsetWidth;$('win').classList.add('flash');}
@@ -471,7 +474,7 @@ async function superJump(){
   backTimer=setTimeout(goBack,1300);
 }
 let backTimer=0,posing=false,poseTok=0,camLock=null;
-function endPose(){camLock=null;if(!posing)return;posing=false;poseTok++;$('bubble').classList.remove('on');clearTimeout(say.t);$('plate').classList.remove('s1','s2');}
+function endPose(){hero.classList.remove('thumbs');camLock=null;if(!posing)return;posing=false;poseTok++;$('bubble').classList.remove('on');clearTimeout(say.t);$('plate').classList.remove('s1','s2');}
 function trail(x,y){const d=document.createElement('div');d.className='pop';d.textContent=pick(['✦','✧','★','✨']);d.style.fontSize=(10+Math.random()*12)+'px';d.style.left=(x-10+Math.random()*30)+'px';d.style.top=y+'px';world.appendChild(d);setTimeout(()=>d.remove(),800);}
 async function goBack(){
   clearTimeout(backTimer);const sp=$('spk');if(!sp.classList.contains('on'))return;sp.classList.remove('on');
