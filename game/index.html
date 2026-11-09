@@ -476,7 +476,9 @@ const CV={
 let showingCV=false;
 function showCV(){showingCV=true;setTimeout(()=>showingCV=false,50);const c=CV[lang];sel=-1;renderSlots();const keepCam=camLock;endPose();camLock=keepCam;
   /* 이력서 볼 때: 웃으며 "저 어때요?" — 방향·동작 버튼 누를 때까지 유지 */
-  if(started&&!busy&&!flying){posing=true;const tk=++poseTok;face=-1;hero.style.zIndex=9;place();say(T[lang].how,600000);
+  if(started&&!busy&&!flying){posing=true;const tk=++poseTok;face=-1;place();
+    const behind=(hx-hero.offsetWidth*.35)<PANO.PART.x1*sc();   /* 칸막이 뒤에 있으면 말풍선 없이 */
+    if(!behind){hero.style.zIndex=9;say(T[lang].how,600000);}
     once('thumb',[0,1,2],120).then(()=>{if(!posing||tk!==poseTok)return;let pk=0;ft=setInterval(()=>frame([3,4,5,6,7,6,4,5][++pk%8]),220);});}   /* 정면 엄지척 (그림이 정면이라 좌우 반전 없이) */   /* 엄지척 그림이 생기면 sheet('thumb')로 교체 */
   $('win').classList.add('idw');document.querySelector('.info').classList.add('cvmode');
   $('win').innerHTML=`<div class="idc"><div class="hd"><i></i>Korea Investors Service<span>${lang=='ko'?'사원증':'STAFF ID'}</span></div><div class="ph"></div>
