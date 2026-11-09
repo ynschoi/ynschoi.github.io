@@ -128,10 +128,10 @@
   .idc .who .chip{margin:2px 0 0!important;flex-basis:auto}
   .idc .rows{grid-template-columns:1fr;row-gap:0!important;padding:2px 10px 14px!important;flex:none!important}
   .idc .rows div{gap:6px!important;min-width:0;padding-top:1px!important;line-height:14px!important}
-  .idc .rows span{width:50px!important;font-size:9px!important;white-space:nowrap}
+  .idc .rows span{width:56px!important;font-size:9px!important;white-space:nowrap}
   .idc .rows p{font-size:10.5px!important;line-height:14px!important}
   .idc .bar{bottom:3px!important;height:7px!important;width:70px!important}.idc .no{bottom:2px!important;font-size:8px!important}
-  @media (max-height:700px){.idc .rows{padding-bottom:4px!important}.idc .bar,.idc .no{display:none}.idc .rows div,.idc .rows p{line-height:12px!important;font-size:9.5px!important}.idc .rows span{font-size:8.5px!important}.idc .who{min-height:30px!important;padding-top:3px!important}.idc .ph{width:28px!important;height:32px!important}.idc .who{padding-left:44px!important}.idc .who .chip{display:none}}
+  @media (max-height:700px){.idc .rows{padding-bottom:4px!important}.idc .bar,.idc .no{display:none}.idc .rows div,.idc .rows p{line-height:11px!important;font-size:9.5px!important}.idc .rows div{padding-top:0!important}.idc .hd{height:18px!important}.idc .ph{top:22px!important}.idc .rows span{font-size:8.5px!important}.idc .who{min-height:24px!important;padding-top:2px!important}.idc .who b{font-size:14px!important}.idc .ph{width:28px!important;height:32px!important}.idc .who{padding-left:44px!important}.idc .who .chip{display:none}}
   .cv{margin-top:8px;display:grid;gap:0}
   .cv div{display:flex;gap:10px;padding:6px 0;border-top:1px solid #2d2560;font:12.5px/1.45 var(--font);color:#ddd8ff}
   .cv div span{width:62px;flex:none;font:10px var(--px);color:var(--violet);padding-top:2px}
@@ -458,16 +458,18 @@ $('emo').addEventListener('pointerdown',e=>{const b=e.target.closest('button');i
 const CV={
   ko:{name:'최영수',sub:'Youngsu Choi',role:'구조화금융 평가',rows:[
     ['소속','한국신용평가 · 구조화금융본부'],
-    ['직급','※ 직급 · 입사 연도'],
-    ['담당','ABS·ABCP 본평가 · SFG 리스트'],
+    ['업무','구조화금융상품 신용평가'],
+    ['Deal 검토','유동화구조 · 기초자산 · 현금흐름 분석'],
+    ['주요 Deal','CDO · Synthetic CDO · PF Loan'],
     ['이전 경력','※ 회사 · 기간'],
     ['학력','※ 학교 · 전공'],
     ['자격증','※ 자격증 이름'],
     ['AI 작업','업무 도구 6개 · 커밋 160']]},
   en:{name:'Youngsu Choi',sub:'최영수',role:'Structured Finance',rows:[
     ['Company','Korea Investors Service · SF'],
-    ['Title','※ Title · Since'],
-    ['Role','ABS/ABCP ratings · SFG list'],
+    ['Role','Structured finance credit ratings'],
+    ['Review','Structure · collateral · cash-flow analysis'],
+    ['Key deals','CDO · Synthetic CDO · PF Loan'],
     ['Previous','※ Company · Years'],
     ['Education','※ School · Major'],
     ['Certs','※ Certificates'],
