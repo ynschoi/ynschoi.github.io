@@ -320,7 +320,7 @@ function worldW(){return PANO.W*sc();}
 function place(){
   const W=worldW(),vw=game.clientWidth,hw=hero.offsetWidth;
   hx=Math.max(hw/2,Math.min((flying?W:PANO.RIVER*sc())-hw/2,hx));
-  camX=Math.max(0,Math.min(W-vw,hx-vw*.42));
+  camX=Math.max(0,Math.min(W-vw,camLock!=null?camLock:hx-vw*.42));
   world.style.transform=`translateX(${-camX}px)`;
   hero.style.left=(hx-hw/2)+'px';
   hero.classList.toggle('right',face>0);if(typeof upGlow==='function')upGlow();
@@ -468,15 +468,16 @@ async function superJump(){
   $('win').innerHTML=`<div class="ttl"><span>${T[lang].arrive}</span><span>${got.size}/6</span></div><h2>✨ 48F</h2><p id="wp"></p>`;typeText($('wp'),T[lang].arriveTxt);
   backTimer=setTimeout(goBack,1300);
 }
-let backTimer=0,posing=false,poseTok=0;
-function endPose(){if(!posing)return;posing=false;poseTok++;$('bubble').classList.remove('on');clearTimeout(say.t);$('plate').classList.remove('s1','s2');}
+let backTimer=0,posing=false,poseTok=0,camLock=null;
+function endPose(){camLock=null;if(!posing)return;posing=false;poseTok++;$('bubble').classList.remove('on');clearTimeout(say.t);$('plate').classList.remove('s1','s2');}
 function trail(x,y){const d=document.createElement('div');d.className='pop';d.textContent=pick(['✦','✧','★','✨']);d.style.fontSize=(10+Math.random()*12)+'px';d.style.left=(x-10+Math.random()*30)+'px';d.style.top=y+'px';world.appendChild(d);setTimeout(()=>d.remove(),800);}
 async function goBack(){
   clearTimeout(backTimer);const sp=$('spk');if(!sp.classList.contains('on'))return;sp.classList.remove('on');
   const fl=$('flash');fl.classList.add('on');await sleep(380);
-  flying=false;heroUp(0);hero.style.opacity='1';hero.style.zIndex='';face=1;hx=PANO.HIDE*sc();place();
+  flying=false;heroUp(0);hero.style.opacity='1';hero.style.zIndex='';face=1;hx=PANO.HIDE*sc();
+  camLock=Math.max(0,PANO.PLATE.x0*sc()-18);place();
   fl.classList.remove('on');await sleep(200);
-  loopF('walk',110);const to=PANO.OUT*sc();let t0=performance.now();
+  loopF('walk',110);const to=Math.max(PANO.OUT*sc()*.8,camLock+game.clientWidth/2);let t0=performance.now();
   await new Promise(r=>{const step=t=>{const dt=Math.min(50,t-t0);t0=t;hx+=hero.offsetHeight*.0011*dt;place();if(hx<to)requestAnimationFrame(step);else r();};requestAnimationFrame(step);});
   hero.style.zIndex=9;showHome();
   if(got.size===ITEMS.length&&!clearShown){clearShown=true;banner('ALL CLEAR!',1500);await sleep(1600);}
