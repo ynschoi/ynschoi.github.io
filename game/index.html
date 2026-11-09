@@ -62,8 +62,8 @@
   .mini u{position:absolute;top:-3px;width:6px;height:10px;background:var(--red);margin-left:-3px}
 
   .hero{position:absolute;bottom:9%;left:0;height:var(--heroH,120px);width:calc(var(--heroH,120px)*.62);z-index:6;pointer-events:none}
-  .hero .flip{position:absolute;inset:0;transform-origin:50% 100%}
-  .hero.right .flip{transform:scaleX(-1)}
+  .hero .flip{position:absolute;inset:0;transform-origin:50% 60%;transform:rotate(var(--rot,0deg))}
+  .hero.right .flip{transform:scaleX(-1) rotate(var(--rot,0deg))}
   .hero .spr{position:absolute;bottom:0;left:50%;height:156.25%;aspect-ratio:1;transform:translateX(-50%);background:0 0/800% 100% no-repeat;filter:drop-shadow(0 4px 0 rgba(0,0,0,.25))}
   .hero .sh{position:absolute;left:14%;right:14%;bottom:-4px;height:9px;border-radius:50%;background:rgba(0,0,0,.3);filter:blur(2px)}
   .bubble{position:absolute;bottom:118%;left:50%;transform:translate(-50%,-4px) scale(.6);opacity:0;transition:.16s;z-index:8;font-size:12px;white-space:nowrap;background:#fff;color:#111;padding:6px 9px;box-shadow:0 0 0 2px #111,3px 3px 0 2px #111}
@@ -73,7 +73,8 @@
   .item.sky{bottom:56%}
   .item.gift .box{background:linear-gradient(90deg,transparent 42%,#ffd400 42% 58%,transparent 58%),linear-gradient(transparent 42%,#ffd400 42% 58%,transparent 58%),#d92d20;font-size:18px;box-shadow:0 0 0 2px #111,0 0 22px #ffd400}
   .item.gift{width:52px;height:52px;margin-left:-26px;animation:bob .9s ease-in-out infinite}
-  .dpad .u.glow{color:#ffd400;box-shadow:0 0 0 3px #ffd400,0 0 18px #ffd400;animation:blink .7s steps(1) infinite}
+  .dpad .u.glow{color:#ffd400;box-shadow:0 0 0 3px #ffd400,0 3px 0 #000;animation:upPulse 1s ease-in-out infinite}
+  @keyframes upPulse{50%{box-shadow:0 0 0 3px #ffd400,0 0 22px 6px #ffd400aa,0 3px 0 #000}}
   .plate{position:absolute;z-index:8;cursor:pointer}
   .plate::after{content:"";position:absolute;inset:-4px;border:2px solid var(--gold);opacity:0;transition:.2s}
   .plate:hover::after,.plate.hint::after{opacity:1;animation:blink .8s steps(1) infinite}
@@ -202,13 +203,13 @@
 /* ═════════ 문구 (한/영) ═════════ */
 const T={
   ko:{a:'펀치',b:'발차기',x:'날아차기',y:'기 모으기',up:'점프',down:'몸풀기',sel:'SELECT = 한/EN',
-      hello:'◀ ▶ 로 걸어가서 아이템 상자를 모아 보세요. 부딪히거나 공격하면 열려요. 내 명판을 누르면 이력서가 나와요.',plateArw:'▲ 이력서 보기',welcome:'STAGE 1 · 여의도 63',
+      hello:'◀ ▶ 로 걸어가서 아이템 상자를 모아 보세요. 부딪히거나 공격하면 열려요.',plateArw:'▲ 이력서 보기',welcome:'STAGE 1 · 여의도 63',
       get:'ITEM GET!',clear:'ALL CLEAR! 업무 도구 6개를 모두 모았어요 🎉',place:{desk:'내 자리',office:'사무실',city:'한강 노을'},
       help:[['◀ ▶','걷기'],['▲','앞으로 점프 (한강 앞: 슈퍼 점프!)'],['▼','몸풀기'],['A','펀치'],['B','발차기'],['X','날아차기'],['Y','기 모으기'],['SELECT','한 / EN'],['START','도움말']],
       lines:{hit:['수작업 KO!','반복 업무 OUT','POW!'],get:['득템!','이건 쓸만해','자동화 획득!']},
       river:'한강물은 추워요 🥶 바로 점프해 볼까? ▲',gift:{k:'63 슈퍼 점프권',d:'한강 앞에서 ▲ 를 누르면 63빌딩 48층까지 날아가요!',m:'SPECIAL'},riverNo:'선물 상자를 먼저 열어 보세요 🎁',fly:'63빌딩 48층까지 슈퍼 점프!',arrive:'여의도 63 · 48층',arriveTxt:'48층 도착 ✨ 반짝이를 누르면 내 자리로 돌아가요.',back:'다시 출근 😎'},
   en:{a:'Punch',b:'Kick',x:'Fly kick',y:'Power',up:'Jump',down:'Warm-up',sel:'SELECT = KO/EN',
-      hello:'Walk with ◀ ▶ and collect the item boxes. Touch or hit them to open. Tap my nameplate to see my resume.',plateArw:'▲ RESUME',welcome:'STAGE 1 · YEOUIDO 63',
+      hello:'Walk with ◀ ▶ and collect the item boxes. Touch or hit them to open.',plateArw:'▲ RESUME',welcome:'STAGE 1 · YEOUIDO 63',
       get:'ITEM GET!',clear:'ALL CLEAR! You collected all 6 work tools 🎉',place:{desk:'MY DESK',office:'OFFICE',city:'HAN RIVER'},
       help:[['◀ ▶','Walk'],['▲','Jump forward (at the river: SUPER JUMP!)'],['▼','Warm-up'],['A','Punch'],['B','Kick'],['X','Fly kick'],['Y','Power up'],['SELECT','KO / EN'],['START','Help']],
       lines:{hit:['Manual work KO!','Repetition OUT','POW!'],get:['Got it!','Useful!','Automation get!']},
@@ -254,7 +255,7 @@ const ACT={
 };
 
 /* ═════════ 상태 ═════════ */
-let lang='ko',started=false,busy=false,flying=false,clearShown=false,boost=false,hx=420,face=1,camX=0,pow=0,score=0,sel=-1;
+let lang='ko',started=false,busy=false,flying=false,clearShown=false,boost=true,hx=420,face=1,camX=0,pow=0,score=0,sel=-1;
 const got=new Set();
 const $=id=>document.getElementById(id);
 const hero=$('hero'),spr=$('spr'),world=$('world'),game=$('game');
@@ -290,14 +291,13 @@ $('slots').onclick=e=>{const s=e.target.closest('.slot.got');if(s)showItem(+s.da
 
 /* ═════════ 게임 화면 ═════════ */
 const itemEls=ITEMS.map((it,i)=>{const d=document.createElement('div');d.className='item'+(it.sky?' sky':'');d.innerHTML=`<div class="box" style="background:${it.c};color:${it.fg||'#fff'}">${it.ic}</div>`;world.appendChild(d);return d;});
-const giftEl=document.createElement('div');giftEl.className='item gift';giftEl.innerHTML='<div class="box">🎁</div>';world.appendChild(giftEl);
 $('mini').innerHTML=ITEMS.map(it=>`<i style="left:${it.x/PANO.W*100}%"></i>`).join('')+'<u id="me"></u>';
 let firstLayout=true;
 function layout(){
   const s=sc();if(firstLayout&&game.clientHeight){hx=PANO.HIDE*s;firstLayout=false;}
   const f=$('front'),P=PANO.PART;f.style.top=(P.y0*s)+'px';f.style.width=(P.x1*s)+'px';f.style.height=((PANO.H-P.y0)*s)+'px';
   f.style.backgroundImage=`url(${$('pano').src})`;f.style.backgroundSize=`${PANO.FULLW*s}px ${PANO.H*s}px`;f.style.backgroundPosition=`0 ${-P.y0*s}px`;document.documentElement.style.setProperty('--heroH',heroH()+'px');
-  ITEMS.forEach((it,i)=>itemEls[i].style.left=(it.x*s)+'px');giftEl.style.left=(PANO.GIFT*s)+'px';
+  ITEMS.forEach((it,i)=>itemEls[i].style.left=(it.x*s)+'px');
   const pl=$('plate'),Q=PANO.PLATE;pl.style.left=(Q.x0*s)+'px';pl.style.top=(Q.y0*s)+'px';pl.style.width=((Q.x1-Q.x0)*s)+'px';pl.style.height=((Q.y1-Q.y0)*s)+'px';
   place();}
 function worldW(){return PANO.W*sc();}
@@ -329,7 +329,7 @@ async function allClear(){if(clearShown)return;clearShown=true;banner('ALL CLEAR
 function banner(t,ms){const b=$('banner');b.textContent=t;b.classList.add('on');setTimeout(()=>b.classList.remove('on'),ms);}
 function nearItem(reach){const s=sc();let best=-1,bd=1e9;
   ITEMS.forEach((it,i)=>{if(got.has(i))return;const dx=(it.x*s-hx)*face;if(dx>-20&&dx<reach&&dx<bd){bd=dx;best=i;}});return best;}
-function touchItems(air){const s=sc(),hw=hero.offsetWidth;if(!boost&&Math.abs(PANO.GIFT*s-hx)<hw*.5)openGift();ITEMS.forEach((it,i)=>{if(!got.has(i)&&(!it.sky||air)&&Math.abs(it.x*s-hx)<hw*.45)collect(i,false);});}
+function touchItems(air){const s=sc(),hw=hero.offsetWidth;ITEMS.forEach((it,i)=>{if(!got.has(i)&&(!it.sky||(air&&flying))&&Math.abs(it.x*s-hx)<hw*.45)collect(i,false);});}
 const atRiver=()=>hx>=PANO.RIVER*sc()-hero.offsetWidth/2-4;
 let coldT=0;function cold(){const n=performance.now();if(n-coldT<1800)return;coldT=n;say(boost?T[lang].river:T[lang].riverNo,1800);}
 function upGlow(){$$up.classList.toggle('glow',boost&&!flying&&atRiver());}
@@ -417,7 +417,7 @@ $('plate').addEventListener('pointerdown',e=>{e.stopPropagation();if(!started)re
    점프 그림(jump.webp, 8칸)이 생기면 SH.jump 로 씁니다. 없으면 몸풀기(hop) 그림으로 대신해요. */
 const JUMPSHEET=()=>SH.jump?'jump':'hop';
 const raf=()=>new Promise(r=>requestAnimationFrame(r));
-function heroUp(y,sc_=1,glow=0){hero.style.transform=`translateY(${-y}px) scale(${sc_})`;hero.style.transformOrigin='50% 100%';
+function heroUp(y,sc_=1,glow=0,rot=0){hero.style.transform=`translateY(${-y}px) scale(${sc_})`;hero.style.transformOrigin='50% 100%';hero.style.setProperty('--rot',rot+'deg');
   spr.style.filter=glow?`brightness(${1+glow*2.2}) drop-shadow(0 0 ${4+glow*22}px #fff) drop-shadow(0 0 ${glow*30}px #9fd8ff)`:'';}
 async function jump(){
   if(busy||!started)return;
@@ -439,8 +439,12 @@ async function superJump(){
   sheet(JUMPSHEET());frame(4);
   while(true){const t=Math.min(1,(performance.now()-t0)/dur),e=1-Math.pow(1-t,2);
     hx=x0+(x1-x0)*e;place();
-    const arc=up1*e+G*.18*Math.sin(Math.PI*t);heroUp(arc,1-.7*t,Math.max(0,(t-.35)/.65));if(SH.jump)frame(t<.12?2:t<.45?3:4);
+    const arc=up1*e+G*.06*Math.sin(Math.PI*t);
+    const spin=t<.08||t>.42?0:-720*((t-.08)/.34);              // 백덤블링 2바퀴
+    heroUp(arc,1-.7*t,Math.max(0,(t-.45)/.55),spin);
+    if(t<.08){sheet('jump');frame(2);}else if(t<=.42){sheet('flip');frame(Math.floor((t-.08)/.34*8)%8);}else{sheet('jump');frame(t<.6?3:4);}
     hero.style.opacity=t>.85?String(1-(t-.85)/.15):'1';
+    if(Math.random()<.5&&t>.1)trail(hx,G-arc*.9-G*.1);
     touchItems(true);if(t>=1)break;await raf();}
   hero.style.opacity='0';const sp=$('spk');sp.style.left=x1+'px';sp.style.top=(PANO.TOWER.y48*s)+'px';sp.classList.add('on');
   pop('✨',x1-14,PANO.TOWER.y48*s-50);
@@ -448,14 +452,15 @@ async function superJump(){
   backTimer=setTimeout(goBack,1300);
 }
 let backTimer=0;
+function trail(x,y){const d=document.createElement('div');d.className='pop';d.textContent=pick(['✦','✧','★','✨']);d.style.fontSize=(10+Math.random()*12)+'px';d.style.left=(x-10+Math.random()*30)+'px';d.style.top=y+'px';world.appendChild(d);setTimeout(()=>d.remove(),800);}
 async function goBack(){
   clearTimeout(backTimer);const sp=$('spk');if(!sp.classList.contains('on'))return;sp.classList.remove('on');
   const fl=$('flash');fl.classList.add('on');await sleep(380);
-  flying=false;heroUp(0);hero.style.opacity='1';face=1;hx=PANO.HIDE*sc();place();
+  flying=false;heroUp(0);hero.style.opacity='1';hero.style.zIndex='';face=1;hx=PANO.HIDE*sc();place();
   fl.classList.remove('on');await sleep(200);
   loopF('walk',110);const to=PANO.OUT*sc();let t0=performance.now();
   await new Promise(r=>{const step=t=>{const dt=Math.min(50,t-t0);t0=t;hx+=hero.offsetHeight*.0011*dt;place();if(hx<to)requestAnimationFrame(step);else r();};requestAnimationFrame(step);});
-  say(T[lang].back,2400);await once('cross',[0,1,2,3,4,5,4,5,4,4,4,5],140);busy=false;idle();$('plateArw').textContent=T[lang].plateArw;$('plate').classList.add('hint');
+  hero.style.zIndex=9;say(T[lang].back,2400);await once('cross',[0,1,2,3,4,5,4,5,4,4,4,5],140);busy=false;idle();$('plateArw').textContent=T[lang].plateArw;$('plate').classList.add('hint');
   if(got.size===ITEMS.length&&!clearShown)allClear();else if(sel>=0)showItem(sel,false);else showHome();
 }
 
@@ -465,7 +470,7 @@ async function start(){if(started)return;started=true;$('cover').classList.add('
   face=1;hx=PANO.HIDE*sc();place();loopF('walk',110);
   const to=PANO.OUT*sc();let t0=performance.now();
   await new Promise(r=>{const step=t=>{const dt=Math.min(50,t-t0);t0=t;hx+=hero.offsetHeight*.0011*dt;place();if(hx<to)requestAnimationFrame(step);else r();};requestAnimationFrame(step);});
-  banner('FIGHT!',900);await once('wave',ACT.wave.seq,110);busy=false;idle();$('plateArw').textContent=T[lang].plateArw;$('plate').classList.add('hint');setTimeout(()=>$('plate').classList.remove('hint'),5000);}
+  banner('FIGHT!',900);await once('wave',ACT.wave.seq,110);busy=false;idle();}
 function setLang(l){lang=l;document.documentElement.lang=l;const t=T[l];
   document.querySelectorAll('[data-t]').forEach(e=>e.textContent=t[e.dataset.t]);
   $('helpBody').innerHTML=t.help.map(([k,v])=>`<b>${k}</b>${v}`).join('<br>');
