@@ -71,6 +71,9 @@
 
   .front{position:absolute;left:0;z-index:7;pointer-events:none;background-repeat:no-repeat}   /* 명판 칸막이: 캐릭터 앞에 한 겹 */
   .item.sky{bottom:56%}
+  .item.gift .box{background:linear-gradient(90deg,transparent 42%,#ffd400 42% 58%,transparent 58%),linear-gradient(transparent 42%,#ffd400 42% 58%,transparent 58%),#d92d20;font-size:18px;box-shadow:0 0 0 2px #111,0 0 22px #ffd400}
+  .item.gift{width:52px;height:52px;margin-left:-26px;animation:bob .9s ease-in-out infinite}
+  .dpad .u.glow{color:#ffd400;box-shadow:0 0 0 3px #ffd400,0 0 18px #ffd400;animation:blink .7s steps(1) infinite}
   .plate{position:absolute;z-index:8;cursor:pointer}
   .plate::after{content:"";position:absolute;inset:-4px;border:2px solid var(--gold);opacity:0;transition:.2s}
   .plate:hover::after,.plate.hint::after{opacity:1;animation:blink .8s steps(1) infinite}
@@ -203,13 +206,13 @@ const T={
       get:'ITEM GET!',clear:'ALL CLEAR! 업무 도구 6개를 모두 모았어요 🎉',place:{desk:'내 자리',office:'사무실',city:'한강 노을'},
       help:[['◀ ▶','걷기'],['▲','앞으로 점프 (한강 앞: 슈퍼 점프!)'],['▼','몸풀기'],['A','펀치'],['B','발차기'],['X','날아차기'],['Y','기 모으기'],['SELECT','한 / EN'],['START','도움말']],
       lines:{hit:['수작업 KO!','반복 업무 OUT','POW!'],get:['득템!','이건 쓸만해','자동화 획득!']},
-      river:'한강물은 추워요 🥶',riverHint:'▲ 점프로 건너 볼까?',fly:'63빌딩 48층까지 슈퍼 점프!',arrive:'여의도 63 · 48층',arriveTxt:'48층 도착 ✨ 반짝이를 누르면 내 자리로 돌아가요.',back:'다시 출근! 명판을 눌러 보세요'},
+      river:'한강물은 추워요 🥶 바로 점프해 볼까? ▲',gift:{k:'63 슈퍼 점프권',d:'한강 앞에서 ▲ 를 누르면 63빌딩 48층까지 날아가요!',m:'SPECIAL'},riverNo:'선물 상자를 먼저 열어 보세요 🎁',fly:'63빌딩 48층까지 슈퍼 점프!',arrive:'여의도 63 · 48층',arriveTxt:'48층 도착 ✨ 반짝이를 누르면 내 자리로 돌아가요.',back:'다시 출근 😎'},
   en:{a:'Punch',b:'Kick',x:'Fly kick',y:'Power',up:'Jump',down:'Warm-up',sel:'SELECT = KO/EN',
       hello:'Walk with ◀ ▶ and collect the item boxes. Touch or hit them to open. Tap my nameplate to see my resume.',plateArw:'▲ RESUME',welcome:'STAGE 1 · YEOUIDO 63',
       get:'ITEM GET!',clear:'ALL CLEAR! You collected all 6 work tools 🎉',place:{desk:'MY DESK',office:'OFFICE',city:'HAN RIVER'},
       help:[['◀ ▶','Walk'],['▲','Jump forward (at the river: SUPER JUMP!)'],['▼','Warm-up'],['A','Punch'],['B','Kick'],['X','Fly kick'],['Y','Power up'],['SELECT','KO / EN'],['START','Help']],
       lines:{hit:['Manual work KO!','Repetition OUT','POW!'],get:['Got it!','Useful!','Automation get!']},
-      river:'The Han River is cold 🥶',riverHint:'Try ▲ to jump?',fly:'SUPER JUMP to the 48th floor!',arrive:'YEOUIDO 63 · 48F',arriveTxt:'Arrived at 48F ✨ Tap the sparkle to go back to my desk.',back:'Back to work! Tap my nameplate'},
+      river:'The Han River is cold 🥶 Jump right over? ▲',gift:{k:'63 Super Jump Pass',d:'Press ▲ at the river to fly to the 48th floor of the 63 Building!',m:'SPECIAL'},riverNo:'Open the gift box first 🎁',fly:'SUPER JUMP to the 48th floor!',arrive:'YEOUIDO 63 · 48F',arriveTxt:'Arrived at 48F ✨ Tap the sparkle to go back to my desk.',back:'Back to work 😎'},
 };
 /* 아이템 = 업무 도구. x 는 배경 원본(높이 1024) 기준 위치 */
 const ITEMS=[
@@ -232,10 +235,10 @@ const ITEMS=[
    d:{ko:'처음 만든 업무 자동화. 신용등급 공시를 모아 정리하는 프로그램으로, 지금 도구들의 출발점입니다.',en:'My first work automation — it gathers rating disclosures. Where all of this started.'},
    s:[['만든 해|Year','2022'],['버전|Version','2.0']]},
 ];
-const PANO={H:1024,W:4920,FULLW:7629,office:1809,city:3833,PART:{x1:676,y0:412},PLATE:{x0:165,y0:418,x1:492,y1:505},HIDE:520,OUT:830,RIVER:3860,TOWER:{x:4590,y48:320}};
+const PANO={H:1024,W:4920,FULLW:7629,office:1809,city:3833,PART:{x1:676,y0:412},PLATE:{x0:165,y0:418,x1:492,y1:505},HIDE:520,OUT:830,RIVER:3860,GIFT:3740,TOWER:{x:4590,y48:320}};
 
 /* ═════════ 동작 그림 (각 8칸, 칸 400px, 왼쪽을 보는 그림) ═════════ */
-const SHEETS=['idle','walk','punch','kick','flykick','power','flip','hop','cheer','wave','paper','cross'];
+const SHEETS=['idle','walk','punch','kick','flykick','power','flip','hop','cheer','wave','paper','cross','jump'];
 const SH={};SHEETS.forEach(n=>{SH[n]=`../work/assets/${n}.webp`;const i=new Image();i.src=SH[n];});
 const ACT={
   punch:{seq:[0,1,2,3,4,5,5,6,7],ms:80,hit:4,reach:70},
@@ -251,7 +254,7 @@ const ACT={
 };
 
 /* ═════════ 상태 ═════════ */
-let lang='ko',started=false,busy=false,flying=false,clearShown=false,hx=420,face=1,camX=0,pow=0,score=0,sel=-1;
+let lang='ko',started=false,busy=false,flying=false,clearShown=false,boost=false,hx=420,face=1,camX=0,pow=0,score=0,sel=-1;
 const got=new Set();
 const $=id=>document.getElementById(id);
 const hero=$('hero'),spr=$('spr'),world=$('world'),game=$('game');
@@ -287,13 +290,14 @@ $('slots').onclick=e=>{const s=e.target.closest('.slot.got');if(s)showItem(+s.da
 
 /* ═════════ 게임 화면 ═════════ */
 const itemEls=ITEMS.map((it,i)=>{const d=document.createElement('div');d.className='item'+(it.sky?' sky':'');d.innerHTML=`<div class="box" style="background:${it.c};color:${it.fg||'#fff'}">${it.ic}</div>`;world.appendChild(d);return d;});
+const giftEl=document.createElement('div');giftEl.className='item gift';giftEl.innerHTML='<div class="box">🎁</div>';world.appendChild(giftEl);
 $('mini').innerHTML=ITEMS.map(it=>`<i style="left:${it.x/PANO.W*100}%"></i>`).join('')+'<u id="me"></u>';
 let firstLayout=true;
 function layout(){
   const s=sc();if(firstLayout&&game.clientHeight){hx=PANO.HIDE*s;firstLayout=false;}
   const f=$('front'),P=PANO.PART;f.style.top=(P.y0*s)+'px';f.style.width=(P.x1*s)+'px';f.style.height=((PANO.H-P.y0)*s)+'px';
   f.style.backgroundImage=`url(${$('pano').src})`;f.style.backgroundSize=`${PANO.FULLW*s}px ${PANO.H*s}px`;f.style.backgroundPosition=`0 ${-P.y0*s}px`;document.documentElement.style.setProperty('--heroH',heroH()+'px');
-  ITEMS.forEach((it,i)=>itemEls[i].style.left=(it.x*s)+'px');
+  ITEMS.forEach((it,i)=>itemEls[i].style.left=(it.x*s)+'px');giftEl.style.left=(PANO.GIFT*s)+'px';
   const pl=$('plate'),Q=PANO.PLATE;pl.style.left=(Q.x0*s)+'px';pl.style.top=(Q.y0*s)+'px';pl.style.width=((Q.x1-Q.x0)*s)+'px';pl.style.height=((Q.y1-Q.y0)*s)+'px';
   place();}
 function worldW(){return PANO.W*sc();}
@@ -303,7 +307,7 @@ function place(){
   camX=Math.max(0,Math.min(W-vw,hx-vw*.42));
   world.style.transform=`translateX(${-camX}px)`;
   hero.style.left=(hx-hw/2)+'px';
-  hero.classList.toggle('right',face>0);
+  hero.classList.toggle('right',face>0);if(typeof upGlow==='function')upGlow();
   const ox=hx/sc();$('me').style.left=(ox/PANO.W*100)+'%';
   const p=ox<PANO.office?'desk':ox<PANO.city?'office':'city';
   $('hud2').innerHTML=`<b>${T[lang].place[p]}</b> · ${got.size}/6`;
@@ -325,9 +329,15 @@ async function allClear(){if(clearShown)return;clearShown=true;banner('ALL CLEAR
 function banner(t,ms){const b=$('banner');b.textContent=t;b.classList.add('on');setTimeout(()=>b.classList.remove('on'),ms);}
 function nearItem(reach){const s=sc();let best=-1,bd=1e9;
   ITEMS.forEach((it,i)=>{if(got.has(i))return;const dx=(it.x*s-hx)*face;if(dx>-20&&dx<reach&&dx<bd){bd=dx;best=i;}});return best;}
-function touchItems(air){const s=sc(),hw=hero.offsetWidth;ITEMS.forEach((it,i)=>{if(!got.has(i)&&(!it.sky||air)&&Math.abs(it.x*s-hx)<hw*.45)collect(i,false);});}
+function touchItems(air){const s=sc(),hw=hero.offsetWidth;if(!boost&&Math.abs(PANO.GIFT*s-hx)<hw*.5)openGift();ITEMS.forEach((it,i)=>{if(!got.has(i)&&(!it.sky||air)&&Math.abs(it.x*s-hx)<hw*.45)collect(i,false);});}
 const atRiver=()=>hx>=PANO.RIVER*sc()-hero.offsetWidth/2-4;
-let coldT=0;function cold(){const n=performance.now();if(n-coldT<1600)return;coldT=n;say(T[lang].river,1300);setTimeout(()=>{if(atRiver()&&!flying)say(T[lang].riverHint,1200);},1400);}
+let coldT=0;function cold(){const n=performance.now();if(n-coldT<1800)return;coldT=n;say(boost?T[lang].river:T[lang].riverNo,1800);}
+function upGlow(){$$up.classList.toggle('glow',boost&&!flying&&atRiver());}
+const $$up=document.querySelector('.dpad .u');
+function openGift(){if(boost)return;boost=true;const s=sc();giftEl.classList.add('got');setTimeout(()=>giftEl.style.display='none',600);
+  pop('🎁 GET!',PANO.GIFT*s-40,game.clientHeight*.3);addScore(2000);setPow(100);const g=T[lang].gift;
+  $('win').innerHTML=`<div class="ttl"><span>${T[lang].get}</span><span>${g.m}</span></div><h2><i style="background:#d92d20">🎁</i>${g.k}</h2><p id="wp"></p>`;typeText($('wp'),g.d);
+  $('win').classList.remove('flash');void $('win').offsetWidth;$('win').classList.add('flash');}
 
 /* ═════════ 입력 ═════════ */
 const keys={left:false,right:false};
@@ -411,23 +421,25 @@ function heroUp(y,sc_=1,glow=0){hero.style.transform=`translateY(${-y}px) scale(
   spr.style.filter=glow?`brightness(${1+glow*2.2}) drop-shadow(0 0 ${4+glow*22}px #fff) drop-shadow(0 0 ${glow*30}px #9fd8ff)`:'';}
 async function jump(){
   if(busy||!started)return;
-  if(atRiver())return superJump();
-  busy=true;const H=hero.offsetHeight,dx=H*.5*face,peak=H*.5,dur=560,x0=hx;let t0=performance.now();
-  sheet(JUMPSHEET());clearInterval(ft);let k=0;frame(0);ft=setInterval(()=>frame(Math.min(7,++k)),dur/8);
+  if(atRiver()&&boost)return superJump();
+  busy=true;const H=hero.offsetHeight,dx=H*.45*face,peak=H*.42,dur=520,x0=hx;
+  if(SH.jump){await once('jump',[1],90);}
+  let t0=performance.now();sheet(JUMPSHEET());clearInterval(ft);if(!SH.jump){let k=0;frame(0);ft=setInterval(()=>frame(Math.min(7,++k)),dur/8);}
   while(true){const t=Math.min(1,(performance.now()-t0)/dur);hx=x0+dx*t;place();heroUp(4*peak*t*(1-t));touchItems(true);
+    if(SH.jump)frame(t<.75?5:6);
     if(t>=1)break;await raf();}
-  heroUp(0);clearInterval(ft);busy=false;if(atRiver()&&face>0)cold();
+  heroUp(0);clearInterval(ft);if(SH.jump)await once('jump',[7],110);busy=false;if(atRiver()&&face>0)cold();
   if(keys.left||keys.right)startWalk();else idle();
 }
 async function superJump(){
   busy=true;flying=true;face=1;place();const s=sc(),G=game.clientHeight;
   say(T[lang].fly,1500);
-  await once(JUMPSHEET(),[0,1,1,2],110);                       // 웅크렸다가
+  await once(JUMPSHEET(),[0,1,1,1,2],110);                     // 웅크렸다가 뛰어오름
   const x0=hx,x1=PANO.TOWER.x*s,up1=G*.91-PANO.TOWER.y48*s,dur=1900;let t0=performance.now();
   sheet(JUMPSHEET());frame(4);
   while(true){const t=Math.min(1,(performance.now()-t0)/dur),e=1-Math.pow(1-t,2);
     hx=x0+(x1-x0)*e;place();
-    const arc=up1*e+G*.18*Math.sin(Math.PI*t);heroUp(arc,1-.7*t,Math.max(0,(t-.35)/.65));
+    const arc=up1*e+G*.18*Math.sin(Math.PI*t);heroUp(arc,1-.7*t,Math.max(0,(t-.35)/.65));if(SH.jump)frame(t<.12?2:t<.45?3:4);
     hero.style.opacity=t>.85?String(1-(t-.85)/.15):'1';
     touchItems(true);if(t>=1)break;await raf();}
   hero.style.opacity='0';const sp=$('spk');sp.style.left=x1+'px';sp.style.top=(PANO.TOWER.y48*s)+'px';sp.classList.add('on');
@@ -443,7 +455,7 @@ async function goBack(){
   fl.classList.remove('on');await sleep(200);
   loopF('walk',110);const to=PANO.OUT*sc();let t0=performance.now();
   await new Promise(r=>{const step=t=>{const dt=Math.min(50,t-t0);t0=t;hx+=hero.offsetHeight*.0011*dt;place();if(hx<to)requestAnimationFrame(step);else r();};requestAnimationFrame(step);});
-  say(T[lang].back,1800);busy=false;idle();$('plateArw').textContent=T[lang].plateArw;$('plate').classList.add('hint');
+  say(T[lang].back,2400);await once('cross',[0,1,2,3,4,5,4,5,4,4,4,5],140);busy=false;idle();$('plateArw').textContent=T[lang].plateArw;$('plate').classList.add('hint');
   if(got.size===ITEMS.length&&!clearShown)allClear();else if(sel>=0)showItem(sel,false);else showHome();
 }
 
