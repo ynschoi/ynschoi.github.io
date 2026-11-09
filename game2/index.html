@@ -312,6 +312,8 @@ const ITEMS=[
   {x:3450,kind:'tool',g:3,c:'#9f3b45',ic:'SEI',k:{ko:'SEIBRO 조회시스템',en:'SEIBRO Lookup'},m:'자동화 툴|Automation tool',
    d:{ko:'SPC명만 넣으면 SEIBRO 발행 종목을 표로 정리해 주는 웹앱. 팀원들이 링크 하나로 씁니다.',en:'Enter an SPC name and get its SEIBRO issuance records as a table.'},s:[],line:{ko:'수동 조회 퇴치!',en:'Manual lookup defeated!'}},
 ];
+ITEMS.push({x:4040,kind:'sky',c:'#2563eb',ic:'★',k:{ko:'다음 목표',en:'Next Goal'},m:'NEXT',
+   d:{ko:'※ 다음 목표 입력 (예: AI로 신용평가 업무를 바꾸는 사람)',en:'※ To be added'},s:[],line:{ko:'더 높이!',en:'Higher!'}});
 const GHOSTS=[{x:2550,ko:'반복 업무',en:'Repetition'},{x:2850,ko:'수기 입력',en:'Manual entry'},{x:3150,ko:'파일 찾기',en:'File hunting'},{x:3450,ko:'수동 조회',en:'Manual lookup'}];
 const ITEM_LINE=ITEMS.map(it=>it.line);
 const NTOT=ITEMS.length;
@@ -370,7 +372,7 @@ function renderSlots(){$('slots').innerHTML=ITEMS.map((it,i)=>got.has(i)?`<div c
 $('slots').onclick=e=>{const s=e.target.closest('.slot.got');if(s)showItem(+s.dataset.i,false);};
 
 /* ═════════ 게임 화면 ═════════ */
-const itemEls=ITEMS.map((it,i)=>{const d=document.createElement('div');d.className='item '+it.kind;
+const itemEls=ITEMS.map((it,i)=>{const d=document.createElement('div');d.className='item '+it.kind+(it.kind=='sky'?' sky':'');
   d.innerHTML=it.kind=='me'?`<div class="box gift" style="--gc:${it.c}"><b>${it.ic}</b></div>`:`<div class="box" style="background:${it.c}">${it.ic}</div>`;
   if(it.kind=='tool')d.style.display='none';world.appendChild(d);return d;});
 const ghostEls=GHOSTS.map(g=>{const d=document.createElement('div');d.className='ghost';d.innerHTML=`<div class="gb"><i></i><i></i></div><span></span>`;d.style.display='none';world.appendChild(d);return d;});
@@ -407,7 +409,7 @@ function collect(i,hit){
   addScore(hit?1500:1000);setPow(pow+14);say(ITEM_LINE[i][lang],1800);
   showItem(i,true);
   if(ITEMS[i].ai)setTimeout(powerUp,1200);
-  if(got.size===ITEMS.length&&!flying)setTimeout(allClear,900);
+
 }
 /* AI 상자 → 에너지 충전 → 유령 등장 */
 function powerUp(){if(powered)return;powered=true;hero.classList.add('powered');setPow(100);banner('ENERGY MAX!',1100);
@@ -420,7 +422,7 @@ function slay(i){if(slain.has(i))return;slain.add(i);const s=sc(),el=ghostEls[i]
   setTimeout(()=>{dropped.add(ti);const d=itemEls[ti];d.style.display='';d.classList.add('drop');$('mini').children[ti].style.opacity='';},450);}
 async function allClear(){if(clearShown)return;clearShown=true;banner('ALL CLEAR!',1600);busy=true;await once('cheer',ACT.cheer.seq,110);busy=false;idle();showHome();}
 function banner(t,ms){const b=$('banner');b.textContent=t;b.classList.add('on');setTimeout(()=>b.classList.remove('on'),ms);}
-const avail=i=>ITEMS[i].kind=='me'||dropped.has(i);
+const avail=i=>ITEMS[i].kind=='me'||dropped.has(i)||(ITEMS[i].kind=='sky'&&flying);
 function nearItem(reach){const s=sc();let best=-1,bd=1e9;
   ITEMS.forEach((it,i)=>{if(got.has(i)||!avail(i))return;const dx=(it.x*s-hx)*face;if(dx>-20&&dx<reach&&dx<bd){bd=dx;best=i;}});return best;}
 function touchItems(air){const s=sc(),hw=hero.offsetWidth;ITEMS.forEach((it,i)=>{if(!got.has(i)&&avail(i)&&Math.abs(it.x*s-hx)<hw*.45)collect(i,false);});}
