@@ -115,6 +115,7 @@
   .idc .rows p{color:#3f3f46;font:11px/1.35 var(--font);margin:0;min-height:0}
   .idc .rows b{color:#18181b}
   .idc .rows p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
+  .idc .rows div:last-child p{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
   .idc .rows p.todo1{color:#d92d20;font:10px var(--px)}
   .idc .rows div{padding-top:2px}
   .idc .rows em{font-style:normal;font:9.5px var(--px);color:#d92d20}
@@ -463,7 +464,7 @@ const CV={
     ['이전 경력','대신증권 리서치센터 애널리스트'],
     ['학력','※ 학교 · 전공'],
     ['자격증','※ 자격증 이름'],
-    ['AI 작업','업무 도구 6개 · 커밋 160']]},
+    ['주요 AI 작업','SFG 리스트 · SEIBRO 발행조회 · 탐색기 툴 · FISIS 엑셀 애드인 · 차트 서식 애드인']]},
   en:{name:'Youngsu Choi',sub:'최영수',role:'Senior Analyst',rows:[
     ['Company','Korea Investors Service · since 2018.09'],
     ['Role','Structured finance credit ratings'],
@@ -471,7 +472,7 @@ const CV={
     ['Previous','Daishin Securities · Research Analyst'],
     ['Education','※ School · Major'],
     ['Certs','※ Certificates'],
-    ['AI work','6 work tools · 160 commits']]},
+    ['AI work','SFG List · SEIBRO Lookup · Explorer Tools · FISIS Excel Add-in · Chart Format Add-in']]},
 };
 let showingCV=false;
 function showCV(){showingCV=true;setTimeout(()=>showingCV=false,50);const c=CV[lang];sel=-1;renderSlots();const keepCam=camLock;endPose();camLock=keepCam;
