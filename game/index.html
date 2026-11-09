@@ -278,7 +278,7 @@ const ITEMS=[
 const PANO={H:1024,W:4920,FULLW:7629,office:1809,city:3833,PART:{x1:676,y0:412},PLATE:{x0:165,y0:418,x1:492,y1:505},HIDE:520,OUT:830,RIVER:3860,GIFT:3740,TOWER:{x:4590,y48:320}};
 
 /* ═════════ 동작 그림 (각 8칸, 칸 400px, 왼쪽을 보는 그림) ═════════ */
-const SHEETS=['idle','walk','punch','kick','flykick','power','flip','hop','cheer','wave','paper','cross','jump'];
+const SHEETS=['idle','walk','punch','kick','flykick','power','flip','hop','cheer','wave','paper','cross','jump','thumb'];
 const SH={};SHEETS.forEach(n=>{SH[n]=`../work/assets/${n}.webp`;const i=new Image();i.src=SH[n];});
 const ACT={
   punch:{seq:[0,1,2,3,4,5,5,6,7],ms:80,hit:4,reach:70},
@@ -449,7 +449,8 @@ const CV={
 };
 function showCV(){const c=CV[lang];sel=-1;renderSlots();const keepCam=camLock;endPose();camLock=keepCam;
   /* 이력서 볼 때: 웃으며 "저 어때요?" — 방향·동작 버튼 누를 때까지 유지 */
-  if(started&&!busy&&!flying){posing=true;poseTok++;face=1;place();sheet('cross');clearInterval(ft);let pk=0;frame(4);ft=setInterval(()=>frame([4,4,5,5][++pk%4]),260);say(T[lang].how,600000);hero.classList.add('thumbs');}   /* 엄지척 그림이 생기면 sheet('thumb')로 교체 */
+  if(started&&!busy&&!flying){posing=true;const tk=++poseTok;face=-1;place();say(T[lang].how,600000);
+    once('thumb',[0,1,2],120).then(()=>{if(!posing||tk!==poseTok)return;let pk=0;ft=setInterval(()=>frame([3,4,5,6,7,6,4,5][++pk%8]),220);});}   /* 정면 엄지척 (그림이 정면이라 좌우 반전 없이) */   /* 엄지척 그림이 생기면 sheet('thumb')로 교체 */
   $('win').classList.add('idw');document.querySelector('.info').classList.add('cvmode');
   $('win').innerHTML=`<div class="idc"><div class="hd"><i></i>Korea Investors Service<span>${lang=='ko'?'사원증':'STAFF ID'}</span></div><div class="ph"></div>
    <div class="who"><b>${c.name}</b><small>${lang=='ko'?'Youngsu Choi':'최영수'}</small><br><span class="chip">${lang=='ko'?'구조화금융 평가':'Structured Finance'}</span></div>
