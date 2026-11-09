@@ -295,6 +295,8 @@ const ITEMS=[
    d:{ko:'처음 만든 업무 자동화. 신용등급 공시를 모아 정리하는 프로그램으로, 지금 도구들의 출발점입니다.',en:'My first work automation — it gathers rating disclosures. Where all of this started.'},
    s:[['만든 해|Year','2022'],['버전|Version','2.0']]},
 ];
+/* 아이템별 득템 대사 (없으면 기본 대사) */
+const ITEM_LINE=[{ko:'PDF는 기계가 읽고, 나는 커피 한 잔 ☕',en:'PDFs read themselves now ☕'},{ko:'3사 보고서 한 방에 수집 완료 📥',en:'Three agencies, one click 📥'},{ko:'표 복붙 지옥 탈출! 🏃‍♀️',en:'Escaped copy-paste hell 🏃‍♀️'},{ko:'SPC 이름만 넣으면 끝 🔎',en:'Just type the SPC name 🔎'},{ko:'폴더 정리 5초 컷 📁',en:'Folders tidied in 5 sec 📁'},{ko:'2022년의 나, 고마워! ⭐',en:'Thanks, 2022 me! ⭐'}];
 const PANO={H:1024,W:4920,FULLW:7629,office:1809,city:3833,PART:{x1:676,y0:412},PLATE:{x0:165,y0:418,x1:492,y1:505},HIDE:520,OUT:830,RIVER:3860,GIFT:3740,TOWER:{x:4590,y48:320}};
 
 /* ═════════ 동작 그림 (각 8칸, 칸 400px, 왼쪽을 보는 그림) ═════════ */
@@ -380,7 +382,7 @@ function collect(i,hit){
   el.classList.add('got');setTimeout(()=>el.style.display='none',600);
   $('mini').children[i].classList.add('got');
   pop(hit?'POW!':'GET!',ITEMS[i].x*s-30,game.clientHeight*.32);
-  addScore(hit?1500:1000);setPow(pow+18);say(pick(T[lang].lines.get));
+  addScore(hit?1500:1000);setPow(pow+18);say(ITEM_LINE[i]?ITEM_LINE[i][lang]:pick(T[lang].lines.get),1600);
   showItem(i,true);
   if(got.size===ITEMS.length&&!flying)setTimeout(allClear,900);
 }
