@@ -46,7 +46,7 @@
   @keyframes blink{50%{opacity:0}}
   .inv{display:flex;gap:5px;align-items:center}
   .inv .lb{font-size:9px;color:var(--violet);margin-right:2px}
-  .slot{flex:1;height:30px;border:2px solid #2d2560;background:#120d33;display:grid;place-items:center;font-size:9px;color:#3d3480;font-weight:700}
+  .slot{flex:1;height:46px;position:relative;border:2px solid #2d2560;background:#120d33;display:grid;place-items:center;font-size:9px;color:#3d3480;font-weight:700}
   .slot.got{border-color:#fff;color:#fff;cursor:pointer}
   .slot.sel{box-shadow:0 0 0 2px var(--gold)}
 
@@ -269,6 +269,9 @@
   .oring{position:absolute;z-index:8;width:20px;height:20px;margin-left:-10px;margin-bottom:-10px;border-radius:50%;border:3px solid #ffb38a;box-shadow:0 0 18px #d97757,inset 0 0 12px #d97757;pointer-events:none;animation:oring 1.5s ease-out forwards}
   @keyframes oring{to{transform:scale(9);opacity:0}}
   .hitspk{position:absolute;z-index:9;width:10px;height:10px;background:#fff;box-shadow:0 0 8px #fff,0 0 14px #ffd400;pointer-events:none;transform:translate(-50%,-50%) rotate(45deg)}
+  .slot .sp{position:absolute;inset:3px;background-repeat:no-repeat;background-position:0 0;image-rendering:auto}
+  .hi.pic{position:relative;width:40px!important;min-width:40px;height:40px!important;padding:0!important}
+  .hi.pic .sp{position:absolute;inset:2px;background-repeat:no-repeat;background-position:0 0}
 </style>
 </head>
 <body>
@@ -436,11 +439,13 @@ function showHome(){$('win').classList.remove('idw');document.querySelector('.in
   const done=got.size===NTOT;$('win').innerHTML=`<div class="ttl"><span>${done?`All Clear (${NTOT}/${NTOT})`:t.welcome}</span><span>${done?'':got.size+'/'+NTOT}</span></div><h2>1P YOUNGSU</h2><p id="wp"></p>`;typeText($('wp'),got.size===NTOT?t.clear:t.hello);}
 function showItem(i,fresh){$('win').classList.remove('idw');document.querySelector('.info').classList.remove('cvmode');const it=ITEMS[i],L=lang=='ko'?0:1;sel=i;renderSlots();
   $('win').innerHTML=`<div class="ttl"><span>${fresh?T[lang].get:'ITEM '+(i+1)}</span><span>${two(it.m,L)}</span></div>
-   <h2><i class="hi" style="background:${it.c};color:${it.fg||'#fff'}">${ICON[it.ic+'s']||ICON[it.ic]||it.ic}</i>${it.k[lang]}</h2><p id="wp"></p>
+   <h2><i class="hi pic" style="background:${it.c}55">${itemPic(i,'sp')}</i>${it.k[lang]}</h2><p id="wp"></p>
    <div class="st">${it.s.map(s=>`<span>${two(s[0],L)} <b>${two(s[1],L)}</b></span>`).join('')}</div>${it.data?spark(it.data):''}`;
   typeText($('wp'),it.d[lang]);
   if(fresh){$('win').classList.remove('flash');void $('win').offsetWidth;$('win').classList.add('flash');}}
-function renderSlots(){$('slots').innerHTML=ITEMS.map((it,i)=>got.has(i)?`<div class="slot got${sel===i?' sel':''}" data-i="${i}" style="background:${it.c};color:${it.fg||'#fff'}">${it.ic}</div>`:`<div class="slot">?</div>`).join('');}
+const ITEMPIC=i=>{const it=ITEMS[i];return it.ic=='WORK'?['briefcase',1]:it.ai?['ag_claude',8]:it.kind=='sky'?['next_star',6]:[['ag_sulsul','ag_ddalkkak','ag_chakchak'][it.g],8];};
+function itemPic(i,cls='sp'){const [n,f]=ITEMPIC(i);return `<i class="${cls}" style="background-image:url(${A2(n)});background-size:${f*100}% 100%"></i>`;}
+function renderSlots(){$('slots').innerHTML=ITEMS.map((it,i)=>got.has(i)?`<div class="slot got${sel===i?' sel':''}" data-i="${i}" style="background:${it.c}55">${itemPic(i)}</div>`:`<div class="slot">?</div>`).join('');}
 $('slots').onclick=e=>{const s=e.target.closest('.slot.got');if(s)showItem(+s.dataset.i,false);};
 
 /* ═════════ 게임 화면 ═════════ */
@@ -570,11 +575,11 @@ async slime(st,m){m.wake&&m.wake();let a=m.a;const S=st.clientHeight,cx=a._cx,to
   a.classList.remove('i-wobble');
   await strike(st,'punch');word(st,'Ctrl+V',cx,top(),16);m.tag.style.opacity=0;
   for(const i of [1,2,3,4,5]){a.frame(i);await wait(140);}
-  let bb=bubble(st,'또야? 다시 합체~',cx+st.clientWidth*.12,top()-24);for(const i of [6,7]){a.frame(i);await wait(200);}await wait(450);bb.remove();
+  for(const i of [6,7]){a.frame(i);await wait(200);}await wait(300);
   const a2=actor(st,'s2',S*.36*300/256,cx,S*.04);a2.frame(0);a.remove();a=a2;
   await strike(st,'kick');word(st,'Ctrl+V',cx,top(),16);
   for(const i of [1,2,3,4,5]){a.frame(i);await wait(140);}
-  bb=bubble(st,'몇 번을 해도 똑같아~',cx+st.clientWidth*.12,top()-24);for(const i of [6,7]){a.frame(i);await wait(200);}await wait(450);bb.remove();
+  for(const i of [6,7]){a.frame(i);await wait(200);}await wait(300);
   const a3=actor(st,'s3',S*.36*300/288,cx,S*.04);a3.frame(0);a.remove();a=a3;
   await strike(st,'punch');word(st,'MAX!',cx,top(),22);
   for(const i of [1,2,3]){a.frame(i);await wait(170);}
@@ -613,7 +618,9 @@ function spawnMon(i){const mo=mons[i];if(mo.st)return;mo.x=Math.max(GHOSTS[i].x,
   mo.m=B[GHOSTS[i].kind](st);anim(st,[{opacity:0,transform:'scale(.6)'},{opacity:1,transform:'none'}],{duration:400,fill:'none'});
   if(GHOSTS[i].kind=='golem'){const a=mo.m.a,gb=bubble(st,lang=='ko'?'이거… 오늘까지래…':'Due… today…',a._cx,st.clientHeight-a._b-a.offsetHeight*.95);setTimeout(()=>gb.remove(),3000);}}
 function layoutMons(){mons.forEach((mo,i)=>{if(!mo.st||mo.done)return;const b=stageBox(i);mo.st.style.left=b.left+'px';});}
-function strike(st){const mo=st._mon;if(mo.hitQ>0){mo.hitQ--;return Promise.resolve();}return new Promise(r=>mo.waiter=r);}
+const HITS={zombie:2,slime:3,golem:2};let morphing=false;
+function strike(st){const mo=st._mon;mo.ns=(mo.ns||0)+1;const last=mo.ns>=HITS[GHOSTS[mons.indexOf(mo)].kind];const lock=()=>{if(last){morphing=true;keys.left=keys.right=false;}};
+  const pr=(()=>{if(mo.hitQ>0){mo.hitQ--;return Promise.resolve();}return new Promise(r=>mo.waiter=r);})();return pr.then(lock);}
 function hitReact(i){const st=mons[i].st;if(!st)return;
   st.querySelectorAll('.actor').forEach(a=>a.animate([{translate:'0 0',filter:'none'},{translate:'22px -6px',filter:'brightness(3) saturate(0)',offset:.15},{translate:'10px 0',filter:'brightness(1.6)',offset:.45},{translate:'0 0',filter:'none'}],{duration:380,easing:'ease-out'}));
   const r=st.getBoundingClientRect(),wr=world.getBoundingClientRect(),x=mons[i].x*sc()-st.clientWidth*.12,y=r.top-wr.top+st.clientHeight*.45;
@@ -622,7 +629,7 @@ function hitReact(i){const st=mons[i].st;if(!st)return;
   game.animate([{transform:'none'},{transform:'translate(-4px,2px)'},{transform:'translate(3px,-2px)'},{transform:'none'}],{duration:180});}
 function hitMon(i){const mo=mons[i];if(mo.done)return;addScore(500);if(GHOSTS[i].kind!='golem'&&(!mo.started||mo.waiter))hitReact(i);
   if(!mo.started){mo.started=true;mo.hitQ=1;runKO(i);}else if(mo.waiter){const w=mo.waiter;mo.waiter=null;w();}}
-async function runKO(i){const mo=mons[i];const ag=await K[GHOSTS[i].kind](mo.st,mo.m);mo.done=true;slain.add(i);addScore(2000);joinTeam(ag,i);
+async function runKO(i){const mo=mons[i];const ag=await K[GHOSTS[i].kind](mo.st,mo.m);morphing=false;mo.done=true;slain.add(i);addScore(2000);joinTeam(ag,i);
   if(i+1<GHOSTS.length)setTimeout(()=>{spawnMon(i+1);banner(lang=='ko'?'다음 몬스터!':'NEXT MONSTER!',900);},1200);}
 /* 몬스터가 주인공 쪽으로 다가와요 (맞기 전까지) */
 const MSPD={zombie:.00035,slime:.0005,golem:.0003};
@@ -704,6 +711,7 @@ function walkStep(t){
   walkRaf=requestAnimationFrame(walkStep);}
 function press(k,down){
   if(!started){if(down)start();return;}
+  if(morphing){if(!down&&(k==='left'||k==='right'))keys[k]=false;return;}   /* 변신하는 동안은 주인공 멈춤 */
   if(down&&posing){endPose();if(k!=='left'&&k!=='right'){idle();return;}}
   if(k==='left'||k==='right'){if(down)lineup=false;keys[k]=down;if(down&&!busy)startWalk();return;}
   if(!down)return;
