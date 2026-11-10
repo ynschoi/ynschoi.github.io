@@ -291,6 +291,7 @@
   .rxfly{position:absolute;left:50%;top:-4px;pointer-events:none;font-size:18px;animation:rxf .9s ease-out forwards}
   @keyframes rxf{to{transform:translate(-50%,-46px) scale(1.4);opacity:0}}
   @media (prefers-reduced-motion:reduce){.cred .roll{animation:none;top:0}}
+  .rx.off{opacity:.35;filter:grayscale(1)}
 </style>
 </head>
 <body>
@@ -465,18 +466,20 @@ const RK=[['heart','❤️'],['thumb','👍'],['muscle','💪🏿']];
 let RC={heart:0,thumb:0,muscle:0};
 const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
 function loadReact(){if(!REACT_URL)return;fetch(REACT_URL+'?op=get').then(r=>r.json()).then(j=>{RC={...RC,...j};paintReact();}).catch(()=>{});}
-function paintReact(){RK.forEach(([k])=>{const e=document.querySelector(`.rx[data-k="${k}"] b`);if(e)e.textContent=RC[k]+(REACT_URL?0:(ls.get('rw_'+k)?1:0));});}
+const myPick=()=>ls.get('rw_pick');
+function paintReact(){const mine=myPick();RK.forEach(([k])=>{const btn=document.querySelector(`.rx[data-k="${k}"]`);if(!btn)return;
+  btn.querySelector('b').textContent=RC[k]+(REACT_URL?0:(mine==k?1:0));btn.classList.toggle('on',mine==k);btn.classList.toggle('off',!!mine&&mine!=k);});}
 function pressReact(k,btn){const d=document.createElement('span');d.className='rxfly';d.textContent=RK.find(r=>r[0]==k)[1];btn.appendChild(d);setTimeout(()=>d.remove(),900);
-  if(ls.get('rw_'+k)){say(lang=='ko'?'이미 보냈어요! 고마워요 💕':'Already sent, thank you! 💕',1200);return;}
-  ls.set('rw_'+k,'1');if(REACT_URL){RC[k]++;fetch(REACT_URL+'?op=add&k='+k).catch(()=>{});}paintReact();say(lang=='ko'?'고마워요! 💕':'Thank you! 💕',1200);}
+  const mine=myPick();if(mine){say(mine==k?(lang=='ko'?'이미 보냈어요! 고마워요 💕':'Already sent, thank you! 💕'):(lang=='ko'?'반응은 하나만 고를 수 있어요':'You can pick just one'),1200);return;}
+  ls.set('rw_pick',k);if(REACT_URL){RC[k]++;fetch(REACT_URL+'?op=add&k='+k).catch(()=>{});}paintReact();say(lang=='ko'?'고마워요! 💕':'Thank you! 💕',1200);}
 function showCredits(){const ko=lang=='ko';
   $('win').innerHTML=`<div class="ttl"><span>All Clear (${NTOT}/${NTOT})</span><span>${ko?'계속 돌아다녀도 돼요':'Keep exploring!'}</span></div>
    <div class="cred"><div class="roll"><h3>THANK YOU<br>FOR PLAYING</h3>
     <i>PLAYER</i><b>1P YOUNGSU</b><i>AGENTS</i><b>Rule · Search · Data</b>
     <i>POWERED BY</i><b>Claude Code · Codex</b><i>AND YOU</i><b>♥</b></div></div>
-   <div class="rxbar">${RK.map(([k,e])=>`<button class="rx${ls.get('rw_'+k)?' on':''}" data-k="${k}" type="button">${e}<b>0</b></button>`).join('')}</div>`;
+   <div class="rxbar">${RK.map(([k,e])=>`<button class="rx" data-k="${k}" type="button">${e}<b>0</b></button>`).join('')}</div>`;
   paintReact();}
-document.addEventListener('pointerdown',e=>{const b=e.target.closest('.rx');if(b){e.stopPropagation();e.preventDefault();b.classList.add('on');pressReact(b.dataset.k,b);}},true);
+document.addEventListener('pointerdown',e=>{const b=e.target.closest('.rx');if(b){e.stopPropagation();e.preventDefault();pressReact(b.dataset.k,b);}},true);
 loadReact();
 function showHome(){if(clearShown&&started){$('win').classList.remove('idw');document.querySelector('.info').classList.remove('cvmode');sel=-1;renderSlots();showCredits();return;}
   $('win').classList.remove('idw');document.querySelector('.info').classList.remove('cvmode');const t=T[lang];sel=-1;renderSlots();
