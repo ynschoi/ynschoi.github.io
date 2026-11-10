@@ -359,12 +359,12 @@ const ITEMS=[
   {x:1250,kind:'me',motion:'cross',c:'#1e3a8a',ic:'WORK',k:{ko:'WORK',en:'WORK'},m:'한국신용평가|Korea Investors Service',
    d:{ko:'수석애널리스트, CFA\n구조화금융 상품 신용평가 담당\n전문분야는 CDO, Synthetic CDO',en:'Senior Analyst, CFA\nStructured finance credit ratings\nSpecialty: CDO, Synthetic CDO'},s:[],line:{ko:'맡겨주세요!',en:'Leave it to me!'}},
   {x:2000,kind:'me',ai:1,c:'#7c3aed',ic:'AI',k:{ko:'AI',en:'AI'},m:'NOW',
-   d:{ko:'요즘 최대 관심사는 AI를 활용한 업무 프로세스 개선\n주요 Tool: Claude, Codex',en:'Top interest these days: improving work processes with AI\nMain tools: Claude, Codex'},s:[],line:{ko:'',en:''}},
-  {x:2550,kind:'tool',g:0,c:'#1e3a8a',ic:'분석',k:{ko:'분석 AGENT',en:'Analysis AGENT'},m:'AGENT 합류|AGENT JOINED',
+   d:{ko:'요즘 최대 관심사는 AI를 활용한 업무 프로세스 개선\n주요 Tool: Claude Code, Codex',en:'Top interest these days: improving work processes with AI\nMain tools: Claude Code, Codex'},s:[],line:{ko:'',en:''}},
+  {x:2550,kind:'tool',g:0,c:'#1e3a8a',ic:'분석',k:{ko:'Analysis Agent',en:'Analysis Agent'},m:'AGENT 합류|AGENT JOINED',
    d:{ko:'암묵지로 남아 있던 복잡한 업무 프로세스를\nAI와 함께 규칙으로 정형화\n규칙을 적용해 문서를 분석하는 툴 개발',en:'Turned complex, tacit work processes into clear rules with AI\nBuilt a tool that analyzes documents by applying those rules'},s:[],line:{ko:'',en:''}},
-  {x:2950,kind:'tool',g:1,c:'#2f9a3a',ic:'조회',k:{ko:'조회 AGENT',en:'Lookup AGENT'},m:'AGENT 합류|AGENT JOINED',
+  {x:2950,kind:'tool',g:1,c:'#2f9a3a',ic:'조회',k:{ko:'Lookup Agent',en:'Lookup Agent'},m:'AGENT 합류|AGENT JOINED',
    d:{ko:'단순 반복하던 조회 업무를\n클릭 한 번에 끝내는 툴 개발\n웹으로 배포해 운영 중',en:'Built a tool that turns repetitive lookups into a single click\nDeployed and running on the web'},s:[],line:{ko:'',en:''}},
-  {x:3350,kind:'tool',g:2,c:'#b45309',ic:'정리',k:{ko:'정리 AGENT',en:'Organizer AGENT'},m:'AGENT 합류|AGENT JOINED',
+  {x:3350,kind:'tool',g:2,c:'#b45309',ic:'정리',k:{ko:'Organizer Agent',en:'Organizer Agent'},m:'AGENT 합류|AGENT JOINED',
    d:{ko:'하나씩 조회·다운받아 취합하던 대량 데이터를\n엑셀에 정리된 형식으로 바로 받고\n자동 업데이트까지 되는 엑셀 애드인 개발',en:'Bulk data once looked up and merged one by one\nnow lands in Excel, neatly organized\nBuilt an Excel add-in that keeps it auto-updated'},s:[],line:{ko:'',en:''}},
   {x:4040,kind:'sky',c:'#ffd400',fg:'#111',ic:'NEXT',k:{ko:'NEXT',en:'NEXT'},m:'NEXT',
    d:{ko:'새로운 아이디어를 구상하며 설레는 중',en:'Excited, sketching out new ideas'},s:[],line:{ko:'더 높이!',en:'Higher!'}},
@@ -558,7 +558,7 @@ async function spawnAgent(st,key,cx,floorY,label,noPop){const h=Math.round(st.cl
   if(noPop)await anim(ag,[{filter:'brightness(2)'},{filter:'none'}],{duration:250});else await anim(ag,[{transform:'scale(.2) translateY(20px)',filter:'brightness(3)'},{transform:'scale(1.25) translateY(-10px)',offset:.6},{transform:'none',filter:'none'}],{duration:420,easing:'ease-out'});
   ag.stopLoop=loopPlay(ag,[0,1,2,3,4,5],130);
   if(label)word(st,label,st.clientWidth*.5,st.clientHeight*.1,14);return ag;}
-const AGTAG={ag_sulsul:{ko:'분석<br>AGENT',en:'ANALYSIS<br>AGENT'},ag_ddalkkak:{ko:'조회<br>AGENT',en:'LOOKUP<br>AGENT'},ag_chakchak:{ko:'정리<br>AGENT',en:'ORGANIZER<br>AGENT'}};
+const AGTAG={ag_sulsul:{ko:'ANALYSIS<br>AGENT',en:'ANALYSIS<br>AGENT'},ag_ddalkkak:{ko:'LOOKUP<br>AGENT',en:'LOOKUP<br>AGENT'},ag_chakchak:{ko:'ORGANIZER<br>AGENT',en:'ORGANIZER<br>AGENT'}};
 const AGNICK={ag_sulsul:{n:'술술',ko:'보고서는 술술~',en:'Reports, smoothly~'},ag_ddalkkak:{n:'딸깍',ko:'조회는 딸깍!',en:'Lookup in one click!'},ag_chakchak:{n:'착착',ko:'정리는 착착!',en:'Sorted, neatly!'}};
 const AGJUMP={ag_sulsul:'j_excel',ag_ddalkkak:'j_slime',ag_chakchak:'j_paper'};
 const B={
@@ -665,7 +665,7 @@ function agTalk(o,i){const N=AGNICK[o.key],b=document.createElement('div');b.cla
 function trailRec(){const p=TR[0],o=hero.style.opacity===''?1:+hero.style.opacity;
   if(!p||Math.abs(hx-p.x)+Math.abs(heroY-p.y)>2)TR.unshift({x:hx,y:heroY,s:heroS,o});else{p.s=heroS;p.o=o;}if(TR.length>900)TR.length=900;}
 function trailAt(dist){let acc=0;for(let k=1;k<TR.length;k++){const a=TR[k-1],b=TR[k],d=Math.hypot(a.x-b.x,a.y-b.y);if(acc+d>=dist){const t=(dist-acc)/(d||1);return{x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t,s:a.s,o:a.o};}acc+=d;}return null;}
-function folSnap(){fols.forEach((o,k)=>{o.x=hx-face*(hero.offsetWidth*.45+o.h*(.35+k*.98));o.y=0;});TR=[];}
+function folSnap(){fols.forEach((o,k)=>{o.x=hx-face*(hero.offsetWidth*.45+o.h*(.35+k*1.1));o.y=0;});TR=[];}
 let superFly=false,lineup=false;
 setInterval(()=>{if(!powered||flying||document.hidden)return;const h=hero.offsetHeight,d=document.createElement('div');const cl=Math.random()<.45;
   d.className='csp'+(cl?' cl':'');if(cl)d.style.backgroundImage=`url(${A2('ag_claude')})`;else d.textContent=pick(['✦','✧','✦']);
@@ -676,7 +676,7 @@ function flyFols(el,dur,x1,up1,G){fols.forEach(o=>{const t=Math.max(0,Math.min(1
   o.el.style.left=(x-o.h/2)+'px';o.el.style.bottom=(G*.09+arc)+'px';o.el.style.transform=`scale(${1-.9*t})`;o.el.style.opacity=t>.8?String(Math.max(0,1-(t-.8)/.2)):'1';
   if(t>.1&&t<1&&Math.random()<.25)trail(x,G-arc-G*.12);});}
 function folStep(){trailRec();const G=game.clientHeight;if(superFly){requestAnimationFrame(folStep);return;}
-  fols.forEach((o,k)=>{const dist=hero.offsetWidth*.45+o.h*(.35+k*.98);let p=trailAt(dist);
+  fols.forEach((o,k)=>{const dist=hero.offsetWidth*.45+o.h*(.35+k*1.1);let p=trailAt(dist);
     if(lineup)p={x:hx+hero.offsetWidth*.55+o.h*(.55+k*1.05),y:0,s:1,o:1};
     else if(!p)p={x:hx-face*dist,y:0,s:1,o:1};
     const nx=o.x+(p.x-o.x)*(flying?.5:.25),ny=o.y+(p.y-o.y)*(flying?.5:.3),dx=nx-o.x;o.d+=Math.abs(dx);if(Math.abs(dx)>.4)o.dir=dx>0?1:-1;o.x=nx;o.y=ny;
