@@ -457,6 +457,7 @@ function worldW(){return PANO.W*sc();}
 function place(){
   const W=worldW(),vw=game.clientWidth,hw=hero.offsetWidth;
   hx=Math.max(hw/2,Math.min((flying?W:PANO.RIVER*sc())-hw/2,hx));
+  if(!flying&&typeof mons!='undefined')mons.forEach((mo,i)=>{if(!mo.st||mo.done)return;const mx=mo.x*sc(),g=gapOf(i);if(hx>mx-g&&hx<mx+g)hx=mx-g;});   /* 몬스터와 겹치지 않게 */
   camX=Math.max(0,Math.min(W-vw,camLock!=null?camLock:hx-vw*(face>0?.42+.06*Math.min(3,(typeof fols!='undefined'?fols.length:0)):.42)));
   world.style.transform=`translateX(${-camX}px)`;
   hero.style.left=(hx-hw/2)+'px';
@@ -560,11 +561,11 @@ async slime(st,m){m.wake&&m.wake();let a=m.a;const S=st.clientHeight,cx=a._cx,to
   a.classList.remove('i-wobble');
   await strike(st,'punch');word(st,'Ctrl+V',cx,top(),16);m.tag.style.opacity=0;
   for(const i of [1,2,3,4,5]){a.frame(i);await wait(140);}
-  let bb=bubble(st,'또야? 다시 합체~',cx,top()-10);for(const i of [6,7]){a.frame(i);await wait(200);}await wait(450);bb.remove();
+  let bb=bubble(st,'또야? 다시 합체~',cx+st.clientWidth*.12,top()-24);for(const i of [6,7]){a.frame(i);await wait(200);}await wait(450);bb.remove();
   const a2=actor(st,'s2',S*.36*300/256,cx,S*.04);a2.frame(0);a.remove();a=a2;
   await strike(st,'kick');word(st,'Ctrl+V',cx,top(),16);
   for(const i of [1,2,3,4,5]){a.frame(i);await wait(140);}
-  bb=bubble(st,'몇 번을 해도 똑같아~',cx,top()-10);for(const i of [6,7]){a.frame(i);await wait(200);}await wait(450);bb.remove();
+  bb=bubble(st,'몇 번을 해도 똑같아~',cx+st.clientWidth*.12,top()-24);for(const i of [6,7]){a.frame(i);await wait(200);}await wait(450);bb.remove();
   const a3=actor(st,'s3',S*.36*300/288,cx,S*.04);a3.frame(0);a.remove();a=a3;
   await strike(st,'punch');word(st,'MAX!',cx,top(),22);
   for(const i of [1,2,3]){a.frame(i);await wait(170);}
@@ -583,7 +584,7 @@ async zombie(st,m){m.wake&&m.wake();const a=m.a,S=st.clientHeight,cx=a._cx,H=a.o
   const ex=cx-60.5*H/300,exW=60*H/300,D3=exW*300/256;
   const x3=actor(st,'z3',D3,ex,S*.04);x3.frame(0);x3.style.transformOrigin='50% 100%';
   const man=actor(st,'z2',S*.66*300/292,cx,S*.04);man.frame(0);a.remove();
-  const bub=bubble(st,'드디어 칼퇴다!',cx,top-6);
+  const bub=bubble(st,'드디어 칼퇴다!',cx+H*.12,top-H*.22);
   const grow=0.22*S/(273*D3/300);
   for(const i of [1,2,3,4,5,6,7]){x3.frame(i);if(i>=3)x3.style.transform=`scale(${1+(grow-1)*(i-2)/5})`;if(i==2)word(st,'✓ ✓ ✓',ex,st.clientHeight-S*.04-30,13);await wait(230);}
   const ag=await spawnAgent(st,'ag_sulsul',ex,st.clientHeight-S*.04,'술술 합류!',true);x3.remove();
