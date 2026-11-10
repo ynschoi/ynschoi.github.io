@@ -1,0 +1,18 @@
+const KINDS = ['heart', 'thumb', 'muscle'];
+
+function doGet(e) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  const p = (e && e.parameter) || {};
+  if (p.op === 'add' && KINDS.indexOf(p.k) >= 0) {
+    sheet.appendRow([new Date(), p.k]);
+  }
+  const counts = { heart: 0, thumb: 0, muscle: 0 };
+  const last = sheet.getLastRow();
+  if (last > 0) {
+    sheet.getRange(1, 2, last, 1).getValues().forEach(function (r) {
+      if (counts.hasOwnProperty(r[0])) counts[r[0]]++;
+    });
+  }
+  return ContentService.createTextOutput(JSON.stringify(counts))
+    .setMimeType(ContentService.MimeType.JSON);
+}
