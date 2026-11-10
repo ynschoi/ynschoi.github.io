@@ -617,7 +617,7 @@ function stageBox(i){const g=GHOSTS[i],U=MU(),W=U*1.6,G=game.clientHeight;return
 function spawnMon(i){const mo=mons[i];if(mo.st)return;mo.x=Math.max(GHOSTS[i].x,(hx+game.clientWidth*.55)/sc());const b=stageBox(i),st=document.createElement('div');st.className='mstage';
   st.style.cssText+=`;left:${b.left}px;bottom:${b.bottom}px;width:${b.W}px;height:${b.U}px`;world.appendChild(st);mo.st=st;st._mon=mo;
   mo.m=B[GHOSTS[i].kind](st);anim(st,[{opacity:0,transform:'scale(.6)'},{opacity:1,transform:'none'}],{duration:400,fill:'none'});
-  if(GHOSTS[i].kind=='golem'){const a=mo.m.a,gb=bubble(st,lang=='ko'?'이거… 오늘까지래…':'Due… today…',a._cx,st.clientHeight-a._b-a.offsetHeight*1.02-28);gb.style.fontSize='10px';gb.style.padding='2px 5px';setTimeout(()=>gb.remove(),3000);}}
+  if(GHOSTS[i].kind=='golem'){const a=mo.m.a,gb=bubble(st,lang=='ko'?'이거… 오늘까지래…':'Due… today…',a._cx,st.clientHeight-a._b-a.offsetHeight*.9-22);gb.style.fontSize='10px';gb.style.padding='2px 5px';setTimeout(()=>gb.remove(),3000);}}
 function layoutMons(){mons.forEach((mo,i)=>{if(!mo.st||mo.done)return;const b=stageBox(i);mo.st.style.left=b.left+'px';});}
 const HITS={zombie:2,slime:3,golem:2};let morphing=false;
 function strike(st){const mo=st._mon;mo.ns=(mo.ns||0)+1;const last=mo.ns>=HITS[GHOSTS[mons.indexOf(mo)].kind];const lock=()=>{if(last){morphing=true;keys.left=keys.right=false;}};
