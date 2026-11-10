@@ -12,10 +12,10 @@
     --px:'Galmuri11','Galmuri9',ui-monospace,monospace; --font:'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-  html,body{height:100%;background:#07051a;overflow:hidden;overscroll-behavior:none}
+  html,body{height:100%;background:#1a1440;overflow:hidden;overscroll-behavior:none}
   body{font-family:var(--px);color:#fff;-webkit-tap-highlight-color:transparent}
   button{all:unset;cursor:pointer;touch-action:none}
-  .app{max-width:440px;height:100dvh;margin:0 auto;display:grid;grid-template-rows:minmax(0,1fr) 38dvh auto;grid-template-columns:minmax(0,1fr);width:100%;background:var(--night)}
+  .app{max-width:440px;height:auto;margin:0 auto;display:grid;grid-template-rows:auto 252px auto;grid-template-columns:minmax(0,1fr);width:100%;background:var(--night)}
 
   /* ═══ 위: 정보 창 ═══ */
   .info{padding:calc(env(safe-area-inset-top) + 10px) 12px 8px;display:flex;flex-direction:column;gap:8px;min-height:0}
@@ -295,6 +295,10 @@
   .lsel{display:flex;gap:8px;margin:4px 0 2px}
   .lsel button{font:700 12px var(--px);color:#fff;padding:6px 12px;border:2px solid var(--violet);border-radius:6px;background:#0b0820;box-shadow:0 3px 0 #000}
   .lsel button.on{border-color:var(--gold);color:#111;background:var(--gold)}
+  /* 고정 크기 배치: 카톡·인스타 등 앱 안 브라우저에서도 크기가 흔들리지 않게 */
+  .info{height:calc(288px + env(safe-area-inset-top,0px))}
+  .info:not(.cvmode) .win{flex:none;height:168px}
+  .info.cvmode .win{flex:1;height:auto;min-height:0}.info.cvmode .idc .rows{flex:1!important;align-content:space-evenly}
 </style>
 </head>
 <body>
@@ -929,11 +933,17 @@ function setLang(l){lang=l;document.documentElement.lang=l;const t=T[l];
   if(typeof fols!='undefined')fols.forEach(o=>{const t=o.el.querySelector('.agtag');if(t)t.innerHTML=AGTAG[o.key][l];});
   if(typeof mons!='undefined')mons.forEach((mo,i)=>{if(mo.m&&mo.m.tag)mo.m.tag.textContent=GHOSTS[i][l];});}
 
-addEventListener('resize',layout);
+/* 화면 높이에 맞춰 게임 칸 높이만 조절 (170~300px) — 위 정보창·아래 버튼은 그대로 */
+function fitApp(){const app=document.querySelector('.app'),vh=(window.visualViewport&&visualViewport.height)||innerHeight;if(!vh)return;
+  const other=app.offsetHeight-game.offsetHeight,row=Math.round(Math.max(170,Math.min(300,vh-other)));
+  if(Math.abs(game.offsetHeight-row)>1){app.style.gridTemplateRows=`auto ${row}px auto`;layout();}}
+addEventListener('resize',()=>{fitApp();layout();});
+window.visualViewport&&visualViewport.addEventListener('resize',fitApp);
+fitApp();
 /* 카톡·인스타 안 브라우저는 처음 화면 높이를 잘못 알려줬다가 나중에 바꿔요 → 게임 칸 크기가 바뀔 때마다 다시 맞춰요 */
 if(window.ResizeObserver){let rh=0;new ResizeObserver(()=>{const h=game.clientHeight;if(h&&Math.abs(h-rh)>1){rh=h;layout();}}).observe(game);}
 window.visualViewport&&visualViewport.addEventListener('resize',layout);
-[300,1000,2500].forEach(t=>setTimeout(layout,t));
+[300,1000,2500].forEach(t=>setTimeout(()=>{fitApp();layout();},t));
 $('pano').onload=layout;
 setLang('ko');idle();layout();setPow(0);
 </script>
