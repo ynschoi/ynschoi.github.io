@@ -36,7 +36,7 @@
   .pr.up .kg{color:var(--gold);animation:blink .3s steps(1) 6}
   .total{text-align:right;font-size:9px;color:var(--violet);line-height:1.3;flex:none}
   .total b{display:block;font-size:17px;color:var(--gold);font-weight:400;font-variant-numeric:tabular-nums}
-  .win{height:92px;border:3px solid #fff;box-shadow:0 0 0 3px var(--night),0 0 0 5px var(--edge);background:linear-gradient(#1d1650,#120d33);padding:9px 12px;overflow:hidden;position:relative}
+  .win{height:108px;border:3px solid #fff;box-shadow:0 0 0 3px var(--night),0 0 0 5px var(--edge);background:linear-gradient(#1d1650,#120d33);padding:12px 14px;overflow:hidden;position:relative;display:flex;flex-direction:column;justify-content:center}
   .win .ttl{font-size:11px;color:var(--gold);margin-bottom:5px;display:flex;justify-content:space-between}
   .win .ttl span:last-child{color:var(--violet)}
   .win h2{font:700 17px var(--px);margin-bottom:3px}
@@ -48,14 +48,14 @@
   .bag{display:flex;gap:5px;align-items:center}
   .bag .lb{font-size:9px;color:var(--violet);margin-right:2px;width:24px;line-height:1.2}
   .pot{flex:1;height:42px;position:relative;border:2px solid #2d2560;background:#120d33;display:flex;align-items:center;gap:6px;padding:0 8px;font-size:10px;color:#5a5090}
-  .pot{flex-direction:row;align-items:center;gap:7px;padding:0 7px;min-width:0;height:50px}
+  .pot{flex-direction:row;align-items:center;gap:7px;padding:0 7px;min-width:0;height:42px}
   .pot .tx{display:flex;flex-direction:column;gap:3px;min-width:0}
   .pot .t{display:flex;align-items:baseline;gap:5px;white-space:nowrap;font-size:11px}
-  .pot canvas{width:22px;height:31px;image-rendering:pixelated;opacity:.55;flex:none;filter:grayscale(.6)}
+  .pot canvas{width:19px;height:27px;image-rendering:pixelated;opacity:.55;flex:none;filter:grayscale(.6)}
   .pot.has canvas{opacity:1;filter:drop-shadow(0 0 5px var(--pc))}
   .pot .n{color:#8d86c9;font-size:15px}.pot .n::before{content:'×';font-size:11px;margin-right:1px}
   .pot.has .n{color:var(--gold)}
-  .win.tall{height:118px}
+  .win.tall{height:126px}
   .pot{cursor:pointer;touch-action:manipulation}.pot.has:active{transform:translateY(2px)}
   .pot.drink{animation:drink .35s ease-out}
   @keyframes drink{40%{transform:scale(1.08);box-shadow:0 0 18px var(--pc)}}
@@ -209,7 +209,7 @@
       <div class="total">합계<b id="tot">0</b></div>
     </div>
     <div class="win" id="win"></div>
-    <div class="bag"><span class="lb">포션<br>눌러서<br>마시기</span>
+    <div class="bag"><span class="lb">포션<br>가방</span>
       <div class="pot" id="potP" style="--pc:#ff5a4a"><canvas width="10" height="14"></canvas><div class="tx"><div class="t">파워<span class="n">0</span></div></div></div>
       <div class="pot" id="potR" style="--pc:#5ad1ff"><canvas width="10" height="14"></canvas><div class="tx"><div class="t">회복<span class="n">0</span></div></div></div>
       <div class="pot" id="potM" style="--pc:#c77dff"><canvas width="10" height="14"></canvas><div class="tx"><div class="t">근육<span class="n">0</span></div></div></div>
