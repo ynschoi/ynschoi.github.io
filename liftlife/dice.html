@@ -56,6 +56,9 @@
   .pot .n{color:#8d86c9;font-size:15px}.pot .n::before{content:'×';font-size:11px;margin-right:1px}
   .pot.has .n{color:var(--gold)}
   .win.tall{height:118px}
+  .pot{cursor:pointer;touch-action:manipulation}.pot.has:active{transform:translateY(2px)}
+  .pot.drink{animation:drink .35s ease-out}
+  @keyframes drink{40%{transform:scale(1.08);box-shadow:0 0 18px var(--pc)}}
   .pot.has{border-color:var(--pc);color:#fff;box-shadow:inset 0 0 12px color-mix(in srgb,var(--pc) 35%,transparent)}.pot.has .ic{opacity:1}
   .pot b{font-weight:400;display:block;font-size:9px;color:var(--violet)}
   .pot.got{animation:got .4s steps(2) 5}
@@ -206,7 +209,7 @@
       <div class="total">합계<b id="tot">0</b></div>
     </div>
     <div class="win" id="win"></div>
-    <div class="bag"><span class="lb">포션<br>가방</span>
+    <div class="bag"><span class="lb">포션<br>눌러서<br>마시기</span>
       <div class="pot" id="potP" style="--pc:#ff5a4a"><canvas width="10" height="14"></canvas><div class="tx"><div class="t">파워<span class="n">0</span></div></div></div>
       <div class="pot" id="potR" style="--pc:#5ad1ff"><canvas width="10" height="14"></canvas><div class="tx"><div class="t">회복<span class="n">0</span></div></div></div>
       <div class="pot" id="potM" style="--pc:#c77dff"><canvas width="10" height="14"></canvas><div class="tx"><div class="t">근육<span class="n">0</span></div></div></div>
@@ -377,6 +380,16 @@ function paint(up){
   $('hud').innerHTML=`DAY <b>${S.day}</b> · 🎲 <b>${S.rolls}</b>`;
   [['sn','potP','스내치'],['cj','potR','클린저크'],['sq','potM','스쿼트']].forEach(([k,id,n])=>{const el=$(id),c=S.pot[POTK[k]];el.classList.toggle('has',c>0);el.querySelector('.n').textContent=c;});
 }
+/* 메인 화면에서 바로 마시기: 마신 만큼 레벨이 계속 쌓임 */
+const POTGAME={P:'sn',R:'cj',M:'sq'};
+function drinkNow(p){if(!started){start();return;}if(busy)return;const k=POTGAME[p],name=FACES.find(f=>f.k===k).n;
+  if(!S.pot[p]){msg('POTION',`🧪 ${POTN[p]} 없음`,`${{P:'밥',R:'잠',M:'똥'}[p]} 칸이 나오면 생겨요.\n지금 ${name} Lv${S.lv[k]} · ${easeText(k,S.lv[k]).replace(/<[^>]+>/g,'')}`);return;}
+  S.pot[p]--;S.lv[k]++;save();paint();SFX.potion();SFX.gulp();
+  const el=$({P:'potP',R:'potR',M:'potM'}[p]);el.classList.remove('drink');void el.offsetWidth;el.classList.add('drink');
+  const h=head();pop(`${name} Lv${S.lv[k]}`,h.x,h.y-30,15);say(pick(['꿀꺽','캬~','힘이 솟는다']),900);
+  msg('POTION',`🧪 ${POTN[p]} 꿀꺽!`,`${name} Lv${S.lv[k]} (계속 쌓여요)\n${easeText(k,S.lv[k]).replace(/<[^>]+>/g,'')}`);}
+[['P','potP'],['R','potR'],['M','potM']].forEach(([p,id])=>$(id).addEventListener('click',()=>{ac();drinkNow(p);}));
+
 function gotPot(p,n=1){S.pot[p]+=n;save();paint();const el=$({P:'potP',R:'potR',M:'potM'}[p]);el.classList.remove('got');void el.offsetWidth;el.classList.add('got');SFX.potion();
   const h=head(),f=document.createElement('img');f.className='fly';f.src=potionURL(p);f.style.cssText+=`;left:${h.x}px;top:${h.y}px;width:20px;height:28px`;game.appendChild(f);
   f.animate([{transform:'translateY(0) scale(.5)'},{transform:'translateY(-40px) scale(1.3)',opacity:1},{transform:'translateY(-70px) scale(.6)',opacity:0}],{duration:1000});setTimeout(()=>f.remove(),1000);}
@@ -578,7 +591,7 @@ addEventListener('keyup',e=>{if((e.key===' '||e.key==='Enter')&&cur&&cur.g.up)cu
 $('helpBody').innerHTML=`<h3>🎲 하는 법</h3>주사위를 굴리면 나온 칸을 ${TO}가 해요.<br>
 <b>1 스내치</b> 추 타이밍 · <b>2 클린앤저크</b> 꾹 눌렀다 놓기 · <b>3 백스쿼트</b> 1초 연타<br>
 <b>4 밥</b> 파워포션 (하차푸리면 2개) → 스내치<br><b>5 잠</b> 회복포션 → 클린앤저크<br><b>6 똥</b> 근육포션 → 백스쿼트<br>아래 <b>필살기</b> 버튼은 언제든 눌러서 볼 수 있어요.<br>
-역도 화면에서 포션을 마시면 레벨이 올라 아주 조금 쉬워져요. 레벨은 계속 쌓여요.<br>
+포션은 위 포션 칸을 누르거나 역도 시작 전에 마셔요. 마실 때마다 레벨이 올라 아주 조금 쉬워지고, 레벨은 계속 쌓여요.<br>
 기록(PR)은 그 종목 최고 무게예요. 잘해야만 바뀌어요.<br>역도 합계 ${LETTER_AT}kg을 넘기면 선물이 있어요.<br><button class="rs" id="rs" type="button">기록 지우고 처음부터</button><small>made by ${FROM} · 아무 곳이나 눌러 닫기</small>`;
 
 function inApp(){const u=navigator.userAgent||'';return /KAKAOTALK|Instagram|FBAN|FBAV|FB_IAB|Line\/|NAVER\(|DaumApps|everytimeApp|Whale\/.*inapp|; wv\)/i.test(u);}
