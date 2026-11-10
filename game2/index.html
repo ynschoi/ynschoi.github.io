@@ -248,11 +248,12 @@
   .fx{position:absolute;z-index:6;pointer-events:none}
   .word{font-family:var(--pix);font-weight:700;color:var(--gold);-webkit-text-stroke:1.5px #111;text-shadow:2px 2px 0 var(--red);white-space:nowrap}
   .mtag{position:absolute;font-family:var(--pix);font-size:10px;background:#3a1020;color:#ff9a9a;border:1px solid #ff9a9a;padding:1px 5px;white-space:nowrap}
-  .agtag{position:absolute;left:50%;bottom:-14px;transform:translateX(-50%);font:700 9px/1 var(--pix);color:#fff;background:#1e3a8a;border:1px solid #9fc0ff;padding:2px 4px;white-space:nowrap;box-shadow:0 0 6px #4f7cff88}
+  .agtag{position:absolute;left:50%;bottom:auto;top:-20px;transform:translateX(-50%);font:700 9px/1.15 var(--pix);text-align:center;color:#fff;background:#1e3a8a;border:1px solid #9fc0ff;padding:2px 4px;white-space:nowrap;box-shadow:0 0 6px #4f7cff88}
   .fol{position:absolute;z-index:5;pointer-events:none;transform-origin:50% 100%}
   .fol .fs{position:absolute;inset:0;background-repeat:no-repeat}
   .fol.l .fs{transform:scaleX(-1)}
-  .item.brief,.item.claude{width:62px;height:62px;margin-left:-31px}
+  .item.claude{width:62px;height:62px;margin-left:-31px}
+  .item.brief{width:46px;height:46px;margin-left:-23px}
   .item .im{position:absolute;inset:0;background:center/contain no-repeat}
   .item .im.cl{background-size:800% 100%;background-position:0 0}
   .item.sky .im.stx{inset:8px;background-size:600% 100%;background-position:0 0;filter:drop-shadow(0 0 10px #ffe680) drop-shadow(0 0 22px #ffd400aa)}
@@ -436,7 +437,7 @@ $('slots').onclick=e=>{const s=e.target.closest('.slot.got');if(s)showItem(+s.da
 const itemEls=ITEMS.map((it,i)=>{const d=document.createElement('div');d.className='item '+it.kind+(it.kind=='sky'?' sky':'')+(it.ic=='WORK'?' brief':it.ai?' claude':'');
   d.innerHTML=it.kind=='sky'?`<span class="im stx" style="background-image:url(${A2('next_star')})"></span><b class="lbl">NEXT</b>`:it.ic=='WORK'?`<span class="im" style="background-image:url(${A2('briefcase')})"></span><b class="lbl">WORK</b>`:it.ai?`<span class="im cl" style="background-image:url(${A2('ag_claude')})"></span><b class="lbl">AI</b>`:`<div class="box" style="background:${it.c}">${it.ic}</div>`;
   if(it.kind=='tool')d.style.display='none';world.appendChild(d);return d;});
-const mons=GHOSTS.map(()=>({st:null,m:null,started:false,hitQ:0,waiter:null}));
+const mons=GHOSTS.map(g=>({st:null,m:null,started:false,hitQ:0,waiter:null,x:g.x}));
 $('mini').innerHTML=ITEMS.map(it=>`<i style="left:${it.x/PANO.W*100}%${it.kind=='tool'?';opacity:0':''}"></i>`).join('')+'<u id="me"></u>';
 let firstLayout=true;
 function layout(){
@@ -475,9 +476,9 @@ function collect(i,hit){
 }
 /* AI 상자 → 에너지 충전 → 몬스터 등장 */
 function powerUp(){if(powered)return;powered=true;hero.classList.add('powered');setPow(100);banner('ENERGY MAX!',1100);
-  setTimeout(()=>{banner(lang=='ko'?'몬스터 출현!':'MONSTERS!',1000);GHOSTS.forEach((g,i)=>setTimeout(()=>spawnMon(i),i*250));
+  setTimeout(()=>{banner(lang=='ko'?'몬스터 출현!':'MONSTERS!',1000);spawnMon(0);
     say(lang=='ko'?'에너지 맥스! 클로드 파워로 몬스터를 퇴치하자!':'Energy max! Clear the monsters!',2200);},1300);}
-function nearGhost(reach){const s=sc();let best=-1,bd=1e9;GHOSTS.forEach((g,i)=>{if(slain.has(i)||!powered||!mons[i].st)return;const dx=(g.x*s-hx)*face;if(dx>-30&&dx<reach&&dx<bd){bd=dx;best=i;}});return best;}
+function nearGhost(reach){const s=sc();let best=-1,bd=1e9;GHOSTS.forEach((g,i)=>{if(slain.has(i)||!powered||!mons[i].st)return;const dx=(mons[i].x*s-hx)*face;if(dx>-30&&dx<reach&&dx<bd){bd=dx;best=i;}});return best;}
 async function allClear(){if(clearShown)return;clearShown=true;banner('ALL CLEAR!',1600);busy=true;await once('cheer',ACT.cheer.seq,110);busy=false;idle();showHome();}
 function banner(t,ms){const b=$('banner');b.textContent=t;b.classList.add('on');setTimeout(()=>b.classList.remove('on'),ms);}
 const avail=i=>ITEMS[i].kind=='me'||dropped.has(i)||(ITEMS[i].kind=='sky'&&flying);
@@ -524,11 +525,11 @@ function idleMon(st,ik,kk,rel,kh,xr,tag){const S=st.clientHeight,cx=st.clientWid
 async function spawnAgent(st,key,cx,floorY,label,noPop){const h=Math.round(st.clientHeight*.3);
   const ag=fx(st,'',cx-h/2,floorY-h+Math.round(h*.02),'fx agent');ag.style.cssText+=`;width:${h}px;height:${h}px;background:url(${SPR[key]}) 0 0/${h*8}px ${h}px no-repeat;z-index:6`;
   ag.frame=i=>{ag.style.backgroundPosition=`${-i*h}px 0`;};ag.frame(0);ag._key=key;
-  const tg=document.createElement('span');tg.className='agtag';tg.textContent=AGTAG[key][lang];ag.appendChild(tg);
+  const tg=document.createElement('span');tg.className='agtag';tg.innerHTML=AGTAG[key][lang];ag.appendChild(tg);
   if(noPop)await anim(ag,[{filter:'brightness(2)'},{filter:'none'}],{duration:250});else await anim(ag,[{transform:'scale(.2) translateY(20px)',filter:'brightness(3)'},{transform:'scale(1.25) translateY(-10px)',offset:.6},{transform:'none',filter:'none'}],{duration:420,easing:'ease-out'});
   ag.stopLoop=loopPlay(ag,[0,1,2,3,4,5],130);
   word(st,label,st.clientWidth*.5,st.clientHeight*.1,14);return ag;}
-const AGTAG={ag_sulsul:{ko:'분석 AGENT',en:'ANALYSIS AGENT'},ag_ddalkkak:{ko:'조회 AGENT',en:'LOOKUP AGENT'},ag_chakchak:{ko:'정리 AGENT',en:'ORGANIZER AGENT'}};
+const AGTAG={ag_sulsul:{ko:'분석<br>AGENT',en:'ANALYSIS<br>AGENT'},ag_ddalkkak:{ko:'조회<br>AGENT',en:'LOOKUP<br>AGENT'},ag_chakchak:{ko:'정리<br>AGENT',en:'ORGANIZER<br>AGENT'}};
 const AGJUMP={ag_sulsul:'j_excel',ag_ddalkkak:'j_slime',ag_chakchak:'j_paper'};
 const B={
 golem(st){return idleMon(st,'m_golem','g1',.6,249,.66,lang=='ko'?'대량업무':'Bulk work');},
@@ -588,7 +589,7 @@ async zombie(st,m){m.wake&&m.wake();const a=m.a,S=st.clientHeight,cx=a._cx,H=a.o
 };
 const MU=()=>game.clientHeight*.6124;       /* 시안 무대 높이 ↔ 게임 배율 (주인공 키 기준) */
 const MXR={golem:.66,slime:.64,zombie:.66};
-function stageBox(i){const g=GHOSTS[i],U=MU(),W=U*1.6,G=game.clientHeight;return{U,W,left:g.x*sc()-W*MXR[g.kind],bottom:G*.09-U*.04};}
+function stageBox(i){const g=GHOSTS[i],U=MU(),W=U*1.6,G=game.clientHeight;return{U,W,left:mons[i].x*sc()-W*MXR[g.kind],bottom:G*.09-U*.04};}
 function spawnMon(i){const mo=mons[i];if(mo.st)return;const b=stageBox(i),st=document.createElement('div');st.className='mstage';
   st.style.cssText+=`;left:${b.left}px;bottom:${b.bottom}px;width:${b.W}px;height:${b.U}px`;world.appendChild(st);mo.st=st;st._mon=mo;
   mo.m=B[GHOSTS[i].kind](st);anim(st,[{opacity:0,transform:'scale(.6)'},{opacity:1,transform:'none'}],{duration:400,fill:'none'});
@@ -597,7 +598,15 @@ function layoutMons(){mons.forEach((mo,i)=>{if(!mo.st||mo.done)return;const b=st
 function strike(st){const mo=st._mon;if(mo.hitQ>0){mo.hitQ--;return Promise.resolve();}return new Promise(r=>mo.waiter=r);}
 function hitMon(i){const mo=mons[i];if(mo.done)return;addScore(500);
   if(!mo.started){mo.started=true;mo.hitQ=1;runKO(i);}else if(mo.waiter){const w=mo.waiter;mo.waiter=null;w();}}
-async function runKO(i){const mo=mons[i];const ag=await K[GHOSTS[i].kind](mo.st,mo.m);mo.done=true;slain.add(i);addScore(2000);joinTeam(ag,i);}
+async function runKO(i){const mo=mons[i];const ag=await K[GHOSTS[i].kind](mo.st,mo.m);mo.done=true;slain.add(i);addScore(2000);joinTeam(ag,i);
+  if(i+1<GHOSTS.length)setTimeout(()=>{spawnMon(i+1);banner(lang=='ko'?'다음 몬스터!':'NEXT MONSTER!',900);},1200);}
+/* 몬스터가 주인공 쪽으로 다가와요 (맞기 전까지) */
+const MSPD={zombie:.00035,slime:.0005,golem:.0003};let mLast=0;
+function monStep(t){const dt=Math.min(50,t-(mLast||t));mLast=t;const s=sc(),hw=hero.offsetWidth;
+  mons.forEach((mo,i)=>{if(!mo.st||mo.started||mo.done||flying)return;const mx=mo.x*s,dx=mx-hx,stop=hw*.42+MU()*.2;
+    if(Math.abs(dx)>game.clientWidth*1.05||Math.abs(dx)<=stop)return;mo.x-=Math.sign(dx)*Math.min(Math.abs(dx)-stop,heroH()*MSPD[GHOSTS[i].kind]*dt)/s;mo.st.style.left=stageBox(i).left+'px';});
+  requestAnimationFrame(monStep);}
+requestAnimationFrame(monStep);
 /* 합류한 AGENT: 주인공이 지나간 길을 따라와요 (점프·슈퍼점프도 같이) */
 const fols=[];let TR=[];
 function joinTeam(ag,i){const r=ag.getBoundingClientRect(),wr=world.getBoundingClientRect(),key=ag._key;ag.stopLoop&&ag.stopLoop();ag.remove();
@@ -608,9 +617,9 @@ function joinTeam(ag,i){const r=ag.getBoundingClientRect(),wr=world.getBoundingC
 function trailRec(){const p=TR[0],o=hero.style.opacity===''?1:+hero.style.opacity;
   if(!p||Math.abs(hx-p.x)+Math.abs(heroY-p.y)>2)TR.unshift({x:hx,y:heroY,s:heroS,o});else{p.s=heroS;p.o=o;}if(TR.length>900)TR.length=900;}
 function trailAt(dist){let acc=0;for(let k=1;k<TR.length;k++){const a=TR[k-1],b=TR[k],d=Math.hypot(a.x-b.x,a.y-b.y);if(acc+d>=dist){const t=(dist-acc)/(d||1);return{x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t,s:a.s,o:a.o};}acc+=d;}return null;}
-function folSnap(){fols.forEach((o,k)=>{o.x=hx-face*(hero.offsetWidth*.45+o.h*(.5+k*1.35));o.y=0;});TR=[];}
+function folSnap(){fols.forEach((o,k)=>{o.x=hx-face*(hero.offsetWidth*.45+o.h*(.5+k*1.1));o.y=0;});TR=[];}
 function folStep(){trailRec();const G=game.clientHeight;
-  fols.forEach((o,k)=>{const dist=hero.offsetWidth*.45+o.h*(.5+k*1.35);let p=trailAt(dist);
+  fols.forEach((o,k)=>{const dist=hero.offsetWidth*.45+o.h*(.5+k*1.1);let p=trailAt(dist);
     if(!p)p={x:hx-face*dist,y:0,s:1,o:1};
     const nx=o.x+(p.x-o.x)*(flying?.5:.25),ny=o.y+(p.y-o.y)*(flying?.5:.3),dx=nx-o.x;o.d+=Math.abs(dx);if(Math.abs(dx)>.4)o.dir=dx>0?1:-1;o.x=nx;o.y=ny;
     const air=o.y>6,img=air?AGJUMP[o.key]:o.key;if(img!==o.img){o.img=img;o.fs.style.backgroundImage=`url(${A2(img)})`;}
@@ -649,7 +658,7 @@ function walkStep(t){
   if(!busy){const dir=(keys.right?1:0)-(keys.left?1:0);
     if(dir===0){walking=false;idle();return;}
     face=dir;const nx=hx+dir*hero.offsetHeight*.0011*dt;const s_=sc(),hw_=hero.offsetWidth*.45;
-    const blk=GHOSTS.findIndex((g,gi)=>powered&&!slain.has(gi)&&Math.abs(g.x*s_-nx)<hw_&&Math.abs(g.x*s_-hx)>=Math.abs(g.x*s_-nx));
+    const blk=GHOSTS.findIndex((g,gi)=>{const mx=mons[gi].x*s_;return powered&&mons[gi].st&&!slain.has(gi)&&Math.abs(mx-nx)<hw_&&Math.abs(mx-hx)>=Math.abs(mx-nx);});
     if(blk<0)hx=nx;else if(Math.random()<.03)say(lang=='ko'?'공격 버튼으로 퇴치! (A B X Y)':'Attack to clear it! (A B X Y)',1200);
     place();touchItems();if(dir>0&&atRiver())cold();
     if(cur!=='walk')loopF('walk',110);}
