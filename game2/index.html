@@ -472,14 +472,20 @@ const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:
 /* 공용 카운터 (설정 없이 쓰는 무료 카운터). 구글 시트를 연결하면 REACT_URL 이 먼저 쓰여요. */
 const CNT='https://abacus.jasoncameron.dev',CNS='ynschoi-randomwalk';let CNT_OK=false;
 let SHEET_OK=false;
+/* 익명 방문 기록: 방문자마다 무작위 번호만 쓰고 이름·연락처는 남기지 않아요 */
+const VID=(()=>{let v=ls.get('rw_vid');if(!v){v=Math.random().toString(36).slice(2,8);ls.set('rw_vid',v);}return v;})();
+const DEV=(/iPhone|iPad/.test(navigator.userAgent)?'iOS':/Android/.test(navigator.userAgent)?'Android':'PC')+(/KAKAOTALK/i.test(navigator.userAgent)?'·카톡':/Instagram/i.test(navigator.userAgent)?'·인스타':'');
+const logged=new Set();
+function track(ev,k='',once=true){if(!REACT_URL)return;const key=ev+'|'+k;if(once&&logged.has(key))return;logged.add(key);
+  try{fetch(`${REACT_URL}?op=log&v=${VID}&ev=${encodeURIComponent(ev)}&k=${encodeURIComponent(k)}&l=${lang}&d=${encodeURIComponent(DEV)}`,{mode:'no-cors',keepalive:true}).catch(()=>{});}catch(e){}}
 function loadReact(){if(REACT_URL){fetch(REACT_URL+'?op=get').then(r=>r.json()).then(j=>{SHEET_OK=true;RC={...RC,...j};paintReact();}).catch(()=>{});return;}
   RK.forEach(([k])=>fetch(`${CNT}/get/${CNS}/${k}`).then(r=>r.ok?r.json():{value:0}).then(j=>{CNT_OK=true;RC[k]=j.value||0;paintReact();}).catch(()=>{}));}
 const myPick=()=>ls.get('rw_pick');
 function paintReact(){const mine=myPick();RK.forEach(([k])=>{const btn=document.querySelector(`.rx[data-k="${k}"]`);if(!btn)return;
   btn.querySelector('b').textContent=RBASE[k]+RC[k]+((SHEET_OK||CNT_OK)?0:(mine==k?1:0));btn.classList.toggle('on',mine==k);btn.classList.toggle('off',!!mine&&mine!=k);});}
 function pressReact(k,btn){const d=document.createElement('span');d.className='rxfly';d.textContent=RK.find(r=>r[0]==k)[1];btn.appendChild(d);setTimeout(()=>d.remove(),900);
-  const mine=myPick();if(mine){say(mine==k?(lang=='ko'?'이미 보냈어요! 고마워요 💕':'Already sent, thank you! 💕'):(lang=='ko'?'반응은 하나만 고를 수 있어요':'You can pick just one'),1200);return;}
-  ls.set('rw_pick',k);if(REACT_URL){if(SHEET_OK)RC[k]++;fetch(REACT_URL+'?op=add&k='+k).then(r=>r.json()).then(j=>{SHEET_OK=true;RC={...RC,...j};paintReact();}).catch(()=>{});}
+  const mine=myPick();if(mine){track('react_again',k+(mine==k?'':' (처음:'+mine+')'),false);say(mine==k?(lang=='ko'?'이미 보냈어요! 고마워요 💕':'Already sent, thank you! 💕'):(lang=='ko'?'반응은 하나만 고를 수 있어요':'You can pick just one'),1200);return;}
+  ls.set('rw_pick',k);if(REACT_URL){if(SHEET_OK)RC[k]++;fetch(`${REACT_URL}?op=add&k=${k}&v=${VID}&l=${lang}&d=${encodeURIComponent(DEV)}`).then(r=>r.json()).then(j=>{SHEET_OK=true;RC={...RC,...j};paintReact();}).catch(()=>{});}
   else{RC[k]+=CNT_OK?1:0;fetch(`${CNT}/hit/${CNS}/${k}`).then(r=>r.json()).then(j=>{CNT_OK=true;RC[k]=j.value;paintReact();}).catch(()=>{});}paintReact();say(lang=='ko'?'고마워요! 💕':'Thank you! 💕',1200);}
 function showCredits(){const ko=lang=='ko';
   $('win').innerHTML=`<div class="ttl"><span>All Clear (${NTOT}/${NTOT})</span><span>${ko?'계속 돌아다녀도 돼요':'Keep exploring!'}</span></div>
@@ -489,7 +495,7 @@ function showCredits(){const ko=lang=='ko';
    <div class="rxbar">${RK.map(([k,e])=>`<button class="rx" data-k="${k}" type="button">${e}<b>0</b></button>`).join('')}</div>`;
   paintReact();}
 document.addEventListener('pointerdown',e=>{const b=e.target.closest('.rx');if(b){e.stopPropagation();e.preventDefault();pressReact(b.dataset.k,b);}},true);
-loadReact();
+loadReact();track('visit');
 function showHome(){if(clearShown&&started){$('win').classList.remove('idw');document.querySelector('.info').classList.remove('cvmode');sel=-1;renderSlots();showCredits();return;}
   $('win').classList.remove('idw');document.querySelector('.info').classList.remove('cvmode');const t=T[lang];sel=-1;renderSlots();
   const done=got.size===NTOT;$('win').innerHTML=`<div class="ttl"><span>${done?`All Clear (${NTOT}/${NTOT})`:t.welcome}</span><span>${done?'':got.size+'/'+NTOT}</span></div><h2>1P YOUNGSU</h2><p id="wp"></p>`;typeText($('wp'),got.size===NTOT?t.clear:t.hello);}
@@ -536,7 +542,7 @@ function pop(txt,x,y){const p=document.createElement('div');p.className='pop';p.
 function say(t,ms=1100){const b=$('bubble');b.textContent=t;b.classList.add('on');clearTimeout(say.t);say.t=setTimeout(()=>b.classList.remove('on'),ms);}
 function addScore(n){score+=n;$('score').textContent=String(score).padStart(6,'0');}
 function setPow(v){pow=Math.max(0,Math.min(100,v));$('pw').style.width=pow+'%';}
-function collect(i,hit){
+function collect(i,hit){if(!got.has(i))track('item',(i+1)+'.'+ITEMS[i].k.en);
   if(got.has(i))return;got.add(i);const s=sc(),el=itemEls[i];
   el.classList.add('got');setTimeout(()=>el.style.display='none',600);
   $('mini').children[i].classList.add('got');
@@ -826,7 +832,7 @@ const CV={
     ['Specialty','Building AI-powered work tools <a class="pf">View portfolio →</a>']]},
 };
 let showingCV=false;
-function showCV(){showingCV=true;setTimeout(()=>showingCV=false,50);const c=CV[lang];sel=-1;renderSlots();const keepCam=camLock;endPose();camLock=keepCam;
+function showCV(){track('resume');showingCV=true;setTimeout(()=>showingCV=false,50);const c=CV[lang];sel=-1;renderSlots();const keepCam=camLock;endPose();camLock=keepCam;
   /* 이력서 볼 때: 웃으며 "저 어때요?" — 방향·동작 버튼 누를 때까지 유지 */
   if(started&&!busy&&!flying){posing=true;const tk=++poseTok;face=-1;place();
     const behind=(hx-hero.offsetWidth*.35)<PANO.PART.x1*sc();   /* 칸막이 뒤에 있으면 말풍선 없이 */
@@ -837,7 +843,7 @@ function showCV(){showingCV=true;setTimeout(()=>showingCV=false,50);const c=CV[l
    <div class="who"><b>${c.name}</b><small>${c.sub}</small><br><span class="chip">${c.role}</span></div>
    <div class="rows">${c.rows.map(r=>`<div><span>${r[0]}</span><p class="${r[1].startsWith('※')?'todo1':''}">${r[1]}</p></div>`).join('')}</div>
    <div class="bar"></div><div class="no">ID · 2026-63</div></div>`;}
-document.addEventListener('pointerdown',e=>{const b=e.target.closest('.idc .pf');if(b){e.stopPropagation();e.preventDefault();b.textContent=lang=='ko'?'추후 공개 예정':'Coming soon';b.classList.add('soon');}},true);
+document.addEventListener('pointerdown',e=>{const b=e.target.closest('.idc .pf');if(b){e.stopPropagation();e.preventDefault();track('portfolio');b.textContent=lang=='ko'?'추후 공개 예정':'Coming soon';b.classList.add('soon');}},true);
 $('plate').addEventListener('pointerdown',e=>{e.stopPropagation();if(!started)return start();showCV();});
 
 /* ═════════ 점프 ═════════
@@ -859,7 +865,7 @@ async function jump(){
   heroUp(0);clearInterval(ft);if(SH.jump)await once('jump',[1],110);busy=false;if(atRiver()&&face>0)cold();
   if(keys.left||keys.right)startWalk();else idle();
 }
-async function superJump(){
+async function superJump(){track('jump');
   busy=true;flying=true;face=1;place();const s=sc(),G=game.clientHeight;
   say(T[lang].fly,1500);
   await once(JUMPSHEET(),[0,1,1,1,2],110);                     // 웅크렸다가 뛰어오름
@@ -894,7 +900,7 @@ async function goBack(){
   loopF('walk',110);const to=Math.max(PANO.OUT*sc()*.8,camLock+game.clientWidth/2);let t0=performance.now();
   await new Promise(r=>{const step=t=>{const dt=Math.min(50,t-t0);t0=t;hx+=hero.offsetHeight*.0011*dt;place();if(hx<to)requestAnimationFrame(step);else r();};requestAnimationFrame(step);});
   hero.style.zIndex=9;showHome();lineup=true;
-  if(got.size===ITEMS.length&&!clearShown){clearShown=true;banner('ALL CLEAR!',700);await sleep(750);showHome();}
+  if(got.size===ITEMS.length&&!clearShown){clearShown=true;track('clear');banner('ALL CLEAR!',700);await sleep(750);showHome();}
   say(T[lang].back,600000);await once('cross',[0,1,2,3,4,5],140);
   posing=true;sheet('cross');clearInterval(ft);let pk=0;frame(4);ft=setInterval(()=>frame([4,4,5,5][++pk%4]),260);busy=false;
   const pl=$('plate');pl.classList.add('s1');
@@ -907,7 +913,7 @@ async function goBack(){
 }
 
 /* ═════════ 시작 · 언어 ═════════ */
-async function start(){if(started)return;started=true;$('cover').classList.add('hide');busy=true;
+async function start(){if(started)return;started=true;track('start');$('cover').classList.add('hide');busy=true;
   /* 명판 칸막이 뒤에서 걸어 나와서 시작 */
   face=1;hx=PANO.HIDE*sc();place();loopF('walk',110);
   const to=PANO.OUT*sc();let t0=performance.now();
