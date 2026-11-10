@@ -277,6 +277,7 @@
   .ppr{position:absolute;z-index:8;pointer-events:none;background-repeat:no-repeat}
   .lang{position:absolute;top:8px;right:8px;z-index:20;font:700 11px var(--px);color:#fff;background:#0b0820cc;border:2px solid var(--gold);padding:3px 7px;cursor:pointer}
   .idc .pf{display:inline-block;margin-left:6px;font:600 10px var(--font);color:#fff;background:#2563eb;padding:1px 7px;border-radius:99px;cursor:pointer;white-space:nowrap}
+  .idc .pf.soon{background:#71717a}
 </style>
 </head>
 <body>
@@ -789,7 +790,7 @@ function showCV(){showingCV=true;setTimeout(()=>showingCV=false,50);const c=CV[l
    <div class="who"><b>${c.name}</b><small>${c.sub}</small><br><span class="chip">${c.role}</span></div>
    <div class="rows">${c.rows.map(r=>`<div><span>${r[0]}</span><p class="${r[1].startsWith('※')?'todo1':''}">${r[1]}</p></div>`).join('')}</div>
    <div class="bar"></div><div class="no">ID · 2026-63</div></div>`;}
-document.addEventListener('pointerdown',e=>{if(e.target.closest('.idc .pf')){e.stopPropagation();say(lang=='ko'?'추후 공개 예정!':'Coming soon!',1600);}},true);
+document.addEventListener('pointerdown',e=>{const b=e.target.closest('.idc .pf');if(b){e.stopPropagation();e.preventDefault();b.textContent=lang=='ko'?'추후 공개 예정':'Coming soon';b.classList.add('soon');}},true);
 $('plate').addEventListener('pointerdown',e=>{e.stopPropagation();if(!started)return start();showCV();});
 
 /* ═════════ 점프 ═════════
