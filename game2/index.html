@@ -495,8 +495,8 @@ function collect(i,hit){
 }
 /* AI 상자 → 에너지 충전 → 몬스터 등장 */
 async function absorbClaude(i){keys.left=keys.right=false;walking=false;await sleep(250);while(busy)await sleep(50);busy=true;face=1;place();
-  const orange=spr.animate([{filter:'none'},{filter:'brightness(1.5) saturate(.7)',offset:.2},{filter:'sepia(.5) saturate(2.2) hue-rotate(-18deg) brightness(1.2) drop-shadow(0 0 10px #ffb38a) drop-shadow(0 0 22px #d97757)',offset:.7},{filter:'brightness(1.08) drop-shadow(0 0 6px #ffd2b8) drop-shadow(0 0 14px #d97757)'}],{duration:2600,easing:'ease-in-out'});
-  await once('c_power',[0,1,2,3,4,5,5,5,6,7],260);await orange.finished.catch(()=>{});
+  const orange=spr.animate([{filter:'none'},{filter:'brightness(1.5) saturate(.7)',offset:.2},{filter:'sepia(.5) saturate(2.2) hue-rotate(-18deg) brightness(1.2) drop-shadow(0 0 10px #ffb38a) drop-shadow(0 0 22px #d97757)',offset:.7},{filter:'brightness(1.08) drop-shadow(0 0 6px #ffd2b8) drop-shadow(0 0 14px #d97757)'}],{duration:2100,easing:'ease-in-out'});
+  await once('c_power',[0,1,2,3,4,5,4,5,4,5,6,7],170);await orange.finished.catch(()=>{});
   busy=false;idle();powerUp();}
 function powerUp(){if(powered)return;powered=true;hero.classList.add('powered');setPow(100);banner('ENERGY MAX!',1100);
   setTimeout(()=>{banner(lang=='ko'?'몬스터 출현!':'MONSTERS!',1000);spawnMon(0);},1300);}
@@ -599,7 +599,7 @@ async zombie(st,m){m.wake&&m.wake();const a=m.a,S=st.clientHeight,cx=a._cx,H=a.o
   const ex=cx-60.5*H/300,exW=60*H/300,D3=exW*300/256;
   const x3=actor(st,'z3',D3,ex,S*.04);x3.frame(0);x3.style.transformOrigin='50% 100%';
   const man=actor(st,'z2',S*.66*300/292,cx,S*.04);man.frame(0);a.remove();
-  const bub=bubble(st,'드디어 칼퇴다!',cx+H*.12,top-H*.22);
+  const bub=bubble(st,'드디어 칼퇴다!',cx+H*.12,top-H*.22);setTimeout(()=>bub.remove(),1000);
   const grow=0.22*S/(273*D3/300);
   for(const i of [1,2,3,4,5,6,7]){x3.frame(i);if(i>=3)x3.style.transform=`scale(${1+(grow-1)*(i-2)/5})`;if(i==2)word(st,'✓ ✓ ✓',ex,st.clientHeight-S*.04-30,13);await wait(230);}
   const ag=await spawnAgent(st,'ag_sulsul',ex,st.clientHeight-S*.04,'',true);x3.remove();
