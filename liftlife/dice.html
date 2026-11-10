@@ -48,13 +48,15 @@
   .bag{display:flex;gap:5px;align-items:center}
   .bag .lb{font-size:9px;color:var(--violet);margin-right:2px;width:24px;line-height:1.2}
   .pot{flex:1;height:42px;position:relative;border:2px solid #2d2560;background:#120d33;display:flex;align-items:center;gap:6px;padding:0 8px;font-size:10px;color:#5a5090}
-  .pot{flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;padding:0 7px;min-width:0}
-  .pot .t{display:flex;align-items:center;gap:4px;white-space:nowrap;font-size:10px}
-  .pot canvas{width:10px;height:14px;image-rendering:pixelated;opacity:.35;flex:none}
-  .pot.has canvas{opacity:1}
-  .pot .n{color:var(--gold)}
+  .pot{flex-direction:row;align-items:center;gap:7px;padding:0 7px;min-width:0;height:50px}
+  .pot .tx{display:flex;flex-direction:column;gap:3px;min-width:0}
+  .pot .t{display:flex;align-items:baseline;gap:5px;white-space:nowrap;font-size:11px}
+  .pot canvas{width:22px;height:31px;image-rendering:pixelated;opacity:.55;flex:none;filter:grayscale(.6)}
+  .pot.has canvas{opacity:1;filter:drop-shadow(0 0 5px var(--pc))}
+  .pot .n{color:#8d86c9;font-size:15px}.pot .n::before{content:'×';font-size:11px;margin-right:1px}
+  .pot.has .n{color:var(--gold)}
   .pot .lvt{font-size:9px;color:var(--violet);white-space:nowrap}
-  .pot.has{border-color:#fff;color:#fff}.pot.has .ic{opacity:1}
+  .pot.has{border-color:var(--pc);color:#fff;box-shadow:inset 0 0 12px color-mix(in srgb,var(--pc) 35%,transparent)}.pot.has .ic{opacity:1}
   .pot b{font-weight:400;display:block;font-size:9px;color:var(--violet)}
   .pot.got{animation:got .4s steps(2) 5}
   @keyframes got{50%{border-color:var(--gold);box-shadow:0 0 12px var(--gold)}}
@@ -205,9 +207,9 @@
     </div>
     <div class="win" id="win"></div>
     <div class="bag"><span class="lb">포션<br>가방</span>
-      <div class="pot" id="potP"><div class="t"><canvas width="10" height="14"></canvas>파워 <span class="n">0</span></div><span class="lvt">스내치 Lv0</span></div>
-      <div class="pot" id="potR"><div class="t"><canvas width="10" height="14"></canvas>회복 <span class="n">0</span></div><span class="lvt">클린저크 Lv0</span></div>
-      <div class="pot" id="potM"><div class="t"><canvas width="10" height="14"></canvas>근육 <span class="n">0</span></div><span class="lvt">스쿼트 Lv0</span></div>
+      <div class="pot" id="potP" style="--pc:#ff5a4a"><canvas width="10" height="14"></canvas><div class="tx"><div class="t">파워<span class="n">0</span></div><span class="lvt">스내치 Lv0</span></div></div>
+      <div class="pot" id="potR" style="--pc:#5ad1ff"><canvas width="10" height="14"></canvas><div class="tx"><div class="t">회복<span class="n">0</span></div><span class="lvt">클린저크 Lv0</span></div></div>
+      <div class="pot" id="potM" style="--pc:#c77dff"><canvas width="10" height="14"></canvas><div class="tx"><div class="t">근육<span class="n">0</span></div><span class="lvt">스쿼트 Lv0</span></div></div>
     </div>
   </section>
 
@@ -590,7 +592,11 @@ function setupWarn(){const kakao=/KAKAOTALK/i.test(navigator.userAgent||'');if(S
 function start(){if(started)return;started=true;ac();$('cover').hidden=true;SFX.morning();banner('DAY '+S.day,1000);
   msg('START',S.rolls?`다시 왔구나, ${TO}`:`안녕, ${TO}`,S.rolls?`역도 합계 ${total()}kg. 오늘은 기록 깰 수 있을까?\n아래 주사위를 눌러요.`:`${TO}의 인생은 주사위에 달렸다.\n밥 · 똥 · 잠 · 그리고 역도. 아래 주사위를 눌러요.`);say('역도 하고 싶다',1400);}
 
-function fitApp(){const app=$('app'),vh=(window.visualViewport&&visualViewport.height)||innerHeight;if(!vh)return;app.style.transform='';const s=Math.min(1,vh/app.scrollHeight);app.style.transform=s<1?`scale(${s})`:'';}
+function fitApp(){const app=$('app'),vh=(window.visualViewport&&visualViewport.height)||innerHeight;if(!vh)return;
+  const cs=getComputedStyle(document.documentElement),pad=(parseFloat(cs.paddingTop)||0)+(parseFloat(cs.paddingBottom)||0);
+  app.style.transform='';const avail=vh-pad-4,s=Math.min(1,avail/app.scrollHeight);app.style.transform=s<1?`scale(${s})`:'';
+  document.body.style.height=avail+'px';}
+setTimeout(fitApp,300);if(window.visualViewport)visualViewport.addEventListener('resize',fitApp);
 addEventListener('resize',()=>{fitApp();place();});
 $('coverTo').textContent=`FOR ${TO} · FROM ${FROM}`;
 setupWarn();
