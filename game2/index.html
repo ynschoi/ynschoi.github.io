@@ -272,6 +272,7 @@
   .slot .sp{position:absolute;inset:3px;background-repeat:no-repeat;background-position:0 0;image-rendering:auto}
   .hi.pic{position:relative;width:40px!important;min-width:40px;height:40px!important;padding:0!important}
   .hi.pic .sp{position:absolute;inset:2px;background-repeat:no-repeat;background-position:0 0}
+  .bubble.lft{left:15%}
 </style>
 </head>
 <body>
@@ -340,13 +341,13 @@ const T={
       get:'ITEM GET!',clear:'ALL CLEAR! 우리 팀 완성 🎉',place:{desk:'내 자리',office:'사무실',city:'한강 노을'},
       help:[['◀ ▶','걷기'],['▲','앞으로 점프 (한강 앞: 슈퍼 점프!)'],['▼','몸풀기'],['A','펀치'],['B','발차기'],['X','날아차기'],['Y','기 모으기'],['SELECT','한 / EN'],['START','도움말']],
       lines:{hit:['수작업 KO!','반복 업무 OUT','POW!'],get:['득템!','야호!','좋은걸?','오호?']},
-      river:'한강은 추워요 🥶 점프! ▲',gift:{k:'63 슈퍼 점프권',d:'한강 앞에서 ▲ 를 누르면 63빌딩 48층까지 날아가요!',m:'SPECIAL'},riverNo:'선물 상자를 먼저 열어 보세요 🎁',fly:'63빌딩 48층까지 슈퍼 점프!',arrive:'여의도 63 · 48층',arriveTxt:'48층 사무실 도착✨',back:'다시 출근 😎',ask:'제 이력서 보실래요? 👈',how:'저 어때요? 👍'},
+      river:['한강은 추워요 🥶','점프! ▲'],gift:{k:'63 슈퍼 점프권',d:'한강 앞에서 ▲ 를 누르면 63빌딩 48층까지 날아가요!',m:'SPECIAL'},riverNo:'선물 상자를 먼저 열어 보세요 🎁',fly:'63빌딩 48층까지 슈퍼 점프!',arrive:'여의도 63 · 48층',arriveTxt:'48층 사무실 도착✨',back:'다시 출근 😎',ask:'제 이력서 보실래요? 👈',how:'저 어때요? 👍'},
   en:{a:'Punch',b:'Kick',x:'Fly kick',y:'Power',up:'Jump',down:'Warm-up',sel:'SELECT = KO/EN',
       hello:'Walk with ◀ ▶ and open the gift boxes.',plateArw:'▲ RESUME',welcome:'STAGE 1 · YEOUIDO 63',
       get:'ITEM GET!',clear:'ALL CLEAR! Team complete 🎉',place:{desk:'MY DESK',office:'OFFICE',city:'HAN RIVER'},
       help:[['◀ ▶','Walk'],['▲','Jump forward (at the river: SUPER JUMP!)'],['▼','Warm-up'],['A','Punch'],['B','Kick'],['X','Fly kick'],['Y','Power up'],['SELECT','KO / EN'],['START','Help']],
       lines:{hit:['Manual work KO!','Repetition OUT','POW!'],get:['Got it!','Yay!','Nice!','Ooh?']},
-      river:'The Han River is cold 🥶 Jump right over? ▲',gift:{k:'63 Super Jump Pass',d:'Press ▲ at the river to fly to the 48th floor of the 63 Building!',m:'SPECIAL'},riverNo:'Open the gift box first 🎁',fly:'SUPER JUMP to the 48th floor!',arrive:'YEOUIDO 63 · 48F',arriveTxt:'Arrived at the 48F office ✨',back:'Back to work 😎',ask:'Want to see my resume? 👈',how:'How am I? 👍'},
+      river:['The river is cold 🥶','Jump! ▲'],gift:{k:'63 Super Jump Pass',d:'Press ▲ at the river to fly to the 48th floor of the 63 Building!',m:'SPECIAL'},riverNo:'Open the gift box first 🎁',fly:'SUPER JUMP to the 48th floor!',arrive:'YEOUIDO 63 · 48F',arriveTxt:'Arrived at the 48F office ✨',back:'Back to work 😎',ask:'Want to see my resume? 👈',how:'How am I? 👍'},
 };
 /* 아이템 = 업무 도구. x 는 배경 원본(높이 1024) 기준 위치 */
 /* ── 아이템 v2: 나에 대한 상자 4개 → AI 에너지 → 몬스터 4마리 퇴치 → 자동화 툴 4개 ── */
@@ -506,7 +507,7 @@ function nearItem(reach){const s=sc();let best=-1,bd=1e9;
   ITEMS.forEach((it,i)=>{if(got.has(i)||!avail(i))return;const dx=(it.x*s-hx)*face;if(dx>-20&&dx<reach&&dx<bd){bd=dx;best=i;}});return best;}
 function touchItems(air){const s=sc(),hw=hero.offsetWidth;ITEMS.forEach((it,i)=>{if(!got.has(i)&&avail(i)&&it.kind!='tool'&&Math.abs(it.x*s-hx)<hw*.45)collect(i,false);});}
 const atRiver=()=>hx>=PANO.RIVER*sc()-hero.offsetWidth/2-4;
-let coldT=0;function cold(){const n=performance.now();if(n-coldT<1800)return;coldT=n;say(boost?T[lang].river:T[lang].riverNo,1800);}
+let coldT=0;function cold(){const n=performance.now();if(n-coldT<1800)return;coldT=n;if(!boost){say(T[lang].riverNo,1800);return;}const r=T[lang].river;$('bubble').classList.add('lft');say(r[0],1300);clearTimeout(cold.t);cold.t=setTimeout(()=>{if(atRiver()&&!flying){say(r[1],2200);}setTimeout(()=>$('bubble').classList.remove('lft'),2300);},1300);}
 function upGlow(){$$up.classList.toggle('glow',boost&&!flying&&atRiver());}
 const $$up=document.querySelector('.dpad .u');
 function openGift(){if(boost)return;boost=true;const s=sc();giftEl.classList.add('got');setTimeout(()=>giftEl.style.display='none',600);
