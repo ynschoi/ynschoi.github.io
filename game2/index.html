@@ -522,7 +522,7 @@ function openGift(){if(boost)return;boost=true;const s=sc();giftEl.classList.add
 
 
 /* ═════════ 몬스터 → AGENT ═════════ */
-const SM={"z1": {"cw": 243, "ch": 300, "f0": [290, 184, 296, 127], "f7": [291, 173, 296, 121]}, "z2": {"cw": 182, "ch": 300, "f0": [292, 79, 296, 90], "f7": [292, 142, 295, 86]}, "z3": {"cw": 268, "ch": 300, "f0": [122, 256, 293, 139], "f7": [273, 252, 295, 126]}, "g1": {"cw": 253, "ch": 300, "f0": [249, 243, 295, 130], "f7": [215, 223, 296, 126]}, "g2": {"cw": 242, "ch": 300, "f0": [284, 178, 287, 109], "f7": [242, 231, 295, 117]}, "s1": {"cw": 252, "ch": 300, "f0": [297, 136, 298, 125], "f7": [297, 136, 298, 125]}, "s2": {"cw": 176, "ch": 300, "f0": [297, 133, 298, 88], "f7": [297, 134, 298, 87]}, "s3": {"cw": 225, "ch": 300, "f0": [297, 151, 298, 111], "f7": [141, 142, 298, 112]}, "ag_ddalkkak": {"cw": 240, "ch": 240, "f0": [178, 173, 239, 116], "f7": [178, 175, 195, 119]}, "ag_chakchak": {"cw": 240, "ch": 240, "f0": [191, 188, 238, 116], "f7": [184, 192, 198, 118]}, "ag_sulsul": {"cw": 240, "ch": 240, "f0": [182, 165, 236, 120], "f7": [170, 172, 185, 116]}, "m_slime": {"cw": 168, "ch": 300, "f0": [278, 129, 298, 83], "f7": [278, 127, 298, 83]}, "m_zombie": {"cw": 210, "ch": 300, "f0": [289, 182, 295, 111]}, "m_golem": {"cw": 287, "ch": 300, "f0": [273, 275, 295, 146]}};
+const SM={"z1": {"cw": 243, "ch": 300, "f0": [290, 184, 296, 127], "f7": [291, 173, 296, 121]}, "z2": {"cw": 182, "ch": 300, "f0": [292, 79, 296, 90], "f7": [292, 142, 295, 86]}, "z3": {"cw": 268, "ch": 300, "f0": [122, 256, 293, 139], "f7": [273, 252, 295, 126]}, "g1": {"cw": 253, "ch": 300, "f0": [249, 243, 295, 130], "f7": [215, 223, 296, 126]}, "g2": {"cw": 242, "ch": 300, "f0": [284, 178, 287, 109], "f7": [242, 231, 295, 117]}, "s1": {"cw": 252, "ch": 300, "f0": [297, 136, 298, 125], "f7": [297, 136, 298, 125]}, "s2": {"cw": 176, "ch": 300, "f0": [297, 133, 298, 88], "f7": [297, 134, 298, 87]}, "s3": {"cw": 225, "ch": 300, "f0": [297, 151, 298, 111], "f7": [141, 142, 298, 112]}, "ag_ddalkkak": {"cw": 240, "ch": 240, "f0": [178, 173, 239, 116], "f7": [178, 175, 195, 119]}, "ag_chakchak": {"cw": 240, "ch": 240, "f0": [191, 188, 238, 116], "f7": [184, 192, 198, 118]}, "ag_sulsul": {"cw": 240, "ch": 240, "f0": [182, 165, 236, 120], "f7": [170, 172, 185, 116]}, "m_slime": {"cw": 168, "ch": 300, "f0": [278, 129, 298, 83], "f7": [278, 127, 298, 83]}, "m_zombie": {"cw": 210, "ch": 300, "f0": [289, 182, 295, 111]}, "m_golem": {"cw": 287, "ch": 300, "f0": [273, 275, 295, 146]}, "s_hit": {"cw": 184, "ch": 300, "f0": [297, 137, 298, 91], "f7": [297, 135, 298, 91]}};
 const SPR=new Proxy({},{get:(o,k)=>A2(k)});
 ['m_golem','m_zombie','m_slime','z1','z2','z3','g1','g2','s1','s2','s3','ag_ddalkkak','ag_chakchak','ag_sulsul','j_slime','j_paper','j_excel'].forEach(k=>{const i=new Image();i.src=A2(k);});
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
@@ -578,15 +578,16 @@ async golem(st,m){m.wake&&m.wake();const a=m.a,S=st.clientHeight,cx=a._cx,c={x:c
   return ag;},
 async slime(st,m){m.wake&&m.wake();let a=m.a;const S=st.clientHeight,cx=a._cx,top=()=>st.clientHeight-a._b-a.offsetHeight*.95;
   a.classList.remove('i-wobble');
-  await strike(st,'punch');word(st,'Ctrl+V',cx,top(),16);m.tag.style.opacity=0;
-  for(const i of [1,2,3,4,5]){a.frame(i);await wait(140);}
+  const face=async(fr,ms)=>{const h=actor(st,'s_hit',S*0.46*300/SM.s_hit.f0[0],cx,S*.04);a.style.visibility='hidden';for(const i of fr){h.frame(i);await wait(ms);}h.remove();a.style.visibility='';};
+  await strike(st,'punch');m.tag.style.opacity=0;await face([1,2,3,4,5],120);word(st,'Ctrl+V',cx,top(),16);
+  for(const i of [2,3,4,5]){a.frame(i);await wait(140);}
   for(const i of [6,7]){a.frame(i);await wait(200);}await wait(300);
   const a2=actor(st,'s2',S*0.46*300/SM.s2.f0[0],cx,S*.04);a2.frame(0);a.remove();a=a2;
-  await strike(st,'kick');word(st,'Ctrl+V',cx,top(),16);
-  for(const i of [1,2,3,4,5]){a.frame(i);await wait(140);}
-  for(const i of [6,7]){a.frame(i);await wait(200);}await wait(300);
+  await strike(st,'kick');await face([1,2,3,4,5],120);word(st,'Ctrl+V',cx,top(),16);
+  for(const i of [2,3,4,5]){a.frame(i);await wait(140);}
+  for(const i of [6,7]){a.frame(i);await wait(200);}await face([6,7],220);await wait(150);
   const a3=actor(st,'s3',S*0.46*300/SM.s3.f0[0],cx,S*.04);a3.frame(0);a.remove();a=a3;
-  await strike(st,'punch');word(st,'MAX!',cx,top(),22);
+  await strike(st,'punch');await face([1,2],130);word(st,'MAX!',cx,top(),22);
   for(const i of [1,2,3]){a.frame(i);await wait(170);}
   a.frame(4);a.style.transform=`scale(${(.3*SM.ag_ddalkkak.f0[0]/240)/(0.46*SM.s3.f7[0]/SM.s3.f0[0])})`;await whiteout(st);word(st,'딸깍!',cx,top(),26);
   for(const i of [4,5,6,7]){a.frame(i);await wait(200);}
