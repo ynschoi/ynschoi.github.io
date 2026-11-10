@@ -274,6 +274,7 @@
   .hi.pic .sp{position:absolute;inset:2px;background-repeat:no-repeat;background-position:0 0}
   .bubble.lft{left:15%}
   html,body,.app,.pad,#game{touch-action:none;-webkit-tap-highlight-color:transparent}
+  .ppr{position:absolute;z-index:8;pointer-events:none;background-repeat:no-repeat}
 </style>
 </head>
 <body>
@@ -409,8 +410,8 @@ const ACT={
   cheer:{seq:[0,1,2,3,4,5,6,7,1,2,3],ms:110},
   thumb:{seq:[0,1,2,3,4,5,5,5,6,7],ms:120},
   wave:{seq:[0,1,2,3,4,5,6,7],ms:120},
-  paper:{seq:[0,1,2,3,4,5,6,7,7],ms:110},
-  flip:{seq:[0,1,2,3,4,5,6,7],ms:95,dx:-70},
+  paper:{seq:[0,1,2,3,4,5,6,7,7],ms:110,toss:3},
+  flip:{seq:[0,1,2,3,4,5,6,7],ms:95,dx:340},
 };
 
 /* ═════════ 상태 ═════════ */
@@ -690,6 +691,7 @@ async function act(n){
   const sn=powered&&SH['c_'+n]?'c_'+n:n;
   await once(sn,A.seq,A.ms,(k)=>{
     if(A.dx){hx+=face*dxTotal/A.seq.length;place();touchItems();}
+    if(A.toss===k)tossPapers();
     if(k===A.hit){
       const hw=hero.offsetWidth,i=nearItem((A.reach||70)*game.clientHeight/320+hw*.3);
       pop(A.txt||'POW!',hx+face*hw*.5-30,game.clientHeight*.38);
@@ -701,6 +703,13 @@ async function act(n){
   busy=false;if(n=='hop'||n=='squat')say('😎',900);
   if(keys.left||keys.right)startWalk();else idle();
 }
+function tossPapers(){const G=game.clientHeight,H=hero.offsetHeight,x0=hx+face*hero.offsetWidth*.3,y0=G*(1-.09)-H*.85;
+  for(let j=0;j<9;j++){const P=Math.round(H*(.2+Math.random()*.1)),d=document.createElement('div');d.className='ppr';
+    d.style.cssText+=`;width:${P}px;height:${P}px;left:${x0-P/2}px;top:${y0-P/2}px;background-image:url(${A2(j%3==1?'urgent':'flutter')});background-size:${P*8}px ${P}px`;world.appendChild(d);
+    let f=j%8;const t=setInterval(()=>{d.style.backgroundPosition=`${-(f++%8)*P}px 0`;},70);
+    const vx=face*(30+Math.random()*90),up=-(H*(.35+Math.random()*.45)),fall=G*.91-y0-P*.4,sw=(Math.random()<.5?-1:1)*(15+Math.random()*25);
+    d.animate([{transform:'translate(0,0) scale(.5)',opacity:1},{transform:`translate(${vx*.5}px,${up}px) scale(1)`,offset:.3},{transform:`translate(${vx*.8+sw}px,${up*.4}px)`,offset:.55},{transform:`translate(${vx-sw}px,${fall*.6}px)`,offset:.8},{transform:`translate(${vx}px,${fall}px)`,opacity:1,offset:.95},{transform:`translate(${vx}px,${fall}px)`,opacity:0}],
+      {duration:1600+Math.random()*700,delay:j*45,easing:'ease-out'}).finished.then(()=>{clearInterval(t);d.remove();});}}
 let walkRaf=0,lastT=0,walking=false;
 function startWalk(){if(walking)return;walking=true;hero.dataset.m='walk';loopF('walk',110);lastT=performance.now();walkRaf=requestAnimationFrame(walkStep);}
 function walkStep(t){
