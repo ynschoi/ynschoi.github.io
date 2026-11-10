@@ -665,7 +665,7 @@ function agTalk(o,i){const N=AGNICK[o.key],b=document.createElement('div');b.cla
 function trailRec(){const p=TR[0],o=hero.style.opacity===''?1:+hero.style.opacity;
   if(!p||Math.abs(hx-p.x)+Math.abs(heroY-p.y)>2)TR.unshift({x:hx,y:heroY,s:heroS,o});else{p.s=heroS;p.o=o;}if(TR.length>900)TR.length=900;}
 function trailAt(dist){let acc=0;for(let k=1;k<TR.length;k++){const a=TR[k-1],b=TR[k],d=Math.hypot(a.x-b.x,a.y-b.y);if(acc+d>=dist){const t=(dist-acc)/(d||1);return{x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t,s:a.s,o:a.o};}acc+=d;}return null;}
-function folSnap(){fols.forEach((o,k)=>{o.x=hx-face*(hero.offsetWidth*.45+o.h*(.35+k*.98));o.y=0;});TR=[];}
+function folSnap(){fols.forEach((o,k)=>{o.x=hx-face*(hero.offsetWidth*.45+o.h*(.35+k*1.1));o.y=0;});TR=[];}
 let superFly=false,lineup=false;
 setInterval(()=>{if(!powered||flying||document.hidden)return;const h=hero.offsetHeight,d=document.createElement('div');const cl=Math.random()<.45;
   d.className='csp'+(cl?' cl':'');if(cl)d.style.backgroundImage=`url(${A2('ag_claude')})`;else d.textContent=pick(['✦','✧','✦']);
@@ -676,7 +676,7 @@ function flyFols(el,dur,x1,up1,G){fols.forEach(o=>{const t=Math.max(0,Math.min(1
   o.el.style.left=(x-o.h/2)+'px';o.el.style.bottom=(G*.09+arc)+'px';o.el.style.transform=`scale(${1-.9*t})`;o.el.style.opacity=t>.8?String(Math.max(0,1-(t-.8)/.2)):'1';
   if(t>.1&&t<1&&Math.random()<.25)trail(x,G-arc-G*.12);});}
 function folStep(){trailRec();const G=game.clientHeight;if(superFly){requestAnimationFrame(folStep);return;}
-  fols.forEach((o,k)=>{const dist=hero.offsetWidth*.45+o.h*(.35+k*.98);let p=trailAt(dist);
+  fols.forEach((o,k)=>{const dist=hero.offsetWidth*.45+o.h*(.35+k*1.1);let p=trailAt(dist);
     if(lineup)p={x:hx+hero.offsetWidth*.55+o.h*(.55+k*1.05),y:0,s:1,o:1};
     else if(!p)p={x:hx-face*dist,y:0,s:1,o:1};
     const nx=o.x+(p.x-o.x)*(flying?.5:.25),ny=o.y+(p.y-o.y)*(flying?.5:.3),dx=nx-o.x;o.d+=Math.abs(dx);if(Math.abs(dx)>.4)o.dir=dx>0?1:-1;o.x=nx;o.y=ny;
