@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<title>먹고 싸고 자고 들고</title>
+<title>Moti</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/galmuri.css">
 <style>
@@ -50,11 +50,11 @@
   .pot{flex:1;height:42px;position:relative;border:2px solid #2d2560;background:#120d33;display:flex;align-items:center;gap:6px;padding:0 8px;font-size:10px;color:#5a5090}
   .pot{flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;padding:0 7px;min-width:0}
   .pot .t{display:flex;align-items:center;gap:4px;white-space:nowrap;font-size:10px}
-  .pot .ic{font-size:13px;flex:none;opacity:.4}
+  .pot canvas{width:10px;height:14px;image-rendering:pixelated;opacity:.35;flex:none}
+  .pot.has canvas{opacity:1}
+  .pot .n{color:var(--gold)}
+  .pot .lvt{font-size:9px;color:var(--violet);white-space:nowrap}
   .pot.has{border-color:#fff;color:#fff}.pot.has .ic{opacity:1}
-  .pot .pips{display:flex;gap:2px}
-  .pot .pips i{width:6px;height:10px;background:#2d2560;border:1px solid #111}
-  .pot .pips i.on{background:var(--gold)}
   .pot b{font-weight:400;display:block;font-size:9px;color:var(--violet)}
   .pot.got{animation:got .4s steps(2) 5}
   @keyframes got{50%{border-color:var(--gold);box-shadow:0 0 12px var(--gold)}}
@@ -112,10 +112,22 @@
   .mgov .row button{font:700 12px var(--px);padding:8px 12px;border:2px solid var(--gold);background:#0b0820;box-shadow:0 3px 0 #000}
   .mgov .row button.y{background:var(--gold);color:#111}
   .mgov .row button:active{transform:translateY(2px);box-shadow:0 1px 0 #000}
+  .mgov .row button[disabled]{opacity:.35;pointer-events:none}
+  .mgov .eff{font:12px/1.5 var(--font);color:var(--ink)}
+  .mgov .eff b{color:var(--gold);font-weight:700}
+  .mgov .kg{font-size:18px;color:#fff}
 
   .cover{position:absolute;inset:0;z-index:20;background:#0b0820d8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;cursor:pointer}
   .cover .to{font-size:11px;color:var(--violet)}
-  .cover .lg{font-size:26px;font-weight:700;color:var(--gold);text-shadow:3px 3px 0 var(--red);line-height:1.15}
+  .cover .lg{font-size:40px;font-weight:700;color:var(--gold);text-shadow:4px 4px 0 var(--red);line-height:1;letter-spacing:4px}
+  .cover .tag{font-size:16px;color:#fff;text-shadow:2px 2px 0 #000}
+  .cover .note{font-size:9px;color:var(--violet)}
+  .warn{margin:2px 16px;border:2px solid var(--gold);background:#0b0820;padding:8px 10px;font:12px/1.5 var(--font);color:#fff;max-width:330px;cursor:default}
+  .warn b{color:var(--gold)}
+  .cover.warned{gap:5px}.cover.warned .to,.cover.warned .sub,.cover.warned .note,.cover.warned .ins{display:none}.cover.warned .lg{font-size:26px}.cover.warned .tag{font-size:12px}.cover.warned .warn{padding:6px 9px;font-size:11px}
+  .warn .row{display:flex;gap:6px;justify-content:center;margin-top:6px;flex-wrap:wrap}
+  .warn .row button,.warn .row a{font:700 11px var(--px);padding:5px 9px;border:2px solid var(--gold);color:#fff;text-decoration:none;background:#15102e}
+  .warn .row .y{background:var(--gold);color:#111}
   .cover .sub{font-size:10px;color:var(--ink);letter-spacing:1px}
   .cover .ins{font-size:14px;animation:blink 1s steps(1) infinite;margin-top:4px}
   .cover[hidden]{display:none}
@@ -164,10 +176,10 @@
       <div class="total">합계<b id="tot">0</b></div>
     </div>
     <div class="win" id="win"></div>
-    <div class="bag"><span class="lb">쉬움<br>레벨</span>
-      <div class="pot" id="bfSn"><div class="t"><span class="ic">🍚</span>스내치</div><span class="pips"></span></div>
-      <div class="pot" id="bfCj"><div class="t"><span class="ic">😴</span>클린저크</div><span class="pips"></span></div>
-      <div class="pot" id="bfSq"><div class="t"><span class="ic">💩</span>스쿼트</div><span class="pips"></span></div>
+    <div class="bag"><span class="lb">포션<br>가방</span>
+      <div class="pot" id="potP"><div class="t"><canvas width="10" height="14"></canvas>파워 <span class="n">0</span></div><span class="lvt">스내치 Lv0</span></div>
+      <div class="pot" id="potR"><div class="t"><canvas width="10" height="14"></canvas>회복 <span class="n">0</span></div><span class="lvt">클린저크 Lv0</span></div>
+      <div class="pot" id="potM"><div class="t"><canvas width="10" height="14"></canvas>근육 <span class="n">0</span></div><span class="lvt">스쿼트 Lv0</span></div>
     </div>
   </section>
 
@@ -190,9 +202,12 @@
     </div>
     <div class="cover" id="cover">
       <div class="to" id="coverTo"></div>
-      <div class="lg">먹고 싸고<br>자고 들고</div>
-      <div class="sub">ROLL · EAT · POOP · SLEEP · LIFT</div>
+      <div class="lg">MOTI</div>
+      <div class="tag">먹고 싸고 들어라</div>
+      <div class="sub">EAT · POOP · LIFT</div>
+      <div class="warn" id="warn" hidden></div>
       <div class="ins">TAP TO START</div>
+      <div class="note">기록은 이 브라우저에 저장돼요</div>
     </div>
   </section>
 
@@ -206,7 +221,8 @@
 
 <script>
 /* ═════════ 선물 설정: 이름은 여기서 바꿔요 ═════════ */
-const TO='친구', FROM='영수';
+const TO='Moti', FROM='영수';
+const SHARE_URL='https://claude.ai/artifact/Cs1xss3g2bppqQWmVQVA5J';   // 외부 브라우저로 열 주소
 const josa=(w,a,b)=>{const c=w.charCodeAt(w.length-1);return (c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28)?a:b;};
 const TOya=TO+josa(TO,'아','야');
 const LETTER_AT=300;   // 합계가 이 kg을 넘으면 편지
@@ -216,15 +232,22 @@ const FACES=[
   {k:'sn',n:'스내치',lift:1},{k:'cj',n:'클린앤저크',lift:1},{k:'sq',n:'백스쿼트',lift:1},
   {k:'eat',n:'밥'},{k:'zzz',n:'잠'},{k:'poo',n:'똥'}];
 const PIPS={1:[[50,50]],2:[[28,28],[72,72]],3:[[26,26],[50,50],[74,74]],4:[[28,28],[72,28],[28,72],[72,72]],5:[[26,26],[74,26],[50,50],[26,74],[74,74]],6:[[30,24],[70,24],[30,50],[70,50],[30,76],[70,76]]};
-const KG={PERFECT:10,GREAT:5,GOOD:2,MISS:0};
-const START={sn:60,cj:80,sq:100};
 
 /* ═════════ 상태 ═════════ */
-const KEY='liftlife.dice.v2';
-const MAXLV=5;
-const S={sn:START.sn,cj:START.cj,sq:START.sq,buff:{sn:0,cj:0,sq:0},day:1,rolls:0,letter:false};
-try{const v=JSON.parse(localStorage.getItem(KEY)||'null');if(v){Object.assign(S,v);S.buff=Object.assign({sn:0,cj:0,sq:0},v.buff);delete S.pot;}}catch(e){}
+const KEY='moti.v1';
+/* PR = 그 종목 최고 기록(kg). 잘해야만 바뀜. pot = 포션 개수, lv = 포션을 마셔서 쌓인 쉬움 레벨(계속 쌓임) */
+const S={sn:0,cj:0,sq:0,pot:{P:0,R:0,M:0},lv:{sn:0,cj:0,sq:0},day:1,rolls:0,letter:false};
+let STORE_OK=true;
+try{localStorage.setItem(KEY+'.t','1');localStorage.removeItem(KEY+'.t');const v=JSON.parse(localStorage.getItem(KEY)||'null');
+  if(v){Object.assign(S,v);S.pot=Object.assign({P:0,R:0,M:0},v.pot);S.lv=Object.assign({sn:0,cj:0,sq:0},v.lv);}}catch(e){STORE_OK=false;}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}};
+const POTK={sn:'P',cj:'R',sq:'M'},POTN={P:'파워포션',R:'회복포션',M:'근육포션'};
+/* 레벨 효과: 아주 조금씩 쉬워짐 */
+const EASE={sn:L=>Math.max(.35,Math.pow(.97,L)),   // 추 속도 배율
+            cj:L=>Math.max(.35,Math.pow(.97,L)),   // 게이지 차는 속도 배율
+            sq:L=>Math.min(4,2+.1*L)};             // 연타 제한 시간(초)
+const easeText=(k,L)=>k==='sq'?`제한 시간 <b>${EASE.sq(L).toFixed(1)}초</b>`:`${k==='sn'?'추':'게이지'} 속도 <b>${Math.round(EASE[k](L)*100)}%</b>`;
+const r05=v=>Math.round(v*2)/2;
 
 const $=id=>document.getElementById(id);
 const game=$('game'),hero=$('hero'),spr=$('spr');
@@ -263,7 +286,12 @@ const SFX={
   morning:()=>[784,988,1175,1568].forEach((f,i)=>tone(f,.1,'triangle',.06,0,i*.08)),
 };
 
-/* ═════════ 픽셀 소품: 하차푸리 ═════════ */
+/* ═════════ 픽셀 소품: 포션 · 하차푸리 ═════════ */
+const POTC={P:['#ff5a4a','#b81d12'],R:['#5ad1ff','#1f7fd1'],M:['#c77dff','#7b2cbf']};
+function drawPotion(cv,[a,b]){const c=cv.getContext('2d');const P=(x,y,w,h,col)=>{c.fillStyle=col;c.fillRect(x,y,w,h);};c.clearRect(0,0,10,14);
+  P(3,0,4,2,'#8a5a2a');P(3,2,4,2,'#ddd');P(1,4,8,9,'#111');P(2,5,6,7,a);P(2,9,6,3,b);P(3,6,1,2,'#fff');P(2,13,6,1,'#111');}
+function potionURL(k){const cv=document.createElement('canvas');cv.width=10;cv.height=14;drawPotion(cv,POTC[k]);return cv.toDataURL();}
+document.querySelectorAll('.pot canvas').forEach((cv,i)=>drawPotion(cv,POTC['PRM'[i]]));
 function khachURL(){const cv=document.createElement('canvas');cv.width=20;cv.height=12;const c=cv.getContext('2d');const P=(x,y,w,h,col)=>{c.fillStyle=col;c.fillRect(x,y,w,h);};
   P(2,3,16,6,'#111');P(0,5,20,2,'#111');P(1,5,18,2,'#c97a2e');P(3,4,14,4,'#c97a2e');P(4,4,12,4,'#ffd84a');P(5,5,10,2,'#ffe98a');P(8,4,4,4,'#fff');P(9,5,2,2,'#ff9d00');P(3,8,14,1,'#8a4a18');
   return cv.toDataURL();}
@@ -308,16 +336,17 @@ function shake(){game.classList.remove('shake');void game.offsetWidth;game.class
 function setBar(on){const bb=$('bb');bb.classList.toggle('on',on);if(on&&!bb.childElementCount){bb.innerHTML=['#d92d20','#2563eb'].map((c,i)=>`<i style="left:${-4-i*6}%;height:${900-i*150}%;background:${c}"></i><i style="right:${-4-i*6}%;height:${900-i*150}%;background:${c}"></i>`).join('');}}
 
 /* ═════════ 화면 갱신 ═════════ */
-const total=()=>S.sn+S.cj+S.sq;
+const total=()=>r05(S.sn+S.cj+S.sq);
 function paint(up){
-  const max=Math.max(150,S.sn,S.cj,S.sq)+20;
-  [['Sn','sn'],['Cj','cj'],['Sq','sq']].forEach(([a,k])=>{$('fl'+a).style.width=(S[k]/max*100)+'%';$('kg'+a).textContent=S[k]+'kg';$('pr'+a).classList.toggle('up',up===k);});
+  const max=Math.max(150,S.sn,S.cj,S.sq)+10;
+  [['Sn','sn'],['Cj','cj'],['Sq','sq']].forEach(([a,k])=>{$('fl'+a).style.width=(S[k]/max*100)+'%';$('kg'+a).textContent=S[k]?S[k]+'kg':'-';$('pr'+a).classList.toggle('up',up===k);});
   $('tot').textContent=total()+'kg';
   $('hud').innerHTML=`DAY <b>${S.day}</b> · 🎲 <b>${S.rolls}</b>`;
-  [['sn','bfSn'],['cj','bfCj'],['sq','bfSq']].forEach(([k,id])=>{const el=$(id),L=S.buff[k];el.classList.toggle('has',L>0);el.querySelector('.pips').innerHTML=Array.from({length:MAXLV},(_,i)=>`<i class="${i<L?'on':''}"></i>`).join('');});
+  [['sn','potP','스내치'],['cj','potR','클린저크'],['sq','potM','스쿼트']].forEach(([k,id,n])=>{const el=$(id),c=S.pot[POTK[k]];el.classList.toggle('has',c>0);el.querySelector('.n').textContent=c;el.querySelector('.lvt').textContent=`${n} Lv${S.lv[k]}`;});
 }
-function buff(k,n=1){const before=S.buff[k];S.buff[k]=Math.min(MAXLV,before+n);save();paint();const el=$({sn:'bfSn',cj:'bfCj',sq:'bfSq'}[k]);el.classList.remove('got');void el.offsetWidth;el.classList.add('got');SFX.potion();
-  const h=head();pop(S.buff[k]>before?`${FACES.find(f=>f.k===k).n} 쉬워짐!`:'이미 MAX!',h.x,h.y-30,14);return S.buff[k];}
+function gotPot(p,n=1){S.pot[p]+=n;save();paint();const el=$({P:'potP',R:'potR',M:'potM'}[p]);el.classList.remove('got');void el.offsetWidth;el.classList.add('got');SFX.potion();
+  const h=head(),f=document.createElement('img');f.className='fly';f.src=potionURL(p);f.style.cssText+=`;left:${h.x}px;top:${h.y}px;width:20px;height:28px`;game.appendChild(f);
+  f.animate([{transform:'translateY(0) scale(.5)'},{transform:'translateY(-40px) scale(1.3)',opacity:1},{transform:'translateY(-70px) scale(.6)',opacity:0}],{duration:1000});setTimeout(()=>f.remove(),1000);}
 let typeT=null;
 function msg(tag,title,body,cls=''){const w=$('win');w.classList.remove('flash');void w.offsetWidth;w.classList.add('flash');
   w.innerHTML=`<div class="ttl"><span>${tag}</span><span>${TO}의 하루</span></div><h2>${title}</h2><p class="${cls}" id="msgP"></p>`;
@@ -344,8 +373,8 @@ async function doEat(){await walkTo(SPOT.table-14);
     f.classList.add('fly');f.style.left=tx+'px';f.style.top=ty+'px';game.appendChild(f);
     f.animate([{transform:'none'},{transform:`translate(${(h.x-tx)/2}px,${h.y-ty-30}px) scale(1.1)`,offset:.5},{transform:`translate(${h.x-tx}px,${h.y-ty+8}px) scale(.3)`,opacity:.2}],{duration:420,easing:'ease-in'});
     setTimeout(()=>f.remove(),400);await sleep(380);SFX.chew();pop(jackpot?pick(['치즈~','쭈욱','고소해']):pick(['냠','쩝','우걱']),h.x,h.y-10,15);await sleep(140);}
-  hero.classList.remove('chew');SFX.gulp();const L=buff('sn',jackpot?2:1);
-  msg('EAT',jackpot?'🧀 하차푸리 잭팟!':'🍚 밥 먹음',(jackpot?'치즈 가득 하차푸리를 먹었다. 힘이 넘친다.':'밥 한 그릇 뚝딱. 힘이 난다.')+`\n스내치가 쉬워졌다! (Lv${L}/${MAXLV}: 추가 느려지고 타겟이 넓어짐)`);
+  hero.classList.remove('chew');SFX.gulp();gotPot('P',jackpot?2:1);
+  msg('EAT',jackpot?'🧀 하차푸리 잭팟!':'🍚 밥 먹음',(jackpot?'치즈 가득 하차푸리를 먹었다.\n파워포션 2개! ':'밥 한 그릇 뚝딱.\n파워포션 1개! ')+'스내치 화면에서 마시면 추가 느려져요.');
   await sleep(500);setF(F.stand);}
 
 async function doSleep(){await walkTo(SPOT.bed+4);say(pick(['잘 자, 내 근육','오늘도 수고했다']),900);await sleep(800);
@@ -353,8 +382,8 @@ async function doSleep(){await walkTo(SPOT.bed+4);say(pick(['잘 자, 내 근육
   night=true;drawRoom();$('night').classList.add('on');
   for(let i=0;i<4;i++){const z=document.createElement('div');z.className='zz';z.textContent=i%2?'Z':'z';z.style.left=(toPx(SPOT.bed)-30+i*4)+'px';z.style.top=(GH()*.32)+'px';game.appendChild(z);setTimeout(()=>z.remove(),2000);if(i%2==0)SFX.snore();await sleep(600);}
   S.day++;night=false;drawRoom();$('night').classList.remove('on');hero.style.transform='';hero.style.zIndex='';await sleep(300);hero.classList.remove('lie');
-  SFX.morning();banner('DAY '+S.day,1200);setF(F.knee);await sleep(350);setF(F.smile);const L=buff('cj');
-  msg('SLEEP','😴 꿀잠',`DAY ${S.day} 시작. 근육이 자는 동안 자랐다.\n클린앤저크가 쉬워졌다! (Lv${L}/${MAXLV}: 초록 구간이 넓어짐)`);await sleep(500);setF(F.stand);}
+  SFX.morning();banner('DAY '+S.day,1200);setF(F.knee);await sleep(350);setF(F.smile);gotPot('R');
+  msg('SLEEP','😴 꿀잠',`DAY ${S.day} 시작. 근육이 자는 동안 자랐다.\n회복포션 1개! 클린앤저크 화면에서 마시면 게이지가 느려져요.`);await sleep(500);setF(F.stand);}
 
 function drawTF(){const c=$('tfront'),x=c.getContext('2d');const P=(a,b,w,h,col)=>{x.fillStyle=col;x.fillRect(a,b,w,h);};
   P(0,0,28,3,'#ddd');P(1,2,26,6,'#fff');P(3,8,20,6,'#e6e6e6');P(7,14,12,6,'#e6e6e6');P(1,7,26,1,'#cfcfcf');
@@ -363,21 +392,24 @@ async function doPoo(){await walkTo(SPOT.toilet);drawTF();$('tfront').classList.
   setF(F.squat);setBar(true);hero.classList.add('strain','red');say('스쿼트하면서... 끄으응',1500);
   for(let i=0;i<4;i++){await sleep(360);const h=head();pop(i%2?'💦':'💪',h.x+18*(i%2?1:-1),h.y,14);}
   hero.classList.remove('strain','red');SFX.fart();shake();const h=head();pop('뿌직!',h.x,h.y-20,26);await sleep(600);SFX.plop();
-  await sleep(400);setBar(false);$('tfront').classList.remove('on');setF(F.smile);say('개운~ ✨',1200);const L=buff('sq');
-  msg('POOP','💩 스쿼트 똥',`바벨을 멘 채로 쾌변 성공. 몸이 가볍다.\n백스쿼트가 쉬워졌다! (Lv${L}/${MAXLV}: 연타 횟수가 줄어듦)`);await sleep(600);setF(F.stand);}
+  await sleep(400);setBar(false);$('tfront').classList.remove('on');setF(F.smile);say('개운~ ✨',1200);gotPot('M');
+  msg('POOP','💩 스쿼트 똥','바벨을 멘 채로 쾌변 성공.\n근육포션 1개! 백스쿼트 화면에서 마시면 연타 시간이 늘어요.');await sleep(600);setF(F.stand);}
 
 /* ═════════ 역도 3종 ═════════ */
 async function doLift(k){await walkTo(SPOT.gym-4);setF(F.squat);say(pick(['간다...!','집중','후우...']),900);await sleep(600);
   const name=FACES.find(f=>f.k===k).n;
-  const grade=await mini(k,S.buff[k]);
+  await prep(k);
+  const r=await mini(k,S.lv[k]);
   closeMG();
-  const add=KG[grade];
-  if(add){const before=S[k];S[k]+=add;save();setF(F.stand);setBar(true);$('bb').style.top='56%';SFX.thud();await sleep(500);setBar(false);$('bb').style.top='';SFX.clang();shake();
-    paint(k);if(grade==='PERFECT'){SFX.win();banner('PERFECT!',1100);setF(F.kick);await sleep(500);setF(F.knee);await sleep(300);}else banner('NEW PR!',1000);
-    setF(F.smile);say(pick(['가볍네','하나 더?','이게 사는 맛이지']),1200);
-    msg('LIFT',`🏋️ ${name} ${grade}`,`${before}kg → ${S[k]}kg (+${add}kg)\n역도 합계 ${total()}kg`);
+  const before=S[k],isPR=r.kg>before;
+  if(r.kg>0){setF(F.stand);setBar(true);$('bb').style.top='56%';SFX.thud();await sleep(500);setBar(false);$('bb').style.top='';SFX.clang();shake();}
+  if(isPR){S[k]=r.kg;save();paint(k);SFX.win();banner('NEW PR!',1100);setF(F.kick);await sleep(500);setF(F.knee);await sleep(300);setF(F.smile);
+    say(pick(['가볍네','이게 사는 맛이지','근육아 고마워']),1200);
+    msg('LIFT',`🏋️ ${name} 신기록!`,`${r.kg}kg 성공 (${r.grade})\n${before?`이전 기록 ${before}kg → `:''}PR ${r.kg}kg · 합계 ${total()}kg`);
+  }else if(r.kg>0){setF(F.smile);say(pick(['아깝다','조금만 더','다음엔 넘는다']),1200);
+    msg('LIFT',`🏋️ ${name} ${r.kg}kg`,`${r.grade}! 하지만 PR ${before}kg은 못 넘었다.\n${POTN[POTK[k]]}을 마시면 조금 쉬워져요.`);
   }else{SFX.fail();setF(F.bend);shake();say(pick(['으아아...','오늘은 컨디션이...','바벨이 무거운 게 아니라...']),1300);
-    msg('LIFT',`🏋️ ${name} 실패`,`${S[k]}kg 그대로.\n${{sn:'밥을 먹으면',cj:'잠을 자면',sq:'똥을 싸면'}[k]} ${name}가 쉬워져요.`);}
+    msg('LIFT',`🏋️ ${name} 실패`,`바벨을 놓쳤다. PR ${before?before+'kg':'없음'} 그대로.\n${POTN[POTK[k]]}을 마시면 조금 쉬워져요.`);}
   await sleep(900);setF(F.stand);paint();
   if(total()>=LETTER_AT&&!S.letter){S.letter=true;save();await sleep(1800);showLetter();}}
 
@@ -391,6 +423,13 @@ function openMG(){mg.classList.add('on');}
 function closeMG(){mg.classList.remove('on');mgov.hidden=true;}
 function overlay(html){mgov.innerHTML=html;mgov.hidden=false;}
 function drawStatic(){bg(mx);drawHero(mx,F.squat,80,118);}
+function prep(k){openMG();drawStatic();const p=POTK[k],name=FACES.find(f=>f.k===k).n;return new Promise(res=>{
+  const draw=()=>{const L=S.lv[k],c=S.pot[p];overlay(`<div class="t">${name} · PR ${S[k]?S[k]+'kg':'없음'}</div><div class="g" style="font-size:20px">Lv${L}</div>
+    <div class="eff">지금 ${easeText(k,L)}${c?`<br>마시면 → ${easeText(k,L+1)}`:''}</div>
+    <div class="row"><button id="drink" type="button"${c?'':' disabled'}>🧪 ${POTN[p]} 마시기 (${c})</button><button class="y" id="go" type="button">▶ 시작</button></div>`);
+    $('drink').onclick=()=>{if(!S.pot[p])return;S.pot[p]--;S.lv[k]++;save();paint();SFX.potion();draw();};
+    $('go').onclick=()=>{mgov.hidden=true;res();};};
+  draw();});}
 
 function bg(c){c.fillStyle='#3b2f72';c.fillRect(0,0,W,FLOOR);c.fillStyle='#433680';for(let x=0;x<W;x+=16)c.fillRect(x,0,1,FLOOR);
   c.fillStyle='#6b4a33';c.fillRect(0,FLOOR,W,H-FLOOR);c.fillStyle='#5a3d2a';for(let y=FLOOR+6;y<H;y+=7)c.fillRect(0,y,W,1);
@@ -402,41 +441,45 @@ function txt(c,t,x,y,size=12,col='#fff'){c.font=`bold ${size}px Galmuri11, monos
 function gauge(c,x,y,w,h,p,col){c.fillStyle='#111';c.fillRect(x-2,y-2,w+4,h+4);c.fillStyle='#3a1020';c.fillRect(x,y,w,h);c.fillStyle=col;c.fillRect(x,y,w*clamp(p,0,1),h);}
 
 const GAMES={
- /* 1 추 타이밍 → 스내치 */
- sn:{init(s,L){s.t=0;s.sp=rnd(2.6,3.2)*(1-.08*L);s.tg=rnd(-40,40);s.tw=7+L;s.a=0;},
+ /* 1 추 타이밍 → 스내치: 가운데에 가까울수록 무거움 (40~110kg) */
+ sn:{init(s,L){s.t=0;s.sp=rnd(2.6,3.2)*EASE.sn(L);s.tg=rnd(-35,35);s.a=0;},
   update(s,dt){if(s.hit==null){s.t+=dt;s.a=Math.sin(s.t*s.sp)*60;}},
   draw(c,s){bg(c);const ok=s.hit!=null&&s.grade!=='MISS';drawHero(c,ok?F.knee:F.bend,70,110,ok?14:0);
    const cx=225,cy=128,R=88,r=d=>Math.PI*1.5+d*Math.PI/180;c.lineWidth=12;c.strokeStyle='#111';c.beginPath();c.arc(cx,cy,R,r(-63),r(63));c.stroke();
    c.lineWidth=8;c.strokeStyle='#4a3f8a';c.beginPath();c.arc(cx,cy,R,r(-60),r(60));c.stroke();
-   c.strokeStyle='#16a34a';c.beginPath();c.arc(cx,cy,R,r(s.tg-s.tw*2.2),r(s.tg+s.tw*2.2));c.stroke();c.strokeStyle='#ffd400';c.beginPath();c.arc(cx,cy,R,r(s.tg-s.tw),r(s.tg+s.tw));c.stroke();
+   [[25,'#14532d'],[7,'#16a34a'],[2.5,'#ffd400']].forEach(([w,col])=>{c.strokeStyle=col;c.beginPath();c.arc(cx,cy,R,r(Math.max(-60,s.tg-w)),r(Math.min(60,s.tg+w)));c.stroke();});
    const a=r(s.a);c.strokeStyle='#fff';c.lineWidth=3;c.beginPath();c.moveTo(cx,cy);c.lineTo(cx+Math.cos(a)*(R+6),cy+Math.sin(a)*(R+6));c.stroke();
-   c.fillStyle='#d92d20';c.beginPath();c.arc(cx+Math.cos(a)*(R-4),cy+Math.sin(a)*(R-4),7,0,7);c.fill();c.fillStyle='#fff';c.fillRect(cx-4,cy-4,8,8);txt(c,'노란 곳에서 TAP!',cx,cy+20,11,'#ffd400');},
-  down(s,end){if(s.hit!=null)return;s.hit=s.a;const d=Math.abs(s.a-s.tg);SFX.tap();end(d<s.tw*.45?'PERFECT':d<s.tw?'GREAT':d<s.tw*2.2?'GOOD':'MISS',500);}},
- /* 4 꾹 눌렀다 놓기 → 클린앤저크 */
- cj:{init(s,L){s.wait=0;s.p=0;s.on=0;s.z=rnd(.62,.76);s.zw=.12+.025*L;s.cs=1-.07*L;s.ct=0;},
-  update(s,dt){if(s.done)return;if(!s.on){s.wait+=dt;if(s.wait>4)s.end('MISS',0);return;}s.p+=dt*(.35+s.p*.9)*s.cs;s.ct+=dt;if(s.ct>.06){s.ct=0;SFX.charge(s.p);}if(s.p>=1){s.p=1;s.end('MISS',300);}},
+   c.fillStyle='#d92d20';c.beginPath();c.arc(cx+Math.cos(a)*(R-4),cy+Math.sin(a)*(R-4),7,0,7);c.fill();c.fillStyle='#fff';c.fillRect(cx-4,cy-4,8,8);
+   txt(c,'노란 곳에 가까울수록 무거움',cx,cy+20,10,'#ffd400');txt(c,`PR ${S.sn||'-'}`,40,18,10,'#fff');},
+  down(s,end){if(s.hit!=null)return;s.hit=s.a;const d=Math.abs(s.a-s.tg);SFX.tap();
+   if(d>=25)return end('MISS',0,500);end(d<2.5?'PERFECT':d<7?'GREAT':'GOOD',r05(40+70*(1-d/25)),500);}},
+ /* 4 꾹 눌렀다 놓기 → 클린앤저크: 노란 줄에 가까울수록 무거움 (60~150kg) */
+ cj:{init(s,L){s.wait=0;s.p=0;s.on=0;s.z=rnd(.58,.74);s.cs=EASE.cj(L);s.ct=0;},
+  update(s,dt){if(s.done)return;if(!s.on){s.wait+=dt;if(s.wait>4)s.end('MISS',0);return;}s.p+=dt*(.35+s.p*.9)*s.cs;s.ct+=dt;if(s.ct>.06){s.ct=0;SFX.charge(s.p);}if(s.p>=1){s.p=1;s.end('MISS',0,300);}},
   draw(c,s){bg(c);const ok=s.done&&s.grade!=='MISS';drawHero(c,ok?F.squat:(s.on?F.bend:F.stand),80,116,0,s.on?s.p*3:0);bar(c,25,140,ok?FLOOR-64:FLOOR-14);
-   const gx=210,gy=24,gh=116;c.fillStyle='#111';c.fillRect(gx-3,gy-3,36,gh+6);c.fillStyle='#3a1020';c.fillRect(gx,gy,30,gh);
-   c.fillStyle='#16a34a';c.fillRect(gx,gy+gh*(1-s.z-s.zw/2),30,gh*s.zw);c.fillStyle='#ffd400';c.fillRect(gx,gy+gh*(1-s.z-s.zw/6),30,gh*s.zw/3);
-   c.fillStyle=s.p>.9?'#d92d20':'#fff';c.fillRect(gx,gy+gh*(1-s.p),30,gh*s.p);c.fillStyle='#ffd400';c.fillRect(gx-8,gy+gh*(1-s.p)-1,46,3);
-   txt(c,s.on?'모으는 중…':'꾹 누르고',275,82,12,'#ffd400');txt(c,s.on?'초록에서 떼!':'초록에서 떼기',275,100,11,'#fff');},
+   const gx=210,gy=24,gh=116,band=(w,col)=>{const t=Math.min(1,s.z+w),b=Math.max(0,s.z-w);c.fillStyle=col;c.fillRect(gx,gy+gh*(1-t),30,gh*(t-b));};
+   c.fillStyle='#111';c.fillRect(gx-3,gy-3,36,gh+6);c.fillStyle='#3a1020';c.fillRect(gx,gy,30,gh);band(.25,'#14532d');band(.06,'#16a34a');band(.02,'#ffd400');
+   c.fillStyle=s.p>.92?'#d92d20':'#ffffffcc';c.fillRect(gx+8,gy+gh*(1-s.p),14,gh*s.p);c.fillStyle='#fff';c.fillRect(gx-8,gy+gh*(1-s.p)-1,46,3);
+   txt(c,s.on?'모으는 중…':'꾹 누르고',275,82,12,'#ffd400');txt(c,'노란 줄에서 떼!',275,100,11,'#fff');txt(c,`PR ${S.cj||'-'}`,40,18,10,'#fff');},
   down(s){if(!s.done)s.on=1;},
-  up(s,end){if(s.done||!s.on)return;s.on=0;const d=Math.abs(s.p-s.z);end(d<s.zw/6?'PERFECT':d<s.zw/2?'GREAT':d<s.zw*.9?'GOOD':'MISS',300);}},
- /* 2 다다다 연타 (2초) → 백스쿼트 */
- sq:{init(s,L){s.p=0;s.t=0;s.lim=2;s.need=14-L;s.taps=0;s.mul=1;s.dec=.15-.02*L;},
-  update(s,dt){if(s.done)return;s.t+=dt;s.p=Math.max(0,s.p-dt*s.dec);if(s.t>=s.lim)s.end('MISS',300);},
-  draw(c,s){bg(c);const ok=s.done&&s.grade!=='MISS';drawHero(c,ok?F.stand:F.squat,90,118,0,s.done?0:1.5);bar(c,40,140,ok?98:86-s.p*6);
-   gauge(c,200,34,100,14,s.p,'#4ade80');gauge(c,200,56,100,5,1-s.t/s.lim,'#ffd400');txt(c,'다다다다!',250,96,16,'#ffd400');txt(c,`${s.taps}회`,250,118,12);},
-  down(s,end){if(s.done)return;s.taps++;SFX.tap();s.p+=s.mul/s.need;if(s.p>=1){s.p=1;const r=s.t;end(r<1.2?'PERFECT':r<1.6?'GREAT':'GOOD',400);}}},
+  up(s,end){if(s.done||!s.on)return;s.on=0;const d=Math.abs(s.p-s.z);if(d>=.25)return end('MISS',0,300);end(d<.02?'PERFECT':d<.06?'GREAT':'GOOD',r05(60+90*(1-d/.25)),300);}},
+ /* 2 다다다 연타 → 백스쿼트: 제한 시간 안에 많이 칠수록 무거움 (40kg + 1회당 5kg) */
+ sq:{init(s,L){s.t=0;s.lim=EASE.sq(L);s.taps=0;s.need=S.sq?Math.floor((S.sq-40)/5)+1:0;},
+  update(s,dt){if(s.done)return;s.t+=dt;if(s.t>=s.lim){s.t=s.lim;const n=s.taps,rate=n/s.lim;if(n<3)return s.end('MISS',0,300);s.end(rate>=8?'PERFECT':rate>=6?'GREAT':'GOOD',40+n*5,300);}},
+  draw(c,s){bg(c);const kg=40+s.taps*5,ok=s.done&&s.grade!=='MISS';drawHero(c,ok?F.stand:F.squat,90,118,0,s.done?0:1.5);bar(c,40,140,ok?98:86-Math.min(1,s.taps/20)*6);
+   gauge(c,200,34,100,10,1-s.t/s.lim,'#ffd400');txt(c,(s.lim-s.t).toFixed(1)+'초',250,62,13,'#fff');
+   txt(c,`${kg}kg`,250,96,20,'#ffd400');txt(c,`${s.taps}회`+(s.need?` · PR까지 ${Math.max(0,s.need-s.taps)}회`:''),250,118,10,'#fff');},
+  down(s){if(s.done)return;s.taps++;SFX.tap();}},
 };
 let cur=null;
-function mini(k,L){openMG();const g=GAMES[k];return new Promise(async res=>{
+function mini(k,L){openMG();const g=GAMES[k];return new Promise(async res=>{ // 결과 {grade,kg}
   const s={};g.init(s,L);
-  const name=FACES.find(f=>f.k===k).n,how={sn:'추가 노란 곳에 올 때 탭!',cj:'꾹 누르고 초록에서 떼기!',sq:'2초 동안 다다다 연타!'}[k];
-  g.draw(mx,s);overlay(`<div class="t">${name}${L?` · 쉬움 Lv${L}`:''}</div><div class="g" style="font-size:22px">READY</div><div class="s">${how}</div>`);await sleep(1000);
+  const name=FACES.find(f=>f.k===k).n,how={sn:'추가 노란 곳에 올 때 탭!',cj:'꾹 누르고 노란 줄에서 떼기!',sq:`${EASE.sq(L).toFixed(1)}초 동안 다다다 연타!`}[k];
+  g.draw(mx,s);overlay(`<div class="t">${name} · Lv${L}</div><div class="g" style="font-size:22px">READY</div><div class="s">${how}</div>`);await sleep(1000);
   overlay(`<div class="g">GO!</div>`);await sleep(350);mgov.hidden=true;
-  s.end=(grade,delay=0)=>{if(s.done)return;s.done=1;s.grade=grade;setTimeout(()=>{overlay(`<div class="g${grade==='MISS'?' miss':''}">${grade}</div><div class="s">${grade==='MISS'?'바벨을 놓쳤다…':'PR +'+KG[grade]+'kg'}</div>`);
-    setTimeout(()=>{cur=null;res(grade);},1100);},delay);};
+  s.end=(grade,kg=0,delay=0)=>{if(s.done)return;s.done=1;s.grade=grade;s.kg=kg;const pr=S[k];setTimeout(()=>{
+    overlay(`<div class="g${grade==='MISS'?' miss':''}">${grade}</div><div class="kg">${grade==='MISS'?'바벨을 놓쳤다…':kg+'kg'}</div><div class="s">${kg>pr?'NEW PR!':`PR ${pr?pr+'kg':'-'}`}</div>`);
+    setTimeout(()=>{cur=null;res({grade,kg});},1300);},delay);};
   cur={g,s};let last=performance.now();
   (function loop(t){if(!cur||cur.s!==s)return;const dt=Math.min(.05,(t-last)/1000);last=t;g.update(s,dt);g.draw(mx,s);requestAnimationFrame(loop);})(last);
 });}
@@ -454,17 +497,27 @@ addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault
 addEventListener('keyup',e=>{if((e.key===' '||e.key==='Enter')&&cur&&cur.g.up)cur.g.up(cur.s,cur.s.end);});
 $('helpBody').innerHTML=`<h3>🎲 하는 법</h3>주사위를 굴리면 나온 칸을 ${TO}가 해요.<br>
 <b>1 스내치</b> 추 타이밍 · <b>2 클린앤저크</b> 꾹 눌렀다 놓기 · <b>3 백스쿼트</b> 2초 연타<br>
-<b>4 밥</b> → 스내치 쉬워짐 (하차푸리면 2단계)<br><b>5 잠</b> → 클린앤저크 쉬워짐<br><b>6 똥</b> → 백스쿼트 쉬워짐<br>쉬움은 최대 Lv5까지 쌓여요.<br>
-판정 PERFECT +10 · GREAT +5 · GOOD +2kg<br>역도 합계 ${LETTER_AT}kg을 넘기면 선물이 있어요.<br><button class="rs" id="rs" type="button">기록 지우고 처음부터</button><small>made by ${FROM} · 아무 곳이나 눌러 닫기</small>`;
+<b>4 밥</b> 파워포션 (하차푸리면 2개) → 스내치<br><b>5 잠</b> 회복포션 → 클린앤저크<br><b>6 똥</b> 근육포션 → 백스쿼트<br>
+역도 화면에서 포션을 마시면 레벨이 올라 아주 조금 쉬워져요. 레벨은 계속 쌓여요.<br>
+기록(PR)은 그 종목 최고 무게예요. 잘해야만 바뀌어요.<br>역도 합계 ${LETTER_AT}kg을 넘기면 선물이 있어요.<br><button class="rs" id="rs" type="button">기록 지우고 처음부터</button><small>made by ${FROM} · 아무 곳이나 눌러 닫기</small>`;
 
+function inApp(){const u=navigator.userAgent||'';return /KAKAOTALK|Instagram|FBAN|FBAV|FB_IAB|Line\/|NAVER\(|DaumApps|everytimeApp|Whale\/.*inapp|; wv\)/i.test(u);}
+function setupWarn(){const kakao=/KAKAOTALK/i.test(navigator.userAgent||'');if(STORE_OK&&!inApp())return;const w=$('warn');w.hidden=false;$('cover').classList.add('warned');
+  w.innerHTML=(STORE_OK?'⚠️ <b>앱 안 브라우저</b>에서는 기록이 사라질 수 있어요.':'⚠️ 이 화면에서는 <b>기록이 저장되지 않아요.</b>')+
+   `<br>오른쪽 위(또는 아래) <b>⋮ · …</b> 메뉴 → <b>다른 브라우저로 열기</b>로 Safari나 Chrome에서 열어 주세요.
+   <div class="row">${kakao?`<a class="y" href="kakaotalk://web/openExternal?url=${encodeURIComponent(SHARE_URL)}" target="_top">바깥 브라우저로 열기</a>`:''}<button type="button" id="cp">링크 복사</button><button type="button" id="skip">그냥 할래</button></div>`;
+  w.addEventListener('click',e=>e.stopPropagation());
+  $('cp').onclick=async()=>{try{await navigator.clipboard.writeText(SHARE_URL);$('cp').textContent='복사됨!';}catch(_){$('cp').textContent=SHARE_URL;}};
+  $('skip').onclick=()=>start();}
 function start(){if(started)return;started=true;ac();$('cover').hidden=true;SFX.morning();banner('DAY '+S.day,1000);
-  msg('START',S.rolls?`다시 왔구나, ${TO}`:`안녕, ${TO}`,S.rolls?`역도 합계 ${total()}kg. 오늘도 굴려 보자.\n아래 주사위를 눌러요.`:`${TO}의 인생은 주사위에 달렸다.\n밥 · 똥 · 잠 · 그리고 역도. 아래 주사위를 눌러요.`);say('역도 하고 싶다',1400);}
+  msg('START',S.rolls?`다시 왔구나, ${TO}`:`안녕, ${TO}`,S.rolls?`역도 합계 ${total()}kg. 오늘은 기록 깰 수 있을까?\n아래 주사위를 눌러요.`:`${TO}의 인생은 주사위에 달렸다.\n밥 · 똥 · 잠 · 그리고 역도. 아래 주사위를 눌러요.`);say('역도 하고 싶다',1400);}
 
 function fitApp(){const app=$('app'),vh=(window.visualViewport&&visualViewport.height)||innerHeight;if(!vh)return;app.style.transform='';const s=Math.min(1,vh/app.scrollHeight);app.style.transform=s<1?`scale(${s})`:'';}
 addEventListener('resize',()=>{fitApp();place();});
 $('coverTo').textContent=`FOR ${TO} · FROM ${FROM}`;
+setupWarn();
 drawRoom();setF(F.stand);place();paint();renderLegend(-1);showDie(6);fitApp();
-$('win').innerHTML=`<div class="ttl"><span>READY</span><span>${TO}의 하루</span></div><h2>🎁 ${TO}에게 주는 선물</h2><p>밥 먹고, 똥 싸고, 잠 자고, 역도만 하는\n${TO}의 인생 주사위.</p>`;
+$('win').innerHTML=`<div class="ttl"><span>READY</span><span>${TO}의 하루</span></div><h2>🎁 먹고 싸고 들어라</h2><p>밥 먹고, 똥 싸고, 잠 자고, 역도만 하는\n${TO}의 인생 주사위.</p>`;
 IMG.onload=()=>{};
 </script>
 </body>
