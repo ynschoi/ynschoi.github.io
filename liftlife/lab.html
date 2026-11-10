@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>미니게임 시안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/galmuri.css">
+<style>
+  :root{--night:#0b0820;--panel:#15102e;--edge:#4a3f8a;--gold:#ffd400;--red:#d92d20;--violet:#8d86c9;--cyan:#4cc3ff;
+    --px:'Galmuri11','Galmuri9',ui-monospace,monospace;--font:'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+  html,body{background:var(--night);color:#fff;font-family:var(--px);-webkit-tap-highlight-color:transparent}
+  button{all:unset;cursor:pointer}
+  main{max-width:440px;margin:0 auto;padding:16px 16px 40px}
+  header{text-align:center;padding:10px 0 16px}
+  header h1{font-size:22px;color:var(--gold);text-shadow:3px 3px 0 var(--red)}
+  header p{font:13px/1.5 var(--font);color:#ddd8ff;margin-top:6px}
+  .card{border:3px solid #fff;box-shadow:0 0 0 3px var(--night),0 0 0 5px var(--edge);background:linear-gradient(#1d1650,#120d33);margin:0 0 22px;padding:10px 12px 12px}
+  .hd{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
+  .hd b{font-size:11px;color:var(--night);background:var(--gold);padding:1px 6px}
+  .hd h2{font-size:16px}
+  .hd span{margin-left:auto;font-size:10px;color:var(--violet);border:1px solid var(--edge);padding:2px 5px;white-space:nowrap}
+  .how{font:13px/1.45 var(--font);color:#ddd8ff;margin-bottom:8px}
+  .how em{font-style:normal;color:var(--gold)}
+  .stage{position:relative;border:2px solid #fff;background:#2a2058;touch-action:none}
+  canvas{display:block;width:100%;height:auto;image-rendering:pixelated}
+  .ov{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:#0b0820b8;cursor:pointer}
+  .ov.off{display:none}
+  .ov .g{font-size:26px;font-weight:700;color:var(--gold);-webkit-text-stroke:1.5px #111;text-shadow:3px 3px 0 var(--red)}
+  .ov .g.miss{color:#9a9ab0;text-shadow:3px 3px 0 #333}
+  .ov .kg{font-size:13px;color:#fff}
+  .ov .go{font-size:13px;color:#fff;border:2px solid var(--gold);padding:5px 12px;margin-top:4px;animation:bl 1s steps(1) infinite}
+  @keyframes bl{50%{opacity:.4}}
+  .keys{display:none;gap:8px;justify-content:center;margin-top:8px}
+  .keys.on{display:flex}
+  .keys button{width:52px;height:44px;display:grid;place-items:center;background:#0b0820;border:2px solid var(--edge);font-size:18px;color:#fff;box-shadow:0 3px 0 #000;touch-action:none}
+  .keys button:active{transform:translateY(2px);box-shadow:0 1px 0 #000}
+  .meta{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+  .meta span{font-size:10px;border:1.5px solid var(--edge);padding:3px 6px;color:var(--violet)}
+  .meta span b{color:#fff;font-weight:400}
+  footer{font:12px/1.6 var(--font);color:var(--violet);text-align:center}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>미니게임 시안 6</h1>
+    <p>역도 칸(스내치 · 클린앤저크 · 백스쿼트)에 넣을 후보예요.<br>직접 해보고 마음에 드는 걸 골라 주세요.</p>
+  </header>
+  <div id="list"></div>
+  <footer>판정: PERFECT +10kg · GREAT +5kg · GOOD +2kg · MISS 실패</footer>
+</main>
+
+<script>
+const IMG=new Image();IMG.src='hero.webp';
+const F={stand:0,run:1,bend:2,knee:3,kick:4,tuck:5,squat:6,smile:7};
+const W=320,H=170,FLOOR=150;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const rnd=(a,b)=>a+Math.random()*(b-a);
+
+/* ── 공통 그리기 ── */
+function bg(c){c.fillStyle='#3b2f72';c.fillRect(0,0,W,FLOOR);for(let x=0;x<W;x+=16){c.fillStyle='#433680';c.fillRect(x,0,1,FLOOR);}
+  c.fillStyle='#6b4a33';c.fillRect(0,FLOOR,W,H-FLOOR);c.fillStyle='#5a3d2a';for(let y=FLOOR+6;y<H;y+=7)c.fillRect(0,y,W,1);
+  c.fillStyle='#222';c.fillRect(20,FLOOR-2,110,5);c.fillStyle='#ffd400';c.fillRect(24,FLOOR,102,1);}
+function hero(c,f,x=75,size=118,dy=0,shake=0){if(!IMG.complete)return;c.drawImage(IMG,f*400,0,400,400,x-size/2+(shake?rnd(-shake,shake):0),FLOOR+4-size-dy,size,size);}
+function plates(c,x,y,dir,n=3){const cols=['#d92d20','#2563eb','#ffd400','#16a34a'];for(let i=0;i<n;i++){const h=[30,26,22,18][i];c.fillStyle='#111';c.fillRect(x+dir*i*5-1,y-h/2-1,6,h+2);c.fillStyle=cols[i];c.fillRect(x+dir*i*5,y-h/2,4,h);}}
+function bar(c,x1,x2,y){c.fillStyle='#111';c.fillRect(x1-1,y-2,x2-x1+2,5);c.fillStyle='#d8d8e4';c.fillRect(x1,y-1,x2-x1,3);plates(c,x1,y,1);plates(c,x2-4,y,-1);}
+function txt(c,t,x,y,size=12,col='#fff',al='center'){c.font=`bold ${size}px Galmuri11, monospace`;c.textAlign=al;c.lineWidth=3;c.strokeStyle='#111';c.strokeText(t,x,y);c.fillStyle=col;c.fillText(t,x,y);}
+function gauge(c,x,y,w,h,p,col){c.fillStyle='#111';c.fillRect(x-2,y-2,w+4,h+4);c.fillStyle='#3a1020';c.fillRect(x,y,w,h);c.fillStyle=col;c.fillRect(x,y,w*clamp(p,0,1),h);}
+
+/* ── 게임 6개 ── */
+const GAMES=[
+{id:'pend',title:'추 타이밍',rec:'스내치 추천',how:'왔다갔다하는 추가 <em>노란 타겟</em>에 왔을 때 <em>탭!</em> 한 번에 폭발하는 스내치 느낌.',
+ potion:'파워포션: 추 느려짐 + 타겟 넓어짐',
+ init(s){s.t=0;s.sp=rnd(2.6,3.2);s.tg=rnd(-40,40);s.tw=7;s.a=0;},
+ update(s,dt){if(s.hit==null){s.t+=dt;s.a=Math.sin(s.t*s.sp)*60;}},
+ draw(c,s){bg(c);const f=s.hit==null?F.bend:(s.grade=='MISS'?F.bend:F.knee);hero(c,f,70,110,s.hit!=null&&s.grade!='MISS'?14:0);
+  const cx=225,cy=128,R=88;c.lineWidth=12;c.strokeStyle='#111';c.beginPath();c.arc(cx,cy,R,Math.PI*1.5-1.1,Math.PI*1.5+1.1);c.stroke();
+  c.lineWidth=8;c.strokeStyle='#4a3f8a';c.beginPath();c.arc(cx,cy,R,Math.PI*1.5-1.05,Math.PI*1.5+1.05);c.stroke();
+  const r=d=>Math.PI*1.5+d*Math.PI/180;c.strokeStyle='#16a34a';c.beginPath();c.arc(cx,cy,R,r(s.tg-s.tw*2.2),r(s.tg+s.tw*2.2));c.stroke();
+  c.strokeStyle='#ffd400';c.beginPath();c.arc(cx,cy,R,r(s.tg-s.tw),r(s.tg+s.tw));c.stroke();
+  const a=r(s.a);c.strokeStyle='#fff';c.lineWidth=3;c.beginPath();c.moveTo(cx,cy);c.lineTo(cx+Math.cos(a)*(R+6),cy+Math.sin(a)*(R+6));c.stroke();
+  c.fillStyle='#d92d20';c.beginPath();c.arc(cx+Math.cos(a)*(R-4),cy+Math.sin(a)*(R-4),7,0,7);c.fill();c.fillStyle='#fff';c.fillRect(cx-4,cy-4,8,8);
+  txt(c,'TAP!',cx,cy+18,12,'#ffd400');},
+ down(s,end){if(s.hit!=null)return;s.hit=s.a;const d=Math.abs(s.a-s.tg);end(d<s.tw*.45?'PERFECT':d<s.tw?'GREAT':d<s.tw*2.2?'GOOD':'MISS',600);}},
+
+{id:'mash',title:'다다다 연타',rec:'백스쿼트 추천',how:'<em>5초 안에</em> 화면을 <em>다다다다</em> 연타해서 게이지를 끝까지! 손을 쉬면 게이지가 내려가요.',
+ potion:'근육포션: 한 번 탭 = 2배 힘',
+ init(s){s.p=0;s.t=0;s.lim=5;s.need=26;s.taps=0;},
+ update(s,dt){if(s.done)return;s.t+=dt;s.p=Math.max(0,s.p-dt*.12);if(s.t>=s.lim){s.done=1;s.end('MISS',300);}},
+ draw(c,s){bg(c);const up=s.p;hero(c,s.done&&s.grade!='MISS'?F.stand:F.squat,90,118,0,s.done?0:1.5);
+  bar(c,40,140,s.done&&s.grade!='MISS'?98:86-up*6);
+  gauge(c,200,34,100,14,s.p,'#4ade80');gauge(c,200,56,100,5,1-s.t/s.lim,'#ffd400');
+  txt(c,'다다다다!',250,96,16,'#ffd400');txt(c,`${s.taps}회`,250,118,12);},
+ down(s,end){if(s.done)return;s.taps++;s.p+=1/s.need*1.6;if(s.p>=1){s.done=1;s.p=1;const r=s.t;end(r<2.6?'PERFECT':r<3.6?'GREAT':'GOOD',400);}}},
+
+{id:'bal',title:'밸런스 잡기',rec:'저크 추천',how:'머리 위 바벨이 기우뚱! <em>왼쪽 / 오른쪽 절반을 누르고 있어서</em> <em>4초</em> 동안 초록 구간에 붙잡아요.',
+ potion:'회복포션: 떨어뜨려도 1번 더 기회',
+ init(s){s.a=0;s.v=0;s.t=0;s.in=0;s.hold=0;s.lim=4;s.push=rnd(-1,1);},
+ update(s,dt){if(s.done)return;s.t+=dt;s.push+=rnd(-3,3)*dt;s.push=clamp(s.push,-1.6,1.6);
+  s.v+=(s.a*1.6+s.push*14+(-s.hold)*55)*dt;s.v*=.97;s.a+=s.v*dt;s.a=clamp(s.a,-30,30);
+  if(Math.abs(s.a)<8)s.in+=dt;if(Math.abs(s.a)>=29.9){s.done=1;s.end('MISS',300);return;}
+  if(s.t>=s.lim){s.done=1;const r=s.in/s.lim;s.end(r>.88?'PERFECT':r>.7?'GREAT':r>.5?'GOOD':'MISS',200);}},
+ draw(c,s){bg(c);c.fillStyle='#ffffff10';c.fillRect(s.hold<0?0:W/2,0,W/2,FLOOR);if(!s.hold)c.clearRect(0,0,0,0);
+  if(s.hold){c.fillStyle='#ffd40022';c.fillRect(s.hold<0?0:W/2,0,W/2,FLOOR);}
+  hero(c,F.stand,160,118);
+  c.save();c.translate(160,FLOOR-118);c.rotate(s.a*Math.PI/180);bar(c,-70,70,0);c.restore();
+  c.fillStyle='#111';c.fillRect(158,FLOOR-116,4,24);
+  const gx=60,gw=200;gauge(c,gx,10,gw,8,0,'#000');c.fillStyle='#16a34a';c.fillRect(gx+gw/2-gw*8/60,10,gw*16/60,8);
+  c.fillStyle='#fff';c.fillRect(gx+gw/2+s.a/30*gw/2-2,6,4,16);
+  gauge(c,gx,26,gw,4,1-s.t/s.lim,'#ffd400');txt(c,'◀',20,110,22,s.hold<0?'#ffd400':'#8d86c9');txt(c,'▶',300,110,22,s.hold>0?'#ffd400':'#8d86c9');},
+ down(s,end,x){s.hold=x<W/2?-1:1;},up(s){s.hold=0;}},
+
+{id:'hold',title:'꾹 눌렀다 놓기',rec:'클린 추천',how:'<em>꾹 누르고 있으면</em> 힘이 모여요. <em>초록 구간에서 손을 떼면</em> 성공! 끝까지 가면 터져요.',
+ potion:'파워포션: 힘이 천천히 차서 맞추기 쉬움',
+ init(s){s.p=0;s.on=0;s.z=rnd(.62,.78);s.zw=.12;},
+ update(s,dt){if(s.done||!s.on)return;s.p+=dt*(.35+s.p*.9);if(s.p>=1){s.p=1;s.done=1;s.end('MISS',300);}},
+ draw(c,s){bg(c);hero(c,s.done&&s.grade!='MISS'?F.squat:(s.on?F.bend:F.stand),80,116,0,s.on?s.p*3:0);
+  if(s.done&&s.grade!='MISS')bar(c,25,140,FLOOR-64);else bar(c,25,140,FLOOR-14);
+  const gx=210,gy=24,gh=116;c.fillStyle='#111';c.fillRect(gx-3,gy-3,36,gh+6);c.fillStyle='#3a1020';c.fillRect(gx,gy,30,gh);
+  c.fillStyle='#16a34a';c.fillRect(gx,gy+gh*(1-s.z-s.zw/2),30,gh*s.zw);c.fillStyle='#ffd400';c.fillRect(gx,gy+gh*(1-s.z-s.zw/6),30,gh*s.zw/3);
+  c.fillStyle=s.p>.9?'#d92d20':'#fff';c.fillRect(gx,gy+gh*(1-s.p),30,gh*s.p);c.fillStyle='#ffd400';c.fillRect(gx-8,gy+gh*(1-s.p)-1,46,3);
+  txt(c,s.on?'모으는 중…':'꾹!',275,90,13,'#ffd400');},
+ down(s){if(!s.done)s.on=1;},
+ up(s,end){if(s.done||!s.on)return;s.on=0;s.done=1;const d=Math.abs(s.p-s.z);end(d<s.zw/6?'PERFECT':d<s.zw/2?'GREAT':d<s.zw*.9?'GOOD':'MISS',200);}},
+
+{id:'cmd',title:'커맨드 입력',rec:'클린앤저크 추천',how:'화면에 뜨는 <em>화살표 5개</em>를 순서대로 빨리! 틀리면 처음부터. 격투게임 기술 쓰는 느낌.',
+ potion:'회복포션: 틀려도 처음부터 안 하고 이어서',
+ init(s){const A='←↑→↓';s.seq=Array.from({length:5},()=>A[Math.floor(Math.random()*4)]);s.i=0;s.t=0;s.lim=4;s.err=0;s.flash=0;},
+ update(s,dt){if(s.done)return;s.t+=dt;s.flash=Math.max(0,s.flash-dt);if(s.t>=s.lim){s.done=1;s.end('MISS',300);}},
+ draw(c,s){bg(c);hero(c,s.done&&s.grade!='MISS'?F.kick:(s.i>2?F.squat:F.bend),62,112);
+  s.seq.forEach((a,k)=>{const x=140+k*34,y=60;c.fillStyle=k<s.i?'#16a34a':(k==s.i?'#ffd400':'#0b0820');c.fillRect(x-14,y-16,28,30);c.fillStyle='#111';c.strokeStyle='#fff';c.lineWidth=2;c.strokeRect(x-14,y-16,28,30);txt(c,a,x,y+6,16,k<s.i?'#fff':(k==s.i?'#111':'#fff'));});
+  if(s.flash){c.fillStyle=`rgba(217,45,32,${s.flash*2})`;c.fillRect(0,0,W,H);}
+  gauge(c,126,96,170,5,1-s.t/s.lim,'#ffd400');txt(c,s.err?`실수 ${s.err}`:'아래 버튼으로 입력',211,124,11,'#ddd8ff');},
+ key(s,k,end){if(s.done)return;if(s.seq[s.i]===k){s.i++;if(s.i>=5){s.done=1;const r=s.t,e=s.err;end(e==0&&r<2?'PERFECT':r<2.8&&e<2?'GREAT':'GOOD',300);}}else{s.i=0;s.err++;s.flash=.35;}}},
+
+{id:'ring',title:'호흡 링',rec:'스내치 · 스쿼트',how:'바깥 원이 줄어들어요. <em>안쪽 링에 딱 겹칠 때 탭!</em> 3번 연속 호흡을 맞추면 성공.',
+ potion:'근육포션: 링이 두꺼워져요',
+ init(s){s.n=0;s.r=90;s.sp=rnd(70,85);s.errs=[];s.msg='';s.mt=0;},
+ update(s,dt){if(s.done)return;s.r-=s.sp*dt;s.mt=Math.max(0,s.mt-dt);if(s.r<8){s.errs.push(99);s.msg='MISS';s.mt=.5;s.next();}},
+ draw(c,s){bg(c);hero(c,s.done&&s.grade!='MISS'?F.smile:(s.n==0?F.stand:s.n==1?F.squat:F.bend),70,114);
+  const cx=228,cy=78,T=34;c.lineWidth=8;c.strokeStyle='#111';c.beginPath();c.arc(cx,cy,T,0,7);c.stroke();c.lineWidth=6;c.strokeStyle='#16a34a';c.beginPath();c.arc(cx,cy,T,0,7);c.stroke();
+  if(!s.done){c.lineWidth=3;c.strokeStyle='#fff';c.beginPath();c.arc(cx,cy,Math.max(1,s.r),0,7);c.stroke();}
+  for(let k=0;k<3;k++){c.fillStyle=k<s.n?'#ffd400':'#0b0820';c.fillRect(cx-28+k*22,cy+58,14,10);c.strokeStyle='#fff';c.lineWidth=1.5;c.strokeRect(cx-28+k*22,cy+58,14,10);}
+  txt(c,['들이쉬고','버티고','올려!'][Math.min(2,s.n)],cx,cy+5,12,'#ffd400');if(s.mt)txt(c,s.msg,cx,cy-46,13,'#fff');},
+ down(s,end){if(s.done)return;const e=Math.abs(s.r-34);s.errs.push(e);s.msg=e<3?'PERFECT':e<7?'GREAT':e<12?'GOOD':'MISS';s.mt=.5;s.next();},
+ setup(s,end){s.next=()=>{s.n++;s.r=90;s.sp*=1.15;if(s.n>=3){s.done=1;const bad=s.errs.filter(e=>e>=12).length,avg=s.errs.reduce((a,b)=>a+b,0)/3;end(bad?'MISS':avg<3.5?'PERFECT':avg<7?'GREAT':'GOOD',400);}};}},
+];
+const KG={PERFECT:10,GREAT:5,GOOD:2,MISS:0};
+
+/* ── 카드 만들기 ── */
+const list=document.getElementById('list');
+GAMES.forEach((g,gi)=>{
+  const el=document.createElement('section');el.className='card';
+  el.innerHTML=`<div class="hd"><b>${gi+1}</b><h2>${g.title}</h2><span>${g.rec}</span></div><p class="how">${g.how}</p>
+  <div class="stage"><canvas width="${W*2}" height="${H*2}"></canvas><div class="ov"><div class="g"></div><div class="kg"></div><div class="go">▶ PLAY</div></div></div>
+  ${g.id=='cmd'?'<div class="keys"><button data-a="←">←</button><button data-a="↑">↑</button><button data-a="→">→</button><button data-a="↓">↓</button></div>':''}
+  <div class="meta"><span>🧪 <b>${g.potion}</b></span><span>BEST <b class="best">-</b></span></div>`;
+  list.appendChild(el);
+  const cv=el.querySelector('canvas'),c=cv.getContext('2d');c.scale(2,2);c.imageSmoothingEnabled=false;
+  const ov=el.querySelector('.ov'),stage=el.querySelector('.stage'),keys=el.querySelector('.keys');
+  let s=null,last=0,raf=0,best=0;
+  const end=(grade,delay=0)=>{if(s.ended)return;s.ended=1;s.done=1;s.grade=grade;setTimeout(()=>{ov.classList.remove('off');const gEl=ov.querySelector('.g');gEl.textContent=grade;gEl.classList.toggle('miss',grade=='MISS');
+    ov.querySelector('.kg').textContent=grade=='MISS'?'바벨을 놓쳤다…':`PR +${KG[grade]}kg`;ov.querySelector('.go').textContent='▶ 다시';keys&&keys.classList.remove('on');
+    if(KG[grade]>best){best=KG[grade];el.querySelector('.best').textContent=grade;}},delay);};
+  function start(){s={};g.init(s);s.end=end;g.setup&&g.setup(s,end);ov.classList.add('off');keys&&keys.classList.add('on');last=performance.now();cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);}
+  function loop(t){const dt=Math.min(.05,(t-last)/1000);last=t;g.update(s,dt);g.draw(c,s);if(!s.ended||performance.now()-s.endAt<1500){if(s.ended&&!s.endAt)s.endAt=performance.now();raf=requestAnimationFrame(loop);}}
+  const pos=e=>{const r=cv.getBoundingClientRect();return (e.clientX-r.left)/r.width*W;};
+  ov.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();start();});
+  cv.addEventListener('pointerdown',e=>{e.preventDefault();if(!s||s.done)return;cv.setPointerCapture(e.pointerId);g.down&&g.down(s,end,pos(e));});
+  ['pointerup','pointercancel'].forEach(ev=>cv.addEventListener(ev,()=>{if(s&&g.up)g.up(s,end);}));
+  keys&&keys.querySelectorAll('button').forEach(b=>b.addEventListener('pointerdown',e=>{e.preventDefault();if(s&&!s.done)g.key(s,b.dataset.a,end);}));
+  // 첫 화면
+  const s0={};g.init(s0);g.setup&&g.setup(s0,()=>{});s=null;
+  const paint0=()=>{g.draw(c,s0);};IMG.complete?paint0():IMG.addEventListener('load',paint0);
+  ov.querySelector('.g').textContent=g.title;ov.querySelector('.g').style.fontSize='20px';
+});
+</script>
+</body>
+</html>
