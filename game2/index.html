@@ -618,13 +618,20 @@ function trailRec(){const p=TR[0],o=hero.style.opacity===''?1:+hero.style.opacit
   if(!p||Math.abs(hx-p.x)+Math.abs(heroY-p.y)>2)TR.unshift({x:hx,y:heroY,s:heroS,o});else{p.s=heroS;p.o=o;}if(TR.length>900)TR.length=900;}
 function trailAt(dist){let acc=0;for(let k=1;k<TR.length;k++){const a=TR[k-1],b=TR[k],d=Math.hypot(a.x-b.x,a.y-b.y);if(acc+d>=dist){const t=(dist-acc)/(d||1);return{x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t,s:a.s,o:a.o};}acc+=d;}return null;}
 function folSnap(){fols.forEach((o,k)=>{o.x=hx-face*(hero.offsetWidth*.45+o.h*(.5+k*1.1));o.y=0;});TR=[];}
-function folStep(){trailRec();const G=game.clientHeight;
+let superFly=false,lineup=false;
+function flyFols(el,dur,x1,up1,G){fols.forEach(o=>{const t=Math.max(0,Math.min(1,(el-o.dl)/dur)),e=1-Math.pow(1-t,2);
+  const x=o.sx+(x1-o.sx)*e,arc=up1*e+G*.06*Math.sin(Math.PI*t);
+  o.fs.style.backgroundPosition=`${-(t<.04?1:t<.5?3:t<.8?4:5)*o.h}px 0`;
+  o.el.style.left=(x-o.h/2)+'px';o.el.style.bottom=(G*.09+arc)+'px';o.el.style.transform=`scale(${1-.9*t})`;o.el.style.opacity=t>.8?String(Math.max(0,1-(t-.8)/.2)):'1';
+  if(t>.1&&t<1&&Math.random()<.25)trail(x,G-arc-G*.12);});}
+function folStep(){trailRec();const G=game.clientHeight;if(superFly){requestAnimationFrame(folStep);return;}
   fols.forEach((o,k)=>{const dist=hero.offsetWidth*.45+o.h*(.5+k*1.1);let p=trailAt(dist);
-    if(!p)p={x:hx-face*dist,y:0,s:1,o:1};
+    if(lineup)p={x:hx+hero.offsetWidth*.55+o.h*(.55+k*.95),y:0,s:1,o:1};
+    else if(!p)p={x:hx-face*dist,y:0,s:1,o:1};
     const nx=o.x+(p.x-o.x)*(flying?.5:.25),ny=o.y+(p.y-o.y)*(flying?.5:.3),dx=nx-o.x;o.d+=Math.abs(dx);if(Math.abs(dx)>.4)o.dir=dx>0?1:-1;o.x=nx;o.y=ny;
     const air=o.y>6,img=air?AGJUMP[o.key]:o.key;if(img!==o.img){o.img=img;o.fs.style.backgroundImage=`url(${A2(img)})`;}
     const fr=air?(o.y>G*.08?4+((o.d/30|0)%2):(heroY>o.y?3:6)):(Math.abs(dx)>.3?(o.d/9|0)%6:0);
-    o.fs.style.backgroundPosition=`${-fr*o.h}px 0`;o.el.classList.toggle('l',o.dir<0);
+    o.fs.style.backgroundPosition=`${-fr*o.h}px 0`;if(lineup&&Math.abs(dx)<.3)o.dir=-1;o.el.classList.toggle('l',o.dir<0);
     o.el.style.left=(o.x-o.h/2)+'px';o.el.style.bottom=(G*.09+o.y)+'px';o.el.style.transform=`scale(${p.s})`;o.el.style.opacity=p.o;});
   requestAnimationFrame(folStep);}
 requestAnimationFrame(folStep);
@@ -666,7 +673,7 @@ function walkStep(t){
 function press(k,down){
   if(!started){if(down)start();return;}
   if(down&&posing){endPose();if(k!=='left'&&k!=='right'){idle();return;}}
-  if(k==='left'||k==='right'){keys[k]=down;if(down&&!busy)startWalk();return;}
+  if(k==='left'||k==='right'){if(down)lineup=false;keys[k]=down;if(down&&!busy)startWalk();return;}
   if(!down)return;
   ({a:()=>act('punch'),b:()=>act('kick'),x:()=>act('flykick'),y:()=>act(pow>=100?'power':'power'),up:()=>jump(),down:()=>act(Math.random()<.5?'hop':'squat'),
     select:()=>setLang(lang=='ko'?'en':'ko'),start:()=>$('help').classList.toggle('on')})[k]?.();
@@ -750,17 +757,20 @@ async function superJump(){
   say(T[lang].fly,1500);
   await once(JUMPSHEET(),[0,1,1,1,2],110);                     // 웅크렸다가 뛰어오름
   const x0=hx,x1=PANO.TOWER.x*s,up1=G*.91-PANO.TOWER.y48*s,dur=1900;let t0=performance.now();
+  superFly=true;fols.forEach((o,k)=>{o.sx=o.x;o.dl=160+k*170;o.img=AGJUMP[o.key];o.fs.style.backgroundImage=`url(${A2(o.img)})`;o.el.classList.remove('l');});
   sheet(JUMPSHEET());frame(4);
   while(true){const t=Math.min(1,(performance.now()-t0)/dur),e=1-Math.pow(1-t,2);
     hx=x0+(x1-x0)*e;place();
     const arc=up1*e+G*.06*Math.sin(Math.PI*t);
     const spin=t<.08||t>.42?0:-720*((t-.08)/.34);              // 백덤블링 2바퀴
     heroUp(arc,1-.7*t,Math.max(0,(t-.45)/.55),spin);
-    if(t<.08){sheet('jump');frame(2);}else if(t<=.42){sheet('flip');frame(2+Math.floor((t-.08)/.34*8)%4);}else{sheet('jump');frame(Math.floor(t*12)%2?4:5);}
+    if(t<.08){sheet('jump');frame(2);}else if(t<=.42){sheet('flip');frame(Math.floor((t-.08)/.34*8)%8);}else{sheet('jump');frame(t<.6?3:4);}
     hero.style.opacity=t>.85?String(1-(t-.85)/.15):'1';
     if(Math.random()<.5&&t>.1)trail(hx,G-arc*.9-G*.1);
+    flyFols(performance.now()-t0,dur,x1,up1,G);
     touchItems(true);if(t>=1)break;await raf();}
-  hero.style.opacity='0';const sp=$('spk');sp.style.left=x1+'px';sp.style.top=(PANO.TOWER.y48*s)+'px';sp.classList.add('on');
+  hero.style.opacity='0';
+  {const tE=performance.now();while(fols.some(o=>o.el.style.opacity!=='0')){flyFols(performance.now()-t0,dur,x1,up1,G);if(Math.random()<.4)trail(x1,G*.1);await raf();if(performance.now()-tE>1500)break;}}const sp=$('spk');sp.style.left=x1+'px';sp.style.top=(PANO.TOWER.y48*s)+'px';sp.classList.add('on');
   pop('✨',x1-14,PANO.TOWER.y48*s-50);
   $('win').innerHTML=`<div class="ttl"><span>${T[lang].arrive}</span><span>${got.size}/${NTOT}</span></div><h2>✨ 48F</h2><p id="wp"></p>`;typeText($('wp'),T[lang].arriveTxt);
   backTimer=setTimeout(goBack,1300);
@@ -771,12 +781,12 @@ function trail(x,y){const d=document.createElement('div');d.className='pop';d.te
 async function goBack(){
   clearTimeout(backTimer);const sp=$('spk');if(!sp.classList.contains('on'))return;sp.classList.remove('on');
   const fl=$('flash');fl.classList.add('on');await sleep(380);
-  flying=false;heroUp(0);hero.style.opacity='1';hero.style.zIndex='';face=1;hx=PANO.HIDE*sc();folSnap();
+  flying=false;heroUp(0);hero.style.opacity='1';hero.style.zIndex='';face=1;hx=PANO.HIDE*sc();superFly=false;folSnap();fols.forEach(o=>{o.el.style.opacity='1';o.el.style.transform='none';});
   camLock=Math.max(0,PANO.PLATE.x0*sc()-18);place();
   fl.classList.remove('on');await sleep(200);
   loopF('walk',110);const to=Math.max(PANO.OUT*sc()*.8,camLock+game.clientWidth/2);let t0=performance.now();
   await new Promise(r=>{const step=t=>{const dt=Math.min(50,t-t0);t0=t;hx+=hero.offsetHeight*.0011*dt;place();if(hx<to)requestAnimationFrame(step);else r();};requestAnimationFrame(step);});
-  hero.style.zIndex=9;showHome();
+  hero.style.zIndex=9;showHome();lineup=true;
   if(got.size===ITEMS.length&&!clearShown){clearShown=true;banner('ALL CLEAR!',700);await sleep(750);}
   say(T[lang].back,600000);await once('cross',[0,1,2,3,4,5],140);
   posing=true;sheet('cross');clearInterval(ft);let pk=0;frame(4);ft=setInterval(()=>frame([4,4,5,5][++pk%4]),260);busy=false;
