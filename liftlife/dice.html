@@ -433,7 +433,7 @@ async function doEat(){await walkTo(SPOT.table-14);
     f.animate([{transform:'none'},{transform:`translate(${(h.x-tx)/2}px,${h.y-ty-30}px) scale(1.1)`,offset:.5},{transform:`translate(${h.x-tx}px,${h.y-ty+8}px) scale(.3)`,opacity:.2}],{duration:420,easing:'ease-in'});
     setTimeout(()=>f.remove(),400);await sleep(380);SFX.chew();pop(jackpot?pick(['치즈~','쭈욱','고소해']):pick(['냠','쩝','우걱']),h.x,h.y-10,15);await sleep(140);}
   hero.classList.remove('chew');SFX.gulp();gotPot('P',jackpot?2:1);
-  msg('EAT',jackpot?'🧀 하차푸리 잭팟!':'🍚 밥 먹음',(jackpot?'치즈 가득 하차푸리를 먹었다.\n파워포션 2개! ':'밥 한 그릇 뚝딱.\n파워포션 1개! ')+'스내치 화면에서 마시면 추가 느려져요.');
+  msg('EAT',jackpot?'🧀 하차푸리 잭팟!':'🍚 밥 먹음',(jackpot?'치즈 가득 하차푸리를 먹었다.\n파워포션 2개! ':'밥 한 그릇 뚝딱.\n파워포션 1개! ')+'마시면 스내치 추가 느려져요.');
   await sleep(500);setF(F.stand);}
 
 async function doSleep(){await walkTo(SPOT.bed+4);say(pick(['잘 자, 내 근육','오늘도 수고했다']),900);await sleep(800);
@@ -442,7 +442,7 @@ async function doSleep(){await walkTo(SPOT.bed+4);say(pick(['잘 자, 내 근육
   for(let i=0;i<4;i++){const z=document.createElement('div');z.className='zz';z.textContent=i%2?'Z':'z';z.style.left=(toPx(SPOT.bed)-30+i*4)+'px';z.style.top=(GH()*.32)+'px';game.appendChild(z);setTimeout(()=>z.remove(),2000);if(i%2==0)SFX.snore();await sleep(600);}
   S.day++;night=false;drawRoom();$('night').classList.remove('on');hero.style.transform='';hero.style.zIndex='';await sleep(300);hero.classList.remove('lie');
   SFX.morning();banner('DAY '+S.day,1200);setF(F.knee);await sleep(350);setF(F.smile);gotPot('R');
-  msg('SLEEP','😴 꿀잠',`DAY ${S.day} 시작. 근육이 자는 동안 자랐다.\n회복포션 1개! 클린앤저크 화면에서 마시면 게이지가 느려져요.`);await sleep(500);setF(F.stand);}
+  msg('SLEEP','😴 꿀잠',`DAY ${S.day} 시작. 근육이 자는 동안 자랐다.\n회복포션 1개! 마시면 클린앤저크 게이지가 느려져요.`);await sleep(500);setF(F.stand);}
 
 function drawTF(){const c=$('tfront'),x=c.getContext('2d');const P=(a,b,w,h,col)=>{x.fillStyle=col;x.fillRect(a,b,w,h);};
   P(0,0,28,3,'#ddd');P(1,2,26,6,'#fff');P(3,8,20,6,'#e6e6e6');P(7,14,12,6,'#e6e6e6');P(1,7,26,1,'#cfcfcf');
@@ -452,7 +452,7 @@ async function doPoo(){await walkTo(SPOT.toilet);drawTF();$('tfront').classList.
   for(let i=0;i<4;i++){await sleep(360);const h=head();pop(i%2?'💦':'💪',h.x+18*(i%2?1:-1),h.y,14);}
   hero.classList.remove('strain','red');SFX.fart();shake();const h=head();pop('뿌직!',h.x,h.y-20,26);await sleep(600);SFX.plop();
   await sleep(400);setBar(false);$('tfront').classList.remove('on');setF(F.smile);say('개운~ ✨',1200);gotPot('M');
-  msg('POOP','💩 스쿼트 똥','바벨을 멘 채로 쾌변 성공.\n근육포션 1개! 백스쿼트 화면에서 마시면 연타 시간이 늘어요.');await sleep(600);setF(F.stand);}
+  msg('POOP','💩 스쿼트 똥','바벨을 멘 채로 쾌변 성공.\n근육포션 1개! 마시면 백스쿼트 연타 시간이 늘어요.');await sleep(600);setF(F.stand);}
 
 /* ═════════ 역도 3종 ═════════ */
 async function doLift(k){await walkTo(SPOT.gym-4);setF(F.squat);say(pick(['간다...!','집중','후우...']),900);await sleep(600);
