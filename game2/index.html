@@ -578,7 +578,9 @@ async golem(st,m){m.wake&&m.wake();const a=m.a,S=st.clientHeight,cx=a._cx,c={x:c
   return ag;},
 async slime(st,m){m.wake&&m.wake();let a=m.a;const S=st.clientHeight,cx=a._cx,top=()=>st.clientHeight-a._b-a.offsetHeight*.95;
   a.classList.remove('i-wobble');
-  const face=async(fr,ms)=>{const h=actor(st,'s_hit',S*0.46*300/SM.s_hit.f0[0],cx,S*.04);a.style.visibility='hidden';for(const i of fr){h.frame(i);await wait(ms);}h.remove();a.style.visibility='';};
+  const face=async(fr,ms)=>{const h=actor(st,'s_hit',S*0.46*300/SM.s_hit.f0[0],cx,S*.04);a.style.visibility='hidden';h.frame(fr[0]);
+    h.animate([{translate:'0 0',scale:'1 1',filter:'brightness(3) saturate(0)'},{translate:'16px 0',scale:'1.15 .8',filter:'brightness(1.5)',offset:.25},{translate:'8px 0',scale:'.92 1.08',filter:'none',offset:.6},{translate:'0 0',scale:'1 1',filter:'none'}],{duration:Math.max(380,fr.length*ms*.6),easing:'ease-out'});
+    for(const i of fr){h.frame(i);await wait(ms);}h.remove();a.style.visibility='';};
   await strike(st,'punch');m.tag.style.opacity=0;await face([1,2,3,4,5],120);word(st,'Ctrl+V',cx,top(),16);
   for(const i of [2,3,4,5]){a.frame(i);await wait(140);}
   for(const i of [6,7]){a.frame(i);await wait(200);}await wait(300);
@@ -608,8 +610,8 @@ async zombie(st,m){m.wake&&m.wake();const a=m.a,S=st.clientHeight,cx=a._cx,H=a.o
   const grow=0.22*S/(273*D3/300);
   for(const i of [1,2,3,4,5,6,7]){x3.frame(i);if(i>=3)x3.style.transform=`scale(${1+(grow-1)*(i-2)/5})`;if(i==2)word(st,'✓ ✓ ✓',ex,st.clientHeight-S*.04-30,13);await wait(180);}
   const ag=await spawnAgent(st,'ag_sulsul',ex,st.clientHeight-S*.04,'',true);x3.remove();
-  for(const i of [1,1,2,2]){man.frame(i);await wait(190);}word(st,'꾸벅',cx,top+H*.2,14);bub.remove();
-  man.frame(3);await wait(200);
+  await wait(250);
+  man.frame(3);await wait(120);
   let k=0;const w=setInterval(()=>man.frame(4+(k++%4)),150);
   await anim(man,[{transform:'none'},{transform:`translateX(${st.clientWidth*.6}px)`}],{duration:1200,easing:'ease-in'});
   clearInterval(w);man.remove();
@@ -638,13 +640,14 @@ function hitReact(i){const st=mons[i].st;if(!st)return;
   for(let k=0;k<8;k++){const d=document.createElement('div');d.className='hitspk';d.style.left=x+'px';d.style.top=y+'px';world.appendChild(d);const a=Math.random()*Math.PI*2,R=26+Math.random()*26;
     d.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*R}px),calc(-50% + ${Math.sin(a)*R}px)) scale(.3)`,opacity:0}],{duration:360,easing:'ease-out'}).finished.then(()=>d.remove());}
   game.animate([{transform:'none'},{transform:'translate(-4px,2px)'},{transform:'translate(3px,-2px)'},{transform:'none'}],{duration:180});}
-function hitMon(i){const mo=mons[i];if(mo.done)return;addScore(500);if(GHOSTS[i].kind!='golem'&&(!mo.started||mo.waiter))hitReact(i);
+function hitMon(i){const mo=mons[i];if(mo.done)return;addScore(500);
+  {const d=(mo.x*sc()-hx)*face,g=gapOf(i);if(mo.st&&d>g+2){mo.x=(hx+face*g)/sc();mo.st.style.transition='left .08s ease-out';mo.st.style.left=stageBox(i).left+'px';setTimeout(()=>{if(mo.st)mo.st.style.transition='';},120);}}   /* 맞을 때 주먹 닿는 거리로 */if(GHOSTS[i].kind!='golem'&&(!mo.started||mo.waiter))hitReact(i);
   if(!mo.started){mo.started=true;mo.hitQ=1;runKO(i);}else if(mo.waiter){const w=mo.waiter;mo.waiter=null;w();}}
 async function runKO(i){const mo=mons[i];const ag=await K[GHOSTS[i].kind](mo.st,mo.m);morphing=false;mo.done=true;slain.add(i);addScore(2000);joinTeam(ag,i);
   if(i+1<GHOSTS.length)setTimeout(()=>{spawnMon(i+1);banner(lang=='ko'?'다음 몬스터!':'NEXT MONSTER!',900);},1200);}
 /* 몬스터가 주인공 쪽으로 다가와요 (맞기 전까지) */
 const MSPD={zombie:.00035,slime:.0005,golem:.0003};
-const gapOf=i=>{const mo=mons[i];return hero.offsetWidth*.42+((mo.m&&mo.m.idw)||MU()*.4)*.45+8;};let mLast=0;
+const gapOf=i=>{const mo=mons[i],sl=GHOSTS[i].kind=='slime';return hero.offsetWidth*(sl?.3:.42)+((mo.m&&mo.m.idw)||MU()*.4)*(sl?.1:.45)+8;};let mLast=0;
 function monStep(t){const dt=Math.min(50,t-(mLast||t));mLast=t;const s=sc(),hw=hero.offsetWidth;
   mons.forEach((mo,i)=>{if(!mo.st||mo.started||mo.done||flying)return;const mx=mo.x*s,dx=mx-hx,stop=gapOf(i);
     if(Math.abs(dx)>game.clientWidth*1.05||Math.abs(dx)<=stop)return;mo.x-=Math.sign(dx)*Math.min(Math.abs(dx)-stop,heroH()*MSPD[GHOSTS[i].kind]*dt)/s;mo.st.style.left=stageBox(i).left+'px';});
