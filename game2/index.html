@@ -356,7 +356,7 @@ const ITEMS=[
   {x:1250,kind:'me',motion:'cross',c:'#1e3a8a',ic:'WORK',k:{ko:'WORK',en:'WORK'},m:'한국신용평가|Korea Investors Service',
    d:{ko:'수석애널리스트, CFA\n구조화금융 상품 신용평가 담당\n전문분야는 CDO, Synthetic CDO',en:'Senior Analyst, CFA\nStructured finance credit ratings\nSpecialty: CDO, Synthetic CDO'},s:[],line:{ko:'맡겨주세요!',en:'Leave it to me!'}},
   {x:2000,kind:'me',ai:1,c:'#7c3aed',ic:'AI',k:{ko:'AI',en:'AI'},m:'NOW',
-   d:{ko:'요즘 최대 관심사는 AI 활용',en:'My biggest interest these days: putting AI to work'},s:[],line:{ko:'드루와~~!',en:'Bring it on~~!'}},
+   d:{ko:'요즘 최대 관심사는 AI 활용',en:'My biggest interest these days: putting AI to work'},s:[],line:{ko:'',en:''}},
   {x:2550,kind:'tool',g:0,c:'#1e3a8a',ic:'분석',k:{ko:'분석 AGENT',en:'Analysis AGENT'},m:'AGENT 합류|AGENT JOINED',
    d:{ko:'신용평가 보고서 PDF를 읽어 업무 리스트를 자동으로 채우는 앱. 분류 규칙을 데이터로 정리해 사람이 고치는 부분만 남깁니다.',en:'Reads rating-report PDFs and fills the team deal list automatically.'},s:[],line:{ko:'',en:''}},
   {x:2950,kind:'tool',g:1,c:'#2f9a3a',ic:'조회',k:{ko:'조회 AGENT',en:'Lookup AGENT'},m:'AGENT 합류|AGENT JOINED',
@@ -622,7 +622,7 @@ function stageBox(i){const g=GHOSTS[i],U=MU(),W=U*1.6,G=game.clientHeight;return
 function spawnMon(i){const mo=mons[i];if(mo.st)return;mo.x=Math.max(GHOSTS[i].x,(hx+game.clientWidth*.55)/sc());const b=stageBox(i),st=document.createElement('div');st.className='mstage';
   st.style.cssText+=`;left:${b.left}px;bottom:${b.bottom}px;width:${b.W}px;height:${b.U}px`;world.appendChild(st);mo.st=st;st._mon=mo;
   mo.m=B[GHOSTS[i].kind](st);anim(st,[{opacity:0,transform:'scale(.6)'},{opacity:1,transform:'none'}],{duration:400,fill:'none'});
-  {const L={zombie:{ko:'머리 아파… 이게 다 뭐야…',en:'My head… what is all this…'},slime:{ko:'오늘도 Ctrl+C, Ctrl+V~',en:'Ctrl+C, Ctrl+V again~'},golem:{ko:'이거… 오늘까지래…',en:'Due… today…'}}[GHOSTS[i].kind];
+  {const L={zombie:{ko:'#REF! #REF!…',en:'#REF! #REF!…'},slime:{ko:'오늘도 Ctrl+C, Ctrl+V~',en:'Ctrl+C, Ctrl+V again~'},golem:{ko:'이거… 오늘까지래…',en:'Due… today…'}}[GHOSTS[i].kind];
    const a=mo.m.a,gb=bubble(st,L[lang],a._cx,st.clientHeight-a._b-a.offsetHeight*.9-22);gb.style.fontSize='10px';gb.style.padding='2px 5px';
    const keep=()=>{if(!gb.isConnected)return;if(mo.started){gb.remove();return;}gb.style.left=a._cx+'px';requestAnimationFrame(keep);};keep();setTimeout(()=>gb.remove(),3000);}}
 function layoutMons(){mons.forEach((mo,i)=>{if(!mo.st||mo.done)return;const b=stageBox(i);mo.st.style.left=b.left+'px';});}
