@@ -596,21 +596,21 @@ async zombie(st,m){m.wake&&m.wake();const a=m.a,S=st.clientHeight,cx=a._cx,H=a.o
   a.classList.remove('i-shamble');
   await strike(st,'punch');word(st,'POW!',cx,top+H*.1,22);a.frame(1);await flash(a);a.frame(0);
   await strike(st,'kick');word(st,'MAX!',cx,top+H*.1,22);a.frame(1);await flash(a);m.tag.style.opacity=0;
-  for(const i of [2,3,4]){a.frame(i);await wait(110);}
+  for(const i of [2,3,4]){a.frame(i);await wait(170);}
   await whiteout(st);
-  for(const i of [5,6,7]){a.frame(i);await wait(140);}
+  for(const i of [5,6,6,7,7]){a.frame(i);await wait(150);}
   // split: man -> z2, fallen excel -> z3
   const ex=cx-60.5*H/300,exW=60*H/300,D3=exW*300/256;
   const x3=actor(st,'z3',D3,ex,S*.04);x3.frame(0);x3.style.transformOrigin='50% 100%';
   const man=actor(st,'z2',S*.66*300/292,cx,S*.04);man.frame(0);a.remove();
-  const bub=bubble(st,'드디어 칼퇴다!',cx+H*.12,top-H*.22);setTimeout(()=>bub.remove(),900);
+  const bub=bubble(st,'드디어 칼퇴다!',cx+H*.12,top-H*.22);setTimeout(()=>bub.remove(),1300);
   const grow=0.22*S/(273*D3/300);
-  for(const i of [1,2,3,4,5,6,7]){x3.frame(i);if(i>=3)x3.style.transform=`scale(${1+(grow-1)*(i-2)/5})`;if(i==2)word(st,'✓ ✓ ✓',ex,st.clientHeight-S*.04-30,13);await wait(140);}
+  for(const i of [1,2,3,4,5,6,7]){x3.frame(i);if(i>=3)x3.style.transform=`scale(${1+(grow-1)*(i-2)/5})`;if(i==2)word(st,'✓ ✓ ✓',ex,st.clientHeight-S*.04-30,13);await wait(180);}
   const ag=await spawnAgent(st,'ag_sulsul',ex,st.clientHeight-S*.04,'',true);x3.remove();
-  for(const i of [1,1,2]){man.frame(i);await wait(170);}word(st,'꾸벅',cx,top+H*.2,14);bub.remove();
-  man.frame(3);await wait(120);
-  let k=0;const w=setInterval(()=>man.frame(4+(k++%4)),130);
-  await anim(man,[{transform:'none'},{transform:`translateX(${st.clientWidth*.6}px)`}],{duration:850,easing:'linear'});
+  for(const i of [1,1,2,2]){man.frame(i);await wait(190);}word(st,'꾸벅',cx,top+H*.2,14);bub.remove();
+  man.frame(3);await wait(200);
+  let k=0;const w=setInterval(()=>man.frame(4+(k++%4)),150);
+  await anim(man,[{transform:'none'},{transform:`translateX(${st.clientWidth*.6}px)`}],{duration:1200,easing:'ease-in'});
   clearInterval(w);man.remove();
   return ag;},
 
