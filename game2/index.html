@@ -397,7 +397,7 @@ let powered=false;const dropped=new Set(),slain=new Set();
 const PANO={H:1024,W:4920,FULLW:7629,office:1809,city:3833,PART:{x1:676,y0:412},PLATE:{x0:165,y0:418,x1:492,y1:505},HIDE:520,OUT:830,RIVER:3860,GIFT:3740,TOWER:{x:4590,y48:320}};
 
 /* ═════════ 동작 그림 (각 8칸, 칸 400px, 왼쪽을 보는 그림) ═════════ */
-const SHEETS=['idle','walk','punch','kick','flykick','power','flip','hop','squat','cheer','wave','paper','cross','jump','thumb','c_punch','c_kick','c_flykick','c_power'];
+const SHEETS=['idle','walk','punch','kick','flykick','power','flip','hop','squat','cheer','wave','paper','cross','jump','thumb','c_punch','c_kick','c_flykick','c_power','greet','clap','dance'];
 const SH={};SHEETS.forEach(n=>{SH[n]=A2(n);const i=new Image();i.src=SH[n];});
 const ACT={
   punch:{seq:[0,1,2,3,4,5,5,6,7],ms:80,hit:4,reach:70},
@@ -409,6 +409,9 @@ const ACT={
   cross:{seq:[0,1,2,3,4,5,4,5,6,7],ms:130},
   cheer:{seq:[0,1,2,3,4,5,6,7,1,2,3],ms:110},
   thumb:{seq:[0,1,2,3,4,5,5,5,6,7],ms:120},
+  greet:{seq:[0,1,2,3,4,5,2,3,6,7],ms:150,front:1},
+  clap:{seq:[0,1,2,3,4,5,6,7,1,2,3,4],ms:110,front:1},
+  dance:{seq:[0,1,2,3,4,5,5,6,7],ms:170},
   wave:{seq:[0,1,2,3,4,5,6,7],ms:120},
   paper:{seq:[0,1,2,3,4,5,6,7,7],ms:110,toss:3},
   flip:{seq:[0,1,2,3,4,5,6,7],ms:95,dx:340},
@@ -688,7 +691,7 @@ function idle(){hero.dataset.m='idle';loopF('idle',130);}
 async function act(n){
   if(busy||!started)return;busy=true;const A=ACT[n];
   const dxTotal=(A.dx||0)*sc()/ (1024/1024)*(game.clientHeight/320);
-  const sn=powered&&SH['c_'+n]?'c_'+n:n;
+  const sn=powered&&SH['c_'+n]?'c_'+n:n;if(A.front)hero.classList.remove('right');
   await once(sn,A.seq,A.ms,(k)=>{
     if(A.dx){hx+=face*dxTotal/A.seq.length;place();touchItems();}
     if(A.toss===k)tossPapers();
@@ -747,7 +750,7 @@ $('cover').addEventListener('pointerdown',()=>start());
 document.addEventListener('gesturestart',e=>e.preventDefault());
 
 /* 감정 표현 버튼 (손 흔들기 · 환호 · 서류 · 덤블링) */
-$('emo').innerHTML=[['wave','👋'],['cheer','🙌'],['paper','📄'],['flip','🤸'],['thumb','👍'],['cross','😎']].map(([n,e])=>`<button data-e="${n}">${e}</button>`).join('');
+$('emo').innerHTML=[['wave','👋'],['cheer','🙌'],['paper','📄'],['flip','🤸'],['clap','👏'],['dance','💃']].map(([n,e])=>`<button data-e="${n}">${e}</button>`).join('');
 $('emo').addEventListener('pointerdown',e=>{const b=e.target.closest('button');if(!b)return;e.preventDefault();if(!started)return start();endPose();act(b.dataset.e);});
 
 /* ═════════ 명판 → 이력서 ═════════
@@ -859,7 +862,7 @@ async function start(){if(started)return;started=true;$('cover').classList.add('
   face=1;hx=PANO.HIDE*sc();place();loopF('walk',110);
   const to=PANO.OUT*sc();let t0=performance.now();
   await new Promise(r=>{const step=t=>{const dt=Math.min(50,t-t0);t0=t;hx+=hero.offsetHeight*.0011*dt;place();if(hx<to)requestAnimationFrame(step);else r();};requestAnimationFrame(step);});
-  banner('FIGHT!',900);await once('wave',ACT.wave.seq,110);busy=false;idle();}
+  banner('FIGHT!',900);hero.classList.remove('right');await once('greet',ACT.greet.seq,ACT.greet.ms);place();busy=false;idle();}
 function setLang(l){lang=l;document.documentElement.lang=l;const t=T[l];
   document.querySelectorAll('[data-t]').forEach(e=>e.textContent=t[e.dataset.t]);
   $('helpBody').innerHTML=t.help.map(([k,v])=>`<b>${k}</b>${v}`).join('<br>');
