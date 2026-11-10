@@ -465,20 +465,21 @@ function spark(d){const w=300,h=44,m=Math.max(...d)||1;const p=d.map((v,i)=>`${i
   return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><polyline points="0,${h} ${p} ${w},${h}" fill="#4cc3ff22" stroke="none"/><polyline points="${p}" fill="none" stroke="#4cc3ff" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`;}
 /* ═════════ 엔딩 크레딧 + 익명 반응 (구글 시트) ═════════
    REACT_URL 에 구글 Apps Script 웹앱 주소를 넣으면 숫자가 시트에 쌓여요. 비어 있으면 이 기기에서만 세요. */
-const REACT_URL='';
+const REACT_URL='https://script.google.com/macros/s/AKfycbzKhwW_6AYvPPC-tkyQKm8ieApQQ8FBzqIQz8XTEF4f229MXIFBwObfDl8nBG9K1H_o/exec';
 const RK=[['heart','❤️'],['thumb','👍'],['muscle','💪']];
 let RC={heart:0,thumb:0,muscle:0};const RBASE={heart:17,thumb:9,muscle:5};   /* 처음 보여줄 숫자 */
 const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
 /* 공용 카운터 (설정 없이 쓰는 무료 카운터). 구글 시트를 연결하면 REACT_URL 이 먼저 쓰여요. */
 const CNT='https://abacus.jasoncameron.dev',CNS='ynschoi-randomwalk';let CNT_OK=false;
-function loadReact(){if(REACT_URL){fetch(REACT_URL+'?op=get').then(r=>r.json()).then(j=>{RC={...RC,...j};paintReact();}).catch(()=>{});return;}
+let SHEET_OK=false;
+function loadReact(){if(REACT_URL){fetch(REACT_URL+'?op=get').then(r=>r.json()).then(j=>{SHEET_OK=true;RC={...RC,...j};paintReact();}).catch(()=>{});return;}
   RK.forEach(([k])=>fetch(`${CNT}/get/${CNS}/${k}`).then(r=>r.ok?r.json():{value:0}).then(j=>{CNT_OK=true;RC[k]=j.value||0;paintReact();}).catch(()=>{}));}
 const myPick=()=>ls.get('rw_pick');
 function paintReact(){const mine=myPick();RK.forEach(([k])=>{const btn=document.querySelector(`.rx[data-k="${k}"]`);if(!btn)return;
-  btn.querySelector('b').textContent=RBASE[k]+RC[k]+((REACT_URL||CNT_OK)?0:(mine==k?1:0));btn.classList.toggle('on',mine==k);btn.classList.toggle('off',!!mine&&mine!=k);});}
+  btn.querySelector('b').textContent=RBASE[k]+RC[k]+((SHEET_OK||CNT_OK)?0:(mine==k?1:0));btn.classList.toggle('on',mine==k);btn.classList.toggle('off',!!mine&&mine!=k);});}
 function pressReact(k,btn){const d=document.createElement('span');d.className='rxfly';d.textContent=RK.find(r=>r[0]==k)[1];btn.appendChild(d);setTimeout(()=>d.remove(),900);
   const mine=myPick();if(mine){say(mine==k?(lang=='ko'?'이미 보냈어요! 고마워요 💕':'Already sent, thank you! 💕'):(lang=='ko'?'반응은 하나만 고를 수 있어요':'You can pick just one'),1200);return;}
-  ls.set('rw_pick',k);if(REACT_URL){RC[k]++;fetch(REACT_URL+'?op=add&k='+k).catch(()=>{});}
+  ls.set('rw_pick',k);if(REACT_URL){if(SHEET_OK)RC[k]++;fetch(REACT_URL+'?op=add&k='+k).then(r=>r.json()).then(j=>{SHEET_OK=true;RC={...RC,...j};paintReact();}).catch(()=>{});}
   else{RC[k]+=CNT_OK?1:0;fetch(`${CNT}/hit/${CNS}/${k}`).then(r=>r.json()).then(j=>{CNT_OK=true;RC[k]=j.value;paintReact();}).catch(()=>{});}paintReact();say(lang=='ko'?'고마워요! 💕':'Thank you! 💕',1200);}
 function showCredits(){const ko=lang=='ko';
   $('win').innerHTML=`<div class="ttl"><span>All Clear (${NTOT}/${NTOT})</span><span>${ko?'계속 돌아다녀도 돼요':'Keep exploring!'}</span></div>
