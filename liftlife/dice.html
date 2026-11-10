@@ -69,6 +69,11 @@
   #room{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated}
   .night{position:absolute;inset:0;background:#05031a;opacity:0;transition:opacity 1s;pointer-events:none;z-index:8}
   .night.on{opacity:.7}
+  /* 방 배경 그림 (낮/밤 크로스페이드) */
+  .rbg{position:absolute;inset:0;background:center/cover no-repeat;transition:opacity 1.1s;pointer-events:none}
+  .rbg.day{background-image:url(room_day.webp)}.rbg.nt{background-image:url(room_night.webp);opacity:0}
+  .game.isnight .rbg.nt{opacity:1}
+  .game.hasbg #room,.game.hasbg .tfront{visibility:hidden}.game.hasbg .night.on{opacity:.18}
   .hud{position:absolute;left:8px;top:8px;z-index:9;font-size:10px;background:#0b0820b0;padding:4px 7px}
   .hud b{color:var(--gold);font-weight:400}
   .tb{position:absolute;top:8px;z-index:9;font:700 10px var(--px);color:#fff;background:#0b0820cc;border:2px solid var(--gold);padding:3px 6px}
@@ -221,6 +226,7 @@
 
   <section class="game" id="game">
     <canvas id="room" width="240" height="138"></canvas>
+    <div class="rbg day"></div><div class="rbg nt"></div>
     <div class="hero" id="hero">
       <div class="bubble" id="bubble"></div>
       <div class="flip"><div class="spr" id="spr"></div><div class="sklw" id="sklw"><div class="skl" id="skl"></div><div class="skl off" id="skl2"></div></div><div class="bb" id="bb"></div></div>
@@ -337,10 +343,14 @@ function khachURL(){const cv=document.createElement('canvas');cv.width=20;cv.hei
 const IMG_K=khachURL();
 
 /* ═════════ 방 ═════════ */
-const SPOT={bed:36,table:99,toilet:153,gym:206};
+/* 장소: 배경 그림 가로 위치(0~1) → 화면 좌표(240 단위). 배경은 화면을 꽉 채우고 가운데 정렬 */
+const BG_AR=1536/961;
+function bgX(fr){const gw=GW()||390,gh=GH()||252,dw=Math.max(gw,gh*BG_AR),off=(dw-gw)/2;return (fr*dw-off)/gw*240;}
+const SPOT={get bed(){return bgX(.12)},get table(){return bgX(.33)},get toilet(){return bgX(.468)},get gym(){return bgX(.66)}};
+{const im=new Image();im.onload=()=>game.classList.add('hasbg');im.src='room_day.webp';}
 const cv=$('room'),g2=cv.getContext('2d');let night=false;
 function R(x,y,w,h,c){g2.fillStyle=c;g2.fillRect(x|0,y|0,w|0,h|0);}
-function drawRoom(){const W=240,H=138,FY=106;
+function drawRoom(){game.classList.toggle('isnight',night);const W=240,H=138,FY=106;
   R(0,0,W,FY,night?'#1b1640':'#3b2f72');for(let x=0;x<W;x+=12)R(x,0,1,FY,night?'#211a4c':'#433680');R(0,FY-6,W,6,night?'#140f33':'#2a2058');
   R(0,FY,W,H-FY,night?'#2a1d1a':'#6b4a33');for(let y=FY+6;y<H;y+=8)R(0,y,W,1,night?'#221714':'#5a3d2a');
   for(let y=FY,k=0;y<H;y+=8,k++)for(let x=(k%2)*18;x<W;x+=36)R(x,y,1,8,night?'#221714':'#5a3d2a');
@@ -417,7 +427,7 @@ async function roll(){ac();if(!started){start();return;}if(busy)return;busy=true
 async function doEat(){await walkTo(SPOT.table-14);
   const jackpot=Math.random()<.2;setF(F.smile);hero.classList.add('chew');
   say(jackpot?'하차푸리다!!! 🧀':pick(['밥이다','탄수화물 충전','오늘은 밥 세 공기']),1200);
-  for(let i=0;i<4;i++){const h=head(),tx=toPx(SPOT.table),ty=GH()*.52;let f;
+  for(let i=0;i<4;i++){const h=head(),tx=toPx(SPOT.table),ty=GH()*.62;let f;
     if(jackpot){f=document.createElement('img');f.src=IMG_K;f.style.cssText='width:34px;height:20px;image-rendering:pixelated';}else{f=document.createElement('div');f.textContent=pick(['🍚','🍚','🍗','🥚']);}
     f.classList.add('fly');f.style.left=tx+'px';f.style.top=ty+'px';game.appendChild(f);
     f.animate([{transform:'none'},{transform:`translate(${(h.x-tx)/2}px,${h.y-ty-30}px) scale(1.1)`,offset:.5},{transform:`translate(${h.x-tx}px,${h.y-ty+8}px) scale(.3)`,opacity:.2}],{duration:420,easing:'ease-in'});
@@ -427,7 +437,7 @@ async function doEat(){await walkTo(SPOT.table-14);
   await sleep(500);setF(F.stand);}
 
 async function doSleep(){await walkTo(SPOT.bed+4);say(pick(['잘 자, 내 근육','오늘도 수고했다']),900);await sleep(800);
-  hero.classList.add('lie');hero.style.transform=`translate(${heroH()*.02}px,${-GH()*.13}px) rotate(-90deg) scale(.78)`;hero.style.zIndex=4;await sleep(500);
+  hero.classList.add('lie');const HB=game.classList.contains('hasbg');hero.style.transform=`translate(${heroH()*.02}px,${HB?GH()*.09:-GH()*.13}px) rotate(-90deg) scale(${HB?.62:.78})`;hero.style.zIndex=4;await sleep(500);
   night=true;drawRoom();$('night').classList.add('on');
   for(let i=0;i<4;i++){const z=document.createElement('div');z.className='zz';z.textContent=i%2?'Z':'z';z.style.left=(toPx(SPOT.bed)-30+i*4)+'px';z.style.top=(GH()*.32)+'px';game.appendChild(z);setTimeout(()=>z.remove(),2000);if(i%2==0)SFX.snore();await sleep(600);}
   S.day++;night=false;drawRoom();$('night').classList.remove('on');hero.style.transform='';hero.style.zIndex='';await sleep(300);hero.classList.remove('lie');
