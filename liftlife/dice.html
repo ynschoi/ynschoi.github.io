@@ -48,10 +48,14 @@
   .bag{display:flex;gap:5px;align-items:center}
   .bag .lb{font-size:9px;color:var(--violet);margin-right:2px;width:24px;line-height:1.2}
   .pot{flex:1;height:42px;position:relative;border:2px solid #2d2560;background:#120d33;display:flex;align-items:center;gap:6px;padding:0 8px;font-size:10px;color:#5a5090}
-  .pot canvas{width:18px;height:24px;image-rendering:pixelated;opacity:.35;flex:none}
-  .pot.has{border-color:#fff;color:#fff}.pot.has canvas{opacity:1}
+  .pot{flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;padding:0 7px;min-width:0}
+  .pot .t{display:flex;align-items:center;gap:4px;white-space:nowrap;font-size:10px}
+  .pot .ic{font-size:13px;flex:none;opacity:.4}
+  .pot.has{border-color:#fff;color:#fff}.pot.has .ic{opacity:1}
+  .pot .pips{display:flex;gap:2px}
+  .pot .pips i{width:6px;height:10px;background:#2d2560;border:1px solid #111}
+  .pot .pips i.on{background:var(--gold)}
   .pot b{font-weight:400;display:block;font-size:9px;color:var(--violet)}
-  .pot .n{margin-left:auto;font-size:14px;color:var(--gold)}
   .pot.got{animation:got .4s steps(2) 5}
   @keyframes got{50%{border-color:var(--gold);box-shadow:0 0 12px var(--gold)}}
 
@@ -160,10 +164,10 @@
       <div class="total">합계<b id="tot">0</b></div>
     </div>
     <div class="win" id="win"></div>
-    <div class="bag"><span class="lb">포션<br>가방</span>
-      <div class="pot" id="potP"><canvas width="10" height="14"></canvas><div>파워<b>스내치</b></div><span class="n">0</span></div>
-      <div class="pot" id="potR"><canvas width="10" height="14"></canvas><div>회복<b>클린저크</b></div><span class="n">0</span></div>
-      <div class="pot" id="potM"><canvas width="10" height="14"></canvas><div>근육<b>스쿼트</b></div><span class="n">0</span></div>
+    <div class="bag"><span class="lb">쉬움<br>레벨</span>
+      <div class="pot" id="bfSn"><div class="t"><span class="ic">🍚</span>스내치</div><span class="pips"></span></div>
+      <div class="pot" id="bfCj"><div class="t"><span class="ic">😴</span>클린저크</div><span class="pips"></span></div>
+      <div class="pot" id="bfSq"><div class="t"><span class="ic">💩</span>스쿼트</div><span class="pips"></span></div>
     </div>
   </section>
 
@@ -216,9 +220,10 @@ const KG={PERFECT:10,GREAT:5,GOOD:2,MISS:0};
 const START={sn:60,cj:80,sq:100};
 
 /* ═════════ 상태 ═════════ */
-const KEY='liftlife.dice.v1';
-const S={sn:START.sn,cj:START.cj,sq:START.sq,pot:{P:0,R:0,M:0},day:1,rolls:0,letter:false};
-try{const v=JSON.parse(localStorage.getItem(KEY)||'null');if(v){Object.assign(S,v);S.pot=Object.assign({P:0,R:0,M:0},v.pot);}}catch(e){}
+const KEY='liftlife.dice.v2';
+const MAXLV=5;
+const S={sn:START.sn,cj:START.cj,sq:START.sq,buff:{sn:0,cj:0,sq:0},day:1,rolls:0,letter:false};
+try{const v=JSON.parse(localStorage.getItem(KEY)||'null');if(v){Object.assign(S,v);S.buff=Object.assign({sn:0,cj:0,sq:0},v.buff);delete S.pot;}}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}};
 
 const $=id=>document.getElementById(id);
@@ -258,16 +263,11 @@ const SFX={
   morning:()=>[784,988,1175,1568].forEach((f,i)=>tone(f,.1,'triangle',.06,0,i*.08)),
 };
 
-/* ═════════ 픽셀 소품: 포션 · 하차푸리 ═════════ */
-const POT={P:['#ff5a4a','#b81d12'],R:['#5ad1ff','#1f7fd1'],M:['#c77dff','#7b2cbf']};
-function drawPotion(cv,[a,b]){const c=cv.getContext('2d');const P=(x,y,w,h,col)=>{c.fillStyle=col;c.fillRect(x,y,w,h);};c.clearRect(0,0,10,14);
-  P(3,0,4,2,'#8a5a2a');P(3,2,4,2,'#ddd');P(1,4,8,9,'#111');P(2,5,6,7,a);P(2,9,6,3,b);P(3,6,1,2,'#fff');P(2,13,6,1,'#111');}
-function potionURL(k){const cv=document.createElement('canvas');cv.width=10;cv.height=14;drawPotion(cv,POT[k]);return cv.toDataURL();}
+/* ═════════ 픽셀 소품: 하차푸리 ═════════ */
 function khachURL(){const cv=document.createElement('canvas');cv.width=20;cv.height=12;const c=cv.getContext('2d');const P=(x,y,w,h,col)=>{c.fillStyle=col;c.fillRect(x,y,w,h);};
   P(2,3,16,6,'#111');P(0,5,20,2,'#111');P(1,5,18,2,'#c97a2e');P(3,4,14,4,'#c97a2e');P(4,4,12,4,'#ffd84a');P(5,5,10,2,'#ffe98a');P(8,4,4,4,'#fff');P(9,5,2,2,'#ff9d00');P(3,8,14,1,'#8a4a18');
   return cv.toDataURL();}
 const IMG_K=khachURL();
-document.querySelectorAll('.pot canvas').forEach((cv,i)=>drawPotion(cv,POT['PRM'[i]]));
 
 /* ═════════ 방 ═════════ */
 const SPOT={bed:36,table:99,toilet:153,gym:206};
@@ -314,11 +314,10 @@ function paint(up){
   [['Sn','sn'],['Cj','cj'],['Sq','sq']].forEach(([a,k])=>{$('fl'+a).style.width=(S[k]/max*100)+'%';$('kg'+a).textContent=S[k]+'kg';$('pr'+a).classList.toggle('up',up===k);});
   $('tot').textContent=total()+'kg';
   $('hud').innerHTML=`DAY <b>${S.day}</b> · 🎲 <b>${S.rolls}</b>`;
-  [['P','potP'],['R','potR'],['M','potM']].forEach(([k,id])=>{const el=$(id);el.classList.toggle('has',S.pot[k]>0);el.querySelector('.n').textContent=S.pot[k];});
+  [['sn','bfSn'],['cj','bfCj'],['sq','bfSq']].forEach(([k,id])=>{const el=$(id),L=S.buff[k];el.classList.toggle('has',L>0);el.querySelector('.pips').innerHTML=Array.from({length:MAXLV},(_,i)=>`<i class="${i<L?'on':''}"></i>`).join('');});
 }
-function gotPot(k,n=1){S.pot[k]+=n;save();paint();const el=$({P:'potP',R:'potR',M:'potM'}[k]);el.classList.remove('got');void el.offsetWidth;el.classList.add('got');SFX.potion();
-  const h=head(),f=document.createElement('img');f.className='fly';f.src=potionURL(k);f.style.cssText+=`;left:${h.x}px;top:${h.y}px;width:20px;height:28px`;game.appendChild(f);
-  f.animate([{transform:'translateY(0) scale(.5)'},{transform:'translateY(-40px) scale(1.3)',opacity:1},{transform:'translateY(-70px) scale(.6)',opacity:0}],{duration:1000});setTimeout(()=>f.remove(),1000);}
+function buff(k,n=1){const before=S.buff[k];S.buff[k]=Math.min(MAXLV,before+n);save();paint();const el=$({sn:'bfSn',cj:'bfCj',sq:'bfSq'}[k]);el.classList.remove('got');void el.offsetWidth;el.classList.add('got');SFX.potion();
+  const h=head();pop(S.buff[k]>before?`${FACES.find(f=>f.k===k).n} 쉬워짐!`:'이미 MAX!',h.x,h.y-30,14);return S.buff[k];}
 let typeT=null;
 function msg(tag,title,body,cls=''){const w=$('win');w.classList.remove('flash');void w.offsetWidth;w.classList.add('flash');
   w.innerHTML=`<div class="ttl"><span>${tag}</span><span>${TO}의 하루</span></div><h2>${title}</h2><p class="${cls}" id="msgP"></p>`;
@@ -345,8 +344,8 @@ async function doEat(){await walkTo(SPOT.table-14);
     f.classList.add('fly');f.style.left=tx+'px';f.style.top=ty+'px';game.appendChild(f);
     f.animate([{transform:'none'},{transform:`translate(${(h.x-tx)/2}px,${h.y-ty-30}px) scale(1.1)`,offset:.5},{transform:`translate(${h.x-tx}px,${h.y-ty+8}px) scale(.3)`,opacity:.2}],{duration:420,easing:'ease-in'});
     setTimeout(()=>f.remove(),400);await sleep(380);SFX.chew();pop(jackpot?pick(['치즈~','쭈욱','고소해']):pick(['냠','쩝','우걱']),h.x,h.y-10,15);await sleep(140);}
-  hero.classList.remove('chew');SFX.gulp();gotPot('P',jackpot?2:1);
-  msg('EAT',jackpot?'🧀 하차푸리 잭팟!':'🍚 밥 먹음',jackpot?'치즈 가득 하차푸리를 먹었다.\n파워포션 2개 획득! (스내치에 사용)':'밥 한 그릇 뚝딱.\n파워포션 1개 획득! (스내치에 사용)');
+  hero.classList.remove('chew');SFX.gulp();const L=buff('sn',jackpot?2:1);
+  msg('EAT',jackpot?'🧀 하차푸리 잭팟!':'🍚 밥 먹음',(jackpot?'치즈 가득 하차푸리를 먹었다. 힘이 넘친다.':'밥 한 그릇 뚝딱. 힘이 난다.')+`\n스내치가 쉬워졌다! (Lv${L}/${MAXLV}: 추가 느려지고 타겟이 넓어짐)`);
   await sleep(500);setF(F.stand);}
 
 async function doSleep(){await walkTo(SPOT.bed+4);say(pick(['잘 자, 내 근육','오늘도 수고했다']),900);await sleep(800);
@@ -354,8 +353,8 @@ async function doSleep(){await walkTo(SPOT.bed+4);say(pick(['잘 자, 내 근육
   night=true;drawRoom();$('night').classList.add('on');
   for(let i=0;i<4;i++){const z=document.createElement('div');z.className='zz';z.textContent=i%2?'Z':'z';z.style.left=(toPx(SPOT.bed)-30+i*4)+'px';z.style.top=(GH()*.32)+'px';game.appendChild(z);setTimeout(()=>z.remove(),2000);if(i%2==0)SFX.snore();await sleep(600);}
   S.day++;night=false;drawRoom();$('night').classList.remove('on');hero.style.transform='';hero.style.zIndex='';await sleep(300);hero.classList.remove('lie');
-  SFX.morning();banner('DAY '+S.day,1200);setF(F.knee);await sleep(350);setF(F.smile);gotPot('R');
-  msg('SLEEP','😴 꿀잠',`DAY ${S.day} 시작. 근육이 자는 동안 자랐다.\n회복포션 1개 획득! (클린앤저크에 사용)`);await sleep(500);setF(F.stand);}
+  SFX.morning();banner('DAY '+S.day,1200);setF(F.knee);await sleep(350);setF(F.smile);const L=buff('cj');
+  msg('SLEEP','😴 꿀잠',`DAY ${S.day} 시작. 근육이 자는 동안 자랐다.\n클린앤저크가 쉬워졌다! (Lv${L}/${MAXLV}: 초록 구간이 넓어짐)`);await sleep(500);setF(F.stand);}
 
 function drawTF(){const c=$('tfront'),x=c.getContext('2d');const P=(a,b,w,h,col)=>{x.fillStyle=col;x.fillRect(a,b,w,h);};
   P(0,0,28,3,'#ddd');P(1,2,26,6,'#fff');P(3,8,20,6,'#e6e6e6');P(7,14,12,6,'#e6e6e6');P(1,7,26,1,'#cfcfcf');
@@ -364,17 +363,13 @@ async function doPoo(){await walkTo(SPOT.toilet);drawTF();$('tfront').classList.
   setF(F.squat);setBar(true);hero.classList.add('strain','red');say('스쿼트하면서... 끄으응',1500);
   for(let i=0;i<4;i++){await sleep(360);const h=head();pop(i%2?'💦':'💪',h.x+18*(i%2?1:-1),h.y,14);}
   hero.classList.remove('strain','red');SFX.fart();shake();const h=head();pop('뿌직!',h.x,h.y-20,26);await sleep(600);SFX.plop();
-  await sleep(400);setBar(false);$('tfront').classList.remove('on');setF(F.smile);say('개운~ ✨',1200);gotPot('M');
-  msg('POOP','💩 스쿼트 똥','바벨을 멘 채로 쾌변 성공.\n근육포션 1개 획득! (백스쿼트에 사용)');await sleep(600);setF(F.stand);}
+  await sleep(400);setBar(false);$('tfront').classList.remove('on');setF(F.smile);say('개운~ ✨',1200);const L=buff('sq');
+  msg('POOP','💩 스쿼트 똥',`바벨을 멘 채로 쾌변 성공. 몸이 가볍다.\n백스쿼트가 쉬워졌다! (Lv${L}/${MAXLV}: 연타 횟수가 줄어듦)`);await sleep(600);setF(F.stand);}
 
 /* ═════════ 역도 3종 ═════════ */
-const LIFT={sn:{pot:'P',pn:'파워포션',eff:'추가 느려지고 타겟이 넓어져요'},cj:{pot:'R',pn:'회복포션',eff:'실패해도 한 번 더 할 수 있어요'},sq:{pot:'M',pn:'근육포션',eff:'한 번 탭이 2배 힘이 돼요'}};
 async function doLift(k){await walkTo(SPOT.gym-4);setF(F.squat);say(pick(['간다...!','집중','후우...']),900);await sleep(600);
-  const L=LIFT[k],name=FACES.find(f=>f.k===k).n;let use=false;
-  if(S.pot[L.pot]>0)use=await ask(`${name} · 지금 ${S[k]}kg`,`🧪 ${L.pn} 쓸까요? (${S.pot[L.pot]}개)`,L.eff);
-  if(use){S.pot[L.pot]--;save();paint();SFX.potion();}
-  let grade=await mini(k,use);
-  if(grade==='MISS'&&k==='cj'&&use){await note('회복포션 발동!','한 번 더 해요');grade=await mini(k,false);}
+  const name=FACES.find(f=>f.k===k).n;
+  const grade=await mini(k,S.buff[k]);
   closeMG();
   const add=KG[grade];
   if(add){const before=S[k];S[k]+=add;save();setF(F.stand);setBar(true);$('bb').style.top='56%';SFX.thud();await sleep(500);setBar(false);$('bb').style.top='';SFX.clang();shake();
@@ -382,7 +377,7 @@ async function doLift(k){await walkTo(SPOT.gym-4);setF(F.squat);say(pick(['간�
     setF(F.smile);say(pick(['가볍네','하나 더?','이게 사는 맛이지']),1200);
     msg('LIFT',`🏋️ ${name} ${grade}`,`${before}kg → ${S[k]}kg (+${add}kg)\n역도 합계 ${total()}kg`);
   }else{SFX.fail();setF(F.bend);shake();say(pick(['으아아...','오늘은 컨디션이...','바벨이 무거운 게 아니라...']),1300);
-    msg('LIFT',`🏋️ ${name} 실패`,`${S[k]}kg 그대로.\n밥·잠·똥으로 포션을 모아서 다시 도전!`);}
+    msg('LIFT',`🏋️ ${name} 실패`,`${S[k]}kg 그대로.\n${{sn:'밥을 먹으면',cj:'잠을 자면',sq:'똥을 싸면'}[k]} ${name}가 쉬워져요.`);}
   await sleep(900);setF(F.stand);paint();
   if(total()>=LETTER_AT&&!S.letter){S.letter=true;save();await sleep(1800);showLetter();}}
 
@@ -395,9 +390,6 @@ const W=320,H=170,FLOOR=150;
 function openMG(){mg.classList.add('on');}
 function closeMG(){mg.classList.remove('on');mgov.hidden=true;}
 function overlay(html){mgov.innerHTML=html;mgov.hidden=false;}
-function ask(t,q,eff){openMG();drawStatic();return new Promise(res=>{overlay(`<div class="t">${t}</div><div class="s">${q}<br><span style="color:var(--violet)">${eff}</span></div><div class="row"><button class="y" id="aY" type="button">쓴다</button><button id="aN" type="button">아껴둔다</button></div>`);
-  $('aY').onclick=()=>{mgov.hidden=true;res(true);};$('aN').onclick=()=>{mgov.hidden=true;res(false);};});}
-function note(g,s){openMG();overlay(`<div class="g">${g}</div><div class="s">${s}</div>`);return sleep(1100).then(()=>{mgov.hidden=true;});}
 function drawStatic(){bg(mx);drawHero(mx,F.squat,80,118);}
 
 function bg(c){c.fillStyle='#3b2f72';c.fillRect(0,0,W,FLOOR);c.fillStyle='#433680';for(let x=0;x<W;x+=16)c.fillRect(x,0,1,FLOOR);
@@ -411,7 +403,7 @@ function gauge(c,x,y,w,h,p,col){c.fillStyle='#111';c.fillRect(x-2,y-2,w+4,h+4);c
 
 const GAMES={
  /* 1 추 타이밍 → 스내치 */
- sn:{init(s,pot){s.t=0;s.sp=rnd(2.6,3.2)*(pot?.6:1);s.tg=rnd(-40,40);s.tw=pot?11:7;s.a=0;},
+ sn:{init(s,L){s.t=0;s.sp=rnd(2.6,3.2)*(1-.08*L);s.tg=rnd(-40,40);s.tw=7+L;s.a=0;},
   update(s,dt){if(s.hit==null){s.t+=dt;s.a=Math.sin(s.t*s.sp)*60;}},
   draw(c,s){bg(c);const ok=s.hit!=null&&s.grade!=='MISS';drawHero(c,ok?F.knee:F.bend,70,110,ok?14:0);
    const cx=225,cy=128,R=88,r=d=>Math.PI*1.5+d*Math.PI/180;c.lineWidth=12;c.strokeStyle='#111';c.beginPath();c.arc(cx,cy,R,r(-63),r(63));c.stroke();
@@ -421,8 +413,8 @@ const GAMES={
    c.fillStyle='#d92d20';c.beginPath();c.arc(cx+Math.cos(a)*(R-4),cy+Math.sin(a)*(R-4),7,0,7);c.fill();c.fillStyle='#fff';c.fillRect(cx-4,cy-4,8,8);txt(c,'노란 곳에서 TAP!',cx,cy+20,11,'#ffd400');},
   down(s,end){if(s.hit!=null)return;s.hit=s.a;const d=Math.abs(s.a-s.tg);SFX.tap();end(d<s.tw*.45?'PERFECT':d<s.tw?'GREAT':d<s.tw*2.2?'GOOD':'MISS',500);}},
  /* 4 꾹 눌렀다 놓기 → 클린앤저크 */
- cj:{init(s){s.wait=0;s.p=0;s.on=0;s.z=rnd(.62,.78);s.zw=.12;s.ct=0;},
-  update(s,dt){if(s.done)return;if(!s.on){s.wait+=dt;if(s.wait>4)s.end('MISS',0);return;}s.p+=dt*(.35+s.p*.9);s.ct+=dt;if(s.ct>.06){s.ct=0;SFX.charge(s.p);}if(s.p>=1){s.p=1;s.end('MISS',300);}},
+ cj:{init(s,L){s.wait=0;s.p=0;s.on=0;s.z=rnd(.62,.76);s.zw=.12+.025*L;s.cs=1-.07*L;s.ct=0;},
+  update(s,dt){if(s.done)return;if(!s.on){s.wait+=dt;if(s.wait>4)s.end('MISS',0);return;}s.p+=dt*(.35+s.p*.9)*s.cs;s.ct+=dt;if(s.ct>.06){s.ct=0;SFX.charge(s.p);}if(s.p>=1){s.p=1;s.end('MISS',300);}},
   draw(c,s){bg(c);const ok=s.done&&s.grade!=='MISS';drawHero(c,ok?F.squat:(s.on?F.bend:F.stand),80,116,0,s.on?s.p*3:0);bar(c,25,140,ok?FLOOR-64:FLOOR-14);
    const gx=210,gy=24,gh=116;c.fillStyle='#111';c.fillRect(gx-3,gy-3,36,gh+6);c.fillStyle='#3a1020';c.fillRect(gx,gy,30,gh);
    c.fillStyle='#16a34a';c.fillRect(gx,gy+gh*(1-s.z-s.zw/2),30,gh*s.zw);c.fillStyle='#ffd400';c.fillRect(gx,gy+gh*(1-s.z-s.zw/6),30,gh*s.zw/3);
@@ -431,17 +423,17 @@ const GAMES={
   down(s){if(!s.done)s.on=1;},
   up(s,end){if(s.done||!s.on)return;s.on=0;const d=Math.abs(s.p-s.z);end(d<s.zw/6?'PERFECT':d<s.zw/2?'GREAT':d<s.zw*.9?'GOOD':'MISS',300);}},
  /* 2 다다다 연타 (2초) → 백스쿼트 */
- sq:{init(s,pot){s.p=0;s.t=0;s.lim=2;s.need=14;s.taps=0;s.mul=pot?2:1;},
-  update(s,dt){if(s.done)return;s.t+=dt;s.p=Math.max(0,s.p-dt*.15);if(s.t>=s.lim)s.end('MISS',300);},
+ sq:{init(s,L){s.p=0;s.t=0;s.lim=2;s.need=14-L;s.taps=0;s.mul=1;s.dec=.15-.02*L;},
+  update(s,dt){if(s.done)return;s.t+=dt;s.p=Math.max(0,s.p-dt*s.dec);if(s.t>=s.lim)s.end('MISS',300);},
   draw(c,s){bg(c);const ok=s.done&&s.grade!=='MISS';drawHero(c,ok?F.stand:F.squat,90,118,0,s.done?0:1.5);bar(c,40,140,ok?98:86-s.p*6);
    gauge(c,200,34,100,14,s.p,'#4ade80');gauge(c,200,56,100,5,1-s.t/s.lim,'#ffd400');txt(c,'다다다다!',250,96,16,'#ffd400');txt(c,`${s.taps}회`,250,118,12);},
   down(s,end){if(s.done)return;s.taps++;SFX.tap();s.p+=s.mul/s.need;if(s.p>=1){s.p=1;const r=s.t;end(r<1.2?'PERFECT':r<1.6?'GREAT':'GOOD',400);}}},
 };
 let cur=null;
-function mini(k,pot){openMG();const g=GAMES[k];return new Promise(async res=>{
-  const s={};g.init(s,pot);
+function mini(k,L){openMG();const g=GAMES[k];return new Promise(async res=>{
+  const s={};g.init(s,L);
   const name=FACES.find(f=>f.k===k).n,how={sn:'추가 노란 곳에 올 때 탭!',cj:'꾹 누르고 초록에서 떼기!',sq:'2초 동안 다다다 연타!'}[k];
-  g.draw(mx,s);overlay(`<div class="t">${name}${pot?' · 🧪 포션 ON':''}</div><div class="g" style="font-size:22px">READY</div><div class="s">${how}</div>`);await sleep(1000);
+  g.draw(mx,s);overlay(`<div class="t">${name}${L?` · 쉬움 Lv${L}`:''}</div><div class="g" style="font-size:22px">READY</div><div class="s">${how}</div>`);await sleep(1000);
   overlay(`<div class="g">GO!</div>`);await sleep(350);mgov.hidden=true;
   s.end=(grade,delay=0)=>{if(s.done)return;s.done=1;s.grade=grade;setTimeout(()=>{overlay(`<div class="g${grade==='MISS'?' miss':''}">${grade}</div><div class="s">${grade==='MISS'?'바벨을 놓쳤다…':'PR +'+KG[grade]+'kg'}</div>`);
     setTimeout(()=>{cur=null;res(grade);},1100);},delay);};
@@ -462,7 +454,7 @@ addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault
 addEventListener('keyup',e=>{if((e.key===' '||e.key==='Enter')&&cur&&cur.g.up)cur.g.up(cur.s,cur.s.end);});
 $('helpBody').innerHTML=`<h3>🎲 하는 법</h3>주사위를 굴리면 나온 칸을 ${TO}가 해요.<br>
 <b>1 스내치</b> 추 타이밍 · <b>2 클린앤저크</b> 꾹 눌렀다 놓기 · <b>3 백스쿼트</b> 2초 연타<br>
-<b>4 밥</b> 파워포션 (하차푸리 나오면 2개)<br><b>5 잠</b> 회복포션 · <b>6 똥</b> 근육포션<br>
+<b>4 밥</b> → 스내치 쉬워짐 (하차푸리면 2단계)<br><b>5 잠</b> → 클린앤저크 쉬워짐<br><b>6 똥</b> → 백스쿼트 쉬워짐<br>쉬움은 최대 Lv5까지 쌓여요.<br>
 판정 PERFECT +10 · GREAT +5 · GOOD +2kg<br>역도 합계 ${LETTER_AT}kg을 넘기면 선물이 있어요.<br><button class="rs" id="rs" type="button">기록 지우고 처음부터</button><small>made by ${FROM} · 아무 곳이나 눌러 닫기</small>`;
 
 function start(){if(started)return;started=true;ac();$('cover').hidden=true;SFX.morning();banner('DAY '+S.day,1000);
