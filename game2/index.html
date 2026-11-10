@@ -457,7 +457,8 @@ function worldW(){return PANO.W*sc();}
 function place(){
   const W=worldW(),vw=game.clientWidth,hw=hero.offsetWidth;
   hx=Math.max(hw/2,Math.min((flying?W:PANO.RIVER*sc())-hw/2,hx));
-  if(!flying&&typeof mons!='undefined')mons.forEach((mo,i)=>{if(!mo.st||mo.done)return;const mx=mo.x*sc(),g=gapOf(i);if(hx>mx-g&&hx<mx+g)hx=mx-g;});   /* 몬스터와 겹치지 않게 */
+  if(!flying&&typeof mons!='undefined'&&(powered||got.has(ITEMS.findIndex(it=>it.ai)))){const i=mons.findIndex(m=>!m.done);   /* 다음 몬스터를 넘어갈 수 없고, 겹치지도 않게 */
+    if(i>=0){const mx=mons[i].x*sc(),g=gapOf(i);if(hx>mx-g)hx=mx-g;}}
   camX=Math.max(0,Math.min(W-vw,camLock!=null?camLock:hx-vw*(face>0?.42+.06*Math.min(3,(typeof fols!='undefined'?fols.length:0)):.42)));
   world.style.transform=`translateX(${-camX}px)`;
   hero.style.left=(hx-hw/2)+'px';
@@ -599,7 +600,7 @@ async zombie(st,m){m.wake&&m.wake();const a=m.a,S=st.clientHeight,cx=a._cx,H=a.o
 const MU=()=>game.clientHeight*.6124;       /* 시안 무대 높이 ↔ 게임 배율 (주인공 키 기준) */
 const MXR={golem:.66,slime:.64,zombie:.66};
 function stageBox(i){const g=GHOSTS[i],U=MU(),W=U*1.6,G=game.clientHeight;return{U,W,left:mons[i].x*sc()-W*MXR[g.kind],bottom:G*.09-U*.04};}
-function spawnMon(i){const mo=mons[i];if(mo.st)return;const b=stageBox(i),st=document.createElement('div');st.className='mstage';
+function spawnMon(i){const mo=mons[i];if(mo.st)return;mo.x=Math.max(GHOSTS[i].x,(hx+game.clientWidth*.55)/sc());const b=stageBox(i),st=document.createElement('div');st.className='mstage';
   st.style.cssText+=`;left:${b.left}px;bottom:${b.bottom}px;width:${b.W}px;height:${b.U}px`;world.appendChild(st);mo.st=st;st._mon=mo;
   mo.m=B[GHOSTS[i].kind](st);anim(st,[{opacity:0,transform:'scale(.6)'},{opacity:1,transform:'none'}],{duration:400,fill:'none'});
   if(GHOSTS[i].kind=='golem'){const a=mo.m.a,gb=bubble(st,lang=='ko'?'이거… 오늘까지래…':'Due… today…',a._cx,st.clientHeight-a._b-a.offsetHeight*.95);setTimeout(()=>gb.remove(),3000);}}
