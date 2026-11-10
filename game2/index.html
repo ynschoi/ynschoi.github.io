@@ -789,7 +789,7 @@ function showCV(){showingCV=true;setTimeout(()=>showingCV=false,50);const c=CV[l
    <div class="who"><b>${c.name}</b><small>${c.sub}</small><br><span class="chip">${c.role}</span></div>
    <div class="rows">${c.rows.map(r=>`<div><span>${r[0]}</span><p class="${r[1].startsWith('※')?'todo1':''}">${r[1]}</p></div>`).join('')}</div>
    <div class="bar"></div><div class="no">ID · 2026-63</div></div>`;}
-document.addEventListener('pointerdown',e=>{if(e.target.closest('.idc .pf')){e.stopPropagation();say(lang=='ko'?'포트폴리오 준비 중이에요!':'Portfolio coming soon!',1600);}},true);
+document.addEventListener('pointerdown',e=>{if(e.target.closest('.idc .pf')){e.stopPropagation();say(lang=='ko'?'추후 공개 예정!':'Coming soon!',1600);}},true);
 $('plate').addEventListener('pointerdown',e=>{e.stopPropagation();if(!started)return start();showCV();});
 
 /* ═════════ 점프 ═════════
