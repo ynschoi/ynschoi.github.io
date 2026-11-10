@@ -275,6 +275,7 @@
   .bubble.lft{left:15%}
   html,body,.app,.pad,#game{touch-action:none;-webkit-tap-highlight-color:transparent}
   .ppr{position:absolute;z-index:8;pointer-events:none;background-repeat:no-repeat}
+  .lang{position:absolute;top:8px;right:8px;z-index:20;font:700 11px var(--px);color:#fff;background:#0b0820cc;border:2px solid var(--gold);padding:3px 7px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -304,6 +305,7 @@
       <div class="hero right" id="hero"><div class="bubble" id="bubble"></div><div class="flip"><div class="spr" id="spr"></div></div><span class="thumb">👍</span><div class="sh"></div></div>
     </div>
     <div class="hud2" id="hud2"></div>
+    <button class="lang" id="langBtn" type="button">EN</button>
     <div class="mini" id="mini"></div>
     <div class="banner" id="banner"></div>
     <div class="wflash" id="flash"></div>
@@ -344,7 +346,7 @@ const T={
       lines:{hit:['수작업 KO!','반복 업무 OUT','POW!'],get:['득템!','야호!','좋은걸?','오호?']},
       river:['한강은 추워요 🥶','점프! ▲'],gift:{k:'63 슈퍼 점프권',d:'한강 앞에서 ▲ 를 누르면 63빌딩 48층까지 날아가요!',m:'SPECIAL'},riverNo:'선물 상자를 먼저 열어 보세요 🎁',fly:'63빌딩 48층까지 슈퍼 점프!',arrive:'여의도 63 · 48층',arriveTxt:'48층 사무실 도착✨',back:'다시 출근 😎',ask:'제 이력서 보실래요? 👈',how:'저 어때요? 👍'},
   en:{a:'Punch',b:'Kick',x:'Fly kick',y:'Power',up:'Jump',down:'Warm-up',sel:'SELECT = KO/EN',
-      hello:'Walk with ◀ ▶ and open the gift boxes.',plateArw:'▲ RESUME',welcome:'STAGE 1 · YEOUIDO 63',
+      hello:'Walk with ◀ ▶.',plateArw:'▲ RESUME',welcome:'STAGE 1 · YEOUIDO 63',
       get:'ITEM GET!',clear:'ALL CLEAR! Team complete 🎉',place:{desk:'MY DESK',office:'OFFICE',city:'HAN RIVER'},
       help:[['◀ ▶','Walk'],['▲','Jump forward (at the river: SUPER JUMP!)'],['▼','Warm-up'],['A','Punch'],['B','Kick'],['X','Fly kick'],['Y','Power up'],['SELECT','KO / EN'],['START','Help']],
       lines:{hit:['Manual work KO!','Repetition OUT','POW!'],get:['Got it!','Yay!','Nice!','Ooh?']},
@@ -571,7 +573,7 @@ async golem(st,m){m.wake&&m.wake();const a=m.a,S=st.clientHeight,cx=a._cx,c={x:c
   for(const i of [3,4,5,6,7]){a.frame(i);if(i==4)shake(st);await wait(150);}
   const b=actor(st,'g2',(.3*SM.ag_chakchak.f0[0]/240)*S*300/SM.g2.f7[0],cx,S*.04);b.frame(0);
   anim(a,[{opacity:1},{opacity:0}],{duration:300}).then(()=>a.remove());
-  for(const i of [0,1,2,3]){b.frame(i);if(i>0)word(st,'착',cx,st.clientHeight-S*.04-b.offsetHeight*(.15+i*.1),11);await wait(230);}
+  for(const i of [0,1,2,3]){b.frame(i);if(i>0)word(st,lang=='ko'?'착':'TAP',cx,st.clientHeight-S*.04-b.offsetHeight*(.15+i*.1),11);await wait(230);}
   for(const i of [4,5]){b.frame(i);await wait(260);}
   b.frame(6);word(st,'DONE!',cx,st.clientHeight-S*.04-b.offsetHeight*.9,15);await wait(300);b.frame(7);await wait(350);
   const ag=await spawnAgent(st,'ag_chakchak',cx,st.clientHeight-S*.04,'',true);b.remove();
@@ -588,7 +590,7 @@ async slime(st,m){m.wake&&m.wake();let a=m.a;const S=st.clientHeight,cx=a._cx,to
   const a3=actor(st,'s3',S*0.46*300/SM.s3.f0[0],cx,S*.04);a3.frame(0);a.remove();a=a3;
   await strike(st,'punch');word(st,'MAX!',cx,top(),22);
   for(const i of [1,2,3]){a.frame(i);await wait(110);}
-  a.frame(4);a.style.transform=`scale(${(.3*SM.ag_ddalkkak.f0[0]/240)/(0.46*SM.s3.f7[0]/SM.s3.f0[0])})`;await whiteout(st);word(st,'딸깍!',cx,top(),26);
+  a.frame(4);a.style.transform=`scale(${(.3*SM.ag_ddalkkak.f0[0]/240)/(0.46*SM.s3.f7[0]/SM.s3.f0[0])})`;await whiteout(st);word(st,lang=='ko'?'딸깍!':'CLICK!',cx,top(),26);
   for(const i of [4,5,6,7]){a.frame(i);await wait(150);}
   const ag=await spawnAgent(st,'ag_ddalkkak',cx,st.clientHeight-S*.04,'',true);a.remove();
   return ag;},
@@ -603,7 +605,7 @@ async zombie(st,m){m.wake&&m.wake();const a=m.a,S=st.clientHeight,cx=a._cx,H=a.o
   const ex=cx-60.5*H/300,exW=60*H/300,D3=exW*300/256;
   const x3=actor(st,'z3',D3,ex,S*.04);x3.frame(0);x3.style.transformOrigin='50% 100%';
   const man=actor(st,'z2',S*.66*300/292,cx,S*.04);man.frame(0);a.remove();
-  const bub=bubble(st,'드디어 칼퇴다!',cx+H*.32,top-H*.12);
+  const bub=bubble(st,lang=='ko'?'드디어 칼퇴다!':'Finally, off work!',cx+H*.32,top-H*.12);
   const leave=(async()=>{await wait(650);bub.remove();man.frame(3);await wait(80);let k=0;const w=setInterval(()=>man.frame(4+(k++%4)),110);
     await anim(man,[{transform:'none',opacity:1},{transform:`translateX(${st.clientWidth*.45}px)`,opacity:0}],{duration:650,easing:'ease-in'});clearInterval(w);man.remove();})();
   const grow=0.22*S/(273*D3/300);
@@ -747,6 +749,7 @@ addEventListener('keyup',e=>{const k=KB[e.key];if(!k)return;press(k,false);docum
 $('help').onpointerdown=()=>$('help').classList.remove('on');
 $('spk').addEventListener('pointerdown',e=>{e.stopPropagation();goBack();});
 $('cover').addEventListener('pointerdown',()=>start());
+$('langBtn').addEventListener('pointerdown',e=>{e.stopPropagation();e.preventDefault();setLang(lang=='ko'?'en':'ko');});
 ['touchstart','touchend','gesturestart','dblclick','contextmenu'].forEach(t=>document.addEventListener(t,e=>{if(!e.target.closest('.win,.idc'))e.preventDefault();},{passive:false}));   /* 아이폰 돋보기·확대 막기 */
 document.addEventListener('gesturestart',e=>e.preventDefault());
 
@@ -867,7 +870,10 @@ async function start(){if(started)return;started=true;$('cover').classList.add('
 function setLang(l){lang=l;document.documentElement.lang=l;const t=T[l];
   document.querySelectorAll('[data-t]').forEach(e=>e.textContent=t[e.dataset.t]);
   $('helpBody').innerHTML=t.help.map(([k,v])=>`<b>${k}</b>${v}`).join('<br>');
-  if(sel>=0)showItem(sel,false);else showHome();place();}
+  if(sel>=0)showItem(sel,false);else showHome();place();
+  $('langBtn').textContent=l=='ko'?'EN':'한';
+  if(typeof fols!='undefined')fols.forEach(o=>{const t=o.el.querySelector('.agtag');if(t)t.innerHTML=AGTAG[o.key][l];});
+  if(typeof mons!='undefined')mons.forEach((mo,i)=>{if(mo.m&&mo.m.tag)mo.m.tag.textContent=GHOSTS[i][l];});}
 
 addEventListener('resize',layout);
 $('pano').onload=layout;
