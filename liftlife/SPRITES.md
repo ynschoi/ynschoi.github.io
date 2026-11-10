@@ -5,7 +5,7 @@
 - **투명 배경** (흰색·검은색·체크무늬 X), **빨간/노란 테두리 빛 X**
 - 모든 컷 **같은 크기 · 오른쪽을 봄 · 발바닥 높이 같게**
 - 소품(바벨, 변기, 침대, 그릇, 포션병)은 **그림 안에 같이** 그리기
-- 바벨 원판 색: 빨강(25kg) · 파랑(20kg) · 노랑(15kg)
+- 바벨 원판 색: **검은색** (범퍼 원판)
 
 ## 만들 것 (위에서부터 중요한 순서)
 
@@ -31,7 +31,7 @@
 Output: transparent background PNG at the highest possible resolution. Real alpha transparency only.
 Same character as the attached sprite sheet (same face, hair, tank top, pants, shoes, same pixel-art style and scale).
 Sprite sheet, 2 rows x 4 columns, 8 frames, character facing right, feet on the same baseline in every frame.
-Olympic weightlifting SNATCH with a barbell (red, blue and yellow plates):
+Olympic weightlifting SNATCH with a barbell (black bumper plates):
 1 standing behind the bar, 2 gripping the bar in the start position, 3 first pull to the knees,
 4 explosive extension on the toes, 5 pulling under the bar, 6 catching overhead in a deep squat,
 7 standing up with the bar locked out overhead, 8 dropping the bar and cheering.

@@ -85,7 +85,7 @@
   .bubble.on{opacity:1;transform:translate(-50%,-6px) scale(1)}
   .bb{position:absolute;height:2.4%;background:linear-gradient(#e9e9f2,#8a8aa0);box-shadow:0 0 0 1px #111;display:none;z-index:2;left:20%;right:24%;top:52.5%}
   .bb.on{display:block}
-  .bb i{position:absolute;top:50%;width:5%;transform:translateY(-50%);border:1px solid #111}
+  .bb i{position:absolute;top:50%;width:5%;transform:translateY(-50%);border:1px solid #6b6b7a}
   .tfront{position:absolute;z-index:7;display:none;image-rendering:pixelated;pointer-events:none}
   .tfront.on{display:block}
   .pop{position:absolute;z-index:10;pointer-events:none;font-size:22px;font-weight:700;color:var(--gold);-webkit-text-stroke:2px #111;text-shadow:3px 3px 0 var(--red);animation:pop .9s ease-out forwards;white-space:nowrap}
@@ -346,7 +346,7 @@ function drawRoom(){const W=240,H=138,FY=106;
   R(136,44,36,62,night?'#2a2650':'#cfd8e6');for(let y=46;y<104;y+=6)for(let x=138;x<170;x+=6)R(x,y,5,5,night?'#302c5c':'#dde5f0');
   R(156,66,12,22,'#f2f2f2');R(156,66,12,2,'#bbb');R(140,88,26,6,'#fff');R(142,94,20,6,'#e6e6e6');R(146,100,12,6,'#e6e6e6');R(139,86,28,3,'#ddd');R(140,58,8,8,'#fff');R(143,56,2,2,'#999');
   R(180,100,58,8,'#222');R(180,100,58,2,'#3a3a3a');R(184,103,50,1,'#ffd400');R(224,40,4,62,'#777');R(234,40,4,62,'#777');R(220,56,22,3,'#555');
-  [['#d92d20',16],['#2563eb',14],['#ffd400',12]].forEach(([c,h],i)=>R(216-i*5,104-h-12,4,h,c));R(186,96,10,8,'#eee');R(186,95,10,2,'#ccc');}
+  [16,14,12].forEach((h,i)=>{R(216-i*5,104-h-12,4,h,'#5a5a68');R(216-i*5,104-h-11,3,h-2,'#1b1b22');});R(186,96,10,8,'#eee');R(186,95,10,2,'#ccc');}
 
 /* ═════════ 주인공 ═════════ */
 const F={stand:0,run:1,bend:2,knee:3,kick:4,tuck:5,squat:6,smile:7};
@@ -364,7 +364,7 @@ function pop(t,x,y,size){const p=document.createElement('div');p.className='pop'
 function head(){const h=heroH();return{x:toPx(hx)+h*.06,y:GH()*.93-h*.86};}
 function banner(t,ms=1200){const b=$('banner');b.textContent=t;b.classList.add('on');clearTimeout(banner.t);banner.t=setTimeout(()=>b.classList.remove('on'),ms);}
 function shake(){game.classList.remove('shake');void game.offsetWidth;game.classList.add('shake');}
-function setBar(on){const bb=$('bb');bb.classList.toggle('on',on);if(on&&!bb.childElementCount){bb.innerHTML=['#d92d20','#2563eb'].map((c,i)=>`<i style="left:${-4-i*6}%;height:${900-i*150}%;background:${c}"></i><i style="right:${-4-i*6}%;height:${900-i*150}%;background:${c}"></i>`).join('');}}
+function setBar(on){const bb=$('bb');bb.classList.toggle('on',on);if(on&&!bb.childElementCount){bb.innerHTML=['#1b1b22','#1b1b22'].map((c,i)=>`<i style="left:${-4-i*6}%;height:${900-i*150}%;background:${c}"></i><i style="right:${-4-i*6}%;height:${900-i*150}%;background:${c}"></i>`).join('');}}
 
 /* ═════════ 화면 갱신 ═════════ */
 const total=()=>r05(S.sn+S.cj+S.sq);
@@ -473,7 +473,7 @@ function bg(c){c.fillStyle='#3b2f72';c.fillRect(0,0,W,FLOOR);c.fillStyle='#43368
   c.fillStyle='#6b4a33';c.fillRect(0,FLOOR,W,H-FLOOR);c.fillStyle='#5a3d2a';for(let y=FLOOR+6;y<H;y+=7)c.fillRect(0,y,W,1);
   c.fillStyle='#222';c.fillRect(20,FLOOR-2,110,5);c.fillStyle='#ffd400';c.fillRect(24,FLOOR,102,1);}
 function drawHero(c,f,x=75,size=118,dy=0,sh=0){if(!IMG.complete)return;c.drawImage(IMG,f*400,0,400,400,x-size/2+(sh?rnd(-sh,sh):0),FLOOR+4-size-dy,size,size);}
-function plates(c,x,y,dir){['#d92d20','#2563eb','#ffd400'].forEach((col,i)=>{const h=[30,26,22][i];c.fillStyle='#111';c.fillRect(x+dir*i*5-1,y-h/2-1,6,h+2);c.fillStyle=col;c.fillRect(x+dir*i*5,y-h/2,4,h);});}
+function plates(c,x,y,dir){['#1b1b22','#1b1b22','#1b1b22'].forEach((col,i)=>{const h=[30,26,22][i];c.fillStyle='#6b6b7a';c.fillRect(x+dir*i*5-1,y-h/2-1,6,h+2);c.fillStyle=col;c.fillRect(x+dir*i*5,y-h/2,4,h);c.fillStyle='#3a3a46';c.fillRect(x+dir*i*5+1,y-h/2+2,1,h-4);});}
 function bar(c,x1,x2,y){c.fillStyle='#111';c.fillRect(x1-1,y-2,x2-x1+2,5);c.fillStyle='#d8d8e4';c.fillRect(x1,y-1,x2-x1,3);plates(c,x1,y,1);plates(c,x2-4,y,-1);}
 function txt(c,t,x,y,size=12,col='#fff'){c.font=`bold ${size}px Galmuri11, monospace`;c.textAlign='center';c.lineWidth=3;c.strokeStyle='#111';c.strokeText(t,x,y);c.fillStyle=col;c.fillText(t,x,y);}
 function gauge(c,x,y,w,h,p,col){c.fillStyle='#111';c.fillRect(x-2,y-2,w+4,h+4);c.fillStyle='#3a1020';c.fillRect(x,y,w,h);c.fillStyle=col;c.fillRect(x,y,w*clamp(p,0,1),h);}
