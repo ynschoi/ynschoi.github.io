@@ -114,7 +114,7 @@
   @keyframes gIn{from{opacity:0;transform:scale(.3)}}
   @keyframes gDie{30%{filter:brightness(3);transform:scale(1.3)}100%{opacity:0;transform:scale(.2) translateY(-30px)}}
   .hero.powered .spr{filter:drop-shadow(0 0 6px #ffd2b8) drop-shadow(0 0 14px #d97757) brightness(1.08);animation:pglow 1.2s ease-in-out infinite}
-  @keyframes pglow{50%{filter:drop-shadow(0 0 10px #fff) drop-shadow(0 0 22px #ffd400) brightness(1.15)}}
+  @keyframes pglow{50%{filter:drop-shadow(0 0 10px #ffd2b8) drop-shadow(0 0 22px #d97757) brightness(1.12)}}
   .item.gift .box{background:linear-gradient(90deg,transparent 42%,#ffd400 42% 58%,transparent 58%),linear-gradient(transparent 42%,#ffd400 42% 58%,transparent 58%),#d92d20;font-size:18px;box-shadow:0 0 0 2px #111,0 0 22px #ffd400}
   .item.gift{width:52px;height:52px;margin-left:-26px;animation:bob .9s ease-in-out infinite}
   .dpad .u.glow{color:#ffd400;filter:drop-shadow(0 0 6px #ffd400);animation:upPulse .9s ease-in-out infinite}
@@ -248,7 +248,7 @@
   .fx{position:absolute;z-index:6;pointer-events:none}
   .word{font-family:var(--pix);font-weight:700;color:var(--gold);-webkit-text-stroke:1.5px #111;text-shadow:2px 2px 0 var(--red);white-space:nowrap}
   .mtag{position:absolute;font-family:var(--pix);font-size:10px;background:#3a1020;color:#ff9a9a;border:1px solid #ff9a9a;padding:1px 5px;white-space:nowrap}
-  .agtag{position:absolute;left:50%;bottom:auto;top:-20px;transform:translateX(-50%);font:700 9px/1.15 var(--pix);text-align:center;color:#fff;background:#1e3a8a;border:1px solid #9fc0ff;padding:2px 4px;white-space:nowrap;box-shadow:0 0 6px #4f7cff88}
+  .agtag{position:absolute;left:50%;bottom:auto;top:-20px;transform:translateX(-50%);font:700 8px/1.15 var(--pix);text-align:center;color:#fff;background:#1e3a8a;border:1px solid #9fc0ff;padding:1px 3px;white-space:nowrap;box-shadow:0 0 6px #4f7cff88}
   .fol{position:absolute;z-index:5;pointer-events:auto;cursor:pointer;transform-origin:50% 100%}
   .fol .fs{position:absolute;inset:0;background-repeat:no-repeat}
   .fol.l .fs{transform:scaleX(-1)}
@@ -265,6 +265,9 @@
   .csp{position:absolute;z-index:7;pointer-events:none;color:#ffb38a;font-size:12px;text-shadow:0 0 6px #d97757,0 0 12px #d97757;animation:csp 1.2s ease-out forwards}
   .csp.cl{width:18px;height:18px;background-size:800% 100%;background-position:0 0;filter:drop-shadow(0 0 4px #ff9a6a) drop-shadow(0 0 8px #d97757)}
   @keyframes csp{0%{opacity:0;transform:translateY(0) scale(.5)}20%{opacity:1;transform:translateY(-6px) scale(1)}100%{opacity:0;transform:translateY(-34px) scale(.6) rotate(25deg)}}
+  .absorb{position:absolute;z-index:9;width:52px;height:52px;background-size:800% 100%;background-position:0 0;background-repeat:no-repeat;pointer-events:none;filter:drop-shadow(0 0 8px #ffb38a) drop-shadow(0 0 16px #d97757)}
+  .oring{position:absolute;z-index:8;width:20px;height:20px;margin-left:-10px;margin-bottom:-10px;border-radius:50%;border:3px solid #ffb38a;box-shadow:0 0 18px #d97757,inset 0 0 12px #d97757;pointer-events:none;animation:oring 1.5s ease-out forwards}
+  @keyframes oring{to{transform:scale(9);opacity:0}}
 </style>
 </head>
 <body>
@@ -478,11 +481,18 @@ function collect(i,hit){
   pop(hit?'POW!':'GET!',ITEMS[i].x*s-30,game.clientHeight*.32);
   addScore(hit?1500:1000);setPow(pow+14);say(ITEM_LINE[i][lang],1800);
   showItem(i,true);
-  if(ITEMS[i].ai)setTimeout(powerUp,1200);
+  if(ITEMS[i].ai)absorbClaude(i);
   if(ITEMS[i].motion)setTimeout(()=>{if(!busy){keys.left=keys.right=false;act(ITEMS[i].motion);}},150);
 
 }
 /* AI 상자 → 에너지 충전 → 몬스터 등장 */
+async function absorbClaude(i){const s=sc(),G=game.clientHeight,d=document.createElement('div');d.className='absorb';d.style.backgroundImage=`url(${A2('ag_claude')})`;
+  const sx=ITEMS[i].x*s,sy=G*.6;d.style.left=(sx-26)+'px';d.style.top=(sy-26)+'px';world.appendChild(d);
+  const tx=hx-sx,ty=G*(1-.09)-hero.offsetHeight*.55-sy;
+  await d.animate([{transform:'scale(1)',offset:0},{transform:'translateY(-40px) scale(1.3)',offset:.35},{transform:`translate(${tx}px,${ty}px) scale(.2)`,opacity:.9}],{duration:1100,easing:'ease-in',fill:'forwards'}).finished;d.remove();
+  const ring=document.createElement('div');ring.className='oring';ring.style.left=hx+'px';ring.style.bottom=(G*.09+hero.offsetHeight*.45)+'px';world.appendChild(ring);setTimeout(()=>ring.remove(),1600);
+  await spr.animate([{filter:'none'},{filter:'brightness(1.8) saturate(.6)',offset:.15},{filter:'sepia(.6) saturate(2.4) hue-rotate(-18deg) brightness(1.25) drop-shadow(0 0 10px #ffb38a) drop-shadow(0 0 24px #d97757)',offset:.6},{filter:'brightness(1.08) drop-shadow(0 0 6px #ffd2b8) drop-shadow(0 0 14px #d97757)'}],{duration:1800,easing:'ease-in-out'}).finished;
+  powerUp();}
 function powerUp(){if(powered)return;powered=true;hero.classList.add('powered');setPow(100);banner('ENERGY MAX!',1100);
   setTimeout(()=>{banner(lang=='ko'?'몬스터 출현!':'MONSTERS!',1000);spawnMon(0);
     say(lang=='ko'?'클로드 파워 ON!':'Claude power ON!',1600);},1300);}
@@ -632,7 +642,7 @@ function agTalk(o,i){const N=AGNICK[o.key],b=document.createElement('div');b.cla
 function trailRec(){const p=TR[0],o=hero.style.opacity===''?1:+hero.style.opacity;
   if(!p||Math.abs(hx-p.x)+Math.abs(heroY-p.y)>2)TR.unshift({x:hx,y:heroY,s:heroS,o});else{p.s=heroS;p.o=o;}if(TR.length>900)TR.length=900;}
 function trailAt(dist){let acc=0;for(let k=1;k<TR.length;k++){const a=TR[k-1],b=TR[k],d=Math.hypot(a.x-b.x,a.y-b.y);if(acc+d>=dist){const t=(dist-acc)/(d||1);return{x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t,s:a.s,o:a.o};}acc+=d;}return null;}
-function folSnap(){fols.forEach((o,k)=>{o.x=hx-face*(hero.offsetWidth*.45+o.h*(.35+k*.82));o.y=0;});TR=[];}
+function folSnap(){fols.forEach((o,k)=>{o.x=hx-face*(hero.offsetWidth*.45+o.h*(.35+k*.98));o.y=0;});TR=[];}
 let superFly=false,lineup=false;
 setInterval(()=>{if(!powered||flying||document.hidden)return;const h=hero.offsetHeight,d=document.createElement('div');const cl=Math.random()<.45;
   d.className='csp'+(cl?' cl':'');if(cl)d.style.backgroundImage=`url(${A2('ag_claude')})`;else d.textContent=pick(['✦','✧','✦']);
@@ -643,8 +653,8 @@ function flyFols(el,dur,x1,up1,G){fols.forEach(o=>{const t=Math.max(0,Math.min(1
   o.el.style.left=(x-o.h/2)+'px';o.el.style.bottom=(G*.09+arc)+'px';o.el.style.transform=`scale(${1-.9*t})`;o.el.style.opacity=t>.8?String(Math.max(0,1-(t-.8)/.2)):'1';
   if(t>.1&&t<1&&Math.random()<.25)trail(x,G-arc-G*.12);});}
 function folStep(){trailRec();const G=game.clientHeight;if(superFly){requestAnimationFrame(folStep);return;}
-  fols.forEach((o,k)=>{const dist=hero.offsetWidth*.45+o.h*(.35+k*.82);let p=trailAt(dist);
-    if(lineup)p={x:hx+hero.offsetWidth*.55+o.h*(.55+k*.95),y:0,s:1,o:1};
+  fols.forEach((o,k)=>{const dist=hero.offsetWidth*.45+o.h*(.35+k*.98);let p=trailAt(dist);
+    if(lineup)p={x:hx+hero.offsetWidth*.55+o.h*(.55+k*1.05),y:0,s:1,o:1};
     else if(!p)p={x:hx-face*dist,y:0,s:1,o:1};
     const nx=o.x+(p.x-o.x)*(flying?.5:.25),ny=o.y+(p.y-o.y)*(flying?.5:.3),dx=nx-o.x;o.d+=Math.abs(dx);if(Math.abs(dx)>.4)o.dir=dx>0?1:-1;o.x=nx;o.y=ny;
     const air=o.y>6,img=air?AGJUMP[o.key]:o.key;if(img!==o.img){o.img=img;o.fs.style.backgroundImage=`url(${A2(img)})`;}
