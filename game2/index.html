@@ -279,6 +279,18 @@
   .idc .pf{display:inline-block;margin-left:6px;font:600 10px var(--font);color:#fff;background:#2563eb;padding:1px 7px;border-radius:99px;cursor:pointer;white-space:nowrap}
   .idc .pf.soon{background:#71717a}
   .idc .ph{display:none!important}.idc .who{padding-left:12px!important;min-height:0!important;padding-bottom:4px!important}
+  .cred{position:absolute;left:0;right:0;top:30px;bottom:34px;overflow:hidden;-webkit-mask:linear-gradient(transparent,#000 18%,#000 82%,transparent);mask:linear-gradient(transparent,#000 18%,#000 82%,transparent)}
+  .cred .roll{position:absolute;left:0;right:0;top:100%;text-align:center;animation:croll 14s linear infinite;font:11px/1.5 var(--px);color:#ddd8ff;display:flex;flex-direction:column;align-items:center}
+  .cred h3{margin:0 0 8px;font:700 16px/1.3 var(--px);color:var(--gold)}.cred i{font-style:normal;font-size:9px;color:var(--violet);margin-top:6px}.cred b{color:#fff;font-size:12px}
+  @keyframes croll{from{transform:translateY(0)}to{transform:translateY(calc(-100% - 140px))}}
+  .rxbar{position:absolute;right:8px;bottom:6px;display:flex;gap:6px;align-items:center}
+  .rxbar small{font:9px var(--px);color:var(--violet)}
+  .rx{position:relative;display:flex;align-items:center;gap:4px;background:#0b0820;border:2px solid var(--gold);color:#fff;font:12px var(--px);padding:3px 8px;box-shadow:2px 2px 0 #000;cursor:pointer}
+  .rx b{font-weight:400}.rx.on{background:#2a1f00}
+  .rx:active{transform:translate(2px,2px);box-shadow:none}
+  .rxfly{position:absolute;left:50%;top:-4px;pointer-events:none;font-size:18px;animation:rxf .9s ease-out forwards}
+  @keyframes rxf{to{transform:translate(-50%,-46px) scale(1.4);opacity:0}}
+  @media (prefers-reduced-motion:reduce){.cred .roll{animation:none;top:0}}
 </style>
 </head>
 <body>
@@ -446,7 +458,28 @@ function typeText(el,txt){clearInterval(typeT);let i=0;el.innerHTML='<span class
 const two=(s,i)=>s.split('|')[i]??s.split('|')[0];
 function spark(d){const w=300,h=44,m=Math.max(...d)||1;const p=d.map((v,i)=>`${i*w/(d.length-1)},${h-3-v/m*(h-8)}`).join(' ');
   return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><polyline points="0,${h} ${p} ${w},${h}" fill="#4cc3ff22" stroke="none"/><polyline points="${p}" fill="none" stroke="#4cc3ff" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`;}
-function showHome(){$('win').classList.remove('idw');document.querySelector('.info').classList.remove('cvmode');const t=T[lang];sel=-1;renderSlots();
+/* ═════════ 엔딩 크레딧 + 익명 반응 (구글 시트) ═════════
+   REACT_URL 에 구글 Apps Script 웹앱 주소를 넣으면 숫자가 시트에 쌓여요. 비어 있으면 이 기기에서만 세요. */
+const REACT_URL='';
+const RK=[['heart','❤️'],['thumb','👍'],['muscle','💪']];
+let RC={heart:0,thumb:0,muscle:0};
+const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+function loadReact(){if(!REACT_URL)return;fetch(REACT_URL+'?op=get').then(r=>r.json()).then(j=>{RC={...RC,...j};paintReact();}).catch(()=>{});}
+function paintReact(){RK.forEach(([k])=>{const e=document.querySelector(`.rx[data-k="${k}"] b`);if(e)e.textContent=RC[k]+(REACT_URL?0:(ls.get('rw_'+k)?1:0));});}
+function pressReact(k,btn){const d=document.createElement('span');d.className='rxfly';d.textContent=RK.find(r=>r[0]==k)[1];btn.appendChild(d);setTimeout(()=>d.remove(),900);
+  if(ls.get('rw_'+k)){say(lang=='ko'?'이미 보냈어요! 고마워요 💕':'Already sent, thank you! 💕',1200);return;}
+  ls.set('rw_'+k,'1');if(REACT_URL){RC[k]++;fetch(REACT_URL+'?op=add&k='+k).catch(()=>{});}paintReact();say(lang=='ko'?'고마워요! 💕':'Thank you! 💕',1200);}
+function showCredits(){const ko=lang=='ko';
+  $('win').innerHTML=`<div class="ttl"><span>All Clear (${NTOT}/${NTOT})</span><span>${ko?'계속 돌아다녀도 돼요':'Keep exploring!'}</span></div>
+   <div class="cred"><div class="roll"><h3>THANK YOU<br>FOR PLAYING</h3>
+    <i>PLAYER</i><b>1P YOUNGSU</b><i>ANALYSIS AGENT</i><b>술술</b><i>LOOKUP AGENT</i><b>딸깍</b><i>ORGANIZER AGENT</i><b>착착</b>
+    <i>POWERED BY</i><b>Claude Code · Codex</b><i>AND YOU</i><b>♥</b></div></div>
+   <div class="rxbar"><small>${ko?'익명':'anonymous'}</small>${RK.map(([k,e])=>`<button class="rx${ls.get('rw_'+k)?' on':''}" data-k="${k}" type="button">${e}<b>0</b></button>`).join('')}</div>`;
+  paintReact();}
+document.addEventListener('pointerdown',e=>{const b=e.target.closest('.rx');if(b){e.stopPropagation();e.preventDefault();b.classList.add('on');pressReact(b.dataset.k,b);}},true);
+loadReact();
+function showHome(){if(clearShown&&started){$('win').classList.remove('idw');document.querySelector('.info').classList.remove('cvmode');sel=-1;renderSlots();showCredits();return;}
+  $('win').classList.remove('idw');document.querySelector('.info').classList.remove('cvmode');const t=T[lang];sel=-1;renderSlots();
   const done=got.size===NTOT;$('win').innerHTML=`<div class="ttl"><span>${done?`All Clear (${NTOT}/${NTOT})`:t.welcome}</span><span>${done?'':got.size+'/'+NTOT}</span></div><h2>1P YOUNGSU</h2><p id="wp"></p>`;typeText($('wp'),got.size===NTOT?t.clear:t.hello);}
 function showItem(i,fresh){$('win').classList.remove('idw');document.querySelector('.info').classList.remove('cvmode');const it=ITEMS[i],L=lang=='ko'?0:1;sel=i;renderSlots();
   $('win').innerHTML=`<div class="ttl"><span>${fresh?T[lang].get:'ITEM '+(i+1)}</span><span>${two(it.m,L)}</span></div>
@@ -848,7 +881,7 @@ async function goBack(){
   loopF('walk',110);const to=Math.max(PANO.OUT*sc()*.8,camLock+game.clientWidth/2);let t0=performance.now();
   await new Promise(r=>{const step=t=>{const dt=Math.min(50,t-t0);t0=t;hx+=hero.offsetHeight*.0011*dt;place();if(hx<to)requestAnimationFrame(step);else r();};requestAnimationFrame(step);});
   hero.style.zIndex=9;showHome();lineup=true;
-  if(got.size===ITEMS.length&&!clearShown){clearShown=true;banner('ALL CLEAR!',700);await sleep(750);}
+  if(got.size===ITEMS.length&&!clearShown){clearShown=true;banner('ALL CLEAR!',700);await sleep(750);showHome();}
   say(T[lang].back,600000);await once('cross',[0,1,2,3,4,5],140);
   posing=true;sheet('cross');clearInterval(ft);let pk=0;frame(4);ft=setInterval(()=>frame([4,4,5,5][++pk%4]),260);busy=false;
   const pl=$('plate');pl.classList.add('s1');
