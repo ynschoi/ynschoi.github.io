@@ -497,8 +497,7 @@ async function absorbClaude(i){keys.left=keys.right=false;walking=false;await sl
   await once('c_power',[0,1,2,3,4,5,5,5,6,7],260);await orange.finished.catch(()=>{});
   busy=false;idle();powerUp();}
 function powerUp(){if(powered)return;powered=true;hero.classList.add('powered');setPow(100);banner('ENERGY MAX!',1100);
-  setTimeout(()=>{banner(lang=='ko'?'몬스터 출현!':'MONSTERS!',1000);spawnMon(0);
-    say(lang=='ko'?'클로드 파워 ON!':'Claude power ON!',1600);},1300);}
+  setTimeout(()=>{banner(lang=='ko'?'몬스터 출현!':'MONSTERS!',1000);spawnMon(0);},1300);}
 function nearGhost(reach){const s=sc();let best=-1,bd=1e9;GHOSTS.forEach((g,i)=>{if(slain.has(i)||!powered||!mons[i].st)return;const dx=(mons[i].x*s-hx)*face;if(dx>-30&&dx<reach&&dx<bd){bd=dx;best=i;}});return best;}
 async function allClear(){if(clearShown)return;clearShown=true;banner('ALL CLEAR!',1600);busy=true;await once('cheer',ACT.cheer.seq,110);busy=false;idle();showHome();}
 function banner(t,ms){const b=$('banner');b.textContent=t;b.classList.add('on');setTimeout(()=>b.classList.remove('on'),ms);}
