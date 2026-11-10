@@ -404,9 +404,9 @@ function showDie(n){$('die').className='die'+(n==1?' red':'');$('die').innerHTML
 async function roll(){ac();if(!started){start();return;}if(busy)return;busy=true;
   const d=$('dice');d.classList.remove('ready','land');d.classList.add('roll');renderLegend(-1);
   const n=window.__force||1+Math.floor(Math.random()*6);let k=0;
-  while(k<12){showDie(1+Math.floor(Math.random()*6));SFX.tick();await sleep(50+k*9);k++;}
+  while(k<8){showDie(1+Math.floor(Math.random()*6));SFX.tick();await sleep(35+k*7);k++;}
   showDie(n);d.classList.remove('roll');void d.offsetWidth;d.classList.add('land');SFX.land();renderLegend(n-1);
-  S.rolls++;save();paint();const f=FACES[n-1];banner(f.n+'!',900);await sleep(700);
+  S.rolls++;save();paint();const f=FACES[n-1];banner(f.n+'!',800);await sleep(400);
   try{if(f.k==='eat')await doEat();else if(f.k==='zzz')await doSleep();else if(f.k==='poo')await doPoo();else await doLift(f.k);}catch(e){console.error(e);}
   busy=false;d.classList.add('ready');}
 
@@ -457,7 +457,7 @@ async function doLift(k){await walkTo(SPOT.gym-4);setF(F.squat);say(pick(['간�
   }else{SFX.fail();setF(F.bend);shake();say(pick(['으아아...','오늘은 컨디션이...','바벨이 무거운 게 아니라...']),1300);
     msg('LIFT',`🏋️ ${name} 실패`,`바벨을 놓쳤다. PR ${before?before+'kg':'없음'} 그대로.\n${POTN[POTK[k]]}을 마시면 조금 쉬워져요.`);}
   await sleep(900);setF(F.stand);paint();
-  if(total()>=LETTER_AT&&!S.letter){S.letter=true;save();await sleep(1800);showLetter();}}
+}
 
 /* 성공 컷: 상반신 클로즈업 + 요쓰! (전용 그림이 오면 YOSS_IMG/YOSS_F만 바꾸면 됨) */
 const YOSS_F=F.knee;let YOSS_IMG=null;   // null = 기본 스프라이트(IMG) 사용
@@ -592,7 +592,7 @@ $('helpBody').innerHTML=`<h3>🎲 하는 법</h3>주사위를 굴리면 나온 �
 <b>1 스내치</b> 추 타이밍 · <b>2 클린앤저크</b> 꾹 눌렀다 놓기 · <b>3 백스쿼트</b> 1초 연타<br>
 <b>4 밥</b> 파워포션 (하차푸리면 2개) → 스내치<br><b>5 잠</b> 회복포션 → 클린앤저크<br><b>6 똥</b> 근육포션 → 백스쿼트<br>아래 <b>필살기</b> 버튼은 언제든 눌러서 볼 수 있어요.<br>
 포션은 위 포션 칸을 누르거나 역도 시작 전에 마셔요. 마실 때마다 레벨이 올라 아주 조금 쉬워지고, 레벨은 계속 쌓여요.<br>
-기록(PR)은 그 종목 최고 무게예요. 잘해야만 바뀌어요.<br>역도 합계 ${LETTER_AT}kg을 넘기면 선물이 있어요.<br><button class="rs" id="rs" type="button">기록 지우고 처음부터</button><small>made by ${FROM} · 아무 곳이나 눌러 닫기</small>`;
+기록(PR)은 그 종목 최고 무게예요. 잘해야만 바뀌어요.<br><button class="rs" id="rs" type="button">기록 지우고 처음부터</button><small>made by ${FROM} · 아무 곳이나 눌러 닫기</small>`;
 
 function inApp(){const u=navigator.userAgent||'';return /KAKAOTALK|Instagram|FBAN|FBAV|FB_IAB|Line\/|NAVER\(|DaumApps|everytimeApp|Whale\/.*inapp|; wv\)/i.test(u);}
 function setupWarn(){const kakao=/KAKAOTALK/i.test(navigator.userAgent||'');if(STORE_OK&&!inApp())return;const w=$('warn');w.hidden=false;$('cover').classList.add('warned');
