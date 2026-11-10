@@ -155,6 +155,12 @@
   /* 필살기 */
   .hero .skl{position:absolute;left:-20%;top:-20%;width:140%;height:140%;background:0 0/800% 100% no-repeat;display:none;filter:drop-shadow(0 3px 0 rgba(0,0,0,.25))}
   .hero.skill .spr{visibility:hidden}.hero.skill .skl{display:block}
+  /* 부드럽게: 두 장을 겹쳐 컷 사이를 크로스페이드, 전체는 숨 쉬듯 살짝 움직임 */
+  .hero .sklw{position:absolute;inset:0;transform-origin:50% 95%;transition:transform .22s cubic-bezier(.3,1.6,.5,1)}
+  .hero.skill .sklw{animation:breathe2 1.1s ease-in-out infinite}
+  @keyframes breathe2{50%{translate:0 -1.2%}}
+  .hero .skl{transition:opacity var(--xf,160ms) ease-in-out}
+  .hero .skl.off{opacity:0}
   .wflash{position:absolute;inset:0;z-index:11;background:#fff;opacity:0;pointer-events:none;transition:opacity .25s}
   .wflash.on{opacity:.8;transition:none}
   .skills{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
@@ -209,7 +215,7 @@
     <canvas id="room" width="240" height="138"></canvas>
     <div class="hero" id="hero">
       <div class="bubble" id="bubble"></div>
-      <div class="flip"><div class="spr" id="spr"></div><div class="skl" id="skl"></div><div class="bb" id="bb"></div></div>
+      <div class="flip"><div class="spr" id="spr"></div><div class="sklw" id="sklw"><div class="skl" id="skl"></div><div class="skl off" id="skl2"></div></div><div class="bb" id="bb"></div></div>
       <div class="sh"></div>
     </div>
     <canvas class="tfront" id="tfront" width="30" height="22"></canvas>
@@ -541,11 +547,20 @@ const SFXS={
 };
 async function useSkill(sk){ac();if(!started)start();if(busy)return;busy=true;$('dice').classList.remove('ready');
   await walkTo(120);face=1;place();
-  const el=$('skl');el.style.backgroundImage=`url(${sk.img})`;hero.classList.add('skill');
-  for(const [f,ms] of sk.seq){el.style.backgroundPosition=(f/7*100)+'% 0';SFXS[sk.k](f);
+  const L=[$('skl'),$('skl2')],wrap=$('sklw');let top=0;
+  L.forEach(el=>{el.style.backgroundImage=`url(${sk.img})`;el.style.backgroundPosition='0 0';});L[1].classList.add('off');L[0].classList.remove('off');
+  hero.classList.add('skill');
+  for(const [f,ms] of sk.seq){
+    // 다음 컷을 아래 장에 깔고 서서히 드러냄 (컷 길이에 맞춰 페이드 시간 조절)
+    const nxt=L[1-top],xf=Math.min(220,Math.max(110,ms*.4));
+    L.forEach(el=>el.style.setProperty('--xf',xf+'ms'));
+    nxt.style.backgroundPosition=(f/7*100)+'% 0';nxt.classList.remove('off');L[top].classList.add('off');top=1-top;
+    SFXS[sk.k](f);
     if(sk.say[f])say(sk.say[f],Math.max(900,ms+300));
-    if(f===sk.hit){banner(sk.word,1200);shake();const w=$('wflash');w.classList.add('on');setTimeout(()=>w.classList.remove('on'),60);}
+    if(f===sk.hit){banner(sk.word,1200);shake();const w=$('wflash');w.classList.add('on');setTimeout(()=>w.classList.remove('on'),60);
+      wrap.style.transform='scale(1.06)';setTimeout(()=>wrap.style.transform='',180);}
     await sleep(ms);}
+  await sleep(120);
   hero.classList.remove('skill');setF(F.stand);
   msg('SKILL',`${sk.ic} ${sk.n}`,{aura:'최초는 주먹, 잔! 켄! 바위!\n오라를 모은 주먹이 바벨을 향한다.',card:'카드 한 장에 분홍 오라.\n늘어나고 줄어드는 근육의 성질.',guardian:'감사의 합장.\n금빛 거인이 Moti 뒤에 섰다.'}[sk.k]);
   busy=false;$('dice').classList.add('ready');}
