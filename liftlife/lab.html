@@ -3,16 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<title>미니게임 시안</title>
+<title>역도 미니게임 6종</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/galmuri.css">
 <style>
   :root{--night:#0b0820;--panel:#15102e;--edge:#4a3f8a;--gold:#ffd400;--red:#d92d20;--violet:#8d86c9;--cyan:#4cc3ff;
     --px:'Galmuri11','Galmuri9',ui-monospace,monospace;--font:'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif}
   *{box-sizing:border-box;margin:0;padding:0;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+  :root{color-scheme:dark}
   html,body{background:var(--night);color:#fff;font-family:var(--px);-webkit-tap-highlight-color:transparent}
   button{all:unset;cursor:pointer}
-  main{max-width:440px;margin:0 auto;padding:16px 16px 40px}
+  main{max-width:440px;margin:0 auto;padding-block:16px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  button,.ov,.keys{touch-action:manipulation}
   header{text-align:center;padding:10px 0 16px}
   header h1{font-size:22px;color:var(--gold);text-shadow:3px 3px 0 var(--red)}
   header p{font:13px/1.5 var(--font);color:#ddd8ff;margin-top:6px}
