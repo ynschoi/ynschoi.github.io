@@ -249,7 +249,7 @@
   .word{font-family:var(--pix);font-weight:700;color:var(--gold);-webkit-text-stroke:1.5px #111;text-shadow:2px 2px 0 var(--red);white-space:nowrap}
   .mtag{position:absolute;font-family:var(--pix);font-size:10px;background:#3a1020;color:#ff9a9a;border:1px solid #ff9a9a;padding:1px 5px;white-space:nowrap}
   .agtag{position:absolute;left:50%;bottom:auto;top:-20px;transform:translateX(-50%);font:700 9px/1.15 var(--pix);text-align:center;color:#fff;background:#1e3a8a;border:1px solid #9fc0ff;padding:2px 4px;white-space:nowrap;box-shadow:0 0 6px #4f7cff88}
-  .fol{position:absolute;z-index:5;pointer-events:none;transform-origin:50% 100%}
+  .fol{position:absolute;z-index:5;pointer-events:auto;cursor:pointer;transform-origin:50% 100%}
   .fol .fs{position:absolute;inset:0;background-repeat:no-repeat}
   .fol.l .fs{transform:scaleX(-1)}
   .item.claude{width:62px;height:62px;margin-left:-31px}
@@ -259,6 +259,12 @@
   .item.sky .im.stx{inset:8px;background-size:600% 100%;background-position:0 0;filter:drop-shadow(0 0 10px #ffe680) drop-shadow(0 0 22px #ffd400aa)}
   .hi .ico{display:inline-block;width:22px;height:22px;vertical-align:middle;background:center/contain no-repeat}
   .hi .ico.cl{background-size:800% 100%;background-position:0 0}
+  .agsay{position:absolute;z-index:11;transform:translateX(-50%);background:#fff;color:#111;border:2px solid #111;padding:3px 7px;font:12px/1.3 var(--pix);white-space:nowrap;text-align:center;pointer-events:none;box-shadow:2px 2px 0 #0006;animation:agpop .25s ease-out}
+  .agsay b{display:block;color:#d97757;font-size:14px}
+  @keyframes agpop{from{transform:translateX(-50%) scale(.4)}}
+  .csp{position:absolute;z-index:7;pointer-events:none;color:#ffb38a;font-size:12px;text-shadow:0 0 6px #d97757,0 0 12px #d97757;animation:csp 1.2s ease-out forwards}
+  .csp.cl{width:18px;height:18px;background-size:800% 100%;background-position:0 0;filter:drop-shadow(0 0 4px #ff9a6a) drop-shadow(0 0 8px #d97757)}
+  @keyframes csp{0%{opacity:0;transform:translateY(0) scale(.5)}20%{opacity:1;transform:translateY(-6px) scale(1)}100%{opacity:0;transform:translateY(-34px) scale(.6) rotate(25deg)}}
 </style>
 </head>
 <body>
@@ -323,14 +329,14 @@
 /* ═════════ 문구 (한/영) ═════════ */
 const T={
   ko:{a:'펀치',b:'발차기',x:'날아차기',y:'기 모으기',up:'점프',down:'몸풀기',sel:'SELECT = 한/EN',
-      hello:'◀ ▶ 로 걸어가서 선물 상자를 열어 보세요.',plateArw:'▲ 이력서 보기',welcome:'STAGE 1 · 여의도 63',
-      get:'ITEM GET!',clear:'ALL CLEAR! 나에 대한 상자와 자동화 툴을 모두 모았어요 🎉',place:{desk:'내 자리',office:'사무실',city:'한강 노을'},
+      hello:'◀ ▶ 로 걸어가 보세요.',plateArw:'▲ 이력서 보기',welcome:'STAGE 1 · 여의도 63',
+      get:'ITEM GET!',clear:'ALL CLEAR! 우리 팀 완성 🎉',place:{desk:'내 자리',office:'사무실',city:'한강 노을'},
       help:[['◀ ▶','걷기'],['▲','앞으로 점프 (한강 앞: 슈퍼 점프!)'],['▼','몸풀기'],['A','펀치'],['B','발차기'],['X','날아차기'],['Y','기 모으기'],['SELECT','한 / EN'],['START','도움말']],
       lines:{hit:['수작업 KO!','반복 업무 OUT','POW!'],get:['득템!','야호!','좋은걸?','오호?']},
-      river:'한강물은 추워요 🥶 바로 점프해 볼까? ▲',gift:{k:'63 슈퍼 점프권',d:'한강 앞에서 ▲ 를 누르면 63빌딩 48층까지 날아가요!',m:'SPECIAL'},riverNo:'선물 상자를 먼저 열어 보세요 🎁',fly:'63빌딩 48층까지 슈퍼 점프!',arrive:'여의도 63 · 48층',arriveTxt:'48층 사무실 도착✨',back:'다시 출근 😎',ask:'제 이력서 보실래요? 👈',how:'저 어때요? 👍'},
+      river:'한강은 추워요 🥶 점프! ▲',gift:{k:'63 슈퍼 점프권',d:'한강 앞에서 ▲ 를 누르면 63빌딩 48층까지 날아가요!',m:'SPECIAL'},riverNo:'선물 상자를 먼저 열어 보세요 🎁',fly:'63빌딩 48층까지 슈퍼 점프!',arrive:'여의도 63 · 48층',arriveTxt:'48층 사무실 도착✨',back:'다시 출근 😎',ask:'제 이력서 보실래요? 👈',how:'저 어때요? 👍'},
   en:{a:'Punch',b:'Kick',x:'Fly kick',y:'Power',up:'Jump',down:'Warm-up',sel:'SELECT = KO/EN',
       hello:'Walk with ◀ ▶ and open the gift boxes.',plateArw:'▲ RESUME',welcome:'STAGE 1 · YEOUIDO 63',
-      get:'ITEM GET!',clear:'ALL CLEAR! You found everything about me and every tool 🎉',place:{desk:'MY DESK',office:'OFFICE',city:'HAN RIVER'},
+      get:'ITEM GET!',clear:'ALL CLEAR! Team complete 🎉',place:{desk:'MY DESK',office:'OFFICE',city:'HAN RIVER'},
       help:[['◀ ▶','Walk'],['▲','Jump forward (at the river: SUPER JUMP!)'],['▼','Warm-up'],['A','Punch'],['B','Kick'],['X','Fly kick'],['Y','Power up'],['SELECT','KO / EN'],['START','Help']],
       lines:{hit:['Manual work KO!','Repetition OUT','POW!'],get:['Got it!','Yay!','Nice!','Ooh?']},
       river:'The Han River is cold 🥶 Jump right over? ▲',gift:{k:'63 Super Jump Pass',d:'Press ▲ at the river to fly to the 48th floor of the 63 Building!',m:'SPECIAL'},riverNo:'Open the gift box first 🎁',fly:'SUPER JUMP to the 48th floor!',arrive:'YEOUIDO 63 · 48F',arriveTxt:'Arrived at the 48F office ✨',back:'Back to work 😎',ask:'Want to see my resume? 👈',how:'How am I? 👍'},
@@ -343,11 +349,11 @@ const ITEMS=[
   {x:2000,kind:'me',ai:1,c:'#7c3aed',ic:'AI',k:{ko:'AI',en:'AI'},m:'NOW',
    d:{ko:'요즘 최대 관심사는 AI 활용',en:'My biggest interest these days: putting AI to work'},s:[],line:{ko:'드루와~~!',en:'Bring it on~~!'}},
   {x:2550,kind:'tool',g:0,c:'#1e3a8a',ic:'분석',k:{ko:'분석 AGENT',en:'Analysis AGENT'},m:'AGENT 합류|AGENT JOINED',
-   d:{ko:'신용평가 보고서 PDF를 읽어 업무 리스트를 자동으로 채우는 앱. 분류 규칙을 데이터로 정리해 사람이 고치는 부분만 남깁니다.',en:'Reads rating-report PDFs and fills the team deal list automatically.'},s:[],line:{ko:'복잡업무 해결! 분석 AGENT 합류',en:'Complex work solved!'}},
+   d:{ko:'신용평가 보고서 PDF를 읽어 업무 리스트를 자동으로 채우는 앱. 분류 규칙을 데이터로 정리해 사람이 고치는 부분만 남깁니다.',en:'Reads rating-report PDFs and fills the team deal list automatically.'},s:[],line:{ko:'술술 합류!',en:'Sulsul joined!'}},
   {x:2950,kind:'tool',g:1,c:'#2f9a3a',ic:'조회',k:{ko:'조회 AGENT',en:'Lookup AGENT'},m:'AGENT 합류|AGENT JOINED',
-   d:{ko:'SPC명만 넣으면 SEIBRO 발행 종목을 표로 정리해 주는 웹앱. 팀원들이 링크 하나로 씁니다.',en:'Enter an SPC name and get its SEIBRO issuance records as a table.'},s:[],line:{ko:'반복업무 해결! 조회 AGENT 합류',en:'Repetitive work solved!'}},
+   d:{ko:'SPC명만 넣으면 SEIBRO 발행 종목을 표로 정리해 주는 웹앱. 팀원들이 링크 하나로 씁니다.',en:'Enter an SPC name and get its SEIBRO issuance records as a table.'},s:[],line:{ko:'딸깍 합류!',en:'Ddalkkak joined!'}},
   {x:3350,kind:'tool',g:2,c:'#b45309',ic:'정리',k:{ko:'정리 AGENT',en:'Organizer AGENT'},m:'AGENT 합류|AGENT JOINED',
-   d:{ko:'※ 설명 입력 필요',en:'※ To be added'},s:[],line:{ko:'대량업무 해결! 정리 AGENT 합류',en:'Bulk work solved!'}},
+   d:{ko:'※ 설명 입력 필요',en:'※ To be added'},s:[],line:{ko:'착착 합류!',en:'Chakchak joined!'}},
   {x:4040,kind:'sky',c:'#ffd400',fg:'#111',ic:'NEXT',k:{ko:'NEXT',en:'NEXT'},m:'NEXT',
    d:{ko:'※ 다음 목표 입력',en:'※ To be added'},s:[],line:{ko:'더 높이!',en:'Higher!'}},
 ];
@@ -477,7 +483,7 @@ function collect(i,hit){
 /* AI 상자 → 에너지 충전 → 몬스터 등장 */
 function powerUp(){if(powered)return;powered=true;hero.classList.add('powered');setPow(100);banner('ENERGY MAX!',1100);
   setTimeout(()=>{banner(lang=='ko'?'몬스터 출현!':'MONSTERS!',1000);spawnMon(0);
-    say(lang=='ko'?'에너지 맥스! 클로드 파워로 몬스터를 퇴치하자!':'Energy max! Clear the monsters!',2200);},1300);}
+    say(lang=='ko'?'클로드 파워 ON!':'Claude power ON!',1600);},1300);}
 function nearGhost(reach){const s=sc();let best=-1,bd=1e9;GHOSTS.forEach((g,i)=>{if(slain.has(i)||!powered||!mons[i].st)return;const dx=(mons[i].x*s-hx)*face;if(dx>-30&&dx<reach&&dx<bd){bd=dx;best=i;}});return best;}
 async function allClear(){if(clearShown)return;clearShown=true;banner('ALL CLEAR!',1600);busy=true;await once('cheer',ACT.cheer.seq,110);busy=false;idle();showHome();}
 function banner(t,ms){const b=$('banner');b.textContent=t;b.classList.add('on');setTimeout(()=>b.classList.remove('on'),ms);}
@@ -530,6 +536,7 @@ async function spawnAgent(st,key,cx,floorY,label,noPop){const h=Math.round(st.cl
   ag.stopLoop=loopPlay(ag,[0,1,2,3,4,5],130);
   word(st,label,st.clientWidth*.5,st.clientHeight*.1,14);return ag;}
 const AGTAG={ag_sulsul:{ko:'분석<br>AGENT',en:'ANALYSIS<br>AGENT'},ag_ddalkkak:{ko:'조회<br>AGENT',en:'LOOKUP<br>AGENT'},ag_chakchak:{ko:'정리<br>AGENT',en:'ORGANIZER<br>AGENT'}};
+const AGNICK={ag_sulsul:{n:'술술',ko:'보고서는 술술~',en:'Reports, smoothly~'},ag_ddalkkak:{n:'딸깍',ko:'조회는 딸깍!',en:'Lookup in one click!'},ag_chakchak:{n:'착착',ko:'정리는 착착!',en:'Sorted, neatly!'}};
 const AGJUMP={ag_sulsul:'j_excel',ag_ddalkkak:'j_slime',ag_chakchak:'j_paper'};
 const B={
 golem(st){return idleMon(st,'m_golem','g1',.6,249,.66,lang=='ko'?'대량업무':'Bulk work');},
@@ -547,7 +554,7 @@ async golem(st,m){m.wake&&m.wake();const a=m.a,S=st.clientHeight,cx=a._cx,c={x:c
   for(const i of [0,1,2,3]){b.frame(i);if(i>0)word(st,'착',cx,st.clientHeight-S*.04-b.offsetHeight*(.15+i*.1),11);await wait(230);}
   for(const i of [4,5]){b.frame(i);await wait(260);}
   b.frame(6);word(st,'DONE!',cx,st.clientHeight-S*.04-b.offsetHeight*.9,15);await wait(300);b.frame(7);await wait(350);
-  const ag=await spawnAgent(st,'ag_chakchak',cx,st.clientHeight-S*.04,'정리 AGENT 합류!',true);b.remove();
+  const ag=await spawnAgent(st,'ag_chakchak',cx,st.clientHeight-S*.04,'착착 합류!',true);b.remove();
   return ag;},
 async slime(st,m){m.wake&&m.wake();let a=m.a;const S=st.clientHeight,cx=a._cx,top=()=>st.clientHeight-a._b-a.offsetHeight*.95;
   a.classList.remove('i-wobble');
@@ -563,7 +570,7 @@ async slime(st,m){m.wake&&m.wake();let a=m.a;const S=st.clientHeight,cx=a._cx,to
   for(const i of [1,2,3]){a.frame(i);await wait(170);}
   a.frame(4);a.style.transform=`scale(${(.3*SM.ag_ddalkkak.f0[0]/240)/(.36*SM.s3.f7[0]/288)})`;await whiteout(st);word(st,'딸깍!',cx,top(),26);
   for(const i of [4,5,6,7]){a.frame(i);await wait(200);}
-  const ag=await spawnAgent(st,'ag_ddalkkak',cx,st.clientHeight-S*.04,'조회 AGENT 합류!',true);a.remove();
+  const ag=await spawnAgent(st,'ag_ddalkkak',cx,st.clientHeight-S*.04,'딸깍 합류!',true);a.remove();
   return ag;},
 async zombie(st,m){m.wake&&m.wake();const a=m.a,S=st.clientHeight,cx=a._cx,H=a.offsetHeight,top=st.clientHeight-a._b-H;
   a.classList.remove('i-shamble');
@@ -578,7 +585,7 @@ async zombie(st,m){m.wake&&m.wake();const a=m.a,S=st.clientHeight,cx=a._cx,H=a.o
   const bub=bubble(st,'드디어 칼퇴다!',cx,top-6);
   const grow=0.22*S/(273*D3/300);
   for(const i of [1,2,3,4,5,6,7]){x3.frame(i);if(i>=3)x3.style.transform=`scale(${1+(grow-1)*(i-2)/5})`;if(i==2)word(st,'✓ ✓ ✓',ex,st.clientHeight-S*.04-30,13);await wait(230);}
-  const ag=await spawnAgent(st,'ag_sulsul',ex,st.clientHeight-S*.04,'분석 AGENT 합류!',true);x3.remove();
+  const ag=await spawnAgent(st,'ag_sulsul',ex,st.clientHeight-S*.04,'술술 합류!',true);x3.remove();
   for(const i of [1,1,2]){man.frame(i);await wait(300);}word(st,'꾸벅',cx,top+H*.2,14);bub.remove();
   man.frame(3);await wait(250);
   let k=0;const w=setInterval(()=>man.frame(4+(k++%4)),130);
@@ -612,13 +619,20 @@ const fols=[];let TR=[];
 function joinTeam(ag,i){const r=ag.getBoundingClientRect(),wr=world.getBoundingClientRect(),key=ag._key;ag.stopLoop&&ag.stopLoop();ag.remove();
   const h=Math.round(MU()*.3),f=document.createElement('div');f.className='fol';f.style.width=f.style.height=h+'px';
   f.innerHTML=`<div class="fs" style="background-image:url(${A2(key)});background-size:${h*8}px ${h}px"></div><span class="agtag">${AGTAG[key][lang]}</span>`;
-  world.appendChild(f);const o={el:f,fs:f.firstChild,key,h,x:r.left-wr.left+r.width/2,y:0,d:0,dir:1,img:key};fols.push(o);
+  world.appendChild(f);f.addEventListener('pointerdown',ev=>{ev.stopPropagation();agTalk(o,i);});const o={el:f,fs:f.firstChild,key,h,x:r.left-wr.left+r.width/2,y:0,d:0,dir:1,img:key};fols.push(o);
   const ti=ITEMS.findIndex(it=>it.g===i);if(ti>=0){dropped.add(ti);$('mini').children[ti].style.opacity='';collect(ti,false);}}
+function agTalk(o,i){const N=AGNICK[o.key],b=document.createElement('div');b.className='agsay';b.innerHTML=`<b>${N.n}</b>${N[lang]}`;
+  b.style.left=o.x+'px';b.style.bottom=(game.clientHeight*.09+o.h*1.45)+'px';world.appendChild(b);setTimeout(()=>b.remove(),1600);
+  anim(o.el,[{transform:'none'},{transform:'translateY(-14px)'},{transform:'none'}],{duration:300,fill:'none'});
+  const ti=ITEMS.findIndex(it=>it.g===i);if(ti>=0)showItem(ti,false);}
 function trailRec(){const p=TR[0],o=hero.style.opacity===''?1:+hero.style.opacity;
   if(!p||Math.abs(hx-p.x)+Math.abs(heroY-p.y)>2)TR.unshift({x:hx,y:heroY,s:heroS,o});else{p.s=heroS;p.o=o;}if(TR.length>900)TR.length=900;}
 function trailAt(dist){let acc=0;for(let k=1;k<TR.length;k++){const a=TR[k-1],b=TR[k],d=Math.hypot(a.x-b.x,a.y-b.y);if(acc+d>=dist){const t=(dist-acc)/(d||1);return{x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t,s:a.s,o:a.o};}acc+=d;}return null;}
 function folSnap(){fols.forEach((o,k)=>{o.x=hx-face*(hero.offsetWidth*.45+o.h*(.35+k*.82));o.y=0;});TR=[];}
 let superFly=false,lineup=false;
+setInterval(()=>{if(!powered||flying||document.hidden)return;const h=hero.offsetHeight,d=document.createElement('div');const cl=Math.random()<.45;
+  d.className='csp'+(cl?' cl':'');if(cl)d.style.backgroundImage=`url(${A2('ag_claude')})`;else d.textContent=pick(['✦','✧','✦']);
+  d.style.left=(hx+(Math.random()-.5)*hero.offsetWidth*1.1)+'px';d.style.bottom=(game.clientHeight*.09+h*(.2+Math.random()*.8))+'px';world.appendChild(d);setTimeout(()=>d.remove(),1200);},260);
 function flyFols(el,dur,x1,up1,G){fols.forEach(o=>{const t=Math.max(0,Math.min(1,(el-o.dl)/dur)),e=1-Math.pow(1-t,2);
   const x=o.sx+(x1-o.sx)*e,arc=up1*e+G*.06*Math.sin(Math.PI*t);
   o.fs.style.backgroundPosition=`${-(t<.04?1:t<.5?3:t<.8?4:5)*o.h}px 0`;
