@@ -177,6 +177,14 @@
   .hero.gone{opacity:0}
   .scn{position:absolute;z-index:6;background-repeat:no-repeat;background-size:800% 100%;display:none;pointer-events:none;filter:drop-shadow(0 3px 0 rgba(0,0,0,.25))}
   .scn.on{display:block}
+  .choose{position:absolute;inset:0;z-index:13;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:#0b0820b0}
+  .choose[hidden]{display:none}
+  .choose .t{font-size:14px;color:#fff;text-shadow:2px 2px 0 #000}
+  .choose .row{display:flex;gap:10px}
+  .choose button{display:flex;flex-direction:column;align-items:center;gap:4px;width:138px;padding:10px 6px;border:3px solid var(--gold);background:#15102e;box-shadow:0 4px 0 #000;font:700 13px var(--px);color:#fff}
+  .choose button small{font:11px var(--font);color:var(--ink);font-weight:400}
+  .choose button img{height:38px;width:auto;image-rendering:pixelated}
+  .choose button:active{transform:translateY(3px);box-shadow:0 1px 0 #000}
   /* 지곡 잔상: 직전 포즈를 통째로 복사해 파랗게 물들인 층 (본체 뒤) */
   .hero .gh{position:absolute;left:-20%;top:-20%;width:140%;height:140%;background-repeat:no-repeat;opacity:0;pointer-events:none;
     transition:transform .18s cubic-bezier(.2,.8,.3,1),opacity .18s;filter:brightness(1.35) sepia(1) saturate(4) hue-rotate(170deg)}
@@ -239,6 +247,9 @@
       <div class="sh"></div>
     </div>
     <div class="scn" id="scn"></div>
+    <div class="choose" id="choose" hidden><div class="t">뭐 먹지?</div><div class="row">
+      <button type="button" data-f="r"><img src="ic_rice.webp" alt="" width="44" height="38">밥<small>파워포션 1개 확정</small></button>
+      <button type="button" data-f="k"><img src="ic_khach.webp" alt="" width="56" height="38">하차푸리<small>파워포션 0~3개 랜덤!</small></button></div></div>
     <canvas class="tfront" id="tfront" width="30" height="22"></canvas>
     <div class="night" id="night"></div>
     <div class="hud" id="hud"></div>
@@ -292,13 +303,14 @@ const S={sn:0,cj:0,sq:0,pot:{P:0,R:0,M:0},lv:{sn:0,cj:0,sq:0},day:1,rolls:0,lett
 let STORE_OK=true;
 try{localStorage.setItem(KEY+'.t','1');localStorage.removeItem(KEY+'.t');const v=JSON.parse(localStorage.getItem(KEY)||'null');
   if(v){Object.assign(S,v);S.pot=Object.assign({P:0,R:0,M:0},v.pot);S.lv=Object.assign({sn:0,cj:0,sq:0},v.lv);}}catch(e){STORE_OK=false;}
+if(S.cj&&S.cjRaw==null)S.cjRaw=S.cj/Math.pow(1.02,S.lv.cj);   // 배율 빼고 계산한 클린앤저크 실력 기록
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}};
 const POTK={sn:'P',cj:'R',sq:'M'},POTN={P:'파워포션',R:'회복포션',M:'근육포션'};
 /* 레벨 효과: 아주 조금씩 쉬워짐 */
 const EASE={sn:L=>Math.max(.35,Math.pow(.97,L)),   // 추 속도 배율
-            cj:L=>Math.max(.35,Math.pow(.97,L)),   // 게이지 차는 속도 배율
+            cj:L=>Math.pow(1.02,L),               // 클린앤저크 점수 배율 (계속 곱해짐)
             sq:L=>Math.min(3,1+.1*L)};             // 연타 제한 시간(초)
-const easeText=(k,L)=>k==='sq'?`제한 시간 <b>${EASE.sq(L).toFixed(1)}초</b>`:`${k==='sn'?'추':'게이지'} 속도 <b>${Math.round(EASE[k](L)*100)}%</b>`;
+const easeText=(k,L)=>k==='cj'?`점수 <b>×${EASE.cj(L).toFixed(2)}</b>`:k==='sq'?`제한 시간 <b>${EASE.sq(L).toFixed(1)}초</b>`:`${k==='sn'?'추':'게이지'} 속도 <b>${Math.round(EASE[k](L)*100)}%</b>`;
 const r05=v=>Math.round(v*2)/2;
 
 const $=id=>document.getElementById(id);
@@ -447,15 +459,23 @@ async function roll(){ac();if(!started){start();return;}if(busy)return;busy=true
   busy=false;d.classList.add('ready');}
 
 /* ═════════ 생활 3종 ═════════ */
+function chooseFood(){if(window.__food)return Promise.resolve(window.__food);const ch=$('choose');ch.hidden=false;
+  return new Promise(res=>{ch.onclick=e=>{const b=e.target.closest('button');if(!b)return;ch.hidden=true;SFX.tick();res(b.dataset.f);};});}
 async function doEat(){await walkTo(SPOT.table-14);
-  const jackpot=window.__jack??Math.random()<.2,name=jackpot?'mv_khach':'mv_eat';
-  say(jackpot?'하차푸리다!!! 🧀':pick(['밥이다','탄수화물 충전','오늘은 밥 세 공기']),1200);
-  await playAct(name,jackpot?[[0,500],[1,420],[2,420],[3,600],[4,520],[5,420],[6,420],[7,650]]:[[0,380],[1,360],[2,420],[3,380],[4,380],[5,520],[6,480],[7,700]],f=>{
+  const kh=(await chooseFood())==='k',name=kh?'mv_khach':'mv_eat';
+  say(kh?'하차푸리다!!! 🧀':pick(['밥이다','탄수화물 충전','오늘은 밥 세 공기']),1200);
+  await playAct(name,kh?[[0,500],[1,420],[2,420],[3,600],[4,520],[5,420],[6,420],[7,650]]:[[0,380],[1,360],[2,420],[3,380],[4,380],[5,520],[6,480],[7,700]],f=>{
     const h=head();
-    if(jackpot){if(f===1||f===5)SFX.chew();if(f===3){tone(300,.5,'sawtooth',.03,300);pop('쭈~욱',h.x+20,h.y-10,16);}if(f===6)SFX.gulp();if(f===7)say('고소해~',900);}
+    if(kh){if(f===1||f===5)SFX.chew();if(f===3){tone(300,.5,'sawtooth',.03,300);pop('쭈~욱',h.x+20,h.y-10,16);}if(f===6)SFX.gulp();}
     else{if(f===2||f===3||f===4){SFX.chew();pop(pick(['냠','쩝','우걱']),h.x,h.y-10,15);}if(f===5)SFX.gulp();if(f===7)say('든든하다 👍',900);}});
-  actEnd(name);gotPot('P',jackpot?2:1);
-  msg('EAT',jackpot?'🧀 하차푸리 잭팟!':'🍚 밥 먹음',(jackpot?'치즈 가득 하차푸리를 먹었다.\n파워포션 2개! ':'밥 한 그릇 뚝딱.\n파워포션 1개! ')+'마시면 스내치 추가 느려져요.');
+  actEnd(name);
+  if(!kh){gotPot('P',1);msg('EAT','🍚 밥 먹음','밥 한 그릇 뚝딱.\n파워포션 1개! 마시면 스내치 추가 느려져요.');await sleep(300);return;}
+  // 하차푸리 랜덤 이벤트: 포션 0~3개
+  const n=window.__kn??Math.floor(Math.random()*4),b=$('bubble');
+  for(let i=0;i<10;i++){b.textContent=`포션… ${i%4}개?`;b.classList.add('on');SFX.tick();await sleep(70+i*12);}
+  if(n){gotPot('P',n);say(['','1개!','2개!!','3개!!! 대박'][n],1300);banner(n===3?'잭팟!!':'+'+n,1000);if(n===3)SFX.win();}
+  else{say('배만 부르다…',1300);SFX.fail();}
+  msg('EAT','🧀 하차푸리',n?`치즈 가득 하차푸리.\n파워포션 ${n}개! 마시면 스내치 추가 느려져요.`:'치즈 가득 하차푸리.\n이번엔 포션이 안 나왔다… 다음엔 3개?');
   await sleep(300);}
 
 async function doSleep(){
@@ -471,7 +491,7 @@ async function doSleep(){
     if(f===6){S.day++;night=false;drawRoom();$('night').classList.remove('on');SFX.morning();banner('DAY '+S.day,1200);}
     await sleep(ms);}
   hx=(left+(m.ax+m.end)*k)/GW()*240;face=1;place();setF(F.smile);sc.classList.remove('on');hero.classList.remove('gone');gotPot('R');
-  msg('SLEEP','😴 꿀잠',`DAY ${S.day} 시작. 근육이 자는 동안 자랐다.\n회복포션 1개! 마시면 클린앤저크 게이지가 느려져요.`);await sleep(500);setF(F.stand);}
+  msg('SLEEP','😴 꿀잠',`DAY ${S.day} 시작. 근육이 자는 동안 자랐다.\n회복포션 1개! 마시면 클린앤저크 점수가 ×1.02씩 올라요.`);await sleep(500);setF(F.stand);}
 
 function drawTF(){const c=$('tfront'),x=c.getContext('2d');const P=(a,b,w,h,col)=>{x.fillStyle=col;x.fillRect(a,b,w,h);};
   P(0,0,28,3,'#ddd');P(1,2,26,6,'#fff');P(3,8,20,6,'#e6e6e6');P(7,14,12,6,'#e6e6e6');P(1,7,26,1,'#cfcfcf');
@@ -491,7 +511,7 @@ async function doLift(k){await walkTo(SPOT.gym-4);setF(F.squat);say(pick(['간�
   closeMG();
   const before=S[k],isPR=r.kg>before;
   if(r.kg>0){await yoss();setF(F.stand);setBar(true);$('bb').style.top='56%';SFX.thud();await sleep(500);setBar(false);$('bb').style.top='';SFX.clang();shake();}
-  if(isPR){S[k]=r.kg;save();paint(k);SFX.win();banner('NEW PR!',1100);
+  if(isPR){S[k]=r.kg;if(k==='cj')S.cjRaw=r.raw;save();paint(k);SFX.win();banner('NEW PR!',1100);
     await playAct('mv_yoss',[[1,180],[2,260],[3,320],[4,420],[5,480],[6,420],[7,300]],f=>{if(f===4){say('요쓰!!',1000);SFX.thud();}});actEnd('mv_yoss');setF(F.smile);
     say(pick(['가볍네','이게 사는 맛이지','근육아 고마워']),1200);
     msg('LIFT',`🏋️ ${name} 신기록!`,`${r.kg}kg 성공 (${r.grade})\n${before?`이전 기록 ${before}kg → `:''}PR ${r.kg}kg · 합계 ${total()}kg`);
@@ -555,7 +575,7 @@ const GAMES={
   down(s,end){if(s.hit!=null)return;s.hit=s.a;const d=Math.abs(s.a-s.tg);SFX.tap();
    if(d>=25)return end('MISS',0,500);end(d<2.5?'PERFECT':d<7?'GREAT':'GOOD',r05(40+70*(1-d/25)),500);}},
  /* 4 꾹 눌렀다 놓기 → 클린앤저크: 사다리 방식. 노란 줄에 가까울수록 지금 PR 위에 조금씩 더해짐 → 정밀하면 계속 PR 갱신 */
- cj:{init(s,L){s.wait=0;s.p=0;s.on=0;s.z=rnd(.55,.72);s.cs=EASE.cj(L);s.ct=0;},
+ cj:{init(s,L){s.wait=0;s.p=0;s.on=0;s.z=rnd(.55,.72);s.cs=1;s.mul=EASE.cj(L);s.ct=0;},
   update(s,dt){if(s.done)return;if(!s.on){s.wait+=dt;if(s.wait>4)s.end('MISS',0);return;}s.p+=dt*(.35+s.p*.9)*s.cs;s.ct+=dt;if(s.ct>.06){s.ct=0;SFX.charge(s.p);}if(s.p>=1){s.p=1;s.end('MISS',0,300);}},
   draw(c,s){bg(c);const ok=s.done&&s.grade!=='MISS';drawHero(c,ok?F.squat:(s.on?F.bend:F.stand),80,116,0,s.on?s.p*3:0);bar(c,25,140,ok?FLOOR-64:FLOOR-14);
    // 큰 게이지
@@ -570,13 +590,13 @@ const GAMES={
    if(Math.abs(s.p-s.z)<R){c.fillStyle='#d92d20';c.fillRect(zx-4,ZY(s.p)-1,22,3);}
    [[0,'+5'],[.045,'+1'],[.07,'+½']].forEach(([w,t])=>txt(c,t,zx+26,ZY(s.z+w)+(w?4:3),w?8:10,w?'#ffd400':'#fff'));
    txt(c,s.on?'모으는 중… 노란 줄 정중앙에서 떼!':'꾹 누르고 노란 줄 정중앙에서 떼!',222,14,9,'#ffd400');
-   txt(c,`PR ${S.cj||'-'}`,40,18,10,'#fff');},
+   txt(c,`PR ${S.cj||'-'}`,40,18,10,'#fff');if(s.mul>1)txt(c,`점수 ×${s.mul.toFixed(2)}`,52,32,9,'#5ad1ff');},
   down(s){if(!s.done)s.on=1;},
-  up(s,end){if(s.done||!s.on)return;s.on=0;const d=Math.abs(s.p-s.z),base=Math.max(60,S.cj);
+  up(s,end){if(s.done||!s.on)return;s.on=0;const d=Math.abs(s.p-s.z),base=Math.max(60,S.cjRaw||0),M=v=>r05(v*s.mul);
    if(d>=.25)return end('MISS',0,300);
    const add=d<.008?5:d<.016?3:d<.03?2:d<.045?1:d<.07?.5:null;
-   if(add!=null)return end(d<.016?'PERFECT':'GREAT',r05(base+add),300);
-   end('GOOD',Math.max(40,r05(base-(d-.07)/.18*30)),300);}},
+   if(add!=null){s.raw=base+add;return end(d<.016?'PERFECT':'GREAT',M(s.raw),300);}
+   s.raw=Math.max(40,base-(d-.07)/.18*30);end('GOOD',M(s.raw),300);}},
  /* 2 다다다 연타 → 백스쿼트: 제한 시간 안에 많이 칠수록 무거움 (40kg + 1회당 5kg) */
  sq:{init(s,L){s.t=0;s.lim=EASE.sq(L);s.taps=0;s.need=S.sq?Math.floor((S.sq-40)/5)+1:0;},
   update(s,dt){if(s.done)return;s.t+=dt;if(s.t>=s.lim){s.t=s.lim;const n=s.taps,rate=n/s.lim;if(n<3)return s.end('MISS',0,300);s.end(rate>=8?'PERFECT':rate>=6?'GREAT':'GOOD',40+n*5,300);}},
@@ -593,7 +613,7 @@ function mini(k,L){openMG();const g=GAMES[k];return new Promise(async res=>{ // 
   overlay(`<div class="g">GO!</div>`);await sleep(350);mgov.hidden=true;
   s.end=(grade,kg=0,delay=0)=>{if(s.done)return;s.done=1;s.grade=grade;s.kg=kg;const pr=S[k];setTimeout(()=>{
     overlay(`<div class="g${grade==='MISS'?' miss':''}">${grade}</div><div class="kg">${grade==='MISS'?'바벨을 놓쳤다…':kg+'kg'}</div><div class="s">${kg>pr?'NEW PR!':`PR ${pr?pr+'kg':'-'}`}</div>`);
-    setTimeout(()=>{cur=null;res({grade,kg});},1300);},delay);};
+    setTimeout(()=>{cur=null;res({grade,kg,raw:s.raw});},1300);},delay);};
   cur={g,s};let last=performance.now();
   (function loop(t){if(!cur||cur.s!==s)return;const dt=Math.min(.05,(t-last)/1000);last=t;g.update(s,dt);g.draw(mx,s);requestAnimationFrame(loop);})(last);
 });}
@@ -662,7 +682,7 @@ addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault
 addEventListener('keyup',e=>{if((e.key===' '||e.key==='Enter')&&cur&&cur.g.up)cur.g.up(cur.s,cur.s.end);});
 $('helpBody').innerHTML=`<h3>🎲 하는 법</h3>주사위를 굴리면 나온 칸을 ${TO}가 해요.<br>
 <b>1 스내치</b> 추 타이밍 · <b>2 클린앤저크</b> 꾹 눌렀다 놓기 (노란 줄에 가까울수록 PR +0.5~5kg) · <b>3 백스쿼트</b> 1초 연타<br>
-<b>4 밥</b> 파워포션 (하차푸리면 2개) → 스내치<br><b>5 잠</b> 회복포션 → 클린앤저크<br><b>6 똥</b> 근육포션 → 백스쿼트<br>아래 <b>필살기</b> 버튼은 언제든 눌러서 볼 수 있어요.<br>
+<b>4 밥</b> 🍚밥 = 파워포션 1개 · 🧀하차푸리 = 0~3개 랜덤 → 스내치<br><b>5 잠</b> 회복포션 → 클린앤저크 점수 ×1.02씩<br><b>6 똥</b> 근육포션 → 백스쿼트<br>아래 <b>필살기</b> 버튼은 언제든 눌러서 볼 수 있어요.<br>
 포션은 위 포션 칸을 누르거나 역도 시작 전에 마셔요. 마실 때마다 레벨이 올라 아주 조금 쉬워지고, 레벨은 계속 쌓여요.<br>
 기록(PR)은 그 종목 최고 무게예요. 잘해야만 바뀌어요.<br><button class="rs" id="rs" type="button">기록 지우고 처음부터</button><small>made by ${FROM} · 아무 곳이나 눌러 닫기</small>`;
 
