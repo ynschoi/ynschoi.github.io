@@ -703,7 +703,7 @@ async function act(n){
       if(gI>=0)hitMon(gI);else if(i>=0)collect(i,true);else{addScore(10);if(Math.random()<.4)say(pick(T[lang].lines.hit),800);}
       if(A.pow)setPow(100);
     }});
-  busy=false;if(n=='hop'||n=='squat')say('😎',900);
+  busy=false;place();if(n=='hop'||n=='squat')say('😎',900);
   if(keys.left||keys.right)startWalk();else idle();
 }
 function tossPapers(){const G=game.clientHeight,H=hero.offsetHeight,x0=hx+face*H*.24,y0=G*(1-.09)-H*.95;
