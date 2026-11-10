@@ -168,8 +168,8 @@
   .hero .skl.off{opacity:0}
   .wflash{position:absolute;inset:0;z-index:11;background:#fff;opacity:0;pointer-events:none;transition:opacity .25s}
   .wflash.on{opacity:.8;transition:none}
-  .skills{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-  .skills button{display:flex;align-items:center;justify-content:center;gap:5px;height:34px;border:2px solid var(--gold);background:linear-gradient(#3a2f7a,#241c55);font:700 11px var(--px);color:#fff;box-shadow:0 3px 0 #000;white-space:nowrap}
+  .skills{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+  .skills button{display:flex;align-items:center;justify-content:center;gap:3px;height:34px;border:2px solid var(--gold);background:linear-gradient(#3a2f7a,#241c55);font:700 11px var(--px);color:#fff;box-shadow:0 3px 0 #000;white-space:nowrap}
   .skills button:active{transform:translateY(2px);box-shadow:0 1px 0 #000}
   .skills button i{font-style:normal;font-size:14px}
   .skills .lb{grid-column:1/-1;font-size:9px;color:var(--violet);margin-bottom:-2px}
@@ -551,25 +551,29 @@ const SKILLS=[
   {k:'guardian',ic:'🙏',n:'백식관음',img:'sk_guardian.webp',
    seq:[[0,300],[1,450],[2,650],[3,650],[4,350],[5,800],[6,450],[7,350]],
    say:{1:'감사합니다',2:'…',4:'영(零)의 손'},hit:5,word:'백식관음!'},
+  {k:'killua',ic:'⚡',n:'지곡',img:'sk_killua.webp',nf:16,
+   seq:[[0,300],[1,160],[2,160],[3,150],[4,140],[5,140],[6,140],[7,140],[8,140],[9,150],[10,170],[11,420],[12,380],[13,220],[14,200],[15,300]],
+   say:{1:'…',4:'지곡(肢曲)',11:'잡았다'},hit:11,word:'지곡!'},
 ];
 SKILLS.forEach(sk=>{const i=new Image();i.src=sk.img;});
 $('skills').insertAdjacentHTML('beforeend',SKILLS.map((sk,i)=>`<button type="button" data-i="${i}"><i>${sk.ic}</i>${sk.n}</button>`).join(''));
 $('skills').addEventListener('click',e=>{const b=e.target.closest('button');if(b)useSkill(SKILLS[+b.dataset.i]);});
 const SFXS={
   aura:f=>f===5?(SFX.thud(),SFX.clang()):f>=2&&f<=4?SFX.charge(f/5):0,
+  killua:f=>f>=3&&f<=10?tone(220+f*25,.05,'triangle',.025):f===11?(noise(.25,.1,4000),tone(1200,.15,'square',.05,-900)):0,
   card:f=>f===2?tone(1200,.12,'triangle',.06,-600):f===4?tone(300,.4,'sawtooth',.04,500):f===5?tone(700,.3,'sine',.06,-500):0,
   guardian:f=>f===2?[523,784].forEach((x,i)=>tone(x,.4,'triangle',.04,0,i*.1)):f===3?noise(.6,.05,600):f===5?(SFX.thud(),noise(.4,.12,3000)):0,
 };
 async function useSkill(sk){ac();if(!started)start();if(busy)return;busy=true;$('dice').classList.remove('ready');
   await walkTo(120);face=1;place();
   const L=[$('skl'),$('skl2')],wrap=$('sklw');let top=0;
-  L.forEach(el=>{el.style.backgroundImage=`url(${sk.img})`;el.style.backgroundPosition='0 0';});L[1].classList.add('off');L[0].classList.remove('off');
+  const nf=sk.nf||8;L.forEach(el=>{el.style.backgroundImage=`url(${sk.img})`;el.style.backgroundSize=`${nf*100}% 100%`;el.style.backgroundPosition='0 0';});L[1].classList.add('off');L[0].classList.remove('off');
   hero.classList.add('skill');
   for(const [f,ms] of sk.seq){
     // 다음 컷을 아래 장에 깔고 서서히 드러냄 (컷 길이에 맞춰 페이드 시간 조절)
     const nxt=L[1-top],xf=Math.min(220,Math.max(110,ms*.4));
     L.forEach(el=>el.style.setProperty('--xf',xf+'ms'));
-    nxt.style.backgroundPosition=(f/7*100)+'% 0';nxt.classList.remove('off');L[top].classList.add('off');top=1-top;
+    nxt.style.backgroundPosition=(f/(nf-1)*100)+'% 0';nxt.classList.remove('off');L[top].classList.add('off');top=1-top;
     SFXS[sk.k](f);
     if(sk.say[f])say(sk.say[f],Math.max(900,ms+300));
     if(f===sk.hit){banner(sk.word,1200);shake();const w=$('wflash');w.classList.add('on');setTimeout(()=>w.classList.remove('on'),60);
@@ -577,7 +581,7 @@ async function useSkill(sk){ac();if(!started)start();if(busy)return;busy=true;$(
     await sleep(ms);}
   await sleep(120);
   hero.classList.remove('skill');setF(F.stand);
-  msg('SKILL',`${sk.ic} ${sk.n}`,{aura:'최초는 주먹, 잔! 켄! 바위!\n오라를 모은 주먹이 바벨을 향한다.',card:'카드 한 장에 분홍 오라.\n늘어나고 줄어드는 근육의 성질.',guardian:'감사의 합장.\n금빛 거인이 Moti 뒤에 섰다.'}[sk.k]);
+  msg('SKILL',`${sk.ic} ${sk.n}`,{aura:'최초는 주먹, 잔! 켄! 바위!\n오라를 모은 주먹이 바벨을 향한다.',card:'카드 한 장에 분홍 오라.\n늘어나고 줄어드는 근육의 성질.',guardian:'감사의 합장.\n금빛 거인이 Moti 뒤에 섰다.',killua:'리듬 있게 걷는 발걸음.\n잔상이 여러 개로 갈라진다.'}[sk.k]);
   busy=false;$('dice').classList.add('ready');}
 
 /* ═════════ 입력 · 시작 ═════════ */
