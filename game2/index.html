@@ -273,6 +273,7 @@
   .hi.pic{position:relative;width:40px!important;min-width:40px;height:40px!important;padding:0!important}
   .hi.pic .sp{position:absolute;inset:2px;background-repeat:no-repeat;background-position:0 0}
   .bubble.lft{left:15%}
+  html,body,.app,.pad,#game{touch-action:none;-webkit-tap-highlight-color:transparent}
 </style>
 </head>
 <body>
@@ -447,7 +448,7 @@ function showItem(i,fresh){$('win').classList.remove('idw');document.querySelect
 const ITEMPIC=i=>{const it=ITEMS[i];return it.ic=='WORK'?['briefcase',1]:it.ai?['ag_claude',8]:it.kind=='sky'?['next_star',6]:[['ag_sulsul','ag_ddalkkak','ag_chakchak'][it.g],8];};
 function itemPic(i,cls='sp'){const [n,f]=ITEMPIC(i);return `<i class="${cls}" style="background-image:url(${A2(n)});background-size:${f*100}% 100%"></i>`;}
 function renderSlots(){$('slots').innerHTML=ITEMS.map((it,i)=>got.has(i)?`<div class="slot got${sel===i?' sel':''}" data-i="${i}" style="background:${it.c}55">${itemPic(i)}</div>`:`<div class="slot">?</div>`).join('');}
-$('slots').onclick=e=>{const s=e.target.closest('.slot.got');if(s)showItem(+s.dataset.i,false);};
+$('slots').onpointerdown=e=>{const s=e.target.closest('.slot.got');if(s)showItem(+s.dataset.i,false);};
 
 /* ═════════ 게임 화면 ═════════ */
 const itemEls=ITEMS.map((it,i)=>{const d=document.createElement('div');d.className='item '+it.kind+(it.kind=='sky'?' sky':'')+(it.ic=='WORK'?' brief':it.ai?' claude':'');
@@ -602,10 +603,10 @@ async zombie(st,m){m.wake&&m.wake();const a=m.a,S=st.clientHeight,cx=a._cx,H=a.o
   const grow=0.22*S/(273*D3/300);
   for(const i of [1,2,3,4,5,6,7]){x3.frame(i);if(i>=3)x3.style.transform=`scale(${1+(grow-1)*(i-2)/5})`;if(i==2)word(st,'✓ ✓ ✓',ex,st.clientHeight-S*.04-30,13);await wait(230);}
   const ag=await spawnAgent(st,'ag_sulsul',ex,st.clientHeight-S*.04,'',true);x3.remove();
-  for(const i of [1,1,2]){man.frame(i);await wait(300);}word(st,'꾸벅',cx,top+H*.2,14);bub.remove();
-  man.frame(3);await wait(250);
+  for(const i of [1,1,2]){man.frame(i);await wait(170);}word(st,'꾸벅',cx,top+H*.2,14);bub.remove();
+  man.frame(3);await wait(120);
   let k=0;const w=setInterval(()=>man.frame(4+(k++%4)),130);
-  await anim(man,[{transform:'none'},{transform:`translateX(${st.clientWidth*.6}px)`}],{duration:1500,easing:'linear'});
+  await anim(man,[{transform:'none'},{transform:`translateX(${st.clientWidth*.6}px)`}],{duration:850,easing:'linear'});
   clearInterval(w);man.remove();
   return ag;},
 
@@ -616,14 +617,17 @@ function stageBox(i){const g=GHOSTS[i],U=MU(),W=U*1.6,G=game.clientHeight;return
 function spawnMon(i){const mo=mons[i];if(mo.st)return;mo.x=Math.max(GHOSTS[i].x,(hx+game.clientWidth*.55)/sc());const b=stageBox(i),st=document.createElement('div');st.className='mstage';
   st.style.cssText+=`;left:${b.left}px;bottom:${b.bottom}px;width:${b.W}px;height:${b.U}px`;world.appendChild(st);mo.st=st;st._mon=mo;
   mo.m=B[GHOSTS[i].kind](st);anim(st,[{opacity:0,transform:'scale(.6)'},{opacity:1,transform:'none'}],{duration:400,fill:'none'});
-  if(GHOSTS[i].kind=='golem'){const a=mo.m.a,gb=bubble(st,lang=='ko'?'이거… 오늘까지래…':'Due… today…',a._cx,st.clientHeight-a._b-a.offsetHeight*.95);setTimeout(()=>gb.remove(),3000);}}
+  if(GHOSTS[i].kind=='golem'){const a=mo.m.a,gb=bubble(st,lang=='ko'?'이거… 오늘까지래…':'Due… today…',a._cx,st.clientHeight-a._b-a.offsetHeight*1.02-28);gb.style.fontSize='10px';gb.style.padding='2px 5px';setTimeout(()=>gb.remove(),3000);}}
 function layoutMons(){mons.forEach((mo,i)=>{if(!mo.st||mo.done)return;const b=stageBox(i);mo.st.style.left=b.left+'px';});}
 const HITS={zombie:2,slime:3,golem:2};let morphing=false;
 function strike(st){const mo=st._mon;mo.ns=(mo.ns||0)+1;const last=mo.ns>=HITS[GHOSTS[mons.indexOf(mo)].kind];const lock=()=>{if(last){morphing=true;keys.left=keys.right=false;}};
   const pr=(()=>{if(mo.hitQ>0){mo.hitQ--;return Promise.resolve();}return new Promise(r=>mo.waiter=r);})();return pr.then(lock);}
 function hitReact(i){const st=mons[i].st;if(!st)return;
   st.querySelectorAll('.actor').forEach(a=>a.animate([{translate:'0 0',filter:'none'},{translate:'22px -6px',filter:'brightness(3) saturate(0)',offset:.15},{translate:'10px 0',filter:'brightness(1.6)',offset:.45},{translate:'0 0',filter:'none'}],{duration:380,easing:'ease-out'}));
-  const r=st.getBoundingClientRect(),wr=world.getBoundingClientRect(),x=mons[i].x*sc()-st.clientWidth*.12,y=r.top-wr.top+st.clientHeight*.45;
+  const act_=[...st.querySelectorAll('.actor')].find(a=>a.style.visibility!=='hidden'&&a.style.opacity!=='0')||st.querySelector('.actor');
+  const wr=world.getBoundingClientRect(),ar=act_.getBoundingClientRect(),x=ar.left-wr.left+ar.width*.3,y=ar.top-wr.top+ar.height*.5;
+  if(GHOSTS[i].kind=='slime')act_.animate([{scale:'1 1'},{scale:'1.35 .6',offset:.2},{scale:'.85 1.2',offset:.5},{scale:'1.08 .92',offset:.75},{scale:'1 1'}],{duration:420,easing:'ease-out'});
+  pop(pick(['POW!','HIT!','BAM!']),x-20,y-ar.height*.6);
   for(let k=0;k<8;k++){const d=document.createElement('div');d.className='hitspk';d.style.left=x+'px';d.style.top=y+'px';world.appendChild(d);const a=Math.random()*Math.PI*2,R=26+Math.random()*26;
     d.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*R}px),calc(-50% + ${Math.sin(a)*R}px)) scale(.3)`,opacity:0}],{duration:360,easing:'ease-out'}).finished.then(()=>d.remove());}
   game.animate([{transform:'none'},{transform:'translate(-4px,2px)'},{transform:'translate(3px,-2px)'},{transform:'none'}],{duration:180});}
@@ -715,7 +719,7 @@ function press(k,down){
   if(down&&posing){endPose();if(k!=='left'&&k!=='right'){idle();return;}}
   if(k==='left'||k==='right'){if(down)lineup=false;keys[k]=down;if(down&&!busy)startWalk();return;}
   if(!down)return;
-  ({a:()=>act('punch'),b:()=>act('kick'),x:()=>act('flykick'),y:()=>act(pow>=100?'power':'power'),up:()=>jump(),down:()=>act(Math.random()<.5?'hop':'squat'),
+  ({a:()=>act('punch'),b:()=>act('kick'),x:()=>act('flykick'),y:()=>act(pow>=100?'power':'power'),up:()=>jump(),down:()=>act('hop'),
     select:()=>setLang(lang=='ko'?'en':'ko'),start:()=>$('help').classList.toggle('on')})[k]?.();
 }
 document.querySelectorAll('[data-k]').forEach(b=>{
@@ -727,9 +731,10 @@ document.querySelectorAll('[data-k]').forEach(b=>{
 const KB={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down',z:'a',x:'b',c:'x',v:'y',Enter:'start',Shift:'select'};
 addEventListener('keydown',e=>{const k=KB[e.key];if(!k||e.repeat)return;e.preventDefault();press(k,true);document.querySelector(`[data-k="${k}"]`)?.classList.add('on');});
 addEventListener('keyup',e=>{const k=KB[e.key];if(!k)return;press(k,false);document.querySelector(`[data-k="${k}"]`)?.classList.remove('on');});
-$('help').onclick=()=>$('help').classList.remove('on');
+$('help').onpointerdown=()=>$('help').classList.remove('on');
 $('spk').addEventListener('pointerdown',e=>{e.stopPropagation();goBack();});
 $('cover').addEventListener('pointerdown',()=>start());
+['touchstart','touchend','gesturestart','dblclick','contextmenu'].forEach(t=>document.addEventListener(t,e=>{if(!e.target.closest('.win,.idc'))e.preventDefault();},{passive:false}));   /* 아이폰 돋보기·확대 막기 */
 document.addEventListener('gesturestart',e=>e.preventDefault());
 
 /* 감정 표현 버튼 (손 흔들기 · 환호 · 서류 · 덤블링) */
