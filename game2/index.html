@@ -605,7 +605,7 @@ async zombie(st,m){m.wake&&m.wake();const a=m.a,S=st.clientHeight,cx=a._cx,H=a.o
   const ex=cx-60.5*H/300,exW=60*H/300,D3=exW*300/256;
   const x3=actor(st,'z3',D3,ex,S*.04);x3.frame(0);x3.style.transformOrigin='50% 100%';
   const man=actor(st,'z2',S*.66*300/292,cx,S*.04);man.frame(0);a.remove();
-  const bub=bubble(st,lang=='ko'?'드디어 칼퇴다!':'Finally, off work!',cx+H*.32,top-H*.12);
+  const bub=bubble(st,lang=='ko'?'드디어 칼퇴다!':'Finally, off work!',cx+H*.18,top-34);
   const leave=(async()=>{await wait(650);bub.remove();man.frame(3);await wait(80);let k=0;const w=setInterval(()=>man.frame(4+(k++%4)),110);
     await anim(man,[{transform:'none',opacity:1},{transform:`translateX(${st.clientWidth*.45}px)`,opacity:0}],{duration:650,easing:'ease-in'});clearInterval(w);man.remove();})();
   const grow=0.22*S/(273*D3/300);
