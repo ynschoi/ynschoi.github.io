@@ -285,13 +285,16 @@
   @keyframes croll{from{transform:translateY(0)}to{transform:translateY(calc(-100% - 140px))}}
   .rxbar{position:absolute;right:8px;bottom:6px;display:flex;gap:6px;align-items:center}
   .rxbar small{font:9px var(--px);color:var(--violet)}
-  .rx{position:relative;display:flex;align-items:center;gap:4px;background:#0b0820;border:2px solid var(--gold);color:#fff;font:12px var(--px);padding:3px 8px;box-shadow:2px 2px 0 #000;cursor:pointer}
-  .rx b{font-weight:400}.rx.on{background:#2a1f00}
-  .rx:active{transform:translate(2px,2px);box-shadow:none}
+  .rx{position:relative;width:54px;height:30px;display:flex;align-items:center;justify-content:center;gap:5px;background:linear-gradient(#3a2f7a,#241c55);border:2px solid var(--gold);border-radius:8px;color:#fff;font:13px var(--px);box-shadow:0 4px 0 #9a7a00,0 6px 6px #0008;cursor:pointer;transition:transform .06s,box-shadow .06s}
+  .rx b{font-weight:700;min-width:14px;text-align:left}
+  .rx:active{transform:translateY(4px);box-shadow:0 0 0 #9a7a00}.rx.on{background:linear-gradient(#ffe066,#ffc400);color:#111;box-shadow:0 4px 0 #9a7a00,0 0 12px #ffd40088}
   .rxfly{position:absolute;left:50%;top:-4px;pointer-events:none;font-size:18px;animation:rxf .9s ease-out forwards}
   @keyframes rxf{to{transform:translate(-50%,-46px) scale(1.4);opacity:0}}
   @media (prefers-reduced-motion:reduce){.cred .roll{animation:none;top:0}}
   .rx.off{opacity:.35;filter:grayscale(1)}
+  .lsel{display:flex;gap:8px;margin:4px 0 2px}
+  .lsel button{font:700 12px var(--px);color:#fff;padding:6px 12px;border:2px solid var(--violet);border-radius:6px;background:#0b0820;box-shadow:0 3px 0 #000}
+  .lsel button.on{border-color:var(--gold);color:#111;background:var(--gold)}
 </style>
 </head>
 <body>
@@ -328,6 +331,7 @@
     <div class="cover" id="cover">
       <div style="font-size:11px;color:var(--violet)">YOUNGSU CHOI</div>
       <div class="lg">STAGE 1<br>OFFICE</div>
+      <div class="lsel" id="lsel"><button type="button" data-l="ko" class="on">한국어</button><button type="button" data-l="en">English</button></div>
       <div class="ins">PRESS START</div>
     </div>
   </section>
@@ -787,6 +791,7 @@ addEventListener('keydown',e=>{const k=KB[e.key];if(!k||e.repeat)return;e.preven
 addEventListener('keyup',e=>{const k=KB[e.key];if(!k)return;press(k,false);document.querySelector(`[data-k="${k}"]`)?.classList.remove('on');});
 $('help').onpointerdown=()=>$('help').classList.remove('on');
 $('spk').addEventListener('pointerdown',e=>{e.stopPropagation();goBack();});
+$('lsel').addEventListener('pointerdown',e=>{const b=e.target.closest('button');e.stopPropagation();e.preventDefault();if(!b)return;setLang(b.dataset.l);[...$('lsel').children].forEach(x=>x.classList.toggle('on',x===b));});
 $('cover').addEventListener('pointerdown',()=>start());
 $('langBtn').addEventListener('pointerdown',e=>{e.stopPropagation();e.preventDefault();setLang(lang=='ko'?'en':'ko');});
 ['touchstart','touchend','gesturestart','dblclick','contextmenu'].forEach(t=>document.addEventListener(t,e=>{if(!e.target.closest('.win,.idc'))e.preventDefault();},{passive:false}));   /* 아이폰 돋보기·확대 막기 */
