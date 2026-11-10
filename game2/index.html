@@ -581,18 +581,15 @@ async slime(st,m){m.wake&&m.wake();let a=m.a;const S=st.clientHeight,cx=a._cx,to
   const face=async(fr,ms)=>{const h=actor(st,'s_hit',S*0.46*300/SM.s_hit.f0[0],cx,S*.04);a.style.visibility='hidden';h.frame(fr[0]);
     h.animate([{translate:'0 0',scale:'1 1',filter:'brightness(3) saturate(0)'},{translate:'16px 0',scale:'1.15 .8',filter:'brightness(1.5)',offset:.25},{translate:'8px 0',scale:'.92 1.08',filter:'none',offset:.6},{translate:'0 0',scale:'1 1',filter:'none'}],{duration:Math.max(380,fr.length*ms*.6),easing:'ease-out'});
     for(const i of fr){h.frame(i);await wait(ms);}h.remove();a.style.visibility='';};
-  await strike(st,'punch');m.tag.style.opacity=0;await face([1,2,3,4,5],120);word(st,'Ctrl+V',cx,top(),16);
+  await strike(st,'punch');morphing=true;keys.left=keys.right=false;m.tag.style.opacity=0;await face([1,2,3,4,5],120);word(st,'Ctrl+V',cx,top(),16);
   for(const i of [2,3,4,5]){a.frame(i);await wait(140);}
   for(const i of [6,7]){a.frame(i);await wait(200);}await wait(300);
-  const a2=actor(st,'s2',S*0.46*300/SM.s2.f0[0],cx,S*.04);a2.frame(0);a.remove();a=a2;
-  await strike(st,'kick');await face([1,2,3,4,5],120);word(st,'Ctrl+V',cx,top(),16);
-  for(const i of [2,3,4,5]){a.frame(i);await wait(140);}
-  for(const i of [6,7]){a.frame(i);await wait(200);}await face([6,7],220);await wait(150);
+  morphing=false;
   const a3=actor(st,'s3',S*0.46*300/SM.s3.f0[0],cx,S*.04);a3.frame(0);a.remove();a=a3;
-  await strike(st,'punch');await face([1,2],130);word(st,'MAX!',cx,top(),22);
-  for(const i of [1,2,3]){a.frame(i);await wait(170);}
+  await strike(st,'punch');word(st,'MAX!',cx,top(),22);
+  for(const i of [1,2,3]){a.frame(i);await wait(110);}
   a.frame(4);a.style.transform=`scale(${(.3*SM.ag_ddalkkak.f0[0]/240)/(0.46*SM.s3.f7[0]/SM.s3.f0[0])})`;await whiteout(st);word(st,'딸깍!',cx,top(),26);
-  for(const i of [4,5,6,7]){a.frame(i);await wait(200);}
+  for(const i of [4,5,6,7]){a.frame(i);await wait(150);}
   const ag=await spawnAgent(st,'ag_ddalkkak',cx,st.clientHeight-S*.04,'',true);a.remove();
   return ag;},
 async zombie(st,m){m.wake&&m.wake();const a=m.a,S=st.clientHeight,cx=a._cx,H=a.offsetHeight,top=st.clientHeight-a._b-H;
@@ -626,7 +623,7 @@ function spawnMon(i){const mo=mons[i];if(mo.st)return;mo.x=Math.max(GHOSTS[i].x,
    const a=mo.m.a,gb=bubble(st,L[lang],a._cx,st.clientHeight-a._b-a.offsetHeight*.9-22);gb.style.fontSize='10px';gb.style.padding='2px 5px';
    const keep=()=>{if(!gb.isConnected)return;if(mo.started){gb.remove();return;}gb.style.left=a._cx+'px';requestAnimationFrame(keep);};keep();setTimeout(()=>gb.remove(),3000);}}
 function layoutMons(){mons.forEach((mo,i)=>{if(!mo.st||mo.done)return;const b=stageBox(i);mo.st.style.left=b.left+'px';});}
-const HITS={zombie:2,slime:3,golem:2};let morphing=false;
+const HITS={zombie:2,slime:2,golem:2};let morphing=false;
 function strike(st){const mo=st._mon;mo.ns=(mo.ns||0)+1;const last=mo.ns>=HITS[GHOSTS[mons.indexOf(mo)].kind];const lock=()=>{if(last){morphing=true;keys.left=keys.right=false;}};
   const pr=(()=>{if(mo.hitQ>0){mo.hitQ--;return Promise.resolve();}return new Promise(r=>mo.waiter=r);})();return pr.then(lock);}
 function hitReact(i){const st=mons[i].st;if(!st)return;
