@@ -606,15 +606,13 @@ async zombie(st,m){m.wake&&m.wake();const a=m.a,S=st.clientHeight,cx=a._cx,H=a.o
   const ex=cx-60.5*H/300,exW=60*H/300,D3=exW*300/256;
   const x3=actor(st,'z3',D3,ex,S*.04);x3.frame(0);x3.style.transformOrigin='50% 100%';
   const man=actor(st,'z2',S*.66*300/292,cx,S*.04);man.frame(0);a.remove();
-  const bub=bubble(st,'드디어 칼퇴다!',cx+H*.32,top-H*.12);setTimeout(()=>bub.remove(),1300);
+  const bub=bubble(st,'드디어 칼퇴다!',cx+H*.32,top-H*.12);
+  const leave=(async()=>{await wait(650);bub.remove();man.frame(3);await wait(80);let k=0;const w=setInterval(()=>man.frame(4+(k++%4)),110);
+    await anim(man,[{transform:'none',opacity:1},{transform:`translateX(${st.clientWidth*.45}px)`,opacity:0}],{duration:650,easing:'ease-in'});clearInterval(w);man.remove();})();
   const grow=0.22*S/(273*D3/300);
   for(const i of [1,2,3,4,5,6,7]){x3.frame(i);if(i>=3)x3.style.transform=`scale(${1+(grow-1)*(i-2)/5})`;if(i==2)word(st,'✓ ✓ ✓',ex,st.clientHeight-S*.04-30,13);await wait(180);}
   const ag=await spawnAgent(st,'ag_sulsul',ex,st.clientHeight-S*.04,'',true);x3.remove();
-  await wait(250);
-  man.frame(3);await wait(120);
-  let k=0;const w=setInterval(()=>man.frame(4+(k++%4)),150);
-  await anim(man,[{transform:'none'},{transform:`translateX(${st.clientWidth*.6}px)`}],{duration:1200,easing:'ease-in'});
-  clearInterval(w);man.remove();
+  await leave;
   return ag;},
 
 };
