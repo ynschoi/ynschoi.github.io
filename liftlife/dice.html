@@ -162,6 +162,18 @@
   .skills button:active{transform:translateY(2px);box-shadow:0 1px 0 #000}
   .skills button i{font-style:normal;font-size:14px}
   .skills .lb{grid-column:1/-1;font-size:9px;color:var(--violet);margin-bottom:-2px}
+  /* 성공 컷: 요쓰! */
+  .cutin{position:absolute;left:0;right:0;top:14%;height:58%;z-index:14;pointer-events:none;display:none;
+    clip-path:polygon(0 18%,100% 0,100% 82%,0 100%);background:#0b0820;overflow:hidden}
+  .cutin.on{display:block;animation:cutin .9s cubic-bezier(.2,.9,.2,1) forwards}
+  @keyframes cutin{0%{transform:translateX(-105%)}16%{transform:translateX(0)}84%{transform:translateX(0)}100%{transform:translateX(105%)}}
+  .cutin::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(100deg,transparent 0 14px,#ffffff22 14px 16px,transparent 16px 34px);animation:cslide .25s linear infinite}
+  @keyframes cslide{to{background-position:-60px 0}}
+  .cutin::after{content:"";position:absolute;inset:0;box-shadow:inset 0 5px 0 var(--gold),inset 0 -5px 0 var(--gold)}
+  .cutin .cf{position:absolute;left:4%;bottom:-6%;background-repeat:no-repeat;filter:drop-shadow(4px 4px 0 #000)}
+  .cutin b{position:absolute;right:7%;top:50%;transform:translateY(-50%) rotate(-6deg);font:700 54px var(--px);color:#fff;-webkit-text-stroke:3px #111;text-shadow:5px 5px 0 var(--red);white-space:nowrap}
+  .cutin.on b{animation:yos .9s steps(1) forwards}
+  @keyframes yos{0%,15%{opacity:0}16%{opacity:1;transform:translateY(-50%) rotate(-6deg) scale(1.5)}24%{transform:translateY(-50%) rotate(-6deg) scale(1)}}
   .help{position:absolute;inset:0;z-index:30;background:#0b0820ee;display:flex;align-items:center;justify-content:center;padding:16px}
   .help[hidden]{display:none}
   .help div{border:3px solid #fff;padding:14px 16px;background:#15102e;max-width:340px;font:13px/1.6 var(--font);color:var(--ink)}
@@ -206,6 +218,7 @@
     <button class="tb" id="hlp" type="button">?</button>
     <button class="tb" id="snd" type="button">♪ ON</button>
     <div class="wflash" id="wflash"></div>
+    <div class="cutin" id="cutin"><div class="cf" id="cutF"></div><b>요쓰!</b></div>
     <div class="banner" id="banner"></div>
     <div class="mg" id="mg">
       <canvas id="mgc" width="640" height="340"></canvas>
@@ -414,7 +427,7 @@ async function doLift(k){await walkTo(SPOT.gym-4);setF(F.squat);say(pick(['간�
   const r=await mini(k,S.lv[k]);
   closeMG();
   const before=S[k],isPR=r.kg>before;
-  if(r.kg>0){setF(F.stand);setBar(true);$('bb').style.top='56%';SFX.thud();await sleep(500);setBar(false);$('bb').style.top='';SFX.clang();shake();}
+  if(r.kg>0){await yoss();setF(F.stand);setBar(true);$('bb').style.top='56%';SFX.thud();await sleep(500);setBar(false);$('bb').style.top='';SFX.clang();shake();}
   if(isPR){S[k]=r.kg;save();paint(k);SFX.win();banner('NEW PR!',1100);setF(F.kick);await sleep(500);setF(F.knee);await sleep(300);setF(F.smile);
     say(pick(['가볍네','이게 사는 맛이지','근육아 고마워']),1200);
     msg('LIFT',`🏋️ ${name} 신기록!`,`${r.kg}kg 성공 (${r.grade})\n${before?`이전 기록 ${before}kg → `:''}PR ${r.kg}kg · 합계 ${total()}kg`);
@@ -424,6 +437,13 @@ async function doLift(k){await walkTo(SPOT.gym-4);setF(F.squat);say(pick(['간�
     msg('LIFT',`🏋️ ${name} 실패`,`바벨을 놓쳤다. PR ${before?before+'kg':'없음'} 그대로.\n${POTN[POTK[k]]}을 마시면 조금 쉬워져요.`);}
   await sleep(900);setF(F.stand);paint();
   if(total()>=LETTER_AT&&!S.letter){S.letter=true;save();await sleep(1800);showLetter();}}
+
+/* 성공 컷: 상반신 클로즈업 + 요쓰! (전용 그림이 오면 YOSS_IMG/YOSS_F만 바꾸면 됨) */
+const YOSS_F=F.knee;let YOSS_IMG=null;   // null = 기본 스프라이트(IMG) 사용
+async function yoss(){const c=$('cutin'),f=$('cutF'),h=c.offsetHeight||GH()*.58,cell=h*1.9;
+  f.style.backgroundImage=`url(${YOSS_IMG||IMG.src})`;f.style.width=cell*.62+'px';f.style.height=h*1.06+'px';
+  f.style.backgroundSize=`${cell*8}px ${cell}px`;f.style.backgroundPosition=`${-(YOSS_F*cell)-cell*.19}px ${-cell*.02}px`;
+  c.classList.remove('on');void c.offsetWidth;c.classList.add('on');SFX.win();tone(880,.25,'square',.05,400,.15);await sleep(900);c.classList.remove('on');}
 
 function showLetter(){SFX.win();banner('💌',1000);msg('LETTER',`💌 ${TO}에게`,`${TOya}, 너는 진짜 밥 먹고 똥 싸고 잠 자고 역도만 하더라.\n근데 그게 제일 멋있어. 오늘도 PR 갱신하자 💪\nFrom. ${FROM}`,'letter');}
 
