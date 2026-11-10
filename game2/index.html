@@ -606,7 +606,7 @@ async zombie(st,m){m.wake&&m.wake();const a=m.a,S=st.clientHeight,cx=a._cx,H=a.o
   const ex=cx-60.5*H/300,exW=60*H/300,D3=exW*300/256;
   const x3=actor(st,'z3',D3,ex,S*.04);x3.frame(0);x3.style.transformOrigin='50% 100%';
   const man=actor(st,'z2',S*.66*300/292,cx,S*.04);man.frame(0);a.remove();
-  const bub=bubble(st,'드디어 칼퇴다!',cx+H*.12,top-H*.22);setTimeout(()=>bub.remove(),1300);
+  const bub=bubble(st,'드디어 칼퇴다!',cx+H*.32,top-H*.12);setTimeout(()=>bub.remove(),1300);
   const grow=0.22*S/(273*D3/300);
   for(const i of [1,2,3,4,5,6,7]){x3.frame(i);if(i>=3)x3.style.transform=`scale(${1+(grow-1)*(i-2)/5})`;if(i==2)word(st,'✓ ✓ ✓',ex,st.clientHeight-S*.04-30,13);await wait(180);}
   const ag=await spawnAgent(st,'ag_sulsul',ex,st.clientHeight-S*.04,'',true);x3.remove();
@@ -647,7 +647,7 @@ async function runKO(i){const mo=mons[i];const ag=await K[GHOSTS[i].kind](mo.st,
   if(i+1<GHOSTS.length)setTimeout(()=>{spawnMon(i+1);banner(lang=='ko'?'다음 몬스터!':'NEXT MONSTER!',900);},1200);}
 /* 몬스터가 주인공 쪽으로 다가와요 (맞기 전까지) */
 const MSPD={zombie:.00035,slime:.0005,golem:.0003};
-const gapOf=i=>{const mo=mons[i],sl=GHOSTS[i].kind=='slime';return hero.offsetWidth*(sl?.3:.42)+((mo.m&&mo.m.idw)||MU()*.4)*(sl?.1:.45)+8;};let mLast=0;
+const gapOf=i=>{const mo=mons[i],sl=GHOSTS[i].kind=='slime';return hero.offsetWidth*(sl?.4:.42)+((mo.m&&mo.m.idw)||MU()*.4)*(sl?.3:.45)+8;};let mLast=0;
 function monStep(t){const dt=Math.min(50,t-(mLast||t));mLast=t;const s=sc(),hw=hero.offsetWidth;
   mons.forEach((mo,i)=>{if(!mo.st||mo.started||mo.done||flying)return;const mx=mo.x*s,dx=mx-hx,stop=gapOf(i);
     if(Math.abs(dx)>game.clientWidth*1.05||Math.abs(dx)<=stop)return;mo.x-=Math.sign(dx)*Math.min(Math.abs(dx)-stop,heroH()*MSPD[GHOSTS[i].kind]*dt)/s;mo.st.style.left=stageBox(i).left+'px';});
