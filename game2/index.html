@@ -561,6 +561,10 @@ async slime(st,m){m.wake&&m.wake();let a=m.a;const S=st.clientHeight,cx=a._cx,to
   await strike(st,'punch');word(st,'Ctrl+V',cx,top(),16);m.tag.style.opacity=0;
   for(const i of [1,2,3,4,5]){a.frame(i);await wait(140);}
   let bb=bubble(st,'또야? 다시 합체~',cx,top()-10);for(const i of [6,7]){a.frame(i);await wait(200);}await wait(450);bb.remove();
+  const a2=actor(st,'s2',S*.36*300/256,cx,S*.04);a2.frame(0);a.remove();a=a2;
+  await strike(st,'kick');word(st,'Ctrl+V',cx,top(),16);
+  for(const i of [1,2,3,4,5]){a.frame(i);await wait(140);}
+  bb=bubble(st,'몇 번을 해도 똑같아~',cx,top()-10);for(const i of [6,7]){a.frame(i);await wait(200);}await wait(450);bb.remove();
   const a3=actor(st,'s3',S*.36*300/288,cx,S*.04);a3.frame(0);a.remove();a=a3;
   await strike(st,'punch');word(st,'MAX!',cx,top(),22);
   for(const i of [1,2,3]){a.frame(i);await wait(170);}
@@ -570,7 +574,8 @@ async slime(st,m){m.wake&&m.wake();let a=m.a;const S=st.clientHeight,cx=a._cx,to
   return ag;},
 async zombie(st,m){m.wake&&m.wake();const a=m.a,S=st.clientHeight,cx=a._cx,H=a.offsetHeight,top=st.clientHeight-a._b-H;
   a.classList.remove('i-shamble');
-  await strike(st,'punch');word(st,'POW!',cx,top+H*.1,22);a.frame(1);await flash(a);m.tag.style.opacity=0;
+  await strike(st,'punch');word(st,'POW!',cx,top+H*.1,22);a.frame(1);await flash(a);a.frame(0);
+  await strike(st,'kick');word(st,'MAX!',cx,top+H*.1,22);a.frame(1);await flash(a);m.tag.style.opacity=0;
   for(const i of [2,3,4]){a.frame(i);await wait(200);}
   await whiteout(st);
   for(const i of [5,6,7]){a.frame(i);await wait(260);}
