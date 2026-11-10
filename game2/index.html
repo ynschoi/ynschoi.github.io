@@ -374,11 +374,11 @@ const ITEMS=[
    d:{ko:'수석애널리스트, CFA\n구조화금융 상품 신용평가 담당\n전문분야는 CDO, Synthetic CDO',en:'Senior Analyst, CFA\nStructured finance credit ratings\nSpecialty: CDO, Synthetic CDO'},s:[],line:{ko:'맡겨주세요!',en:'Leave it to me!'}},
   {x:2000,kind:'me',ai:1,c:'#7c3aed',ic:'AI',k:{ko:'AI',en:'AI'},m:'NOW',
    d:{ko:'요즘 최대 관심사는 AI를 활용한 업무 프로세스 개선\n주요 Tool: Claude Code, Codex',en:'Top interest these days: improving work processes with AI\nMain tools: Claude Code, Codex'},s:[],line:{ko:'',en:''}},
-  {x:2550,kind:'tool',g:0,c:'#1e3a8a',ic:'분석',k:{ko:'Analysis Agent',en:'Analysis Agent'},m:'AGENT 합류|AGENT JOINED',
+  {x:2550,kind:'tool',g:0,c:'#1e3a8a',ic:'분석',k:{ko:'Rule Agent',en:'Rule Agent'},m:'AGENT 합류|AGENT JOINED',
    d:{ko:'암묵지로 남아 있던 복잡한 업무 프로세스를\nAI와 함께 규칙으로 정형화\n규칙을 적용해 문서를 분석하는 툴 개발',en:'Complex, tacit work processes\nturned into clear rules with AI\nA rule-based document analysis tool'},s:[],line:{ko:'',en:''}},
-  {x:2950,kind:'tool',g:1,c:'#2f9a3a',ic:'조회',k:{ko:'Lookup Agent',en:'Lookup Agent'},m:'AGENT 합류|AGENT JOINED',
+  {x:2950,kind:'tool',g:1,c:'#2f9a3a',ic:'조회',k:{ko:'Query Agent',en:'Query Agent'},m:'AGENT 합류|AGENT JOINED',
    d:{ko:'단순 반복하던 조회 업무를\n클릭 한 번에 끝내는 툴 개발\n웹으로 배포해 운영 중',en:'Repetitive lookups that ate up time\nnow done in a single click\nDeployed and running on the web'},s:[],line:{ko:'',en:''}},
-  {x:3350,kind:'tool',g:2,c:'#b45309',ic:'정리',k:{ko:'Organizer Agent',en:'Organizer Agent'},m:'AGENT 합류|AGENT JOINED',
+  {x:3350,kind:'tool',g:2,c:'#b45309',ic:'정리',k:{ko:'Sync Agent',en:'Sync Agent'},m:'AGENT 합류|AGENT JOINED',
    d:{ko:'하나씩 조회·다운받아 취합하던 대량 데이터를\n엑셀에 정리된 형식으로 바로 받고\n자동 업데이트까지 되는 엑셀 애드인 개발',en:'Bulk data once gathered one by one\nnow lands in Excel, neatly organized\nAn Excel add-in with auto-updates'},s:[],line:{ko:'',en:''}},
   {x:4040,kind:'sky',c:'#ffd400',fg:'#111',ic:'NEXT',k:{ko:'NEXT',en:'NEXT'},m:'NEXT',
    d:{ko:'새로운 아이디어를 구상하며 설레는 중',en:'Excited, sketching out new ideas'},s:[],line:{ko:'더 높이!',en:'Higher!'}},
@@ -461,7 +461,7 @@ function spark(d){const w=300,h=44,m=Math.max(...d)||1;const p=d.map((v,i)=>`${i
 /* ═════════ 엔딩 크레딧 + 익명 반응 (구글 시트) ═════════
    REACT_URL 에 구글 Apps Script 웹앱 주소를 넣으면 숫자가 시트에 쌓여요. 비어 있으면 이 기기에서만 세요. */
 const REACT_URL='';
-const RK=[['heart','❤️'],['thumb','👍'],['muscle','💪']];
+const RK=[['heart','❤️'],['thumb','👍'],['muscle','💪🏿']];
 let RC={heart:0,thumb:0,muscle:0};
 const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
 function loadReact(){if(!REACT_URL)return;fetch(REACT_URL+'?op=get').then(r=>r.json()).then(j=>{RC={...RC,...j};paintReact();}).catch(()=>{});}
@@ -472,9 +472,9 @@ function pressReact(k,btn){const d=document.createElement('span');d.className='r
 function showCredits(){const ko=lang=='ko';
   $('win').innerHTML=`<div class="ttl"><span>All Clear (${NTOT}/${NTOT})</span><span>${ko?'계속 돌아다녀도 돼요':'Keep exploring!'}</span></div>
    <div class="cred"><div class="roll"><h3>THANK YOU<br>FOR PLAYING</h3>
-    <i>PLAYER</i><b>1P YOUNGSU</b><i>ANALYSIS AGENT</i><b>술술</b><i>LOOKUP AGENT</i><b>딸깍</b><i>ORGANIZER AGENT</i><b>착착</b>
+    <i>PLAYER</i><b>1P YOUNGSU</b><i>AGENTS</i><b>Rule · Query · Sync</b>
     <i>POWERED BY</i><b>Claude Code · Codex</b><i>AND YOU</i><b>♥</b></div></div>
-   <div class="rxbar"><small>${ko?'익명':'anonymous'}</small>${RK.map(([k,e])=>`<button class="rx${ls.get('rw_'+k)?' on':''}" data-k="${k}" type="button">${e}<b>0</b></button>`).join('')}</div>`;
+   <div class="rxbar">${RK.map(([k,e])=>`<button class="rx${ls.get('rw_'+k)?' on':''}" data-k="${k}" type="button">${e}<b>0</b></button>`).join('')}</div>`;
   paintReact();}
 document.addEventListener('pointerdown',e=>{const b=e.target.closest('.rx');if(b){e.stopPropagation();e.preventDefault();b.classList.add('on');pressReact(b.dataset.k,b);}},true);
 loadReact();
@@ -593,8 +593,8 @@ async function spawnAgent(st,key,cx,floorY,label,noPop){const h=Math.round(st.cl
   if(noPop)await anim(ag,[{filter:'brightness(2)'},{filter:'none'}],{duration:250});else await anim(ag,[{transform:'scale(.2) translateY(20px)',filter:'brightness(3)'},{transform:'scale(1.25) translateY(-10px)',offset:.6},{transform:'none',filter:'none'}],{duration:420,easing:'ease-out'});
   ag.stopLoop=loopPlay(ag,[0,1,2,3,4,5],130);
   if(label)word(st,label,st.clientWidth*.5,st.clientHeight*.1,14);return ag;}
-const AGTAG={ag_sulsul:{ko:'ANALYSIS<br>AGENT',en:'ANALYSIS<br>AGENT'},ag_ddalkkak:{ko:'LOOKUP<br>AGENT',en:'LOOKUP<br>AGENT'},ag_chakchak:{ko:'ORGANIZER<br>AGENT',en:'ORGANIZER<br>AGENT'}};
-const AGNICK={ag_sulsul:{n:'술술',ko:'보고서는 술술~',en:'Reports, smoothly~'},ag_ddalkkak:{n:'딸깍',ko:'조회는 딸깍!',en:'Lookup in one click!'},ag_chakchak:{n:'착착',ko:'정리는 착착!',en:'Sorted, neatly!'}};
+const AGTAG={ag_sulsul:{ko:'RULE<br>AGENT',en:'RULE<br>AGENT'},ag_ddalkkak:{ko:'QUERY<br>AGENT',en:'QUERY<br>AGENT'},ag_chakchak:{ko:'SYNC<br>AGENT',en:'SYNC<br>AGENT'}};
+const AGNICK={ag_sulsul:{n:'Rule Agent',ko:'규칙대로 분석 완료!',en:'Analyzed by the rules!'},ag_ddalkkak:{n:'Query Agent',ko:'조회는 클릭 한 번!',en:'One click, done!'},ag_chakchak:{n:'Sync Agent',ko:'데이터 자동 정리 중!',en:'Data synced and sorted!'}};
 const AGJUMP={ag_sulsul:'j_excel',ag_ddalkkak:'j_slime',ag_chakchak:'j_paper'};
 const B={
 golem(st){return idleMon(st,'m_golem','g1',.6,249,.66,lang=='ko'?'대량업무':'Bulk work');},
