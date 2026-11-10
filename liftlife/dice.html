@@ -487,7 +487,9 @@ function prep(k){openMG();drawStatic();const p=POTK[k],name=FACES.find(f=>f.k===
     $('go').onclick=()=>{mgov.hidden=true;res();};};
   draw();});}
 
-function bg(c){c.fillStyle='#3b2f72';c.fillRect(0,0,W,FLOOR);c.fillStyle='#433680';for(let x=0;x<W;x+=16)c.fillRect(x,0,1,FLOOR);
+const STAGE=new Image();STAGE.src='stage.webp';
+function bg(c){if(STAGE.complete&&STAGE.naturalWidth){c.imageSmoothingEnabled=true;c.drawImage(STAGE,0,0,W,H);c.imageSmoothingEnabled=false;return;}
+c.fillStyle='#3b2f72';c.fillRect(0,0,W,FLOOR);c.fillStyle='#433680';for(let x=0;x<W;x+=16)c.fillRect(x,0,1,FLOOR);
   c.fillStyle='#6b4a33';c.fillRect(0,FLOOR,W,H-FLOOR);c.fillStyle='#5a3d2a';for(let y=FLOOR+6;y<H;y+=7)c.fillRect(0,y,W,1);
   c.fillStyle='#222';c.fillRect(20,FLOOR-2,110,5);c.fillStyle='#ffd400';c.fillRect(24,FLOOR,102,1);}
 function drawHero(c,f,x=75,size=118,dy=0,sh=0){if(!IMG.complete)return;c.drawImage(IMG,f*400,0,400,400,x-size/2+(sh?rnd(-sh,sh):0),FLOOR+4-size-dy,size,size);}
