@@ -444,7 +444,7 @@ function spark(d){const w=300,h=44,m=Math.max(...d)||1;const p=d.map((v,i)=>`${i
 function showHome(){$('win').classList.remove('idw');document.querySelector('.info').classList.remove('cvmode');const t=T[lang];sel=-1;renderSlots();
   const done=got.size===NTOT;$('win').innerHTML=`<div class="ttl"><span>${done?`All Clear (${NTOT}/${NTOT})`:t.welcome}</span><span>${done?'':got.size+'/'+NTOT}</span></div><h2>1P YOUNGSU</h2><p id="wp"></p>`;typeText($('wp'),got.size===NTOT?t.clear:t.hello);}
 function showItem(i,fresh){$('win').classList.remove('idw');document.querySelector('.info').classList.remove('cvmode');const it=ITEMS[i],L=lang=='ko'?0:1;sel=i;renderSlots();
-  $('win').innerHTML=`${fresh?`<div class="ttl"><span>${T[lang].get}</span><span></span></div>`:''}
+  $('win').innerHTML=`<div class="ttl"><span>${fresh?T[lang].get:'ITEM '+(i+1)}</span><span>${two(it.m,L)}</span></div>
    <h2><i class="hi pic" style="background:${it.c}55">${itemPic(i,'sp')}</i>${it.k[lang]}</h2><p id="wp"></p>
    <div class="st">${it.s.map(s=>`<span>${two(s[0],L)} <b>${two(s[1],L)}</b></span>`).join('')}</div>${it.data?spark(it.data):''}`;
   typeText($('wp'),it.d[lang]);
