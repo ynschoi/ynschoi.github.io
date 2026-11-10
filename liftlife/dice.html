@@ -36,7 +36,7 @@
   .pr.up .kg{color:var(--gold);animation:blink .3s steps(1) 6}
   .total{text-align:right;font-size:9px;color:var(--violet);line-height:1.3;flex:none}
   .total b{display:block;font-size:17px;color:var(--gold);font-weight:400;font-variant-numeric:tabular-nums}
-  .win{height:150px;border:3px solid #fff;box-shadow:0 0 0 3px var(--night),0 0 0 5px var(--edge);background:linear-gradient(#1d1650,#120d33);padding:9px 12px;overflow:hidden;position:relative}
+  .win{height:92px;border:3px solid #fff;box-shadow:0 0 0 3px var(--night),0 0 0 5px var(--edge);background:linear-gradient(#1d1650,#120d33);padding:9px 12px;overflow:hidden;position:relative}
   .win .ttl{font-size:11px;color:var(--gold);margin-bottom:5px;display:flex;justify-content:space-between}
   .win .ttl span:last-child{color:var(--violet)}
   .win h2{font:700 17px var(--px);margin-bottom:3px}
@@ -55,7 +55,7 @@
   .pot.has canvas{opacity:1;filter:drop-shadow(0 0 5px var(--pc))}
   .pot .n{color:#8d86c9;font-size:15px}.pot .n::before{content:'×';font-size:11px;margin-right:1px}
   .pot.has .n{color:var(--gold)}
-  .pot .lvt{font-size:9px;color:var(--violet);white-space:nowrap}
+  .win.tall{height:118px}
   .pot.has{border-color:var(--pc);color:#fff;box-shadow:inset 0 0 12px color-mix(in srgb,var(--pc) 35%,transparent)}.pot.has .ic{opacity:1}
   .pot b{font-weight:400;display:block;font-size:9px;color:var(--violet)}
   .pot.got{animation:got .4s steps(2) 5}
@@ -207,9 +207,9 @@
     </div>
     <div class="win" id="win"></div>
     <div class="bag"><span class="lb">포션<br>가방</span>
-      <div class="pot" id="potP" style="--pc:#ff5a4a"><canvas width="10" height="14"></canvas><div class="tx"><div class="t">파워<span class="n">0</span></div><span class="lvt">스내치 Lv0</span></div></div>
-      <div class="pot" id="potR" style="--pc:#5ad1ff"><canvas width="10" height="14"></canvas><div class="tx"><div class="t">회복<span class="n">0</span></div><span class="lvt">클린저크 Lv0</span></div></div>
-      <div class="pot" id="potM" style="--pc:#c77dff"><canvas width="10" height="14"></canvas><div class="tx"><div class="t">근육<span class="n">0</span></div><span class="lvt">스쿼트 Lv0</span></div></div>
+      <div class="pot" id="potP" style="--pc:#ff5a4a"><canvas width="10" height="14"></canvas><div class="tx"><div class="t">파워<span class="n">0</span></div></div></div>
+      <div class="pot" id="potR" style="--pc:#5ad1ff"><canvas width="10" height="14"></canvas><div class="tx"><div class="t">회복<span class="n">0</span></div></div></div>
+      <div class="pot" id="potM" style="--pc:#c77dff"><canvas width="10" height="14"></canvas><div class="tx"><div class="t">근육<span class="n">0</span></div></div></div>
     </div>
   </section>
 
@@ -375,14 +375,14 @@ function paint(up){
   [['Sn','sn'],['Cj','cj'],['Sq','sq']].forEach(([a,k])=>{$('fl'+a).style.width=(S[k]/max*100)+'%';$('kg'+a).textContent=S[k]?S[k]+'kg':'-';$('pr'+a).classList.toggle('up',up===k);});
   $('tot').textContent=total()+'kg';
   $('hud').innerHTML=`DAY <b>${S.day}</b> · 🎲 <b>${S.rolls}</b>`;
-  [['sn','potP','스내치'],['cj','potR','클린저크'],['sq','potM','스쿼트']].forEach(([k,id,n])=>{const el=$(id),c=S.pot[POTK[k]];el.classList.toggle('has',c>0);el.querySelector('.n').textContent=c;el.querySelector('.lvt').textContent=`${n} Lv${S.lv[k]}`;});
+  [['sn','potP','스내치'],['cj','potR','클린저크'],['sq','potM','스쿼트']].forEach(([k,id,n])=>{const el=$(id),c=S.pot[POTK[k]];el.classList.toggle('has',c>0);el.querySelector('.n').textContent=c;});
 }
 function gotPot(p,n=1){S.pot[p]+=n;save();paint();const el=$({P:'potP',R:'potR',M:'potM'}[p]);el.classList.remove('got');void el.offsetWidth;el.classList.add('got');SFX.potion();
   const h=head(),f=document.createElement('img');f.className='fly';f.src=potionURL(p);f.style.cssText+=`;left:${h.x}px;top:${h.y}px;width:20px;height:28px`;game.appendChild(f);
   f.animate([{transform:'translateY(0) scale(.5)'},{transform:'translateY(-40px) scale(1.3)',opacity:1},{transform:'translateY(-70px) scale(.6)',opacity:0}],{duration:1000});setTimeout(()=>f.remove(),1000);}
 let typeT=null;
 function msg(tag,title,body,cls=''){const w=$('win');w.classList.remove('flash');void w.offsetWidth;w.classList.add('flash');
-  w.innerHTML=`<div class="ttl"><span>${tag}</span><span>${TO}의 하루</span></div><h2>${title}</h2><p class="${cls}" id="msgP"></p>`;
+  w.classList.toggle('tall',cls==='letter');w.innerHTML=`<h2>${title}</h2><p class="${cls}" id="msgP"></p>`;
   const el=$('msgP');clearInterval(typeT);let i=0;typeT=setInterval(()=>{i++;el.innerHTML=body.slice(0,i).replace(/\n/g,'<br>')+'<span class="caret"></span>';if(i>=body.length)clearInterval(typeT);},26);}
 function renderLegend(hit){$('legend').innerHTML=FACES.map((f,i)=>`<div class="lg2${f.lift?' lift':''}${hit===i?' hit':''}"><em>${i+1}</em>${f.n}</div>`).join('');}
 function showDie(n){$('die').className='die'+(n==1?' red':'');$('die').innerHTML=PIPS[n].map(([x,y])=>`<i style="left:${x}%;top:${y}%"></i>`).join('');}
@@ -601,7 +601,7 @@ addEventListener('resize',()=>{fitApp();place();});
 $('coverTo').textContent=`FOR ${TO} · FROM ${FROM}`;
 setupWarn();
 drawRoom();setF(F.stand);place();paint();renderLegend(-1);showDie(6);fitApp();
-$('win').innerHTML=`<div class="ttl"><span>READY</span><span>${TO}의 하루</span></div><h2>🎁 먹고 싸고 들어라</h2><p>밥 먹고, 똥 싸고, 잠 자고, 역도만 하는\n${TO}의 인생 주사위.</p>`;
+$('win').innerHTML=`<h2>🎁 먹고 싸고 들어라</h2><p>밥 먹고, 똥 싸고, 잠 자고, 역도만 하는\n${TO}의 인생 주사위.</p>`;
 IMG.onload=()=>{};
 </script>
 </body>
