@@ -930,6 +930,10 @@ function setLang(l){lang=l;document.documentElement.lang=l;const t=T[l];
   if(typeof mons!='undefined')mons.forEach((mo,i)=>{if(mo.m&&mo.m.tag)mo.m.tag.textContent=GHOSTS[i][l];});}
 
 addEventListener('resize',layout);
+/* 카톡·인스타 안 브라우저는 처음 화면 높이를 잘못 알려줬다가 나중에 바꿔요 → 게임 칸 크기가 바뀔 때마다 다시 맞춰요 */
+if(window.ResizeObserver){let rh=0;new ResizeObserver(()=>{const h=game.clientHeight;if(h&&Math.abs(h-rh)>1){rh=h;layout();}}).observe(game);}
+window.visualViewport&&visualViewport.addEventListener('resize',layout);
+[300,1000,2500].forEach(t=>setTimeout(layout,t));
 $('pano').onload=layout;
 setLang('ko');idle();layout();setPow(0);
 </script>
