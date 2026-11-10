@@ -152,30 +152,7 @@
   .lg2.lift em{background:var(--gold)}
   .lg2.hit{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold);color:#fff}
 
-  /* 필살기 · 헌터헌터식 연출 */
-  .cam{position:absolute;inset:0;transition:transform .45s cubic-bezier(.2,.8,.2,1);will-change:transform}
-  .cam.snap{transition:transform .08s ease-out}
-  .cdark{position:absolute;inset:0;background:#05031a;opacity:0;transition:opacity .5s;z-index:5;pointer-events:none}
-  .lines{position:absolute;inset:-30%;z-index:5;opacity:0;pointer-events:none;
-    background:repeating-conic-gradient(from 0deg at var(--lx,50%) var(--ly,50%),#ffffffd0 0 .6deg,transparent .6deg 6deg);
-    -webkit-mask:radial-gradient(circle at var(--lx,50%) var(--ly,50%),transparent 0 18%,#000 46%);mask:radial-gradient(circle at var(--lx,50%) var(--ly,50%),transparent 0 18%,#000 46%)}
-  .lines.on{opacity:.55;animation:lspin .12s steps(2) infinite}
-  @keyframes lspin{50%{transform:rotate(2deg)}}
-  .lbox{position:absolute;left:0;right:0;height:0;background:#000;z-index:13;transition:height .35s;overflow:hidden;pointer-events:none}
-  .lbox.t{top:0}.lbox.b{bottom:0;display:flex;align-items:center}
-  .game.cine .lbox.t{height:13%}.game.cine .lbox.b{height:24%}
-  .lbox p{font:12px/1.45 var(--font);color:#fff;padding:0 12px;white-space:pre-line}
-  .lbox p b{color:var(--gold);font-weight:700}
-  .game.cine .hud,.game.cine .tb{opacity:0}
-  .chant{position:absolute;left:50%;top:40%;z-index:14;pointer-events:none;font:700 38px var(--px);color:#fff;-webkit-text-stroke:2.5px #111;
-    text-shadow:4px 4px 0 var(--ac,#d92d20);white-space:nowrap;transform:translate(-50%,-50%);animation:chant .7s cubic-bezier(.2,1.6,.4,1) forwards}
-  @keyframes chant{0%{transform:translate(-50%,-50%) scale(2.4);opacity:0}25%{transform:translate(-50%,-50%) scale(.95);opacity:1}80%{opacity:1}100%{transform:translate(-50%,-50%) scale(1.05);opacity:0}}
-  .hero.aura .skl{animation:aurap .18s steps(2) infinite}
-  @keyframes aurap{0%{filter:drop-shadow(0 0 4px var(--ac)) drop-shadow(0 0 12px var(--ac))}100%{filter:drop-shadow(0 0 8px var(--ac)) drop-shadow(0 0 22px var(--ac)) brightness(1.12)}}
-  .ptc{position:absolute;z-index:7;width:6px;height:10px;border-radius:50% 50% 40% 40%;background:var(--ac);box-shadow:0 0 8px var(--ac);pointer-events:none;animation:ptc 1s ease-out forwards}
-  @keyframes ptc{to{transform:translate(var(--dx),-70px) scale(.3);opacity:0}}
-  .game.impact{filter:invert(1) contrast(1.8) saturate(0)}
-
+  /* 필살기 */
   .hero .skl{position:absolute;left:-20%;top:-20%;width:140%;height:140%;background:0 0/800% 100% no-repeat;display:none;filter:drop-shadow(0 3px 0 rgba(0,0,0,.25))}
   .hero.skill .spr{visibility:hidden}.hero.skill .skl{display:block}
   .wflash{position:absolute;inset:0;z-index:11;background:#fff;opacity:0;pointer-events:none;transition:opacity .25s}
@@ -217,10 +194,7 @@
   </section>
 
   <section class="game" id="game">
-    <div class="cam" id="cam">
     <canvas id="room" width="240" height="138"></canvas>
-    <div class="cdark" id="cdark"></div>
-    <div class="lines" id="lines"></div>
     <div class="hero" id="hero">
       <div class="bubble" id="bubble"></div>
       <div class="flip"><div class="spr" id="spr"></div><div class="skl" id="skl"></div><div class="bb" id="bb"></div></div>
@@ -228,8 +202,6 @@
     </div>
     <canvas class="tfront" id="tfront" width="30" height="22"></canvas>
     <div class="night" id="night"></div>
-    </div>
-    <div class="lbox t" id="lboxT"></div><div class="lbox b" id="lboxB"><p id="narr"></p></div>
     <div class="hud" id="hud"></div>
     <button class="tb" id="hlp" type="button">?</button>
     <button class="tb" id="snd" type="button">♪ ON</button>
@@ -285,7 +257,7 @@ const POTK={sn:'P',cj:'R',sq:'M'},POTN={P:'파워포션',R:'회복포션',M:'근
 /* 레벨 효과: 아주 조금씩 쉬워짐 */
 const EASE={sn:L=>Math.max(.35,Math.pow(.97,L)),   // 추 속도 배율
             cj:L=>Math.max(.35,Math.pow(.97,L)),   // 게이지 차는 속도 배율
-            sq:L=>Math.min(4,2+.1*L)};             // 연타 제한 시간(초)
+            sq:L=>Math.min(3,1+.1*L)};             // 연타 제한 시간(초)
 const easeText=(k,L)=>k==='sq'?`제한 시간 <b>${EASE.sq(L).toFixed(1)}초</b>`:`${k==='sn'?'추':'게이지'} 속도 <b>${Math.round(EASE[k](L)*100)}%</b>`;
 const r05=v=>Math.round(v*2)/2;
 
@@ -527,83 +499,35 @@ const mpos=e=>{const r=mgc.getBoundingClientRect();return (e.clientX-r.left)/r.w
 mg.addEventListener('pointerdown',e=>{if(!cur||cur.s.done||!mgov.hidden)return;e.preventDefault();try{mg.setPointerCapture(e.pointerId);}catch(_){}cur.g.down&&cur.g.down(cur.s,cur.s.end,mpos(e));});
 ['pointerup','pointercancel'].forEach(ev=>mg.addEventListener(ev,()=>{if(cur&&cur.g.up)cur.g.up(cur.s,cur.s.end);}));
 
-/* ═════════ 필살기 (헌터헌터 패러디) ═════════
-   한 줄 = 한 컷: f 프레임, ms 길이, z 줌, chant 외치기, narr 내레이션, aura 오라, lines 집중선, hit 임팩트, dark 배경 어둡기, sfx 효과음 */
+/* ═════════ 필살기 (헌터헌터 패러디) ═════════ */
 const SKILLS=[
-  {k:'aura',ic:'✊',n:'잔켄',img:'sk_aura.webp',ac:'#ffc400',
-   intro:'강화계 능력자 <b>Moti</b>.\n모든 오라를 주먹 하나에 모은다 ─ 「<b>경(硬)</b>」',
-   outro:'※ 바벨은 무사하다. 아마도.',
-   cut:[{f:0,ms:900,z:1,dark:.55},
-        {f:1,ms:700,z:1.25,chant:'최초는',sfx:'charge'},
-        {f:1,ms:520,chant:'주먹!',sfx:'charge'},
-        {f:2,ms:620,z:1.55,chant:'잔!',aura:1,sfx:'charge'},
-        {f:3,ms:700,z:1.85,chant:'켄!',aura:1,lines:1,sfx:'charge'},
-        {f:4,ms:760,z:2.1,aura:1,lines:1,narr:'……!',sfx:'hold'},
-        {f:5,ms:1000,z:1.3,hit:1,chant:'바위!!!',lines:1,sfx:'punch'},
-        {f:6,ms:550,z:1},{f:7,ms:450}]},
-  {k:'card',ic:'🃏',n:'번지껌',img:'sk_card.webp',ac:'#ff5fae',
-   intro:'변화계 능력자 <b>Moti</b>.\n오라를 고무와 껌, 두 성질로 바꾼다 ─ 「<b>번지껌</b>」',
-   outro:'※ 한번 붙으면 쉽게 떨어지지 않는다.',
-   cut:[{f:0,ms:800,z:1,dark:.6},
-        {f:1,ms:950,z:1.7,focus:'head',chant:'♦',sfx:'card'},
-        {f:2,ms:550,z:1.2,sfx:'whoosh'},
-        {f:3,ms:1100,z:1.45,aura:1,narr:'고무와 껌, 양쪽 성질을 다 가지고 있지 <b>♠</b>'},
-        {f:4,ms:700,z:1.7,aura:1,lines:1,chant:'늘어나고…',sfx:'stretch'},
-        {f:5,ms:800,z:1.3,hit:1,chant:'줄어든다!',sfx:'snap'},
-        {f:6,ms:800,z:1,chant:'♠'},{f:7,ms:450}]},
-  {k:'guardian',ic:'🙏',n:'백식관음',img:'sk_guardian.webp',ac:'#ffe58a',
-   intro:'하루 만 번, 감사의 정권 지르기.\n그 끝에 닿은 경지 ─ 「<b>백식관음</b>」',
-   outro:'※ 기도는, 공격보다 빠르다.',
-   cut:[{f:0,ms:900,z:1,dark:.5},
-        {f:1,ms:1000,z:1.2,chant:'감사합니다',sfx:'bell'},
-        {f:2,ms:1100,z:1.45,dark:.8,narr:'……'},
-        {f:3,ms:1000,z:1.05,aura:1,chant:'백식관음',sfx:'rumble'},
-        {f:4,ms:600,z:1.15,aura:1,lines:1},
-        {f:5,ms:1100,z:1.35,aura:1,hit:1,chant:'일(壹)의 손!',lines:1,sfx:'palm'},
-        {f:6,ms:800,z:1,aura:1},{f:7,ms:450}]},
+  {k:'aura',ic:'✊',n:'잔켄',img:'sk_aura.webp',
+   seq:[[0,250],[1,300],[2,350],[3,500],[4,220],[5,650],[6,350],[7,300]],
+   say:{1:'최초는 주먹…',3:'잔! 켄!',4:'바위!!'},hit:5,word:'잔켄 펀치!'},
+  {k:'card',ic:'🃏',n:'번지껌',img:'sk_card.webp',
+   seq:[[0,250],[1,550],[2,450],[3,500],[4,450],[5,450],[6,450],[7,300]],
+   say:{1:'♦',3:'고무와 껌의 성질 ♦',6:'♠ 후훗'},hit:4,word:'번지껌!'},
+  {k:'guardian',ic:'🙏',n:'백식관음',img:'sk_guardian.webp',
+   seq:[[0,300],[1,450],[2,650],[3,650],[4,350],[5,800],[6,450],[7,350]],
+   say:{1:'감사합니다',2:'…',4:'영(零)의 손'},hit:5,word:'백식관음!'},
 ];
 SKILLS.forEach(sk=>{const i=new Image();i.src=sk.img;});
 $('skills').insertAdjacentHTML('beforeend',SKILLS.map((sk,i)=>`<button type="button" data-i="${i}"><i>${sk.ic}</i>${sk.n}</button>`).join(''));
 $('skills').addEventListener('click',e=>{const b=e.target.closest('button');if(b)useSkill(SKILLS[+b.dataset.i]);});
-const CSFX={
-  charge:()=>[0,1,2].forEach(i=>tone(180+i*120,.09,'square',.03,140,i*.05)),
-  hold:()=>noise(.7,.03,400),
-  punch:()=>{SFX.thud();SFX.clang();noise(.5,.1,2500);},
-  card:()=>tone(1500,.18,'triangle',.05,600),
-  whoosh:()=>noise(.25,.06,3000),
-  stretch:()=>tone(260,.6,'sawtooth',.035,420),
-  snap:()=>{tone(900,.25,'sine',.08,-700);SFX.thud();},
-  bell:()=>[523,784,1046].forEach((x,i)=>tone(x,.6,'triangle',.035,0,i*.12)),
-  rumble:()=>{noise(1.2,.07,300);tone(55,1.1,'sawtooth',.04,10);},
-  palm:()=>{SFX.thud();noise(.6,.14,3500);tone(140,.5,'square',.05,-80);},
+const SFXS={
+  aura:f=>f===5?(SFX.thud(),SFX.clang()):f>=2&&f<=4?SFX.charge(f/5):0,
+  card:f=>f===2?tone(1200,.12,'triangle',.06,-600):f===4?tone(300,.4,'sawtooth',.04,500):f===5?tone(700,.3,'sine',.06,-500):0,
+  guardian:f=>f===2?[523,784].forEach((x,i)=>tone(x,.4,'triangle',.04,0,i*.1)):f===3?noise(.6,.05,600):f===5?(SFX.thud(),noise(.4,.12,3000)):0,
 };
-const cam=$('cam');
-function focusAt(where){const h=heroH(),x=toPx(hx),y=GH()*.93-h*(where==='head'?.82:.55);return{x,y};}
-function zoom(z,where){const {x,y}=focusAt(where);cam.style.transformOrigin=`${x}px ${y}px`;cam.style.transform=z===1?'':`scale(${z})`;
-  const l=$('lines');l.style.setProperty('--lx',(x/GW()*62.5+18.75)+'%');l.style.setProperty('--ly',(y/GH()*62.5+18.75)+'%');}
-let narrT=null;
-function narr(html){const el=$('narr');clearInterval(narrT);const plain=html.replace(/<[^>]+>/g,'');let i=0;
-  narrT=setInterval(()=>{i++;if(i>=plain.length){clearInterval(narrT);el.innerHTML=html.replace(/\n/g,'<br>');return;}el.textContent=plain.slice(0,i);},34);}
-function chant(t,ac){const d=document.createElement('div');d.className='chant';d.textContent=t;d.style.setProperty('--ac',ac);game.appendChild(d);setTimeout(()=>d.remove(),720);}
-function particles(ac,n=6){const h=heroH(),x=toPx(hx),y=GH()*.93;for(let i=0;i<n;i++){const p=document.createElement('div');p.className='ptc';p.style.setProperty('--ac',ac);
-  p.style.setProperty('--dx',(Math.random()*30-15)+'px');p.style.left=(x+(Math.random()-.5)*h*.6)+'px';p.style.top=(y-Math.random()*h*.8)+'px';cam.appendChild(p);setTimeout(()=>p.remove(),1000);}}
-async function impact(){game.classList.add('impact');await sleep(70);game.classList.remove('impact');const w=$('wflash');w.classList.add('on');setTimeout(()=>w.classList.remove('on'),50);shake();}
 async function useSkill(sk){ac();if(!started)start();if(busy)return;busy=true;$('dice').classList.remove('ready');
   await walkTo(120);face=1;place();
-  game.classList.add('cine');hero.style.setProperty('--ac',sk.ac);narr(sk.intro);await sleep(500);
   const el=$('skl');el.style.backgroundImage=`url(${sk.img})`;hero.classList.add('skill');
-  for(const c of sk.cut){el.style.backgroundPosition=(c.f/7*100)+'% 0';
-    if(c.dark!=null)$('cdark').style.opacity=c.dark;
-    if(c.z!=null){cam.classList.toggle('snap',!!c.hit);zoom(c.z,c.focus);}
-    hero.classList.toggle('aura',!!c.aura);$('lines').classList.toggle('on',!!c.lines);
-    if(c.narr)narr(c.narr);if(c.sfx&&CSFX[c.sfx])CSFX[c.sfx]();
-    if(c.chant)chant(c.chant,sk.ac);
-    if(c.aura)particles(sk.ac,c.hit?14:6);
-    if(c.hit)impact();
-    await sleep(c.ms);}
-  narr(sk.outro);hero.classList.remove('skill','aura');$('lines').classList.remove('on');cam.classList.remove('snap');zoom(1);$('cdark').style.opacity=0;setF(F.stand);
-  await sleep(1300);game.classList.remove('cine');
-  msg('SKILL',`${sk.ic} ${sk.n}`,sk.intro.replace(/<[^>]+>/g,''));
+  for(const [f,ms] of sk.seq){el.style.backgroundPosition=(f/7*100)+'% 0';SFXS[sk.k](f);
+    if(sk.say[f])say(sk.say[f],Math.max(900,ms+300));
+    if(f===sk.hit){banner(sk.word,1200);shake();const w=$('wflash');w.classList.add('on');setTimeout(()=>w.classList.remove('on'),60);}
+    await sleep(ms);}
+  hero.classList.remove('skill');setF(F.stand);
+  msg('SKILL',`${sk.ic} ${sk.n}`,{aura:'최초는 주먹, 잔! 켄! 바위!\n오라를 모은 주먹이 바벨을 향한다.',card:'카드 한 장에 분홍 오라.\n늘어나고 줄어드는 근육의 성질.',guardian:'감사의 합장.\n금빛 거인이 Moti 뒤에 섰다.'}[sk.k]);
   busy=false;$('dice').classList.add('ready');}
 
 /* ═════════ 입력 · 시작 ═════════ */
@@ -615,7 +539,7 @@ $('help').addEventListener('click',e=>{if(e.target.id==='rs'){e.stopPropagation(
 addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();if(cur&&!cur.s.done&&mgov.hidden){if(!e.repeat)cur.g.down&&cur.g.down(cur.s,cur.s.end,0);}else if(!busy)roll();}});
 addEventListener('keyup',e=>{if((e.key===' '||e.key==='Enter')&&cur&&cur.g.up)cur.g.up(cur.s,cur.s.end);});
 $('helpBody').innerHTML=`<h3>🎲 하는 법</h3>주사위를 굴리면 나온 칸을 ${TO}가 해요.<br>
-<b>1 스내치</b> 추 타이밍 · <b>2 클린앤저크</b> 꾹 눌렀다 놓기 · <b>3 백스쿼트</b> 2초 연타<br>
+<b>1 스내치</b> 추 타이밍 · <b>2 클린앤저크</b> 꾹 눌렀다 놓기 · <b>3 백스쿼트</b> 1초 연타<br>
 <b>4 밥</b> 파워포션 (하차푸리면 2개) → 스내치<br><b>5 잠</b> 회복포션 → 클린앤저크<br><b>6 똥</b> 근육포션 → 백스쿼트<br>아래 <b>필살기</b> 버튼은 언제든 눌러서 볼 수 있어요.<br>
 역도 화면에서 포션을 마시면 레벨이 올라 아주 조금 쉬워져요. 레벨은 계속 쌓여요.<br>
 기록(PR)은 그 종목 최고 무게예요. 잘해야만 바뀌어요.<br>역도 합계 ${LETTER_AT}kg을 넘기면 선물이 있어요.<br><button class="rs" id="rs" type="button">기록 지우고 처음부터</button><small>made by ${FROM} · 아무 곳이나 눌러 닫기</small>`;
