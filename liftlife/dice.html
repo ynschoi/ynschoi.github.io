@@ -133,7 +133,7 @@
   .cover[hidden]{display:none}
 
   /* ═══ 아래: 주사위 패드 ═══ */
-  .pad{background:linear-gradient(#2a2060,#1a1440);padding:14px 12px 18px;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:14px}
+  .pad{background:linear-gradient(#2a2060,#1a1440);padding:14px 12px 16px;row-gap:12px;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:14px}
   .diebtn{width:118px;height:118px;display:grid;place-items:center;position:relative}
   .die{width:88px;height:88px;background:#fff;border-radius:14px;box-shadow:inset -6px -7px 0 #c9c4e8,0 0 0 3px #111,0 6px 0 3px #000;position:relative;transition:transform .15s}
   .die i{position:absolute;width:16px;height:16px;border-radius:50%;background:#111;transform:translate(-50%,-50%)}
@@ -152,6 +152,16 @@
   .lg2.lift em{background:var(--gold)}
   .lg2.hit{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold);color:#fff}
 
+  /* 필살기 */
+  .hero .skl{position:absolute;left:-20%;top:-20%;width:140%;height:140%;background:0 0/800% 100% no-repeat;display:none;filter:drop-shadow(0 3px 0 rgba(0,0,0,.25))}
+  .hero.skill .spr{visibility:hidden}.hero.skill .skl{display:block}
+  .wflash{position:absolute;inset:0;z-index:11;background:#fff;opacity:0;pointer-events:none;transition:opacity .25s}
+  .wflash.on{opacity:.8;transition:none}
+  .skills{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+  .skills button{display:flex;align-items:center;justify-content:center;gap:5px;height:34px;border:2px solid var(--gold);background:linear-gradient(#3a2f7a,#241c55);font:700 11px var(--px);color:#fff;box-shadow:0 3px 0 #000;white-space:nowrap}
+  .skills button:active{transform:translateY(2px);box-shadow:0 1px 0 #000}
+  .skills button i{font-style:normal;font-size:14px}
+  .skills .lb{grid-column:1/-1;font-size:9px;color:var(--violet);margin-bottom:-2px}
   .help{position:absolute;inset:0;z-index:30;background:#0b0820ee;display:flex;align-items:center;justify-content:center;padding:16px}
   .help[hidden]{display:none}
   .help div{border:3px solid #fff;padding:14px 16px;background:#15102e;max-width:340px;font:13px/1.6 var(--font);color:var(--ink)}
@@ -187,7 +197,7 @@
     <canvas id="room" width="240" height="138"></canvas>
     <div class="hero" id="hero">
       <div class="bubble" id="bubble"></div>
-      <div class="flip"><div class="spr" id="spr"></div><div class="bb" id="bb"></div></div>
+      <div class="flip"><div class="spr" id="spr"></div><div class="skl" id="skl"></div><div class="bb" id="bb"></div></div>
       <div class="sh"></div>
     </div>
     <canvas class="tfront" id="tfront" width="30" height="22"></canvas>
@@ -195,6 +205,7 @@
     <div class="hud" id="hud"></div>
     <button class="tb" id="hlp" type="button">?</button>
     <button class="tb" id="snd" type="button">♪ ON</button>
+    <div class="wflash" id="wflash"></div>
     <div class="banner" id="banner"></div>
     <div class="mg" id="mg">
       <canvas id="mgc" width="640" height="340"></canvas>
@@ -214,6 +225,7 @@
   <section class="pad">
     <button class="diebtn ready" id="dice" type="button" aria-label="주사위 굴리기"><div class="die" id="die"></div><small>TAP!</small></button>
     <div class="legend" id="legend"></div>
+    <div class="skills" id="skills"><span class="lb">필살기 · 눌러서 보기</span></div>
   </section>
 
   <div class="help" id="help" hidden><div id="helpBody"></div></div>
@@ -487,6 +499,37 @@ const mpos=e=>{const r=mgc.getBoundingClientRect();return (e.clientX-r.left)/r.w
 mg.addEventListener('pointerdown',e=>{if(!cur||cur.s.done||!mgov.hidden)return;e.preventDefault();try{mg.setPointerCapture(e.pointerId);}catch(_){}cur.g.down&&cur.g.down(cur.s,cur.s.end,mpos(e));});
 ['pointerup','pointercancel'].forEach(ev=>mg.addEventListener(ev,()=>{if(cur&&cur.g.up)cur.g.up(cur.s,cur.s.end);}));
 
+/* ═════════ 필살기 (헌터헌터 패러디) ═════════ */
+const SKILLS=[
+  {k:'aura',ic:'✊',n:'잔켄',img:'sk_aura.webp',
+   seq:[[0,250],[1,300],[2,350],[3,500],[4,220],[5,650],[6,350],[7,300]],
+   say:{1:'최초는 주먹…',3:'잔! 켄!',4:'바위!!'},hit:5,word:'잔켄 펀치!'},
+  {k:'card',ic:'🃏',n:'번지껌',img:'sk_card.webp',
+   seq:[[0,250],[1,550],[2,450],[3,500],[4,450],[5,450],[6,450],[7,300]],
+   say:{1:'♦',3:'고무와 껌의 성질 ♦',6:'♠ 후훗'},hit:4,word:'번지껌!'},
+  {k:'guardian',ic:'🙏',n:'백식관음',img:'sk_guardian.webp',
+   seq:[[0,300],[1,450],[2,650],[3,650],[4,350],[5,800],[6,450],[7,350]],
+   say:{1:'감사합니다',2:'…',4:'영(零)의 손'},hit:5,word:'백식관음!'},
+];
+SKILLS.forEach(sk=>{const i=new Image();i.src=sk.img;});
+$('skills').insertAdjacentHTML('beforeend',SKILLS.map((sk,i)=>`<button type="button" data-i="${i}"><i>${sk.ic}</i>${sk.n}</button>`).join(''));
+$('skills').addEventListener('click',e=>{const b=e.target.closest('button');if(b)useSkill(SKILLS[+b.dataset.i]);});
+const SFXS={
+  aura:f=>f===5?(SFX.thud(),SFX.clang()):f>=2&&f<=4?SFX.charge(f/5):0,
+  card:f=>f===2?tone(1200,.12,'triangle',.06,-600):f===4?tone(300,.4,'sawtooth',.04,500):f===5?tone(700,.3,'sine',.06,-500):0,
+  guardian:f=>f===2?[523,784].forEach((x,i)=>tone(x,.4,'triangle',.04,0,i*.1)):f===3?noise(.6,.05,600):f===5?(SFX.thud(),noise(.4,.12,3000)):0,
+};
+async function useSkill(sk){ac();if(!started)start();if(busy)return;busy=true;$('dice').classList.remove('ready');
+  await walkTo(120);face=1;place();
+  const el=$('skl');el.style.backgroundImage=`url(${sk.img})`;hero.classList.add('skill');
+  for(const [f,ms] of sk.seq){el.style.backgroundPosition=(f/7*100)+'% 0';SFXS[sk.k](f);
+    if(sk.say[f])say(sk.say[f],Math.max(900,ms+300));
+    if(f===sk.hit){banner(sk.word,1200);shake();const w=$('wflash');w.classList.add('on');setTimeout(()=>w.classList.remove('on'),60);}
+    await sleep(ms);}
+  hero.classList.remove('skill');setF(F.stand);
+  msg('SKILL',`${sk.ic} ${sk.n}`,{aura:'최초는 주먹, 잔! 켄! 바위!\n오라를 모은 주먹이 바벨을 향한다.',card:'카드 한 장에 분홍 오라.\n늘어나고 줄어드는 근육의 성질.',guardian:'감사의 합장.\n금빛 거인이 Moti 뒤에 섰다.'}[sk.k]);
+  busy=false;$('dice').classList.add('ready');}
+
 /* ═════════ 입력 · 시작 ═════════ */
 $('dice').addEventListener('click',roll);
 $('cover').addEventListener('click',start);
@@ -497,7 +540,7 @@ addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault
 addEventListener('keyup',e=>{if((e.key===' '||e.key==='Enter')&&cur&&cur.g.up)cur.g.up(cur.s,cur.s.end);});
 $('helpBody').innerHTML=`<h3>🎲 하는 법</h3>주사위를 굴리면 나온 칸을 ${TO}가 해요.<br>
 <b>1 스내치</b> 추 타이밍 · <b>2 클린앤저크</b> 꾹 눌렀다 놓기 · <b>3 백스쿼트</b> 2초 연타<br>
-<b>4 밥</b> 파워포션 (하차푸리면 2개) → 스내치<br><b>5 잠</b> 회복포션 → 클린앤저크<br><b>6 똥</b> 근육포션 → 백스쿼트<br>
+<b>4 밥</b> 파워포션 (하차푸리면 2개) → 스내치<br><b>5 잠</b> 회복포션 → 클린앤저크<br><b>6 똥</b> 근육포션 → 백스쿼트<br>아래 <b>필살기</b> 버튼은 언제든 눌러서 볼 수 있어요.<br>
 역도 화면에서 포션을 마시면 레벨이 올라 아주 조금 쉬워져요. 레벨은 계속 쌓여요.<br>
 기록(PR)은 그 종목 최고 무게예요. 잘해야만 바뀌어요.<br>역도 합계 ${LETTER_AT}kg을 넘기면 선물이 있어요.<br><button class="rs" id="rs" type="button">기록 지우고 처음부터</button><small>made by ${FROM} · 아무 곳이나 눌러 닫기</small>`;
 
