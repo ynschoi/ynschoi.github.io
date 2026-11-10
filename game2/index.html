@@ -791,7 +791,7 @@ addEventListener('keydown',e=>{const k=KB[e.key];if(!k||e.repeat)return;e.preven
 addEventListener('keyup',e=>{const k=KB[e.key];if(!k)return;press(k,false);document.querySelector(`[data-k="${k}"]`)?.classList.remove('on');});
 $('help').onpointerdown=()=>$('help').classList.remove('on');
 $('spk').addEventListener('pointerdown',e=>{e.stopPropagation();goBack();});
-$('lsel').addEventListener('pointerdown',e=>{const b=e.target.closest('button');e.stopPropagation();e.preventDefault();if(!b)return;setLang(b.dataset.l);[...$('lsel').children].forEach(x=>x.classList.toggle('on',x===b));});
+$('lsel').addEventListener('pointerdown',e=>{const b=e.target.closest('button');e.stopPropagation();e.preventDefault();if(!b)return;setLang(b.dataset.l);[...$('lsel').children].forEach(x=>x.classList.toggle('on',x===b));start();});
 $('cover').addEventListener('pointerdown',()=>start());
 $('langBtn').addEventListener('pointerdown',e=>{e.stopPropagation();e.preventDefault();setLang(lang=='ko'?'en':'ko');});
 ['touchstart','touchend','gesturestart','dblclick','contextmenu'].forEach(t=>document.addEventListener(t,e=>{if(!e.target.closest('.win,.idc'))e.preventDefault();},{passive:false}));   /* 아이폰 돋보기·확대 막기 */
