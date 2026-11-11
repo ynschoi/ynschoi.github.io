@@ -425,7 +425,11 @@ function cjBands(L){const k=EASE.cj(L),b=[{n:'초록',w:.07,c:'#16a34a',add:1,g:
 const $=id=>document.getElementById(id);
 const game=$('game'),hero=$('hero'),spr=$('spr');
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-const pick=a=>a[Math.floor(Math.random()*a.length)];
+/* 카드 섞기: 같은 목록에서는 한 바퀴 다 나오기 전까지 같은 말 반복 안 함 */
+const BAGS=new Map();
+const pick=a=>{if(a.length<2)return a[0];const key=a.join('\u0001');let b=BAGS.get(key);
+  if(!b||!b.length){b=a.map((_,i)=>i).sort(()=>Math.random()-.5);const last=BAGS.get(key+'#');if(b.length>1&&b[b.length-1]===last)b.unshift(b.pop());BAGS.set(key,b);}
+  const i=b.pop();BAGS.set(key+'#',i);return a[i];};
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const rnd=(a,b)=>a+Math.random()*(b-a);
 const GW=()=>game.clientWidth,GH=()=>game.clientHeight;
@@ -863,8 +867,8 @@ const IDLE=[['Light weight baby!','Light weight baby!'],['Brown Sugar… 아니 
   ['내가 버거킹에서 패티 구워도, ...','If I flipped patties at Burger King, ...'],["It wasn't me ♪","It wasn't me ♪"],[null,'Хуй с ним…',1],[null,'Иди на хуй…',1]];
 let idleT=Date.now(),idleLast=-1;
 ['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{idleT=Date.now();},true));
-setInterval(()=>{if(!started||busy||cur||!$('help').hidden||!$('choose').hidden||document.hidden)return;if(Date.now()-idleT<8000)return;
-  const L=lang==='ko'?0:1;let i;do{i=Math.floor(Math.random()*IDLE.length);}while((i===idleLast||IDLE[i][L]==null||(IDLE[i][2]&&!RUON()))&&IDLE.length>1);idleLast=i;
+let idleGap=8000;setInterval(()=>{if(!started||busy||cur||!$('help').hidden||!$('choose').hidden||document.hidden)return;if(Date.now()-idleT<idleGap)return;idleGap=7000+Math.random()*6000;
+  const L=lang==='ko'?0:1,ok=IDLE.filter(x=>x[L]!=null&&!(x[2]&&!RUON())),i=IDLE.indexOf(pick(ok));
   let t=IDLE[i][L];if(RUON()&&!t.endsWith('...')&&Math.random()<.35)t=t.replace(/[\s!?♪…]+$/,'')+', ёпта!';
   say(t,2600);idleT=Date.now();},1000);
 function fitApp(){const app=$('app'),vh=(window.visualViewport&&visualViewport.height)||innerHeight;if(!vh)return;
