@@ -476,6 +476,7 @@ async function doEat(){await walkTo(SPOT.table-14);
     else{if(f===2||f===3||f===4){SFX.chew();pop(pick(['냠','쩝','우걱']),h.x,h.y-10,15);}if(f===5)SFX.gulp();if(f===7)say('든든하다 👍',900);}});
   actEnd(name);
   if(!kh){gotPot('P',1);msg('EAT','🍚 밥 먹음','밥 한 그릇 뚝딱.\n파워포션 1개! 마시면 스내치 추가 느려져요.');await sleep(300);return;}
+  if(window.__kcu??Math.random()<.5){CU.khach.on=i=>{if(i===0)SFX.chew();if(i===1)tone(300,.6,'sawtooth',.03,300);if(i===2)SFX.gulp();};hero.classList.add('gone');await closeup('khach');hero.classList.remove('gone');}   // 50% 확률 클로즈업
   // 하차푸리 랜덤 이벤트: 포션 0~3개
   const q=Math.random(),n=window.__kn??(q<.4?0:q<.7?1:q<.9?2:3),b=$('bubble');
   for(let i=0;i<10;i++){b.textContent=`포션… ${i%4}개?`;b.classList.add('on');SFX.tick();await sleep(70+i*12);}
@@ -531,6 +532,7 @@ async function doLift(k){await walkTo(SPOT.gym-4);setF(F.squat);say(pick(['간�
 /* 성공 컷: 상반신 클로즈업 + 요쓰! (전용 그림이 오면 YOSS_IMG/YOSS_F만 바꾸면 됨) */
 /* 클로즈업 컷: 상반신 3컷 가로 시트 + 큰 글자. 새 그림이 오면 CU에 한 줄 추가 */
 const CU={yoss:{img:'yoss.webp',word:'요쓰!',ms:[260,240,400]},
+  khach:{img:'cu_khach.webp',words:['앙!','쭈~욱','JMT'],ms:[700,900,800],quiet:1},
   poop:{img:'cu_poop.webp',words:['끄으응…','뿌직!!','해탈'],ms:[900,800,900],quiet:1}};
 async function closeup(key){const cu=CU[key];if(!cu)return;const c=$('cutin'),f=$('cutF'),h=(c.offsetHeight||GH()*.58)*1.08;
   c.querySelector('b').textContent=cu.word||cu.words[0];
