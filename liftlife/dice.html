@@ -77,7 +77,11 @@
   .hud{position:absolute;left:8px;top:8px;z-index:9;font-size:10px;background:#0b0820b0;padding:4px 7px}
   .hud b{color:var(--gold);font-weight:400}
   .tb{position:absolute;top:8px;z-index:9;font:700 10px var(--px);color:#fff;background:#0b0820cc;border:2px solid var(--gold);padding:3px 6px}
-  #snd{right:8px}#hlp{right:56px}
+  #snd{right:8px}#hlp{right:56px}#lng{right:82px}
+  .lsel{display:flex;gap:8px;margin:2px 0}
+  .lsel button{font:700 12px var(--px);color:#fff;padding:6px 12px;border:2px solid var(--violet);background:#0b0820;box-shadow:0 3px 0 #000}
+  .lsel button.on{border-color:var(--gold);color:#111;background:var(--gold)}
+  .cover.warned .lsel{display:none}
   .hero{position:absolute;bottom:7%;left:0;width:var(--hh,130px);height:var(--hh,130px);margin-left:calc(var(--hh,130px)/-2);z-index:6;pointer-events:none}
   .hero .flip{position:absolute;inset:0;transform-origin:50% 98%}
   .hero.left .flip{transform:scaleX(-1)}
@@ -253,6 +257,7 @@
     <canvas class="tfront" id="tfront" width="30" height="22"></canvas>
     <div class="night" id="night"></div>
     <div class="hud" id="hud"></div>
+    <button class="tb" id="lng" type="button">KO</button>
     <button class="tb" id="hlp" type="button">?</button>
     <button class="tb" id="snd" type="button">♪ ON</button>
     <div class="wflash" id="wflash"></div>
@@ -268,6 +273,7 @@
       <div class="tag">먹고 싸고 들어라</div>
       <div class="sub">EAT · POOP · LIFT</div>
       <div class="warn" id="warn" hidden></div>
+      <div class="lsel" id="lsel"><button type="button" data-l="ko">한국어</button><button type="button" data-l="en">English</button></div>
       <div class="ins">TAP TO START</div>
       <div class="note">기록은 이 브라우저에 저장돼요</div>
     </div>
@@ -285,6 +291,12 @@
 <script>
 /* ═════════ 선물 설정: 이름은 여기서 바꿔요 ═════════ */
 const TO='Moti', FROM='영수';
+/* ═════════ 언어: 기본 English, 표지에서 고름 ═════════ */
+let lang='en';try{lang=localStorage.getItem('moti.lang')||'en';}catch(e){}
+const EN={"밥 한 그릇 뚝딱.\n파워포션 1개! 마시면 스내치 추가 느려져요.": "A bowl of rice, gone.\n+1 Power potion! Drink it to slow the snatch pendulum.", "치즈 가득 하차푸리.\n파워포션 ": "Cheesy khachapuri.\n+", "개! 마시면 스내치 추가 느려져요.": " Power potion! Drink it to slow the snatch pendulum.", "치즈 가득 하차푸리.\n이번엔 포션이 안 나왔다… 다음엔 3개?": "Cheesy khachapuri.\nNo potion this time… maybe 3 next time?", "시원하게 쾌변 성공.\n근육포션 1개! 마시면 백스쿼트 연타 시간이 늘어요.": "A clean, glorious poop.\n+1 Muscle potion! Drink it for more squat tap time.", " 시작. 근육이 자는 동안 자랐다.\n": " begins. Muscles grew overnight.\n", "회복포션 1개! 마시면 클린앤저크 게이지에 점수 칸이 생겨요.": "+1 Recovery potion! Drink it to add scoring zones to the C&J gauge.", "kg. 오늘은 기록 깰 수 있을까?\n아래 주사위를 눌러요.": "kg. Can you beat it today?\nTap the dice below.", "의 인생은 주사위에 달렸다.\n밥 · 똥 · 잠 · 그리고 역도. 아래 주사위를 눌러요.": "'s life is up to the dice.\nRice · Poop · Sleep · and lifting. Tap the dice below.", "밥 먹고, 똥 싸고, 잠 자고, 역도만 하는\n": "Eat, poop, sleep, lift. Repeat.\n", "의 인생 주사위.": "'s life dice.", "최초는 주먹, 잔! 켄! 바위!\n오라를 모은 주먹이 바벨을 향한다.": "First comes rock. Jan! Ken! Rock!\nAll the aura in one fist, aimed at the bar.", "카드 한 장에 분홍 오라.\n늘어나고 줄어드는 근육의 성질.": "One card, pink aura.\nMuscles that stretch and snap back.", "감사의 합장.\n금빛 거인이 Moti 뒤에 섰다.": "Hands together in thanks.\nA golden giant rises behind Moti.", "리듬 있게 걷는 발걸음.\n잔상이 여러 개로 갈라진다.": "A rhythmic stalking walk.\nThe afterimages split apart.", "을 마시면 조금 쉬워져요.": " makes it a bit easier.", "! 하지만 PR ": "! But PR ", "kg은 못 넘었다.\n": "kg still stands.\n", "PR 없음 그대로.": "No PR yet.", "바벨을 놓쳤다. PR ": "Dropped the bar. PR ", " 그대로.\n": " unchanged.\n", "kg 성공 (": "kg lifted (", "이전 기록 ": "Previous ", " · 합계 ": " · Total ", " (계속 쌓여요)\n": " (stacks forever)\n", "밥 칸이 나오면 생겨요.": "You get it from Rice.", "잠 칸이 나오면 생겨요.": "You get it from Sleep.", "똥 칸이 나오면 생겨요.": "You get it from Poop.", "\n지금 ": "\nNow ", "다시 왔구나, ": "Welcome back, ", "안녕, ": "Hi, ", "역도 합계 ": "Lifting total ", "추가 노란 곳에 올 때 탭!": "Tap when the pendulum hits yellow!", "꾹 누르고 가운데 칸에서 떼기!": "Hold, then release in the center zone!", "초 동안 다다다 연타!": "s: tap as fast as you can!", "바벨을 놓쳤다…": "Dropped the bar…", "마시면 → ": "Drink → ", " 마시기 (": " drink (", "▶ 시작": "▶ Start", "노란 곳에 가까울수록 무거움": "Closer to yellow = heavier", "가운데 칸에서 떼!": "Release in center!", "포션 마시면 칸 추가": "Potions add zones", "빨강 = 최고 점수": "Red = top score", "회 · 6회부터 PR": " taps · PR from 6", "다다다다!": "TAP TAP TAP!", "꾹 누르고": "Hold", "뭐 먹지?": "What to eat?", "파워포션 1개 확정": "+1 Power potion, guaranteed", "파워포션 0~3개 랜덤!": "0–3 Power potions, random!", "기록은 이 브라우저에 저장돼요": "Progress is saved in this browser", "필살기 · 눌러서 보기": "Special moves · tap to watch", "먹고 싸고 들어라": "Eat Poop Lift", "포션… ": "Potions… ", "1개!": "1!", "2개!!": "2!!", "3개!!! 대박": "3!!! JACKPOT", "하암~": "Yawn~", "잘 자, 내 근육": "Good night, muscles", "오늘도 수고했다": "Good work today", "밥이다": "Rice time", "탄수화물 충전": "Carb loading", "오늘은 밥 세 공기": "Three bowls today", "하차푸리다!!! 🧀": "Khachapuri!!! 🧀", "든든하다 👍": "So full 👍", "행복해~": "Happy~", "배만 부르다…": "Just full…", "신호 왔다…!": "Nature calls…!", "개운~ ✨": "Refreshed~ ✨", "역도 하고 싶다": "I wanna lift", "가볍네": "Light work", "이게 사는 맛이지": "This is living", "근육아 고마워": "Thanks, muscles", "간다...!": "Here we go...!", "집중": "Focus", "후우...": "Phew...", "캬~": "Ahh~", "힘이 솟는다": "Power surge", "아깝다": "So close", "조금만 더": "Just a bit more", "다음엔 넘는다": "Next time", "으아아...": "Argh...", "오늘은 컨디션이...": "Off day...", "바벨이 무거운 게 아니라...": "It's not the bar...", "꿀꺽": "Gulp", "요쓰!!": "YOSH!!", "냠": "nom", "쩝": "munch", "우걱": "chomp", "최초는 주먹…": "First comes rock…", "잔! 켄!": "Jan! Ken!", "바위!!": "ROCK!!", "고무와 껌의 성질 ♦": "Rubber AND gum ♦", "♠ 후훗": "♠ heh", "감사합니다": "Thank you", "영(零)의 손": "Zero Hand", "지곡(肢曲)": "Rhythm Echo", "잡았다": "Got you", "잭팟!!": "JACKPOT!!", "잔켄 펀치!": "JAJANKEN!", "번지껌!": "BUNGEE GUM!", "백식관음!": "KANNON!", "지곡!": "RHYTHM ECHO!", "요쓰!": "YOSH!", "끄으응…": "Nnngh…", "뿌직!!": "PLOP!!", "해탈": "Nirvana", "앙!": "CHOMP!", "쭈~욱": "Stretchy~", "행복…": "Bliss…", "신기록!": "NEW PR!", "밥!": "Rice!", "잠!": "Sleep!", "똥!": "Poop!", "꿀꺽!": "gulp!", " 없음": ": none", "PR 없음": "PR —", "실패": "missed", "🍚 밥 먹음": "🍚 Ate rice", "💩 쾌변": "💩 Smooth poop", "😴 꿀잠": "😴 Deep sleep", "클린앤저크": "Clean & Jerk", "백스쿼트": "Back Squat", "스내치": "Snatch", "클린저크": "C&J", "스쿼트": "Squat", "하차푸리": "Khachapuri", "파워포션": "Power potion", "회복포션": "Recovery potion", "근육포션": "Muscle potion", "잔켄": "Jajanken", "번지껌": "Bungee Gum", "백식관음": "Kannon", "지곡": "Rhythm Echo", "합계": "Total", "포션": "Potion", "가방": "Bag", "파워": "Power", "회복": "Recover", "근육": "Muscle", "진초록": "dark green", "초록": "green", "노랑": "yellow", "빨강": "red"};
+const EN_X={"밥": "Rice", "잠": "Sleep", "똥": "Poop", "백스쿼트": "Squat", "클린앤저크": "C&J"};
+const EN_K=Object.keys(EN).sort((a,b)=>b.length-a.length);
+function tr(t){if(lang==='ko'||t==null)return t;t=String(t);const x=t.trim();if(EN_X[x]!=null)return t.replace(x,EN_X[x]);for(const k of EN_K)if(t.includes(k))t=t.split(k).join(EN[k]);return t;}
 const SHARE_URL='https://claude.ai/artifact/Cs1xss3g2bppqQWmVQVA5J';   // 외부 브라우저로 열 주소
 const josa=(w,a,b)=>{const c=w.charCodeAt(w.length-1);return (c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28)?a:b;};
 const TOya=TO+josa(TO,'아','야');
@@ -310,7 +322,7 @@ const POTK={sn:'P',cj:'R',sq:'M'},POTN={P:'파워포션',R:'회복포션',M:'근
 const EASE={sn:L=>Math.max(.35,Math.pow(.97,L)),   // 추 속도 배율
             cj:L=>Math.min(1.6,1+.04*Math.max(0,L-5)),   // Lv5 이후 안쪽 칸 넓어지는 배율
             sq:L=>Math.min(3,1+.1*L)};             // 연타 제한 시간(초)
-const easeText=(k,L)=>k==='cj'?`칸 <b>${cjBands(L).map(b=>b.n).join('·')}</b>${L>5?` (넓이 ×${EASE.cj(L).toFixed(2)})`:''}`:k==='sq'?`제한 시간 <b>${EASE.sq(L).toFixed(1)}초</b>`:`${k==='sn'?'추':'게이지'} 속도 <b>${Math.round(EASE[k](L)*100)}%</b>`;
+const easeText=(k,L)=>{const ko=lang==='ko';return k==='cj'?`${ko?'칸':'Zones:'} <b>${cjBands(L).map(b=>tr(b.n)).join('·')}</b>${L>5?` (${ko?'넓이':'width'} ×${EASE.cj(L).toFixed(2)})`:''}`:k==='sq'?`${ko?'제한 시간':'Time limit'} <b>${EASE.sq(L).toFixed(1)}${ko?'초':'s'}</b>`:`${ko?'추 속도':'Pendulum speed'} <b>${Math.round(EASE[k](L)*100)}%</b>`;};
 const r05=v=>Math.round(v*2)/2;
 /* 성장 곡선: 초보 → 세계신기록 ×1.2 까지. 남은 거리가 줄수록 오르는 양이 (남은비율)^1.5 로 줄어듦 */
 const WR={sn:225,cj:267,sq:490};                 // 남자 세계신기록 (스내치·클린앤저크: 탈라카제, 백스쿼트: 레이 윌리엄스 노벨트)
@@ -345,10 +357,24 @@ function tone(f,d=.08,type='square',v=.06,slide=0,delay=0){if(!sound)return;cons
   g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(c.destination);o.start(t);o.stop(t+d+.02);}
 function noise(d=.2,v=.08,freq=800,delay=0){if(!sound)return;const c=ac();if(!c)return;const t=c.currentTime+delay,n=c.sampleRate*d,b=c.createBuffer(1,n,c.sampleRate),a=b.getChannelData(0);
   for(let i=0;i<n;i++)a[i]=(Math.random()*2-1)*(1-i/n);const s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();s.buffer=b;f.type='lowpass';f.frequency.value=freq;g.gain.value=v;s.connect(f).connect(g).connect(c.destination);s.start(t);}
+/* 효과음 재료 */
+function sweep(f0,f1,d,type='sawtooth',v=.05,delay=0){if(!sound)return;const c=ac();if(!c)return;const t=c.currentTime+delay,o=c.createOscillator(),g=c.createGain();
+  o.type=type;o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(Math.max(20,f1),t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(c.destination);o.start(t);o.stop(t+d+.02);}
+function bell(f=523,d=1.6,v=.05,delay=0){[1,2.76,5.4,8.93].forEach((m,i)=>tone(f*m,d/(i+1),'sine',v/(i+1),0,delay));}
+function boom(v=.2,delay=0){sweep(120,32,.9,'sine',v,delay);noise(.6,v*.7,700,delay);noise(.12,v*.5,5000,delay);}
+function crackle(n=6,v=.05,delay=0){for(let i=0;i<n;i++)noise(.03,v*(.5+Math.random()),3000+Math.random()*4000,delay+i*.035+Math.random()*.02);}
+function boing(f=220,d=.5,v=.05,delay=0){if(!sound)return;const c=ac();if(!c)return;const t=c.currentTime+delay,o=c.createOscillator(),l=c.createOscillator(),lg=c.createGain(),g=c.createGain();
+  o.type='triangle';o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f*1.8,t+d);l.frequency.value=14;lg.gain.value=f*.25;l.connect(lg).connect(o.frequency);
+  g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(c.destination);o.start(t);l.start(t);o.stop(t+d+.02);l.stop(t+d+.02);}
+function whoosh(d=.35,v=.08,delay=0){if(!sound)return;const c=ac();if(!c)return;const t=c.currentTime+delay,n=c.sampleRate*d,b=c.createBuffer(1,n,c.sampleRate),a=b.getChannelData(0);
+  for(let i=0;i<n;i++)a[i]=(Math.random()*2-1)*Math.sin(Math.PI*i/n);const sr=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();sr.buffer=b;f.type='bandpass';f.Q.value=1.2;
+  f.frequency.setValueAtTime(400,t);f.frequency.exponentialRampToValueAtTime(3500,t+d);g.gain.value=v;sr.connect(f).connect(g).connect(c.destination);sr.start(t);}
+function sparkle(v=.03,delay=0){[1568,2093,2637,3136].forEach((f,i)=>tone(f,.12,'sine',v,0,delay+i*.05));}
 const SFX={
-  tick:()=>tone(600+Math.random()*300,.03,'square',.03),
+  tick:()=>{tone(600+Math.random()*300,.03,'square',.03);noise(.02,.03,4000+Math.random()*3000);},
+  step:()=>{tone(90+Math.random()*30,.04,'triangle',.035);noise(.02,.02,700);},
   land:()=>{tone(180,.12,'square',.08,-60);noise(.08,.06,2000);},
-  chew:()=>{tone(220,.05,'square',.04);tone(180,.05,'square',.03,0,.07);},
+  chew:()=>{const b=170+Math.random()*90;tone(b,.05,'square',.04);tone(b*.8,.05,'square',.03,0,.07);noise(.04,.02,1500,.02);},
   gulp:()=>tone(500,.12,'sine',.08,-300),
   fart:()=>{if(!sound)return;const c=ac();if(!c)return;const t=c.currentTime,o=c.createOscillator(),l=c.createOscillator(),lg=c.createGain(),g=c.createGain();
     o.type='sawtooth';o.frequency.setValueAtTime(95,t);o.frequency.linearRampToValueAtTime(60,t+.55);l.frequency.value=26;lg.gain.value=30;l.connect(lg).connect(o.frequency);
@@ -359,7 +385,8 @@ const SFX={
   charge:p=>tone(200+p*600,.03,'square',.025),
   clang:()=>{tone(1400,.35,'triangle',.08,-200);tone(1900,.25,'square',.03,-500);noise(.15,.08,4000);},
   thud:()=>{tone(90,.25,'sine',.15,-50);noise(.18,.1,500);},
-  potion:()=>[660,880,1320].forEach((f,i)=>tone(f,.09,'triangle',.06,0,i*.06)),
+  potion:()=>{[660,880,1320].forEach((f,i)=>tone(f,.09,'triangle',.06,0,i*.06));sparkle(.02,.18);},
+  glug:()=>{for(let i=0;i<4;i++)sweep(260+Math.random()*80,120,.09,'sine',.07,i*.11);},
   win:()=>[523,659,784,1047].forEach((f,i)=>tone(f,.12,'square',.05,0,i*.09)),
   fail:()=>[392,330,262].forEach((f,i)=>tone(f,.16,'square',.05,0,i*.13)),
   morning:()=>[784,988,1175,1568].forEach((f,i)=>tone(f,.1,'triangle',.06,0,i*.08)),
@@ -420,13 +447,13 @@ function actEnd(name){hero.classList.remove('acting');if(name){hx+=MV[name].end*
 async function playAct(name,seq,on){actSet(name);for(const [f,ms] of seq){actF(f);on&&on(f);await sleep(ms);}}
 function bgPt(fx,fy){const gw=GW(),gh=GH(),dw=Math.max(gw,gh*BG_AR),dh=dw/BG_AR;return{x:fx*dw-(dw-gw)/2,y:fy*dh-(dh-gh)/2};}
 function walkTo(x){return new Promise(res=>{if(Math.abs(x-hx)<1){res();return;}face=x>hx?1:-1;place();actSet('mv_walk');let k=0;actF(0);
-  clearInterval(walkT);walkT=setInterval(()=>actF(++k%8),95);let last=performance.now();
+  clearInterval(walkT);walkT=setInterval(()=>{actF(++k%8);if(k%4===0)SFX.step();},95);let last=performance.now();
   (function step(t){const dt=(t-last)/1000;last=t;const d=x-hx;hx+=Math.sign(d)*Math.min(Math.abs(d),90*dt);place();
     if(Math.abs(x-hx)<.5){hx=x;face=1;place();clearInterval(walkT);hero.classList.remove('acting');setF(F.stand);res();return;}requestAnimationFrame(step);})(last);});}
-function say(t,ms=1300){const b=$('bubble');b.textContent=t;b.classList.add('on');clearTimeout(say.t);say.t=setTimeout(()=>b.classList.remove('on'),ms);}
-function pop(t,x,y,size){const p=document.createElement('div');p.className='pop';p.textContent=t;p.style.left=x+'px';p.style.top=y+'px';if(size)p.style.fontSize=size+'px';game.appendChild(p);setTimeout(()=>p.remove(),900);}
+function say(t,ms=1300){const b=$('bubble');b.textContent=tr(t);b.classList.add('on');clearTimeout(say.t);say.t=setTimeout(()=>b.classList.remove('on'),ms);}
+function pop(t,x,y,size){const p=document.createElement('div');p.className='pop';p.textContent=tr(t);p.style.left=x+'px';p.style.top=y+'px';if(size)p.style.fontSize=size+'px';game.appendChild(p);setTimeout(()=>p.remove(),900);}
 function head(){const h=heroH();return{x:toPx(hx)+h*.06,y:GH()*.93-h*.86};}
-function banner(t,ms=1200){const b=$('banner');b.textContent=t;b.classList.add('on');clearTimeout(banner.t);banner.t=setTimeout(()=>b.classList.remove('on'),ms);}
+function banner(t,ms=1200){const b=$('banner');b.textContent=tr(t);b.classList.add('on');clearTimeout(banner.t);banner.t=setTimeout(()=>b.classList.remove('on'),ms);}
 function shake(){game.classList.remove('shake');void game.offsetWidth;game.classList.add('shake');}
 function setBar(on){const bb=$('bb');bb.classList.toggle('on',on);if(on&&!bb.childElementCount){bb.innerHTML=['#1b1b22','#1b1b22'].map((c,i)=>`<i style="left:${-4-i*6}%;height:${900-i*150}%;background:${c}"></i><i style="right:${-4-i*6}%;height:${900-i*150}%;background:${c}"></i>`).join('');}}
 
@@ -449,7 +476,7 @@ async function drinkNow(p){if(!started){start();return;}if(busy)return;const k=P
   msg('POTION',`🧪 ${POTN[p]} 꿀꺽!`,`${name} Lv${S.lv[k]} (계속 쌓여요)\n${easeText(k,S.lv[k]).replace(/<[^>]+>/g,'')}`);
   busy=true;$('dice').classList.remove('ready');
   const pv=Math.random()<.5?'mv_potion':'mv_potion2';   // 포션 그림 2종 랜덤
-  await playAct(pv,[[0,180],[1,240],[2,260],[3,320],[4,320],[5,300],[6,550],[7,450]],f=>{if(f===(pv==='mv_potion'?3:2))SFX.gulp();if(f===6)tone(660,.3,'triangle',.05,600);});
+  await playAct(pv,[[0,180],[1,240],[2,260],[3,320],[4,320],[5,300],[6,550],[7,450]],f=>{if(f===(pv==='mv_potion'?3:2))SFX.glug();if(f===6){sweep(300,1200,.4,'triangle',.05);sparkle(.03,.2);}});
   actEnd(pv);busy=false;$('dice').classList.add('ready');}
 [['P','potP'],['R','potR'],['M','potM']].forEach(([p,id])=>$(id).addEventListener('click',()=>{ac();drinkNow(p);}));
 
@@ -457,10 +484,10 @@ function gotPot(p,n=1){S.pot[p]+=n;save();paint();const el=$({P:'potP',R:'potR',
   const h=head(),f=document.createElement('img');f.className='fly';f.src=potionURL(p);f.style.cssText+=`;left:${h.x}px;top:${h.y}px;width:20px;height:28px`;game.appendChild(f);
   f.animate([{transform:'translateY(0) scale(.5)'},{transform:'translateY(-40px) scale(1.3)',opacity:1},{transform:'translateY(-70px) scale(.6)',opacity:0}],{duration:1000});setTimeout(()=>f.remove(),1000);}
 let typeT=null;
-function msg(tag,title,body,cls=''){const w=$('win');w.classList.remove('flash');void w.offsetWidth;w.classList.add('flash');
+function msg(tag,title,body,cls=''){title=tr(title);body=tr(body);const w=$('win');w.classList.remove('flash');void w.offsetWidth;w.classList.add('flash');
   w.classList.toggle('tall',cls==='letter');w.innerHTML=`<h2>${title}</h2><p class="${cls}" id="msgP"></p>`;
   const el=$('msgP');clearInterval(typeT);let i=0;typeT=setInterval(()=>{i++;el.innerHTML=body.slice(0,i).replace(/\n/g,'<br>')+'<span class="caret"></span>';if(i>=body.length)clearInterval(typeT);},26);}
-function renderLegend(hit){$('legend').innerHTML=FACES.map((f,i)=>`<div class="lg2${f.lift?' lift':''}${hit===i?' hit':''}"><em>${i+1}</em>${f.n}</div>`).join('');}
+function renderLegend(hit){$('legend').innerHTML=FACES.map((f,i)=>`<div class="lg2${f.lift?' lift':''}${hit===i?' hit':''}"><em>${i+1}</em>${tr(f.n)}</div>`).join('');}
 function showDie(n){$('die').className='die'+(n==1?' red':'');$('die').innerHTML=PIPS[n].map(([x,y])=>`<i style="left:${x}%;top:${y}%"></i>`).join('');}
 
 /* ═════════ 주사위 ═════════ */
@@ -490,7 +517,7 @@ async function doEat(){await walkTo(SPOT.table-14);
   if(window.__kcu??Math.random()<.5){CU.khach.on=i=>{if(i===0)SFX.chew();if(i===1)tone(300,.6,'sawtooth',.03,300);if(i===2)SFX.gulp();};hero.classList.add('gone');await closeup('khach');hero.classList.remove('gone');}   // 50% 확률 클로즈업
   // 하차푸리 랜덤 이벤트: 포션 0~3개
   const q=Math.random(),n=window.__kn??(q<.4?0:q<.7?1:q<.9?2:3),b=$('bubble');
-  for(let i=0;i<10;i++){b.textContent=`포션… ${i%4}개?`;b.classList.add('on');SFX.tick();await sleep(70+i*12);}
+  for(let i=0;i<10;i++){b.textContent=lang==='ko'?`포션… ${i%4}개?`:`Potions… ${i%4}?`;b.classList.add('on');SFX.tick();await sleep(70+i*12);}
   if(n){gotPot('P',n);say(['','1개!','2개!!','3개!!! 대박'][n],1300);banner(n===3?'잭팟!!':'+'+n,1000);if(n===3)SFX.win();}
   else{say('배만 부르다…',1300);SFX.fail();}
   msg('EAT','🧀 하차푸리',n?`치즈 가득 하차푸리.\n파워포션 ${n}개! 마시면 스내치 추가 느려져요.`:'치즈 가득 하차푸리.\n이번엔 포션이 안 나왔다… 다음엔 3개?');
@@ -546,10 +573,10 @@ const CU={yoss:{img:'yoss.webp',word:'요쓰!',ms:[260,240,400]},
   khach:{img:'cu_khach.webp',words:['앙!','쭈~욱','행복…'],ms:[700,900,800],quiet:1},
   poop:{img:'cu_poop.webp',words:['끄으응…','뿌직!!','해탈'],ms:[900,800,900],quiet:1}};
 async function closeup(key){const cu=CU[key];if(!cu)return;const c=$('cutin'),f=$('cutF'),h=(c.offsetHeight||GH()*.58)*1.08;
-  c.querySelector('b').textContent=cu.word||cu.words[0];
+  c.querySelector('b').textContent=tr(cu.word||cu.words[0]);
   f.style.backgroundImage=`url(${cu.img})`;f.style.width=h+'px';f.style.height=h+'px';f.style.backgroundSize='300% 100%';f.style.backgroundPosition='0 0';f.style.bottom='-8%';
   c.classList.remove('on');void c.offsetWidth;c.style.animationDuration=(cu.ms.reduce((a,b)=>a+b,0)/1000)+'s';c.classList.add('on');if(!cu.quiet){SFX.win();tone(880,.25,'square',.05,400,.15);}
-  for(let i=0;i<3;i++){f.style.backgroundPosition=(i*50)+'% 0';if(cu.words){const w=c.querySelector('b');w.textContent=cu.words[i];w.style.animation='none';void w.offsetWidth;w.style.animation='';}cu.on&&cu.on(i);await sleep(cu.ms[i]);}c.classList.remove('on');}
+  for(let i=0;i<3;i++){f.style.backgroundPosition=(i*50)+'% 0';if(cu.words){const w=c.querySelector('b');w.textContent=tr(cu.words[i]);w.style.animation='none';void w.offsetWidth;w.style.animation='';}cu.on&&cu.on(i);await sleep(cu.ms[i]);}c.classList.remove('on');}
 const yoss=()=>closeup('yoss');
 
 function showLetter(){SFX.win();banner('💌',1000);msg('LETTER',`💌 ${TO}에게`,`${TOya}, 너는 진짜 밥 먹고 똥 싸고 잠 자고 역도만 하더라.\n근데 그게 제일 멋있어. 오늘도 PR 갱신하자 💪\nFrom. ${FROM}`,'letter');}
@@ -560,12 +587,12 @@ const IMG=new Image();IMG.src='hero.webp';
 const W=320,H=170,FLOOR=150;
 function openMG(){mg.classList.add('on');}
 function closeMG(){mg.classList.remove('on');mgov.hidden=true;}
-function overlay(html){mgov.innerHTML=html;mgov.hidden=false;}
+function overlay(html){mgov.innerHTML=tr(html);mgov.hidden=false;}
 function drawStatic(){bg(mx);drawHero(mx,F.squat,80,118);}
 function prep(k){openMG();drawStatic();const p=POTK[k],name=FACES.find(f=>f.k===k).n;return new Promise(res=>{
   const draw=()=>{const L=S.lv[k],c=S.pot[p];overlay(`<div class="t">${name} · PR ${S[k]?S[k]+'kg':'없음'}</div><div class="g" style="font-size:20px">Lv${L}</div>
-    <div class="eff">지금 ${easeText(k,L)}${c?`<br>마시면 → ${easeText(k,L+1)}`:''}</div>
-    <div class="row"><button id="drink" type="button"${c?'':' disabled'}>🧪 ${POTN[p]} 마시기 (${c})</button><button class="y" id="go" type="button">▶ 시작</button></div>`);
+    <div class="eff">${lang==='ko'?'지금':'Now'} ${easeText(k,L)}${c?`<br>마시면 → ${easeText(k,L+1)}`:''}</div>
+    <div class="row"><button id="drink" type="button"${c?'':' disabled'}>🧪 ${lang==='ko'?POTN[p]+' 마시기':'Drink '+tr(POTN[p])} (${c})</button><button class="y" id="go" type="button">▶ 시작</button></div>`);
     $('drink').onclick=()=>{if(!S.pot[p])return;S.pot[p]--;S.lv[k]++;save();paint();SFX.potion();draw();};
     $('go').onclick=()=>{mgov.hidden=true;res();};};
   draw();});}
@@ -589,7 +616,7 @@ function drawLift(c,k,f,sh=0){const m=LIFTS['mv_'+k];if(!m||!m.im.complete||!m.i
 function drawHero(c,f,x=75,size=118,dy=0,sh=0){if(!IMG.complete)return;c.drawImage(IMG,f*400,0,400,400,x-size/2+(sh?rnd(-sh,sh):0),FLOOR+4-size-dy,size,size);}
 function plates(c,x,y,dir){['#1b1b22','#1b1b22','#1b1b22'].forEach((col,i)=>{const h=[30,26,22][i];c.fillStyle='#6b6b7a';c.fillRect(x+dir*i*5-1,y-h/2-1,6,h+2);c.fillStyle=col;c.fillRect(x+dir*i*5,y-h/2,4,h);c.fillStyle='#3a3a46';c.fillRect(x+dir*i*5+1,y-h/2+2,1,h-4);});}
 function bar(c,x1,x2,y){c.fillStyle='#111';c.fillRect(x1-1,y-2,x2-x1+2,5);c.fillStyle='#d8d8e4';c.fillRect(x1,y-1,x2-x1,3);plates(c,x1,y,1);plates(c,x2-4,y,-1);}
-function txt(c,t,x,y,size=12,col='#fff'){c.font=`bold ${size}px Galmuri11, monospace`;c.textAlign='center';c.lineWidth=3;c.strokeStyle='#111';c.strokeText(t,x,y);c.fillStyle=col;c.fillText(t,x,y);}
+function txt(c,t,x,y,size=12,col='#fff'){t=tr(t);c.font=`bold ${size}px Galmuri11, monospace`;c.textAlign='center';c.lineWidth=3;c.strokeStyle='#111';c.strokeText(t,x,y);c.fillStyle=col;c.fillText(t,x,y);}
 function gauge(c,x,y,w,h,p,col){c.fillStyle='#111';c.fillRect(x-2,y-2,w+4,h+4);c.fillStyle='#3a1020';c.fillRect(x,y,w,h);c.fillStyle=col;c.fillRect(x,y,w*clamp(p,0,1),h);}
 
 function sqRes(n){return n>=10?['PERFECT',grow('sq',1)]:n>=8?['GREAT',grow('sq',.5)]:n>=6?['GOOD',grow('sq',.15)]:['GOOD',under('sq',(6-n)/3)];}
@@ -629,7 +656,7 @@ const GAMES={
  sq:{init(s,L){s.t=0;s.lim=EASE.sq(L);s.taps=0;},
   update(s,dt){if(s.done)return;s.t+=dt;if(s.t>=s.lim){s.t=s.lim;const n=s.taps;if(n<3)return s.end('MISS',0,300);const r=sqRes(n);s.end(r[0],r[1],300);}},
   draw(c,s){bg(c);const kg=s.taps<3?0:sqRes(s.taps)[1],ok=s.done&&s.grade!=='MISS';if(!drawLift(c,'sq',liftF(s,s.taps?3:2),s.done?0:1.5)){drawHero(c,ok?F.stand:F.squat,90,118,0,s.done?0:1.5);bar(c,40,140,ok?98:86-Math.min(1,s.taps/20)*6);}
-   gauge(c,200,34,100,10,1-s.t/s.lim,'#ffd400');txt(c,(s.lim-s.t).toFixed(1)+'초',250,62,13,'#fff');
+   gauge(c,200,34,100,10,1-s.t/s.lim,'#ffd400');txt(c,(s.lim-s.t).toFixed(1)+(lang==='ko'?'초':'s'),250,62,13,'#fff');
    txt(c,kg?`${kg}kg`:'-',250,96,20,kg>(S.sq||0)?'#ffd400':'#fff');txt(c,`${s.taps}회 · 6회부터 PR`,250,118,10,'#fff');},
   down(s){if(s.done)return;s.taps++;SFX.tap();}},
 };
@@ -671,13 +698,25 @@ const SKILLS=[
           12:[[-55,.4],[-110,.25],[-165,.15]],13:[[-50,.3],[-100,.15]]}},
 ];
 SKILLS.forEach(sk=>{const i=new Image();i.src=sk.img;});
-$('skills').insertAdjacentHTML('beforeend',SKILLS.map((sk,i)=>`<button type="button" data-i="${i}"><i>${sk.ic}</i>${sk.n}</button>`).join(''));
+$('skills').insertAdjacentHTML('beforeend',SKILLS.map((sk,i)=>`<button type="button" data-i="${i}"><i>${sk.ic}</i><span>${sk.n}</span></button>`).join(''));
 $('skills').addEventListener('click',e=>{const b=e.target.closest('button');if(b)useSkill(SKILLS[+b.dataset.i]);});
 const SFXS={
-  aura:f=>f===5?(SFX.thud(),SFX.clang()):f>=2&&f<=4?SFX.charge(f/5):0,
-  killua:f=>f>=3&&f<=10?tone(220+f*25,.05,'triangle',.025):f===11?(noise(.25,.1,4000),tone(1200,.15,'square',.05,-900)):0,
-  card:f=>f===2?tone(1200,.12,'triangle',.06,-600):f===4?tone(300,.4,'sawtooth',.04,500):f===5?tone(700,.3,'sine',.06,-500):0,
-  guardian:f=>f===2?[523,784].forEach((x,i)=>tone(x,.4,'triangle',.04,0,i*.1)):f===3?noise(.6,.05,600):f===5?(SFX.thud(),noise(.4,.12,3000)):0,
+  /* 잔켄: 기 모으기 → 잔! 켄! → 바위!! 폭발 */
+  aura:f=>[()=>{sweep(80,160,.8,'sawtooth',.03);},()=>{tone(330,.12,'square',.06);tone(660,.08,'square',.03,0,.05);},
+    ()=>{tone(392,.12,'square',.06);sweep(200,600,.5,'sawtooth',.035,.05);},()=>{sweep(250,1400,.6,'sawtooth',.05);crackle(8,.05,.1);},
+    ()=>{tone(1800,.5,'sine',.02,300);noise(.5,.03,1200);},()=>{boom(.24);SFX.clang();crackle(10,.07,.05);},()=>{crackle(6,.04);noise(.6,.03,400);},()=>{sparkle(.025);}][f]?.(),
+  /* 번지껌: 카드 → 휙 → 띠용~ 늘어남 → 탁! */
+  card:f=>[()=>{for(let i=0;i<3;i++)noise(.03,.05,6000,i*.06);},()=>{noise(.05,.07,7000);sweep(900,1800,.12,'triangle',.04);},()=>{whoosh(.3,.08);},
+    ()=>{boing(180,.7,.06);},()=>{sweep(1200,90,.25,'sawtooth',.08);boom(.12,.05);},()=>{boing(320,.35,.05);sweep(600,200,.3,'sine',.04,.05);},
+    ()=>{sparkle(.03);},()=>{tone(196,.12,'square',.04);tone(147,.18,'square',.04,0,.13);}][f]?.(),
+  /* 백식관음: 종 → 합장 → 거인 등장 → 손바닥 일격 */
+  guardian:f=>[()=>{bell(392,2.2,.05);},()=>{noise(.06,.12,2500);bell(523,1.6,.04,.08);},()=>{[262,330,392,523].forEach((x,i)=>tone(x,1.4,'triangle',.022,0,i*.03));},
+    ()=>{noise(1.2,.07,250);sweep(40,90,1.2,'sawtooth',.05);},()=>{whoosh(.45,.12);},()=>{boom(.28);noise(.25,.12,6000);bell(784,1.8,.04,.05);},
+    ()=>{noise(.9,.04,300);},()=>{bell(523,2,.035);}][f]?.(),
+  /* 지곡: 리듬 발걸음 → 잔상 지지직 → 슉! */
+  killua:f=>{if(f<=10){tone(110+f*14,.06,'triangle',.05);noise(.025,.04,900);if(f>=4&&f%2===0)crackle(4,.035);}
+    if(f===11){whoosh(.18,.12);sweep(3000,300,.18,'square',.05);crackle(8,.06,.05);}
+    if(f===12)crackle(5,.04);if(f>=13)tone(90,.05,'triangle',.03);},
 };
 async function useSkill(sk){ac();if(!started)start();if(busy)return;busy=true;$('dice').classList.remove('ready');
   await walkTo(120);face=1;place();
@@ -707,22 +746,28 @@ $('dice').addEventListener('click',roll);
 $('cover').addEventListener('click',start);
 $('snd').addEventListener('click',()=>{sound=!sound;$('snd').textContent=sound?'♪ ON':'♪ OFF';});
 $('hlp').addEventListener('click',()=>{$('help').hidden=false;});
-$('help').addEventListener('click',e=>{if(e.target.id==='rs'){e.stopPropagation();if(e.target.dataset.ok){try{localStorage.removeItem(KEY);}catch(_){}location.reload();}else{e.target.dataset.ok=1;e.target.textContent='한 번 더 누르면 지워져요';}return;}$('help').hidden=true;});
+$('help').addEventListener('click',e=>{if(e.target.id==='rs'){e.stopPropagation();if(e.target.dataset.ok){try{localStorage.removeItem(KEY);}catch(_){}location.reload();}else{e.target.dataset.ok=1;e.target.textContent=lang==='ko'?'한 번 더 누르면 지워져요':'Tap again to erase';}return;}$('help').hidden=true;});
 addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();if(cur&&!cur.s.done&&mgov.hidden){if(!e.repeat)cur.g.down&&cur.g.down(cur.s,cur.s.end,0);}else if(!busy)roll();}});
 addEventListener('keyup',e=>{if((e.key===' '||e.key==='Enter')&&cur&&cur.g.up)cur.g.up(cur.s,cur.s.end);});
-$('helpBody').innerHTML=`<h3>🎲 하는 법</h3>주사위를 굴리면 나온 칸을 ${TO}가 해요.<br>
+function helpHTML(){return lang==='ko'?`<h3>🎲 하는 법</h3>주사위를 굴리면 나온 칸을 ${TO}가 해요.<br>
 <b>1 스내치</b> 추 타이밍 · <b>2 클린앤저크</b> 꾹 눌렀다 놓기 (포션 마실수록 진초록·노랑·빨강 칸이 생겨요) · <b>3 백스쿼트</b> 1초 연타<br>
 <b>4 밥</b> 🍚밥 = 파워포션 1개 · 🧀하차푸리 = 0~3개 랜덤 → 스내치<br><b>5 잠</b> 회복포션 → 클린앤저크 게이지에 높은 점수 칸 추가<br><b>6 똥</b> 근육포션 → 백스쿼트<br>아래 <b>필살기</b> 버튼은 언제든 눌러서 볼 수 있어요.<br>
 포션은 위 포션 칸을 누르거나 역도 시작 전에 마셔요. 마실 때마다 레벨이 올라 아주 조금 쉬워지고, 레벨은 계속 쌓여요.<br>
-기록(PR)은 그 종목 최고 무게예요. 잘해야만 바뀌어요.<br>처음엔 쑥쑥 오르다가 세계신기록 1.2배(스내치 270 · 클린앤저크 320.4 · 백스쿼트 588kg)에 가까울수록 점점 덜 올라요.<br><button class="rs" id="rs" type="button">기록 지우고 처음부터</button><small>made by ${FROM} · 아무 곳이나 눌러 닫기</small>`;
+기록(PR)은 그 종목 최고 무게예요. 잘해야만 바뀌어요.<br>처음엔 쑥쑥 오르다가 세계신기록 1.2배(스내치 270 · 클린앤저크 320.4 · 백스쿼트 588kg)에 가까울수록 점점 덜 올라요.<br><button class="rs" id="rs" type="button">기록 지우고 처음부터</button><small>made by ${FROM} · 아무 곳이나 눌러 닫기</small>`:`<h3>🎲 How to play</h3>Roll the dice and ${TO} does whatever comes up.<br>
+<b>1 Snatch</b> pendulum timing · <b>2 Clean &amp; Jerk</b> hold and release (potions add dark green · yellow · red zones) · <b>3 Back Squat</b> 1-second tap frenzy<br>
+<b>4 Rice</b> 🍚 rice = +1 Power potion · 🧀 khachapuri = 0–3 random → snatch<br><b>5 Sleep</b> Recovery potion → higher-scoring zones on the C&amp;J gauge<br><b>6 Poop</b> Muscle potion → squat<br>Tap the <b>special moves</b> below any time.<br>
+Drink potions by tapping the potion bag, or before a lift. Every drink makes that lift a little easier, and it stacks forever.<br>
+Your PR is your best weight per lift, and it only goes up if you actually lift better.<br>Gains start fast and slow down near 1.2× the world record (snatch 270 · C&amp;J 320.4 · squat 588kg).<br><button class="rs" id="rs" type="button">Reset all progress</button><small>made by ${FROM} · tap anywhere to close</small>`;}
+$('helpBody').innerHTML=helpHTML();
 
 function inApp(){const u=navigator.userAgent||'';return /KAKAOTALK|Instagram|FBAN|FBAV|FB_IAB|Line\/|NAVER\(|DaumApps|everytimeApp|Whale\/.*inapp|; wv\)/i.test(u);}
 function setupWarn(){const kakao=/KAKAOTALK/i.test(navigator.userAgent||'');if(STORE_OK&&!inApp())return;const w=$('warn');w.hidden=false;$('cover').classList.add('warned');
-  w.innerHTML=(STORE_OK?'⚠️ <b>앱 안 브라우저</b>에서는 기록이 사라질 수 있어요.':'⚠️ 이 화면에서는 <b>기록이 저장되지 않아요.</b>')+
-   `<br>오른쪽 위(또는 아래) <b>⋮ · …</b> 메뉴 → <b>다른 브라우저로 열기</b>로 Safari나 Chrome에서 열어 주세요.
-   <div class="row">${kakao?`<a class="y" href="kakaotalk://web/openExternal?url=${encodeURIComponent(SHARE_URL)}" target="_top">바깥 브라우저로 열기</a>`:''}<button type="button" id="cp">링크 복사</button><button type="button" id="skip">그냥 할래</button></div>`;
+  const ko=lang==='ko';
+  w.innerHTML=(ko?(STORE_OK?'⚠️ <b>앱 안 브라우저</b>에서는 기록이 사라질 수 있어요.':'⚠️ 이 화면에서는 <b>기록이 저장되지 않아요.</b>'):(STORE_OK?'⚠️ Progress may be lost in an <b>in-app browser</b>.':'⚠️ <b>Progress can’t be saved</b> here.'))+
+   (ko?`<br>오른쪽 위(또는 아래) <b>⋮ · …</b> 메뉴 → <b>다른 브라우저로 열기</b>로 Safari나 Chrome에서 열어 주세요.`:`<br>Use the <b>⋮ · …</b> menu → <b>Open in browser</b> to play in Safari or Chrome.`)+
+   `<div class="row">${kakao?`<a class="y" href="kakaotalk://web/openExternal?url=${encodeURIComponent(SHARE_URL)}" target="_top">${ko?'바깥 브라우저로 열기':'Open outside'}</a>`:''}<button type="button" id="cp">${ko?'링크 복사':'Copy link'}</button><button type="button" id="skip">${ko?'그냥 할래':'Play here'}</button></div>`;
   w.addEventListener('click',e=>e.stopPropagation());
-  $('cp').onclick=async()=>{try{await navigator.clipboard.writeText(SHARE_URL);$('cp').textContent='복사됨!';}catch(_){$('cp').textContent=SHARE_URL;}};
+  $('cp').onclick=async()=>{try{await navigator.clipboard.writeText(SHARE_URL);$('cp').textContent=lang==='ko'?'복사됨!':'Copied!';}catch(_){$('cp').textContent=SHARE_URL;}};
   $('skip').onclick=()=>start();}
 function start(){if(started)return;started=true;ac();$('cover').hidden=true;SFX.morning();banner('DAY '+S.day,1000);
   msg('START',S.rolls?`다시 왔구나, ${TO}`:`안녕, ${TO}`,S.rolls?`역도 합계 ${total()}kg. 오늘은 기록 깰 수 있을까?\n아래 주사위를 눌러요.`:`${TO}의 인생은 주사위에 달렸다.\n밥 · 똥 · 잠 · 그리고 역도. 아래 주사위를 눌러요.`);say('역도 하고 싶다',1400);}
@@ -736,7 +781,15 @@ addEventListener('resize',()=>{fitApp();place();});
 $('coverTo').textContent=`FOR ${TO} · FROM ${FROM}`;
 setupWarn();
 drawRoom();setF(F.stand);place();paint();renderLegend(-1);showDie(6);fitApp();
-$('win').innerHTML=`<h2>🎁 먹고 싸고 들어라</h2><p>밥 먹고, 똥 싸고, 잠 자고, 역도만 하는\n${TO}의 인생 주사위.</p>`;
+const ORIG=new Map();(function walk(n){for(const c of n.childNodes){if(c.nodeType===3&&/[가-힣]/.test(c.data))ORIG.set(c,c.data);else if(c.nodeType===1&&c.id!=='win'&&c.id!=='helpBody'&&c.id!=='legend'&&c.id!=='warn')walk(c);}})($('app'));
+function intro(){$('win').innerHTML=tr(`<h2>🎁 먹고 싸고 들어라</h2><p>밥 먹고, 똥 싸고, 잠 자고, 역도만 하는\n${TO}의 인생 주사위.</p>`);}
+function setLang(l){lang=l;try{localStorage.setItem('moti.lang',l);}catch(e){}document.documentElement.lang=l;
+  ORIG.forEach((o,n)=>n.data=tr(o));$('helpBody').innerHTML=helpHTML();renderLegend(-1);if(!started)intro();
+  document.querySelectorAll('#lsel button').forEach(b=>b.classList.toggle('on',b.dataset.l===l));$('lng').textContent=l==='ko'?'EN':'KO';
+  $('dice').setAttribute('aria-label',l==='ko'?'주사위 굴리기':'Roll the dice');if(!$('warn').hidden){$('warn').hidden=true;$('cover').classList.remove('warned');setupWarn();}}
+$('lsel').addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('button');if(b){SFX.tick();setLang(b.dataset.l);}});
+$('lng').addEventListener('click',()=>{SFX.tick();setLang(lang==='ko'?'en':'ko');});
+setLang(lang);
 IMG.onload=()=>{};
 </script>
 </body>
