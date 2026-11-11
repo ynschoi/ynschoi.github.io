@@ -102,7 +102,7 @@
   .hero.chew .spr{animation:chew .28s ease-in-out infinite}
   @keyframes chew{50%{transform:scaleY(.97)}}
   .hero.lie{transition:transform .5s}
-  .bubble{position:absolute;bottom:100%;left:50%;transform:translate(-50%,-4px) scale(.6);opacity:0;transition:.16s;z-index:9;font-size:12px;white-space:nowrap;background:#fff;color:#111;padding:6px 9px;box-shadow:0 0 0 2px #111,3px 3px 0 2px #111}
+  .bubble{position:absolute;bottom:100%;left:50%;transform:translate(-50%,-4px) scale(.6);opacity:0;transition:.16s;z-index:9;font-size:12px;white-space:normal;width:max-content;max-width:220px;text-align:center;line-height:1.35;background:#fff;color:#111;padding:6px 9px;box-shadow:0 0 0 2px #111,3px 3px 0 2px #111}
   .bubble.on{opacity:1;transform:translate(-50%,-6px) scale(1)}
   .bb{position:absolute;height:2.4%;background:linear-gradient(#e9e9f2,#8a8aa0);box-shadow:0 0 0 1px #111;display:none;z-index:2;left:20%;right:24%;top:52.5%}
   .bb.on{display:block}
@@ -641,7 +641,7 @@ async function doLift(k){await walkTo(SPOT.gym-4);setF(F.squat);say(pick(['간�
     msg('LIFT',`🏋️ ${name} 신기록!`,`${r.kg}kg 성공 (${r.grade})\n${before?`이전 기록 ${before}kg → `:''}PR ${r.kg}kg · 합계 ${total()}kg`);
   }else if(r.kg>0){setF(F.smile);say(pick(['아깝다','조금만 더','다음엔 넘는다']),1200);
     msg('LIFT',`🏋️ ${name} ${r.kg}kg`,`${r.grade}! 하지만 PR ${before}kg은 못 넘었다.\n${POTN[POTK[k]]}을 마시면 조금 쉬워져요.`);
-  }else{SFX.fail();setF(F.bend);shake();say(pick(['으아아...','오늘은 컨디션이...','바벨이 무거운 게 아니라...']),1300);
+  }else{SFX.fail();setF(F.bend);shake();if(Math.random()<.35)say(lang==='ko'?"It wasn't me ♪ (바벨이 그랬어)":"It wasn't me ♪ (the bar did it)",1700);else say(pick(['으아아...','오늘은 컨디션이...','바벨이 무거운 게 아니라...']),1300);
     msg('LIFT',`🏋️ ${name} 실패`,`바벨을 놓쳤다. PR ${before?before+'kg':'없음'} 그대로.\n${POTN[POTK[k]]}을 마시면 조금 쉬워져요.`);}
   await sleep(900);setF(F.stand);paint();
 }
@@ -854,6 +854,16 @@ function setupWarn(){const kakao=/KAKAOTALK/i.test(navigator.userAgent||'');if(S
 function start(){if(started)return;started=true;log('start',lang);ac();$('cover').hidden=true;SFX.morning();banner('DAY '+S.day,1000);
   msg('START',S.rolls?`다시 왔구나, ${TO}`:`안녕, ${TO}`,S.rolls?`역도 합계 ${total()}kg. 오늘은 기록 깰 수 있을까?\n아래 주사위를 눌러요.`:`${TO}의 인생은 주사위에 달렸다.\n밥 · 똥 · 잠 · 그리고 역도. 아래 주사위를 눌러요.`);say('역도 하고 싶다',1400);}
 
+/* 가만히 있으면 혼잣말 (역도 인사이드 조크) */
+const IDLE=[['Light weight baby!','Light weight baby!'],['다리 운동 빼먹는 사람 아님','I never skip leg day'],['근육은 거짓말 안 해',"Muscles don't lie"],
+  ['How does it feel… 이 펌핑 ♪','How does it feel… this pump ♪'],['바벨이랑 나… 딜레마야 ♪',"Me and this barbell… it's a dilemma ♪"],
+  ['내가 버거킹에서 패티 구워도 PR 축하해 줄 거야?','If I flipped patties at Burger King, would you still hype my PR?'],
+  ["It wasn't me ♪ (바벨이 그랬어)","It wasn't me ♪ (the bar did it)"]];
+let idleT=Date.now(),idleLast=-1;
+['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{idleT=Date.now();},true));
+setInterval(()=>{if(!started||busy||cur||!$('help').hidden||!$('choose').hidden||document.hidden)return;if(Date.now()-idleT<8000)return;
+  let i;do{i=Math.floor(Math.random()*IDLE.length);}while(i===idleLast&&IDLE.length>1);idleLast=i;
+  say(IDLE[i][lang==='ko'?0:1],2600);idleT=Date.now();},1000);
 function fitApp(){const app=$('app'),vh=(window.visualViewport&&visualViewport.height)||innerHeight;if(!vh)return;
   const cs=getComputedStyle(document.documentElement),pad=(parseFloat(cs.paddingTop)||0)+(parseFloat(cs.paddingBottom)||0);
   app.style.transform='';const avail=vh-pad-4,s=Math.min(1,avail/app.scrollHeight);app.style.transform=s<1?`scale(${s})`:'';
