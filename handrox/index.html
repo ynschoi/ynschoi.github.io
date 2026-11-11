@@ -69,13 +69,14 @@
   .ov .k{font-size:15px;color:var(--gold);border:2px solid var(--gold);padding:4px 10px;margin-top:2px}
   .cover{position:absolute;inset:0;z-index:20;background:#0c0c10d8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;cursor:pointer}
   .cover[hidden]{display:none}
-  .cover .logo{width:78%;max-width:330px;height:auto;display:block}
+  .cover .logo{width:66%;max-width:280px;height:auto;display:block}
   .cover .tag{font-size:15px;color:#fff;text-shadow:2px 2px 0 #000}
   .cover .city{font-size:26px;font-weight:700;letter-spacing:10px;margin:-6px -10px 0 0;color:#fff;line-height:1;transform:skewX(-9deg)}
-  .cover{gap:7px}
+  .cover{gap:5px}
+  [hidden]{display:none!important}
   .cover .sub{font-size:10px;color:#111;background:var(--gold);padding:2px 8px;letter-spacing:1px}
-  .cover .ins{font-size:14px;animation:blink 1s steps(1) infinite;margin-top:4px}
-  .cover .note{font-size:9px;color:var(--dim)}
+  .cover .ins{font-size:14px;animation:blink 1s steps(1) infinite;margin-top:2px}
+  .cover .note{display:none}
   .lsel{display:flex;gap:8px;margin:2px 0}
   .lsel button{font:700 12px var(--px);color:#fff;padding:6px 12px;border:2px solid var(--dim);background:#0c0c10;box-shadow:0 3px 0 #000}
   .lsel button.on{border-color:var(--gold);color:#111;background:var(--gold)}
@@ -112,6 +113,9 @@
   .help small{display:block;margin-top:10px;font:10px var(--px);color:var(--dim);text-align:center}
   .help .rs{display:inline-block;margin-top:8px;font:10px var(--px);color:#ff9a9a;border:1px solid #ff9a9a;padding:3px 7px}
   .res{text-align:center}
+  #fePrev{display:block;width:192px;height:192px;margin:4px auto 8px;border:3px solid var(--gold);background:#000;image-rendering:pixelated;touch-action:none;cursor:grab}
+  #feZoom{width:192px;margin-bottom:6px;accent-color:var(--gold);touch-action:pan-x}
+  .cover #fsel button{padding:4px 10px;font-size:11px}
   .res .rk{font:700 13px var(--px);color:#111;background:var(--gold);display:inline-block;padding:3px 10px}
   .res .tm{font:700 40px var(--px);color:var(--gold);text-shadow:3px 3px 0 var(--red);line-height:1.2;font-variant-numeric:tabular-nums}
   .res .pbn{font:12px var(--px);color:var(--dim);margin-bottom:8px}.res .pbn.new{color:var(--green)}
@@ -156,6 +160,7 @@
       <div class="tag" id="cTag"></div>
       <div class="sub">THE WORLD SERIES OF FINGER RACING</div>
       <div class="lsel" id="lsel"><button type="button" data-l="ko">한국어</button><button type="button" data-l="en">English</button></div>
+      <div class="lsel" id="fsel"><button type="button" id="faceBtn"></button><button type="button" id="feDel" hidden>✕</button></div>
       <div class="ins">TAP TO START</div>
       <div class="note" id="cNote"></div>
     </div>
@@ -168,6 +173,10 @@
   </section>
 
   <div class="help" id="help" hidden><div id="helpBody"></div></div>
+  <input type="file" id="faceFile" accept="image/*" hidden>
+  <div class="help" id="facePanel" hidden><div class="res"><h3 id="feT"></h3><canvas id="fePrev" width="192" height="192"></canvas>
+    <input type="range" id="feZoom" min="1" max="6" step="0.05" value="1.6" aria-label="zoom"><div class="pbn" id="feN"></div>
+    <div class="row"><button type="button" id="feNo"></button><button type="button" class="y" id="feOk"></button></div></div></div>
   <div class="help" id="result" hidden><div class="res" id="resBody"></div></div>
 </div>
 <script>
@@ -226,6 +235,15 @@ function disc(x,y,r,fill,stroke=OL){c.beginPath();c.arc(x,y,r,0,7);c.fillStyle=f
 function txt(t,x,y,size=12,col='#fff',al='center'){c.font=`bold ${size}px Galmuri11, monospace`;c.textAlign=al;c.lineWidth=3;c.lineJoin='round';c.strokeStyle='#111';c.strokeText(t,x,y);c.fillStyle=col;c.fillText(t,x,y);}
 function gauge(x,y,w,h,p,col){c.fillStyle='#111';c.fillRect(x-2,y-2,w+4,h+4);c.fillStyle='#3a1418';c.fillRect(x,y,w,h);c.fillStyle=col;c.fillRect(x,y,w*clamp(p,0,1),h);}
 
+/* ═════════ 내 얼굴: 사진 → 16×16 픽셀아트 → 손바닥에. 사진은 이 브라우저 밖으로 나가지 않음 ═════════ */
+let FACE=null;const FKEY='handrox.face',FN=16;
+function pixelate(img,cx,cy,size){let src=img,sx=cx-size/2,sy=cy-size/2,sw=size;
+  for(let n=128;n>=FN;n/=2){const t=document.createElement('canvas');t.width=t.height=n;const x=t.getContext('2d');x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';x.drawImage(src,sx,sy,sw,sw,0,0,n,n);src=t;sx=sy=0;sw=n;}
+  const x=src.getContext('2d'),d=x.getImageData(0,0,FN,FN),a=d.data;
+  for(let i=0;i<a.length;i+=4){for(let k=0;k<3;k++)a[i+k]=Math.round(clamp((a[i+k]-128)*1.25+136,0,255)/42.5)*42.5;      // 대비 올리고 색 단계 줄이기
+    const px=(i/4)%FN,py=Math.floor(i/4/FN);if(Math.min(px,FN-1-px)+Math.min(py,FN-1-py)<2)a[i+3]=0;}                       // 모서리 둥글게
+  x.putImageData(d,0,0);return src;}
+
 /* 경기장 배경: off = 지나온 거리(px) */
 function scene(off=0){
   c.fillStyle='#101016';c.fillRect(0,0,W,FL);
@@ -257,8 +275,9 @@ function hero(x,y,o={}){const ph=o.ph||0,cr=o.cr||0,lean=o.lean||0,arm=o.arm==nu
   rr(-7.5,-27,15,5,1,'#ffd400');                                   // 손목밴드
   disc(-8,-2,4.5,SK2);disc(-4,0,4.5,SK2);                          // 접은 약지·새끼
   rr(-10,-20,20,21,6,SK);                                          // 손바닥(몸)
-  c.fillStyle=OL;if(o.dead){c.fillRect(2,-13,3,1.5);c.fillRect(6,-13,3,1.5);}else{c.fillRect(3,-14,2,3);c.fillRect(7,-14,2,3);}
-  c.fillStyle='#e58a7a';c.fillRect(0,-9,2,1.5);
+  if(FACE){c.imageSmoothingEnabled=false;c.drawImage(FACE,-8,-19,16,16);c.imageSmoothingEnabled=true;if(o.dead){c.fillStyle='#fff';c.fillRect(-5,-8,10,1.5);}}
+  else{c.fillStyle=OL;if(o.dead){c.fillRect(2,-13,3,1.5);c.fillRect(6,-13,3,1.5);}else{c.fillRect(3,-14,2,3);c.fillRect(7,-14,2,3);}
+  c.fillStyle='#e58a7a';c.fillRect(0,-9,2,1.5);}
   const tx=8+Math.cos(arm)*10,ty=-9+Math.sin(arm)*10;line([7,-9,tx,ty],5,SK); // 엄지
   c.restore();
   leg(x+3,hy,f1[0],f1[1],SK);
@@ -514,16 +533,37 @@ function setLang(l){lang=l;try{localStorage.setItem('handrox.lang',l);}catch(e){
   $('cTag').textContent=L('손가락으로 뛰는 하이록스','The fitness race for fingers');$('cNote').textContent=L('기록은 이 브라우저에 저장돼요','Your best time is saved in this browser');
   $('pLs').textContent=L('왼 손가락','LEFT FINGER');$('pRs').textContent=L('오른 손가락','RIGHT FINGER');
   ST[0].hint=L('잡고 ↓ 당겨 ⟳ 돌리기','GRAB ↓ PULL ⟳ CIRCLE');ST[4].hint=L('잡고 ← 당기기 · 돌아오기 →','GRAB ← PULL · RETURN →');ST[3].hint=L('꾹 ▸ 떼기','HOLD ▸ RELEASE');ST[5].hint=L('L + R 꾹','HOLD L + R');ST[7].hint=L('탭 ● 탭','TAP ● TAP');
+  faceBtnText();$('feT').textContent=L('📷 얼굴 맞추기','📷 Frame your face');$('feN').textContent=L('드래그로 위치, 슬라이더로 확대. 사진은 이 기기에만 저장돼요.','Drag to move, slide to zoom. The photo stays on this device.');$('feNo').textContent=L('취소','Cancel');$('feOk').textContent=L('이 얼굴로','Use this');
   $('helpBody').innerHTML=helpHTML();document.querySelectorAll('#lsel button').forEach(b=>b.classList.toggle('on',b.dataset.l===l));$('lng').textContent=l==='ko'?'EN':'KO';paintInfo();}
 $('lsel').addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('button');if(b){SFX.tick();setLang(b.dataset.l);}});
 $('lng').addEventListener('click',()=>{SFX.tick();setLang(lang==='ko'?'en':'ko');});
+$('fsel').addEventListener('click',e=>e.stopPropagation());$('faceBtn').addEventListener('click',()=>$('faceFile').click());
 
 function fitApp(){const app=$('app'),vh=(window.visualViewport&&visualViewport.height)||innerHeight;if(!vh)return;
   app.style.transform='';const avail=vh-4,s=Math.min(1,avail/app.scrollHeight);app.style.transform=s<1?`scale(${s})`:'';appScale=s;document.body.style.height=avail+'px';}
 setTimeout(fitApp,300);if(window.visualViewport)visualViewport.addEventListener('resize',fitApp);addEventListener('resize',fitApp);
 
 /* 얼굴 아이콘 */
-(function(){const f=$('face').getContext('2d');f.scale(2.6,2.6);c=f;hero(17,37,{ph:.9,arm:-.8,st:6});c=mainCtx;})();
+const faceCtx=$('face').getContext('2d');faceCtx.scale(2.6,2.6);
+function drawFaceIcon(){faceCtx.clearRect(0,0,92,92);c=faceCtx;hero(17,37,{ph:.9,arm:-.8,st:6});c=mainCtx;}
+drawFaceIcon();
+/* 얼굴 고르기: 드래그로 위치, 슬라이더로 확대 */
+const FE={img:null,z:1.6,cx:0,cy:0,out:null};
+function feSize(){return Math.min(FE.img.width,FE.img.height)/FE.z;}
+function feDraw(){const z=feSize();FE.cx=clamp(FE.cx,z/2,FE.img.width-z/2);FE.cy=clamp(FE.cy,z/2,FE.img.height-z/2);FE.out=pixelate(FE.img,FE.cx,FE.cy,z);
+  const x=$('fePrev').getContext('2d');x.imageSmoothingEnabled=false;x.clearRect(0,0,192,192);x.drawImage(FE.out,0,0,192,192);}
+function faceBtnText(){$('faceBtn').textContent=FACE?L('📷 얼굴 바꾸기','📷 Change face'):L('📷 내 얼굴','📷 My face');$('feDel').hidden=!FACE;}
+$('faceFile').addEventListener('change',e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const im=new Image();
+  im.onload=()=>{FE.img=im;FE.z=1.6;FE.cx=im.width/2;FE.cy=im.height*.42;$('feZoom').value=1.6;$('facePanel').hidden=false;feDraw();};
+  im.onerror=()=>{$('faceBtn').textContent=L('사진을 못 읽었어요','Could not read photo');};im.src=URL.createObjectURL(f);});
+$('feZoom').addEventListener('input',e=>{FE.z=+e.target.value;feDraw();});
+{const pv=$('fePrev');let d=null;pv.addEventListener('pointerdown',e=>{d={x:e.clientX,y:e.clientY};try{pv.setPointerCapture(e.pointerId);}catch(_){}});
+  pv.addEventListener('pointermove',e=>{if(!d||!FE.img)return;const k=feSize()/(pv.getBoundingClientRect().width||192);FE.cx-=(e.clientX-d.x)*k;FE.cy-=(e.clientY-d.y)*k;d={x:e.clientX,y:e.clientY};feDraw();});
+  ['pointerup','pointercancel'].forEach(v=>pv.addEventListener(v,()=>{d=null;}));}
+$('feOk').addEventListener('click',()=>{FACE=FE.out;try{localStorage.setItem(FKEY,FACE.toDataURL());}catch(e){}$('facePanel').hidden=true;drawFaceIcon();faceBtnText();});
+$('feNo').addEventListener('click',()=>{$('facePanel').hidden=true;});
+$('feDel').addEventListener('click',()=>{FACE=null;try{localStorage.removeItem(FKEY);}catch(e){}drawFaceIcon();faceBtnText();});
+try{const u=localStorage.getItem(FKEY);if(u){const im=new Image();im.onload=()=>{const t=document.createElement('canvas');t.width=t.height=FN;t.getContext('2d').drawImage(im,0,0);FACE=t;drawFaceIcon();faceBtnText();};im.src=u;}}catch(e){}
 /* 대회 이름: 폰이면 HANDROX PHONE, PC면 HANDROX HOME */
 const VENUE=(navigator.maxTouchPoints>0||'ontouchstart' in window)?'PHONE':'HOME';$('city').textContent=VENUE;
 setLang(lang);fitApp();requestAnimationFrame(loop);
