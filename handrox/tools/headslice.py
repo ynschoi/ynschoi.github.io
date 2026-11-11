@@ -23,16 +23,21 @@ for f in range(1,8):
             s=shift(cells[f],dy,dx);sc=(((s==1)|(s==2))&bsk).sum()-(((s==1)|(s==2))&(base<0)).sum()
             if sc>best[0]:best=(sc,dy,dx)
     c=shift(cells[f],best[1],best[2]);item=np.isin(c,[3,4,5])
-    near=np.zeros_like(item)                                  # 부품에 붙은 외곽선만 부품 것으로 (민머리에 없던 선)
-    for dy,dx in ((1,0),(-1,0),(0,1),(0,-1),(1,1),(1,-1),(-1,1),(-1,-1)):near|=shift(item.astype(int),dy,dx)==1
-    ol=(c==0)&near&(base!=0)
-    L=np.full_like(c,-1);L[item]=c[item];L[ol]=0;layers[names[f]]=L;print(names[f],'shift',best[1:],'px',int(item.sum()))
+    near=item.copy()                                          # 부품에서 2칸 이내
+    for _ in range(2):
+        n2=near.copy()
+        for dy,dx in ((1,0),(-1,0),(0,1),(0,-1),(1,1),(1,-1),(-1,1),(-1,-1)):n2|=shift(near.astype(int),dy,dx)==1
+        near=n2
+    # 레이어 = 민머리와 달라진 곳 전부: 부품 색, 부품 주변에서 바뀐 외곽선·피부, 그리고 '지우기'(7).
+    # 머리카락 칸은 두상이 민머리보다 작게 그려져서, 민머리가 머리카락 밖으로 삐져나오는 부분(혹처럼 보임)을 지워야 함
+    L=np.full_like(c,-1);L[item]=c[item];ch=near&~item&(c!=base)&(c>=0);L[ch]=c[ch];L[(c<0)&(base>=0)&near]=7
+    layers[names[f]]=L;print(names[f],'shift',best[1:],'px',int(item.sum()),'changed',int(ch.sum()),'erase',int((L==7).sum()))
 ys,xs=np.where((base>=0)|np.any([l>=0 for l in layers.values()],axis=0));y0,y1,x0,x1=ys.min(),ys.max()+1,xs.min(),xs.max()+1
 enc=lambda c:''.join('.' if v<0 else chr(97+v) for v in c[y0:y1,x0:x1].ravel())
 sy=np.where(bsk.any(1))[0];ty=sy[0];hx=[x for x in range(N) if bsk[ty:ty+9,x].any()];bot=np.where((base>=0).any(1))[0][-1];nx=np.where(base[bot]>=0)[0]
 out={'w':int(x1-x0),'h':int(y1-y0),'base':enc(base),'box':[int(hx[0]-x0),int(ty-y0),int(hx[-1]-hx[0]+1)],'neck':[float(nx.mean()-x0),int(bot-y0)],'layers':{k:enc(v) for k,v in layers.items()}}
 json.dump(out,open(name+'.json','w'),separators=(',',':'));print(out['w'],out['h'],out['box'],out['neck'])
-COL=[(38,38,46),(242,184,146),(201,138,98),(229,57,31),(170,40,22),(110,26,14),(255,255,255)]
+COL=[(38,38,46),(242,184,146),(201,138,98),(229,57,31),(170,40,22),(110,26,14),(255,255,255),(5,5,6)]
 im=Image.new('RGB',((x1-x0)*8,(y1-y0)),(5,5,6))
 def put(c,ox):
     for (j,i),v in np.ndenumerate(c[y0:y1,x0:x1]):

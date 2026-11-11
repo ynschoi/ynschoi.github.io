@@ -15,6 +15,10 @@ def scale(c,k):                  # 면적 다수결 축소. 외곽선(0)이 1/3 
             vv=v.copy();vv[0]=vv[1]=0;o[j,i]=vv.argmax()-1 if vv.max()>0 else (0 if v[1]>0 else -1)
     return o
 hd=json.load(open(sys.argv[1]));px,py,pw=hd['box'];nx,ny=hd['neck'];k=REF/pw*HEAD_SCALE
+# 정수리 낮추기: 눈썹 위 두상이 너무 높아 혹처럼 보여서, 그 구간의 가로줄을 3줄에 1줄씩 뺌 (목 위치는 그대로)
+B0=dec(hd['base'],hd['w'],hd['h']);brow=next(y for y in range(py+4,hd['h']) if (B0[y,px+6:px+22]==0).sum()>=5);drop=list(range(py+2,brow-1))[::3]
+def flat(c):return np.vstack([np.full((len(drop),c.shape[1]),-1),c[[y for y in range(c.shape[0]) if y not in drop]]])
+_dec=dec;dec=lambda s,w,h:flat(_dec(s,w,h)) if (w,h)==(hd['w'],hd['h']) else _dec(s,w,h)
 b=scale(dec(hd['base'],hd['w'],hd['h']),k)
 json.dump({'w':int(b.shape[1]),'h':int(b.shape[0]),'base':enc(b),'layers':{n:enc(scale(dec(l,hd['w'],hd['h']),k)) for n,l in hd['layers'].items()}},open('heads_s.json','w'),separators=(',',':'))
 for path in sys.argv[2:]:
