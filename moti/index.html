@@ -637,11 +637,11 @@ async function doLift(k){await walkTo(SPOT.gym-4);setF(F.squat);say(pick(['간�
   if(r.kg>0){await yoss();SFX.thud();SFX.clang();shake();}
   if(isPR){S[k]=r.kg;save();paint(k);SFX.win();banner('NEW PR!',1100);
     await playAct('mv_yoss',[[1,180],[2,260],[3,320],[4,420],[5,480],[6,420],[7,300]],f=>{if(f===4){say('요쓰!!',1000);SFX.thud();}});actEnd('mv_yoss');setF(F.smile);
-    say(pick(['가볍네','이게 사는 맛이지','근육아 고마워']),1200);
+    say(r.grade==='PERFECT'&&Math.random()<.6?'Охуенно!':pick(['가볍네','이게 사는 맛이지','근육아 고마워']),1200);
     msg('LIFT',`🏋️ ${name} 신기록!`,`${r.kg}kg 성공 (${r.grade})\n${before?`이전 기록 ${before}kg → `:''}PR ${r.kg}kg · 합계 ${total()}kg`);
   }else if(r.kg>0){setF(F.smile);say(pick(['아깝다','조금만 더','다음엔 넘는다']),1200);
     msg('LIFT',`🏋️ ${name} ${r.kg}kg`,`${r.grade}! 하지만 PR ${before}kg은 못 넘었다.\n${POTN[POTK[k]]}을 마시면 조금 쉬워져요.`);
-  }else{SFX.fail();setF(F.bend);shake();if(Math.random()<.35)say("It wasn't me ♪",1700);else say(pick(['으아아...','오늘은 컨디션이...','바벨이 무거운 게 아니라...']),1300);
+  }else{SFX.fail();setF(F.bend);shake();{const q=Math.random();if(q<.3)say("It wasn't me ♪",1700);else if(q<.55)say('Хуйня…',1500);else say(pick(['으아아...','오늘은 컨디션이...','바벨이 무거운 게 아니라...']),1300);}
     msg('LIFT',`🏋️ ${name} 실패`,`바벨을 놓쳤다. PR ${before?before+'kg':'없음'} 그대로.\n${POTN[POTK[k]]}을 마시면 조금 쉬워져요.`);}
   await sleep(900);setF(F.stand);paint();
 }
@@ -861,7 +861,8 @@ let idleT=Date.now(),idleLast=-1;
 ['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{idleT=Date.now();},true));
 setInterval(()=>{if(!started||busy||cur||!$('help').hidden||!$('choose').hidden||document.hidden)return;if(Date.now()-idleT<8000)return;
   let i;do{i=Math.floor(Math.random()*IDLE.length);}while(i===idleLast&&IDLE.length>1);idleLast=i;
-  say(IDLE[i][lang==='ko'?0:1],2600);idleT=Date.now();},1000);
+  let t=IDLE[i][lang==='ko'?0:1];if(Math.random()<.35)t=t.replace(/[!?♪]*\s*$/,'')+', ёпта!';
+  say(t,2600);idleT=Date.now();},1000);
 function fitApp(){const app=$('app'),vh=(window.visualViewport&&visualViewport.height)||innerHeight;if(!vh)return;
   const cs=getComputedStyle(document.documentElement),pad=(parseFloat(cs.paddingTop)||0)+(parseFloat(cs.paddingBottom)||0);
   app.style.transform='';const avail=vh-pad-4,s=Math.min(1,avail/app.scrollHeight);app.style.transform=s<1?`scale(${s})`:'';
