@@ -569,9 +569,12 @@ function renderLegend(hit){$('legend').innerHTML=FACES.map((f,i)=>`<div class="l
 function showDie(n){$('die').className='die'+(n==1?' red':'');$('die').innerHTML=PIPS[n].map(([x,y])=>`<i style="left:${x}%;top:${y}%"></i>`).join('');}
 
 /* ═════════ 주사위 ═════════ */
+/* 주사위: 1~6이 두 번씩 든 12장 카드를 섞어 뽑기 → 골고루 나옴 */
+let FBAG=[];
+function nextFace(){if(!FBAG.length){FBAG=[1,2,3,4,5,6,1,2,3,4,5,6].sort(()=>Math.random()-.5);}return FBAG.pop();}
 async function roll(){ac();if(!started){start();return;}if(busy)return;busy=true;
   const d=$('dice');d.classList.remove('ready','land');d.classList.add('roll');renderLegend(-1);
-  const n=window.__force||1+Math.floor(Math.random()*6);let k=0;
+  const n=window.__force||nextFace();let k=0;
   const thr=(async()=>{actSet('mv_dice');for(const [f,ms] of [[0,80],[1,170],[2,230],[3,160]]){actF(f);await sleep(ms);}})();
   while(k<8){showDie(1+Math.floor(Math.random()*6));SFX.tick();await sleep(35+k*7);k++;}
   await thr;
@@ -859,7 +862,7 @@ const IDLE=[['Light weight baby!','Light weight baby!'],['Brown Sugar… 아니 
   ['내가 버거킹에서 패티 구워도, ...','If I flipped patties at Burger King, ...'],["It wasn't me ♪","It wasn't me ♪"],[null,'Хуй с ним…',1],[null,'Иди на хуй…',1]];
 let idleT=Date.now(),idleLast=-1;
 ['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{idleT=Date.now();},true));
-let idleGap=8000;setInterval(()=>{if(!started||busy||cur||!$('help').hidden||!$('choose').hidden||document.hidden)return;if(Date.now()-idleT<idleGap)return;idleGap=7000+Math.random()*6000;
+let idleGap=6000;setInterval(()=>{if(!started||busy||cur||!$('help').hidden||!$('choose').hidden||document.hidden)return;if(Date.now()-idleT<idleGap)return;idleGap=5000+Math.random()*5000;
   const L=lang==='ko'?0:1,ok=IDLE.filter(x=>x[L]!=null&&!(x[2]&&!RUON())),i=IDLE.indexOf(pick(ok));
   let t=IDLE[i][L];if(RUON()&&!t.endsWith('...')&&Math.random()<.35)t=t.replace(/[\s!?♪…]+$/,'')+', ёпта!';
   say(t,2600);idleT=Date.now();},1000);
