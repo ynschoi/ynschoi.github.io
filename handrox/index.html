@@ -49,7 +49,7 @@
   .win{height:92px;border:3px solid #fff;box-shadow:0 0 0 3px var(--night),0 0 0 5px var(--edge);background:linear-gradient(#1c1c26,#121218);padding:9px 12px;overflow:hidden;display:flex;flex-direction:column;justify-content:center;gap:5px}
   .win .ttl{font-size:14px;font-weight:700;color:var(--gold);display:flex;justify-content:space-between;gap:8px;white-space:nowrap}
   .win .ttl span:last-child{color:var(--dim);font-weight:400;font-size:11px}
-  .win p{font:13px/1.4 var(--font);color:var(--ink);min-height:18px}
+  .win p{font:13px/1.3 var(--font);color:var(--ink);min-height:18px}
   .win .tr{height:10px;border:1.5px solid #fff;background:#2a1418;position:relative;overflow:hidden}
   .win .fl{position:absolute;inset:0 auto 0 0;width:0;background:linear-gradient(#ffe866,#f5a623)}
   .win .tr b{position:absolute;inset:0;font-size:8px;font-weight:400;line-height:7px;text-align:center;color:#fff;mix-blend-mode:difference}
@@ -90,6 +90,17 @@
   .fp::before{content:"";position:absolute;width:74px;height:92px;border-radius:50%;border:2px dashed #44445a;opacity:.6}
   .fp.on{transform:translateY(4px);background:radial-gradient(circle at 50% 42%,#ffe866,#f5a623 75%);box-shadow:inset 0 -4px 0 #b97a10,0 2px 0 #000}
   .fp.on b,.fp.on small{color:#111}.fp.on::before{border-color:#111}
+  /* 에르그 손잡이: 손가락을 따라 움직임 */
+  .fp{overflow:hidden}
+  .fp .hd{display:none;position:absolute;left:50%;top:22px;width:70px;height:18px;margin-left:-35px;border-radius:9px;background:#111;border:2px solid var(--gold);box-shadow:0 3px 0 #000;z-index:1}
+  .fp .hd::before{content:"";position:absolute;background:#cfcfd8}
+  .pad.ski .hd,.pad.row .hd{display:block}
+  .pad.ski .hd::before{left:50%;bottom:100%;width:2px;height:200px;margin-left:-1px}
+  .pad.row .hd{top:50%;left:68%;width:18px;height:70px;margin:-35px 0 0 -9px}
+  .pad.row .hd::before{left:100%;top:50%;height:2px;width:300px;margin-top:-1px}
+  .pad.ski .fp::before,.pad.row .fp::before{display:none}
+  .pad.ski .fp b,.pad.row .fp b{font-size:20px;opacity:.5;margin-top:54px}.pad.row .fp b{margin-top:84px}
+  .pad.ski .fp small,.pad.row .fp small{display:none}
   .fp.want{border-color:var(--gold)}.fp.want b{color:var(--gold)}
 
   /* 결과 · 도움말 */
@@ -152,8 +163,8 @@
 
   <section class="pad" id="pad">
     <div class="hint" id="hint"></div>
-    <div class="fp" id="pL"><b>L</b><small id="pLs"></small></div>
-    <div class="fp" id="pR"><b>R</b><small id="pRs"></small></div>
+    <div class="fp" id="pL"><i class="hd"></i><b>L</b><small id="pLs"></small></div>
+    <div class="fp" id="pR"><i class="hd"></i><b>R</b><small id="pRs"></small></div>
   </section>
 
   <div class="help" id="help" hidden><div id="helpBody"></div></div>
@@ -279,15 +290,48 @@ const RUN={id:'run',need:1000,unit:'m',pxu:.8,nm:['달리기','RUN'],hint:'L ▸
   draw(s){scene(s.dp*this.pxu);const m=G.seg.need-s.dp;                       // 결승 아치
     const ax=120+m*this.pxu;if(ax<W+30){c.fillStyle='#e5391f';c.fillRect(ax,60,5,FL-60);c.fillRect(ax-30,60,65,12);txt(G.i===14?'FINISH':'ROXZONE',ax+2,70,8,'#fff');}
     hero(110,FL,{ph:s.ph,lean:.18,arm:.6+Math.sin(s.ph)*.7,sh:s.stum?3:0});}};
+/* ═════════ 에르그(스키·로잉) 공통 ═════════
+   손잡이를 잡은 채 당긴 길이만큼 전진. 끝까지 당기면 되돌아와야 다시 당길 수 있음 (그래서 원을 그리게 됨).
+   손가락 하나 = 한 번에 최대 40m, 두 손잡이 다 잡고 길게 당기면 80m. 초당 2번쯤 돌리면 2:00/500m */
+const ERG={LEN:62,PER:40,
+  init(s){s.pos={L:0,R:0};s.arm={L:1,R:1};s.ls={L:-9,R:-9};s.acc=0;s.v=0;s.k=0;s.kf=0;s.sr=0;s.lst=-9;s.snd=-9;s.vd=0;s.pp=0;s.pt=0;},
+  grab(s,side){s.pos[side]=0;s.arm[side]=1;},
+  stroke(s,side){const d=s.t-s.ls[side];s.ls[side]=s.t;if(d>.12&&d<2)s.sr=1/d;s.lst=s.t;
+    if(s.t-s.pt>.2){if(s.pt>0||s.p>0)s.vd=(s.p-s.pp)/(s.t-s.pt);s.pp=s.p;s.pt=s.t;} /* 모니터 페이스는 스트로크마다 갱신 */
+    if(s.t-s.snd>.1){s.snd=s.t;SFX.pull();}},
+  pull(s,side,d){const f=d/this.LEN,q=s.pos[side];
+    if(f>0){const e=Math.min(f,1-q);if(e>0){add(s,e*this.PER);s.acc+=e*this.PER;}if(s.arm[side]&&q+f>.35){s.arm[side]=0;this.stroke(s,side);}}
+    else if(q+f<.3)s.arm[side]=1;
+    s.pos[side]=clamp(q+f,0,1);},
+  key(s,m){add(s,m);s.acc+=m;s.kf=1;this.stroke(s,'L');},
+  tick(s,dt){s.v+=(s.acc/dt-s.v)*Math.min(1,dt*2.2);s.acc=0;if(s.t-s.lst>1.3)s.sr=s.vd=0;
+    const h=['L','R'].filter(x=>held[x]>0),t=h.length?h.reduce((a,x)=>a+s.pos[x],0)/h.length:0;s.k+=(t-s.k)*Math.min(1,dt*(h.length?30:6));
+    if(s.kf>0){s.kf=Math.max(0,s.kf-dt*3.5);s.k=Math.max(s.k,s.kf);}}};
+/* 에르그 모니터: 남은 거리 · /500m 페이스 · 분당 스트로크 · 와트 (경기 시계 기준) */
+function monitor(x,y,s,need){const w=116,h=76,ink='#17210f',mmss=v=>`${Math.floor(v/60)}:${String(Math.floor(v%60)).padStart(2,'0')}`;
+  rr(x-4,y-4,w+8,h+8,5,'#22222a');rr(x,y,w,h,2,'#b9c6a2',null);c.fillStyle='#22222a';c.fillRect(x+w/2-3,y+h+4,6,FL-y-h-4);
+  const lt=(t,X,Y,sz,al='left')=>{c.font=`bold ${sz}px Galmuri11, monospace`;c.textAlign=al;c.fillStyle=ink;c.fillText(t,X,Y);};
+  const pace=s.vd>25?clamp(500/s.vd*K,65,599):0,avg=s.p>20?500/(s.p/s.t)*K:0;
+  lt(mmss(s.t*K),x+5,y+13,11);lt(`${Math.min(60,Math.round(s.sr*21))} s/m`,x+w-5,y+13,10,'right');
+  c.fillStyle=ink;c.fillRect(x+4,y+17,w-8,1);
+  lt(String(Math.max(0,Math.ceil(need-s.p))),x+w-22,y+40,22,'right');lt('m',x+w-5,y+40,11,'right');
+  lt(pace?mmss(pace):'-:--',x+w-38,y+57,15,'right');lt('/500m',x+w-5,y+57,9,'right');
+  c.fillRect(x+4,y+61,w-8,1);
+  lt(`${pace?Math.round(2.8/Math.pow(pace/500,3)):0} watt`,x+5,y+72,9);lt(`ave ${avg?mmss(Math.min(599,avg)):'-:--'}`,x+w-5,y+72,9,'right');}
+
 const ST=[
- {id:'ski',need:1000,unit:'m',nm:['스키에르그','SKIERG'],hint:'↓  ↓  ↓',
-  how:['패드를 아래로 쓱쓱 쓸어내려요','Swipe down on the pads, again and again'],
-  init(s){s.k=0;},
-  swipe(s,side,dir){if(dir!=='down')return;add(s,50);s.k=1;SFX.pull();},
-  update(s,dt){s.k=Math.max(0,s.k-dt*3.2);},
-  draw(s){scene(0);const x=186;c.fillStyle='#444';c.fillRect(x,38,6,FL-38);rr(x-14,FL-5,36,5,1,'#333');
+ {id:'ski',erg:1,need:1000,unit:'m',nm:['스키에르그','SKIERG'],hint:'',
+  how:['두 손잡이(L·R)를 잡은 채 아래로 길게 당기고, 원을 그리며 위로 돌아와요','Grab both handles (L·R), pull down long, circle back up. Don\'t let go!'],
+  init(s){ERG.init(s);},
+  down(s,side){ERG.grab(s,side);},
+  move(s,side,dx,dy){ERG.pull(s,side,dy);},
+  swipe(s,side,dir,key){if(key&&dir==='down')ERG.key(s,80);},
+  update(s,dt){ERG.tick(s,dt);},
+  want:()=>'LR',
+  draw(s){scene(0);const x=150;c.fillStyle='#444';c.fillRect(x,38,6,FL-38);rr(x-14,FL-5,36,5,1,'#333');
     disc(x+3,42,15,'#22222c');const a=s.dp*.03;for(let i=0;i<3;i++)line([x+3,42,x+3+Math.cos(a+i*2.09)*13,42+Math.sin(a+i*2.09)*13],2,'#ffd400',0);disc(x+3,42,3,'#888');
-    const h=hero(130,FL,{cr:s.k*.9,lean:s.k*.4,arm:-1.2+s.k*2});line([x-2,34,h.tx,h.ty],1.5,'#ddd',0);disc(h.tx,h.ty,2.5,'#111','#ddd');}},
+    const h=hero(98,FL,{cr:s.k*.9,lean:s.k*.4,arm:-1.2+s.k*2});line([x-2,34,h.tx,h.ty],1.5,'#ddd',0);disc(h.tx,h.ty,2.5,'#111','#ddd');
+    monitor(196,22,s,this.need);}},
  {id:'push',need:50,unit:'m',pxu:8,nm:['슬레드 푸시','SLED PUSH'],hint:'L + R',
   how:['L·R 동시에 탭! 두 손가락으로 힘껏 밀어요','Tap L and R together to shove the sled'],
   init(s){s.tp={L:-9,R:-9};s.ph=0;s.tph=0;s.k=0;},
@@ -323,18 +367,21 @@ const ST=[
     c.fillStyle='#16a34a';c.fillRect(gx,Y(1),24,Y(.5)-Y(1));c.fillStyle='#ffd400';c.fillRect(gx,Y(.9),24,Y(.72)-Y(.9));
     if(s.st==='chg'){c.fillStyle='#fff';c.fillRect(gx-6,Y(Math.min(1.12,s.c))-1.5,36,3);}
     txt(L('노랑=10m','YELLOW=10m'),gx+12,gy+gh+16,8,'#ffd400');}},
- {id:'row',need:1000,unit:'m',nm:['로잉','ROWING'],hint:'←  →  ←  →',
-  how:['패드를 좌우로 쓱싹쓱싹 문질러요','Swipe left and right, back and forth'],
-  init(s){s.dir=null;s.k=0;s.kt=0;},
-  swipe(s,side,dir){if(dir!=='left'&&dir!=='right')return;if(dir===s.dir)return;s.dir=dir;add(s,50);s.kt=dir==='left'?1:0;if(dir==='left')SFX.pull();else SFX.step('R');},
-  update(s,dt){s.k+=(s.kt-s.k)*Math.min(1,dt*16);},
-  draw(s){scene(0);c.fillStyle='#666';c.fillRect(70,FL-6,170,3);c.fillRect(74,FL-3,4,3);c.fillRect(200,FL-3,4,3);
-    disc(238,FL-18,14,'#22222c');const a=s.dp*.03;for(let i=0;i<3;i++)line([238,FL-18,238+Math.cos(a+i*2.09)*12,FL-18+Math.sin(a+i*2.09)*12],2,'#ffd400',0);
-    rr(196,FL-14,8,10,1,'#444');const sx=168-s.k*52;rr(sx-9,FL-10,16,4,1,'#333');
-    c.save();const h0=FL-9;                                               // 앉아서 발은 발판에
-    leg(sx-3,h0-8,190,FL-11,SK2);c.restore();
-    const h=hero(sx,FL-9+17-8,{lean:-.15-s.k*.5,arm:-.1,st:0});leg(sx+3,h.hy,194,FL-9,SK);
-    line([h.tx,h.ty,226,FL-22],1.5,'#ddd',0);disc(h.tx,h.ty,2.5,'#111','#ddd');}},
+ {id:'row',erg:1,need:1000,unit:'m',nm:['로잉','ROWING'],hint:'',
+  how:['손잡이를 잡은 채 왼쪽으로 길게 당기고, 오른쪽으로 돌아와요','Grab the handle, pull long to the left, glide back right'],
+  init(s){ERG.init(s);s.kd=null;},
+  down(s,side){ERG.grab(s,side);},
+  move(s,side,dx,dy){ERG.pull(s,side,-dx);},
+  swipe(s,side,dir,key){if(!key||dir===s.kd||(dir!=='left'&&dir!=='right'))return;s.kd=dir;ERG.key(s,40);},
+  update(s,dt){ERG.tick(s,dt);},
+  want:()=>'LR',
+  draw(s){scene(0);const o=-44;c.fillStyle='#666';c.fillRect(70+o,FL-6,170,3);c.fillRect(74+o,FL-3,4,3);c.fillRect(200+o,FL-3,4,3);
+    disc(238+o,FL-18,14,'#22222c');const a=s.dp*.03;for(let i=0;i<3;i++)line([238+o,FL-18,238+o+Math.cos(a+i*2.09)*12,FL-18+Math.sin(a+i*2.09)*12],2,'#ffd400',0);
+    rr(196+o,FL-14,8,10,1,'#444');const sx=168+o-s.k*52;rr(sx-9,FL-10,16,4,1,'#333');
+    leg(sx-3,FL-17,190+o,FL-11,SK2);
+    const h=hero(sx,FL,{lean:-.15-s.k*.5,arm:-.1,st:0});leg(sx+3,h.hy,194+o,FL-9,SK);
+    line([h.tx,h.ty,226+o,FL-22],1.5,'#ddd',0);disc(h.tx,h.ty,2.5,'#111','#ddd');
+    monitor(200,22,s,this.need);}},
  {id:'carry',need:200,unit:'m',pxu:2,nm:['파머스 캐리','FARMERS CARRY'],hint:L('L + R 꾹','HOLD L + R'),
   how:['둘 다 꾹 잡고 걸어요. 악력이 바닥나기 전에 잠깐 떼요!','Hold both to carry. Let go briefly before your grip runs out!'],
   init(s){s.grip=1;s.v=0;s.lock=0;s.ph=0;},
@@ -392,7 +439,7 @@ function paintInfo(){chips();$('pb').textContent=SAVE.pb?fmt(SAVE.pb):'-';
   if(!G||!G.seg){$('segNo').textContent='HANDROX';$('wT').textContent=L('🖐 손가락 피트니스 레이스','🖐 The fitness race for fingers');$('wN').textContent='';
     $('wP').textContent=L('1km 달리기와 운동 8종목을 손가락 두 개로 완주해요.','8 × 1km runs and 8 workouts. All you need is two fingers.');$('wF').style.width='0';$('wB').textContent='';hint(null);return;}
   const seg=G.seg,n=Math.floor(G.i/2)+1;$('segNo').textContent=seg.id==='run'?`RUN ${n}/8`:`STATION ${n}/8`;
-  $('wT').textContent=L(...seg.nm)+(seg.id==='run'?` ${n}`:'');$('wN').textContent=`${G.i+1}/16`;$('wP').textContent=L(...seg.how);hint(seg);}
+  $('wT').textContent=L(...seg.nm)+(seg.id==='run'?` ${n}`:'');$('wN').textContent=`${G.i+1}/16`;$('wP').textContent=L(...seg.how);hint(seg);pad.classList.toggle('ski',seg.id==='ski');pad.classList.toggle('row',seg.id==='row');}
 function hint(seg){$('hint').innerHTML=seg?seg.hint:`<small>${L('여기를 두 손가락으로 눌러요','Your two fingers go here')}</small>`;}
 async function countdown(){for(const n of [3,2,1]){overlay(`<div class="g" style="font-size:44px">${n}</div>`);SFX.beep();await sleep(650);}overlay(null);SFX.go();}
 async function newRace(){FX.length=0;G={i:-1,clock:0,splits:[],state:'wait',seg:null,s:null};$('result').hidden=true;$('rst').hidden=false;$('clock').textContent=fmt(0);
@@ -424,6 +471,7 @@ function loop(t){const dt=Math.min(.05,(t-last)/1000);last=t;
     seg.draw(s);drawFX(dt);
     $('wF').style.width=(s.dp/seg.need*100)+'%';$('wB').textContent=`${Math.floor(s.p)} / ${seg.need}${unit(seg)}`;
     const w=G.state==='play'&&seg.want?seg.want(s):'';$('pL').classList.toggle('want',w.includes('L'));$('pR').classList.toggle('want',w.includes('R'));
+    if(seg.erg)for(const d of ['L','R'])$('p'+d).firstElementChild.style.transform=seg.id==='ski'?`translateY(${s.pos[d]*62}px)`:`translateX(${-s.pos[d]*62}px)`;
     if(G.state==='play'&&s.p>=seg.need)nextSeg();
   }else{idleT+=dt;scene(idleT*40);hero(150,FL,{ph:idleT*7,lean:.15,arm:.6+Math.sin(idleT*7)*.7});}
   requestAnimationFrame(loop);}
@@ -432,18 +480,21 @@ function loop(t){const dt=Math.min(.05,(t-last)/1000);last=t;
 const pad=$('pad'),ptr=new Map(),TH=24;
 function press(side){held[side]++;$('p'+side).classList.add('on');if(G&&G.state==='play'&&G.seg.down)G.seg.down(G.s,side);}
 function release(side){held[side]=Math.max(0,held[side]-1);if(!held[side])$('p'+side).classList.remove('on');if(G&&G.state==='play'&&G.seg.up)G.seg.up(G.s,side);}
-function swipe(side,dir){if(G&&G.state==='play'&&G.seg.swipe)G.seg.swipe(G.s,side,dir);}
+function swipe(side,dir,key){if(G&&G.state==='play'&&G.seg.swipe)G.seg.swipe(G.s,side,dir,key);}
+let appScale=1;
 pad.addEventListener('pointerdown',e=>{e.preventDefault();ac();if(!started)return start();try{pad.setPointerCapture(e.pointerId);}catch(_){}
-  const r=pad.getBoundingClientRect(),side=e.clientX-r.left<r.width/2?'L':'R';ptr.set(e.pointerId,{side,x:e.clientX,y:e.clientY});press(side);});
-pad.addEventListener('pointermove',e=>{const p=ptr.get(e.pointerId);if(!p)return;const dx=e.clientX-p.x,dy=e.clientY-p.y;
+  const r=pad.getBoundingClientRect(),side=e.clientX-r.left<r.width/2?'L':'R';ptr.set(e.pointerId,{side,x:e.clientX,y:e.clientY,lx:e.clientX,ly:e.clientY});press(side);});
+pad.addEventListener('pointermove',e=>{const p=ptr.get(e.pointerId);if(!p)return;
+  if(G&&G.state==='play'&&G.seg.move)G.seg.move(G.s,p.side,(e.clientX-p.lx)/appScale,(e.clientY-p.ly)/appScale);p.lx=e.clientX;p.ly=e.clientY;
+  const dx=e.clientX-p.x,dy=e.clientY-p.y;
   if(Math.abs(dx)<TH&&Math.abs(dy)<TH)return;p.x=e.clientX;p.y=e.clientY;swipe(p.side,Math.abs(dx)>Math.abs(dy)?(dx<0?'left':'right'):(dy<0?'up':'down'));});
 ['pointerup','pointercancel'].forEach(ev=>pad.addEventListener(ev,e=>{const p=ptr.get(e.pointerId);if(!p)return;ptr.delete(e.pointerId);release(p.side);}));
 pad.addEventListener('contextmenu',e=>e.preventDefault());
 /* 키보드: F/← = L, J/→ = R, ↓ = 아래로 쓸기 (좌우 자동 번갈아) */
 const KEYS={f:'L',F:'L',ArrowLeft:'L',j:'R',J:'R',ArrowRight:'R'};let kdn={},kalt='L';
 addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){if(!started){e.preventDefault();start();}return;}
-  if(e.key==='ArrowDown'){e.preventDefault();if(!e.repeat){swipe(kalt,'down');kalt=other(kalt);}return;}
-  const s=KEYS[e.key];if(!s)return;e.preventDefault();if(e.repeat||kdn[s])return;kdn[s]=1;press(s);swipe(s,s==='L'?'left':'right');});
+  if(e.key==='ArrowDown'){e.preventDefault();if(!e.repeat){swipe(kalt,'down',1);kalt=other(kalt);}return;}
+  const s=KEYS[e.key];if(!s)return;e.preventDefault();if(e.repeat||kdn[s])return;kdn[s]=1;press(s);swipe(s,s==='L'?'left':'right',1);});
 addEventListener('keyup',e=>{const s=KEYS[e.key];if(s&&kdn[s]){kdn[s]=0;release(s);}});
 addEventListener('blur',()=>{['L','R'].forEach(s=>{while(held[s])release(s);});kdn={};ptr.clear();});
 
@@ -462,13 +513,13 @@ The race clock runs ${K}× faster than real time. Finish faster for a better tim
 function setLang(l){lang=l;try{localStorage.setItem('handrox.lang',l);}catch(e){}document.documentElement.lang=l;
   $('cTag').textContent=L('손가락으로 뛰는 하이록스','The fitness race for fingers');$('cNote').textContent=L('기록은 이 브라우저에 저장돼요','Your best time is saved in this browser');
   $('pLs').textContent=L('왼 손가락','LEFT FINGER');$('pRs').textContent=L('오른 손가락','RIGHT FINGER');
-  ST[3].hint=L('꾹 ▸ 떼기','HOLD ▸ RELEASE');ST[5].hint=L('L + R 꾹','HOLD L + R');ST[7].hint=L('탭 ● 탭','TAP ● TAP');
+  ST[0].hint=L('잡고 ↓ 당겨 ⟳ 돌리기','GRAB ↓ PULL ⟳ CIRCLE');ST[4].hint=L('잡고 ← 당기기 · 돌아오기 →','GRAB ← PULL · RETURN →');ST[3].hint=L('꾹 ▸ 떼기','HOLD ▸ RELEASE');ST[5].hint=L('L + R 꾹','HOLD L + R');ST[7].hint=L('탭 ● 탭','TAP ● TAP');
   $('helpBody').innerHTML=helpHTML();document.querySelectorAll('#lsel button').forEach(b=>b.classList.toggle('on',b.dataset.l===l));$('lng').textContent=l==='ko'?'EN':'KO';paintInfo();}
 $('lsel').addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('button');if(b){SFX.tick();setLang(b.dataset.l);}});
 $('lng').addEventListener('click',()=>{SFX.tick();setLang(lang==='ko'?'en':'ko');});
 
 function fitApp(){const app=$('app'),vh=(window.visualViewport&&visualViewport.height)||innerHeight;if(!vh)return;
-  app.style.transform='';const avail=vh-4,s=Math.min(1,avail/app.scrollHeight);app.style.transform=s<1?`scale(${s})`:'';document.body.style.height=avail+'px';}
+  app.style.transform='';const avail=vh-4,s=Math.min(1,avail/app.scrollHeight);app.style.transform=s<1?`scale(${s})`:'';appScale=s;document.body.style.height=avail+'px';}
 setTimeout(fitApp,300);if(window.visualViewport)visualViewport.addEventListener('resize',fitApp);addEventListener('resize',fitApp);
 
 /* 얼굴 아이콘 */
