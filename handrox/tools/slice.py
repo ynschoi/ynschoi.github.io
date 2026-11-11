@@ -1,48 +1,44 @@
-# AI 시트 → 저해상도 구역 스프라이트. 사용: python3 slice.py row_raw.png row 12 42 26 30
+# AI로 받은 4x2 시트 → 정확한 격자의 색 번호 스프라이트(JSON). 사용: python3 slice.py 시트.png 이름
+# 칸마다 96x64로 줄이고(다수결), 지정 팔레트로 맞춤. 머리 상자를 프레임마다 찾아 함께 저장.
 import sys,json
 from PIL import Image
 import numpy as np
-src,name,BS,SW,SH,MX=sys.argv[1],sys.argv[2],int(sys.argv[3]),int(sys.argv[4]),int(sys.argv[5]),int(sys.argv[6])
+src,name=sys.argv[1],sys.argv[2];CW,CH=96,64
 a=np.array(Image.open(src).convert('RGBA')).astype(int);H,W=a.shape[:2]
-REF={'K':(0,0,0),'M':(28,28,28),'S':(244,180,140),'R':(240,0,0),'B':(0,0,235),'C':(0,200,240),'G':(0,200,20),'Y':(245,205,0),'W':(240,240,240),'E':(190,190,190)}
-keys=list(REF);ref=np.array([REF[k] for k in keys])
-d=((a[...,:3][:,:,None,:]-ref[None,None])**2).sum(3);cl=d.argmin(2);cl[a[...,3]<128]=-1
-cw,ch=W//4,H//2;frames=[];heads=[]
+PAL=['#202028','#F2B892','#C98A62','#FF0000','#A80000','#0000FF','#0000A8','#00FFFF','#00A8A8','#00FF00','#00A800','#FF00FF','#A800A8','#FFFFFF','#BBBBBB','#3A3A44','#26262E','#FFD400','#C8C8D0','#000000','#D9A02A','#FFFFFF']
+pal=np.array([[int(h[i:i+2],16) for i in (1,3,5)] for h in PAL[:21]])
+d=((a[...,:3][:,:,None,:]-pal[None,None])**2).sum(3);cl=d.argmin(2);cl[cl==19]=0;cl[a[...,3]<110]=-1
+GW,GH=CW*4,CH*2;g=np.full((GH,GW),-1)
+for j in range(GH):
+    y0,y1=int(j*H/GH),int((j+1)*H/GH)
+    for i in range(GW):
+        x0,x1=int(i*W/GW),int((i+1)*W/GW);v=np.bincount(cl[y0:y1,x0:x1].ravel()+1,minlength=22);g[j,i]=v.argmax()-1
+frames=[];heads=[]
 for f in range(8):
-    cx,cy=(f%4)*cw,(f//4)*ch;cell=cl[cy:cy+ch,cx:cx+cw]
-    xs=np.where((cell>=0).any(0))[0];ys=np.where((cell>=0).any(1))[0];x1,y1=xs.max()+1,ys.max()+1   # 장비 오른쪽·아래 기준 정렬
-    g=[]
-    for j in range(SH):
-        row=''
-        for i in range(SW):
-            px0,py0=x1-(SW-i)*BS,y1-(SH-j)*BS;b=cell[max(0,py0):max(0,py0+BS),max(0,px0):max(0,px0+BS)].ravel()
-            if b.size==0:row+='.';continue
-            v=np.bincount(b+1,minlength=len(keys)+1);k=v.argmax();row+='.' if k==0 else keys[k-1]
-        g.append(row)
-    g=[''.join('y' if c=='Y' and i>=MX else c for i,c in enumerate(r)) for r in g]      # 장비 노랑 / 양말 노랑 구분
-    frames.append(g)
-    sk=np.array([[c=='S' for c in r] for r in g]);ty=int(np.where(sk.any(1))[0][0]);tx=int(np.where(sk[ty])[0][0])
-    comp=np.zeros_like(sk);st=[(ty,tx)]                                   # 맨 위 살색에서 시작해 이어진 덩어리
+    c=g[(f//4)*CH:(f//4+1)*CH,(f%4)*CW:(f%4+1)*CW].copy();sk=(c==1)|(c==2)
+    ty=int(np.where(sk.any(1))[0][0]);tx=int(np.where(sk[ty])[0][0]);comp=np.zeros_like(sk);st=[(ty,tx)]
+    body=(c>=0)&~np.isin(c,[15,16,17,18,20])          # 머리 = 맨 위에서 이어진 살색+외곽선 덩어리 중 목 위
     while st:
         y,x=st.pop()
-        if 0<=y<SH and 0<=x<SW and sk[y,x] and not comp[y,x]:comp[y,x]=True;st+=[(y+1,x),(y-1,x),(y,x+1),(y,x-1)]
-    ys=np.where(comp.any(1))[0];wd=[int(comp[y].sum()) for y in range(ys[0],ys[-1]+1)];hh=len(wd)
-    for q in range(3,len(wd)):
-        if wd[q]<max(wd[:q])*.6:hh=q;break
-    hx=[x for x in range(SW) if comp[ys[0]:ys[0]+hh,x].any()]
-    heads.append([hx[0],int(ys[0]),hx[-1]-hx[0]+1,hh])
-json.dump({'w':SW,'h':SH,'f':[''.join(g) for g in frames],'head':heads},open(name+'.json','w'))
-PAL={'.':(5,5,6),'K':(11,11,14),'M':(52,52,60),'S':(141,90,59),'R':(229,57,31),'B':(229,57,31),'C':(141,90,59),'G':(42,42,50),'Y':(242,242,242),'y':(255,212,0),'W':(53,196,106),'E':(190,190,190)}
-Z=6;out=Image.new('RGB',(SW*Z*4,SH*Z*2))
-for f,g in enumerate(frames):
-    im=Image.new('RGB',(SW,SH))
-    for j,r in enumerate(g):
-        for i,c in enumerate(r):im.putpixel((i,j),PAL[c])
+        if 0<=y<CH and 0<=x<CW and (sk[y,x] or (c[y,x]==0 and y<ty+30)) and not comp[y,x]:comp[y,x]=True;st+=[(y+1,x),(y-1,x),(y,x+1),(y,x-1)]
+    ys=np.where(comp.any(1))[0];wd=[int(sk[y].sum()) for y in range(ty,min(CH,ty+34))];hh=len(wd);mx=0
+    for q in range(len(wd)):
+        mx=max(mx,wd[q])
+        if q>8 and wd[q]<mx*.55:hh=q;break
+    hx=[x for x in range(CW) if sk[ty:ty+min(hh,9),x].any()];hw=hx[-1]-hx[0]+1;hh=hw;head=[hx[0],ty,hw,hh];heads.append(head)   # 눈·눈썹 때문에 폭이 끊겨서 높이는 폭과 같게 잡음
+    hb=c[ty:ty+hh+3,hx[0]:hx[-1]+3];hb[(hb==13)|(hb==14)]=21           # 눈 흰자·이는 신발 색과 분리
+    so=np.argwhere((c==11)|(c==12))                                      # 양말에서 먼 흰색·회색은 신발이 아니라 장비 금속
+    for y,x in np.argwhere((c==13)|(c==14)):
+        if not len(so) or np.abs(so-[y,x]).sum(1).min()>12:c[y,x]=18
+    frames.append(''.join('.' if v<0 else chr(97+v) for v in c.ravel()))
+json.dump({'w':CW,'h':CH,'f':frames,'head':heads},open(name+'.json','w'),separators=(',',':'))
+out=Image.new('RGB',(GW*4,GH*4),(5,5,6))
+for f in range(8):
+    im=Image.new('RGB',(CW,CH),(5,5,6))
+    for i,chx in enumerate(frames[f]):
+        if chx!='.':im.putpixel((i%CW,i//CW),tuple(int(PAL[ord(chx)-97][k:k+2],16) for k in (1,3,5)))
     hx,hy,hw,hh=heads[f]
-    for i in range(hx-1,hx+hw):                      # 머리카락·반다나 시험
-        for j in range(hy-1,hy+3):
-            if 0<=i<SW and 0<=j<SH:im.putpixel((i,j),(42,32,24))
-    for i in range(hx-1,hx+hw+1):
-        if 0<=i<SW:im.putpixel((i,hy+3),(255,212,0))
-    out.paste(im.resize((SW*Z,SH*Z),Image.NEAREST),((f%4)*SW*Z,(f//4)*SH*Z))
+    for x in range(hx,hx+hw):
+        for y in (hy,hy+hh-1):im.putpixel((x,y),(255,0,255))
+    out.paste(im.resize((CW*4,CH*4),Image.NEAREST),((f%4)*CW*4,(f//4)*CH*4))
 out.save(name+'_prev.png');print(heads)
