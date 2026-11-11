@@ -591,7 +591,7 @@ async function doEat(){await walkTo(SPOT.table-14);
   const q=Math.random(),n=window.__kn??(q<.4?0:q<.7?1:q<.9?2:3),b=$('bubble');
   for(let i=0;i<10;i++){b.textContent=lang==='ko'?`포션… ${i%4}개?`:`Potions… ${i%4}?`;b.classList.add('on');SFX.tick();await sleep(70+i*12);}
   if(n){gotPot('P',n);say(['','1개!','2개!!','3개!!! 대박'][n],1300);banner(n===3?'잭팟!!':'+'+n,1000);if(n===3)SFX.win();}
-  else{say('배만 부르다…',1300);SFX.fail();}
+  else{say(Math.random()<.5?'Хуй с ним':'배만 부르다…',1300);SFX.fail();}
   msg('EAT','🧀 하차푸리',n?`치즈 가득 하차푸리.\n파워포션 ${n}개! 마시면 스내치 추가 느려져요.`:'치즈 가득 하차푸리.\n이번엔 포션이 안 나왔다… 다음엔 3개?');
   await sleep(300);}
 
@@ -633,7 +633,7 @@ async function doLift(k){await walkTo(SPOT.gym-4);setF(F.squat);say(pick(['간�
     await playAct('mv_yoss',[[1,180],[2,260],[3,320],[4,420],[5,480],[6,420],[7,300]],f=>{if(f===4){say('요쓰!!',1000);SFX.thud();}});actEnd('mv_yoss');setF(F.smile);
     say(r.grade==='PERFECT'&&Math.random()<.6?'Охуенно!':pick(['가볍네','이게 사는 맛이지','근육아 고마워']),1200);
     msg('LIFT',`🏋️ ${name} 신기록!`,`${r.kg}kg 성공 (${r.grade})\n${before?`이전 기록 ${before}kg → `:''}PR ${r.kg}kg · 합계 ${total()}kg`);
-  }else if(r.kg>0){setF(F.smile);say(pick(['아깝다','조금만 더','다음엔 넘는다']),1200);
+  }else if(r.kg>0){setF(F.smile);say(Math.random()<.4?'Хуёвато…':pick(['아깝다','조금만 더','다음엔 넘는다']),1200);
     msg('LIFT',`🏋️ ${name} ${r.kg}kg`,`${r.grade}! 하지만 PR ${before}kg은 못 넘었다.\n${POTN[POTK[k]]}을 마시면 조금 쉬워져요.`);
   }else{SFX.fail();setF(F.bend);shake();{const q=Math.random();if(q<.3)say("It wasn't me ♪",1700);else if(q<.55)say('Хуйня…',1500);else say(pick(['으아아...','오늘은 컨디션이...','바벨이 무거운 게 아니라...']),1300);}
     msg('LIFT',`🏋️ ${name} 실패`,`바벨을 놓쳤다. PR ${before?before+'kg':'없음'} 그대로.\n${POTN[POTK[k]]}을 마시면 조금 쉬워져요.`);}
@@ -850,7 +850,7 @@ function start(){if(started)return;started=true;log('start',lang);ac();$('cover'
 
 /* 가만히 있으면 혼잣말 (역도 인사이드 조크) */
 const IDLE=[['Light weight baby!','Light weight baby!'],['Brown Sugar… 아니 프로틴 ♪','Brown Sugar… no, protein ♪'],
-  ['내가 버거킹에서 패티 구워도, ...','If I flipped patties at Burger King, ...'],["It wasn't me ♪","It wasn't me ♪"]];
+  ['내가 버거킹에서 패티 구워도, ...','If I flipped patties at Burger King, ...'],["It wasn't me ♪","It wasn't me ♪"],['Хуй с ним…','Хуй с ним…']];
 let idleT=Date.now(),idleLast=-1;
 ['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{idleT=Date.now();},true));
 setInterval(()=>{if(!started||busy||cur||!$('help').hidden||!$('choose').hidden||document.hidden)return;if(Date.now()-idleT<8000)return;
