@@ -427,22 +427,22 @@ const ST=[
     rr(x-12,h.hy-38,24,9,4,'#3a3a46');c.fillStyle='#ffd400';c.fillRect(x-3,h.hy-38,6,9);
     const f=(s.bt%this.T)/this.T,bx=258,by=62;disc(bx,by,26,'#0c0c10aa',null);c.lineWidth=3;c.strokeStyle='#ffd400';c.beginPath();c.arc(bx,by,11,0,7);c.stroke();
     c.lineWidth=2;c.strokeStyle='#fff';c.beginPath();c.arc(bx,by,11+(1-f)*22,0,7);c.stroke();txt(s.last?other(s.last):'L',bx,by+4,11,'#fff');}},
- {id:'wall',rate:49,need:100,unit:['개','reps'],nm:['월볼','WALL BALLS'],hint:L('탭 ● 탭','TAP ● TAP'),
+ {id:'wall',rate:40,need:100,unit:['개','reps'],nm:['월볼','WALL BALLS'],hint:L('탭 ● 탭','TAP ● TAP'),
   how:['탭해서 던지고, 공이 손에 돌아올 때 다시 탭!','Tap to throw. Tap again just as the ball comes back'],
-  F:.8,
+  F:.9,
   init(s){s.fly=0;s.ft=0;s.pen=0;s.wait=0;s.k=0;},
   thr(s,n,g){add(s,n);s.fly=1;s.ft=0;s.pen=0;s.k=1;SFX.ball();if(g!=null)grade(g,150,60);},
   down(s){if(s.wait>0)return;if(!s.fly)return this.thr(s,6,null);const t=s.ft;
-    if(t<.6){s.pen=1;return;}if(s.pen)return this.thr(s,3,0);this.thr(s,t>=.7?10:6,t>=.7?2:1);},
-  update(s,dt){s.k=Math.max(0,s.k-dt*4);if(s.wait>0){s.wait-=dt;return;}if(s.fly){s.ft+=dt;if(s.ft>this.F+.14){s.fly=0;s.wait=.55;SFX.drop();fx(L('떨어뜨림!','DROPPED!'),'#ff8a7a',150,60);}}},
+    if(t<.4){s.pen=1;return;}if(t<.5)return;if(s.pen)return this.thr(s,3,0);this.thr(s,t>=.7?10:6,t>=.7?2:1);},
+  update(s,dt){s.k=Math.max(0,s.k-dt*4);if(s.wait>0){s.wait-=dt;return;}if(s.fly){s.ft+=dt;if(s.ft>this.F+.3){s.fly=0;s.wait=.55;SFX.drop();fx(L('떨어뜨림!','DROPPED!'),'#ff8a7a',150,60);}}},
   want:()=>'LR',
   draw(s){scene(0);c.fillStyle='#3a3a46';c.fillRect(266,8,12,FL-8);c.fillStyle='#ffd400';c.fillRect(256,36,10,4);c.lineWidth=3;c.strokeStyle='#e5391f';c.beginPath();c.arc(262,44,10,0,7);c.stroke();
-    const x=176,near=s.fly&&s.ft>.6,h=hero(x,FL,{cr:(near?.6:0)+(s.wait>0?.4:0),arm:s.fly?-1.3:-.5,st:5,dead:s.wait>0});
+    const x=176,near=s.fly&&s.ft>.5,h=hero(x,FL,{cr:(near?.6:0)+(s.wait>0?.4:0),arm:s.fly?-1.3:-.5,st:5,dead:s.wait>0});
     let bx=h.tx+4,by=h.ty-6;
-    if(s.fly){const u=s.ft/this.F,q=u<.5?u*2:(1-u)*2,e=1-(1-Math.min(1,q))**2;bx=x+16+(254-x-16)*e;by=FL-32-(FL-32-44)*e;if(u>1){bx=x+16;by=FL-32+(u-1)*160;}}
+    if(s.fly){const u=s.ft/this.F,q=u<.5?u*2:(1-u)*2,e=1-(1-Math.min(1,q))**2;bx=x+16+(254-x-16)*e;by=FL-32-(FL-32-44)*e;if(u>1){bx=x+16;by=FL-32+(u-1)*45;}}
     else if(s.wait>0){bx=x+26;by=FL-7;}
     disc(bx,by,7,'#c0392b');c.fillStyle='#ffd400';c.fillRect(bx-7,by-1,14,2);
-    if(s.fly){c.fillStyle=s.ft>=.7?'#ffd400':s.ft>=.6?'#35c46a':'#444';c.fillRect(x-22,FL-64,44,4);}}}
+    if(s.fly){c.fillStyle=s.ft>=.7?'#ffd400':s.ft>=.5?'#35c46a':'#444';c.fillRect(x-24,FL-66,48,6);if(s.ft>=.7)txt('TAP!',x,FL-72,11,'#ffd400');}}}
 ];
 const SEG=i=>i%2?ST[(i-1)/2]:RUN;
 const unit=seg=>Array.isArray(seg.unit)?L(...seg.unit):seg.unit;
