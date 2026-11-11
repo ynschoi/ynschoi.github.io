@@ -849,7 +849,7 @@ function start(){if(started)return;started=true;log('start',lang);ac();$('cover'
 
 /* 가만히 있으면 혼잣말 (역도 인사이드 조크) */
 const IDLE=[['Light weight baby!','Light weight baby!'],['Brown Sugar… 아니 프로틴 ♪','Brown Sugar… no, protein ♪'],
-  ['Dilemma ♪ 밥이냐 하차푸리냐','Dilemma ♪ rice or khachapuri?'],['그래도 나 사랑해 줄 거야?','Would you still love me?'],["It wasn't me ♪","It wasn't me ♪"]];
+  ['내가 버거킹에서 패티 구워도, 그래도 나 사랑해 줄 거야?','If I flipped patties at Burger King, would you still love me?'],["It wasn't me ♪","It wasn't me ♪"]];
 let idleT=Date.now(),idleLast=-1;
 ['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{idleT=Date.now();},true));
 setInterval(()=>{if(!started||busy||cur||!$('help').hidden||!$('choose').hidden||document.hidden)return;if(Date.now()-idleT<8000)return;
