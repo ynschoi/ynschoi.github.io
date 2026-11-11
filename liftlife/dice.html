@@ -169,7 +169,7 @@
 
   /* 필살기 */
   .hero .skl{position:absolute;left:-20%;top:-20%;width:140%;height:140%;background:0 0/800% 100% no-repeat;display:none;filter:drop-shadow(0 3px 0 rgba(0,0,0,.25))}
-  .hero.skill .spr{visibility:hidden}.hero.skill .skl{display:block}
+  .hero.skill .spr{opacity:0}.hero.skill .skl{display:block}
   /* 부드럽게: 두 장을 겹쳐 컷 사이를 크로스페이드, 전체는 숨 쉬듯 살짝 움직임 */
   .hero .sklw{position:absolute;inset:0;transform-origin:50% 95%;transition:transform .22s cubic-bezier(.3,1.6,.5,1)}
   .hero.skill .sklw{animation:breathe2 1.1s ease-in-out infinite}
@@ -178,7 +178,8 @@
   .hero .skl.off{opacity:0}
   /* 동작 시트 (걷기·밥·똥·포션·주사위) */
   .hero .act{position:absolute;background-repeat:no-repeat;background-size:800% 100%;display:none;filter:drop-shadow(0 3px 0 rgba(0,0,0,.25))}
-  .hero.acting .spr{visibility:hidden}.hero.acting .act{display:block}
+  .hero.acting .spr{opacity:0}
+  .hero.keep .spr{opacity:1!important}   /* 바꿔 끼우는 동안 기본 Moti를 한 번 더 그려 빈 화면 방지 */.hero.acting .act{display:block}
   .hero.gone{opacity:0}
   .scn{position:absolute;z-index:6;background-repeat:no-repeat;background-size:800% 100%;display:none;pointer-events:none;filter:drop-shadow(0 3px 0 rgba(0,0,0,.25))}
   .scn.on{display:block}
@@ -521,18 +522,23 @@ const IMGC={};
 function ready(src){let c=IMGC[src];if(!c){const im=new Image();im.decoding='async';im.src=src;
   c=IMGC[src]={im,p:(im.decode?im.decode():new Promise((r,j)=>{im.onload=r;im.onerror=j;})).catch(()=>{})};}
   return Promise.race([c.p,sleep(1500)]);}
-Object.values(MV).forEach(m=>ready(m.img));
+Object.values(MV).forEach(m=>ready(m.img));ready('hero.webp');
+/* 그림 바꿔 끼우기: 새 그림과 기본 Moti를 두 프레임 겹쳐 그린 뒤 하나를 숨김 */
+let swapT=0,swapP=null;
+const paint2=()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(r,40))));
+function swapIn(cls){if(swapP&&swapP!==cls)hero.classList.remove(swapP);swapP=null;const t=++swapT;hero.classList.add('keep',cls);paint2().then(()=>{if(t===swapT)hero.classList.remove('keep');});}
+function swapOut(cls){const t=++swapT;swapP=cls;hero.classList.add('keep');paint2().then(()=>{if(t!==swapT)return;hero.classList.remove(cls,'keep');swapP=null;});}
 const KU=()=>heroH()/300;
 function actSet(name){const m=MV[name],el=$('act');el.style.backgroundImage=`url(${m.img})`;
-  el.style.left=((.49875-m.ax/300)*100)+'%';el.style.top=((.98-m.fy/300)*100)+'%';el.style.width=(m.cw/300*100)+'%';el.style.height=(m.ch/300*100)+'%';hero.classList.add('acting');}
+  el.style.left=((.49875-m.ax/300)*100)+'%';el.style.top=((.98-m.fy/300)*100)+'%';el.style.width=(m.cw/300*100)+'%';el.style.height=(m.ch/300*100)+'%';swapIn('acting');}
 function actF(i){$('act').style.backgroundPosition=(i/7*100)+'% 0';}
-function actEnd(name){hero.classList.remove('acting');if(name){hx+=MV[name].end*KU()/GW()*240;place();}setF(F.stand);}
+function actEnd(name){swapOut('acting');if(name){hx+=MV[name].end*KU()/GW()*240;place();}setF(F.stand);}
 async function playAct(name,seq,on){await ready(MV[name].img);actSet(name);await nextPaint();for(const [f,ms] of seq){actF(f);on&&on(f);await sleep(ms);}}
 function bgPt(fx,fy){const gw=GW(),gh=GH(),dw=Math.max(gw,gh*BG_AR),dh=dw/BG_AR;return{x:fx*dw-(dw-gw)/2,y:fy*dh-(dh-gh)/2};}
 function walkTo(x){return new Promise(res=>{if(Math.abs(x-hx)<1){res();return;}face=x>hx?1:-1;place();actSet('mv_walk');let k=0;actF(0);
   clearInterval(walkT);walkT=setInterval(()=>{actF(++k%8);if(k%4===0)SFX.step();},95);let last=performance.now();
   (function step(t){const dt=(t-last)/1000;last=t;const d=x-hx;hx+=Math.sign(d)*Math.min(Math.abs(d),90*dt);place();
-    if(Math.abs(x-hx)<.5){hx=x;face=1;place();clearInterval(walkT);hero.classList.remove('acting');setF(F.stand);res();return;}requestAnimationFrame(step);})(last);});}
+    if(Math.abs(x-hx)<.5){hx=x;face=1;place();clearInterval(walkT);swapOut('acting');setF(F.stand);res();return;}requestAnimationFrame(step);})(last);});}
 function say(t,ms=1300){const b=$('bubble');b.textContent=tr(t);b.classList.add('on');clearTimeout(say.t);say.t=setTimeout(()=>b.classList.remove('on'),ms);}
 function pop(t,x,y,size){const p=document.createElement('div');p.className='pop';p.textContent=tr(t);p.style.left=x+'px';p.style.top=y+'px';if(size)p.style.fontSize=size+'px';game.appendChild(p);setTimeout(()=>p.remove(),900);}
 function head(){const h=heroH();return{x:toPx(hx)+h*.06,y:GH()*.93-h*.86};}
@@ -811,7 +817,7 @@ async function useSkill(sk){ac();if(!started)start();if(busy)return;busy=true;lo
   const L=[$('skl'),$('skl2')],wrap=$('sklw');let top=0;
   const nf=sk.nf||8;L.forEach(el=>{el.style.backgroundImage=`url(${sk.img})`;el.style.backgroundSize=`${nf*100}% 100%`;el.style.backgroundPosition='0 0';});L[1].classList.add('off');L[0].classList.remove('off');
   await ready(sk.img);   // 필살기 그림이 준비된 뒤에 바꿔 끼움
-  hero.classList.add('skill');
+  swapIn('skill');
   const G=[];if(sk.ghost){for(let i=0;i<4;i++){const g=document.createElement('div');g.className='gh';g.style.backgroundImage=`url(${sk.img})`;g.style.backgroundSize=`${nf*100}% 100%`;wrap.insertBefore(g,wrap.firstChild);G.push(g);}}
   for(const [f,ms] of sk.seq){
     if(G.length){const plan=sk.ghost[f+1]||[],pf=Math.max(0,f-1);
@@ -826,7 +832,7 @@ async function useSkill(sk){ac();if(!started)start();if(busy)return;busy=true;lo
       wrap.style.transform='scale(1.06)';setTimeout(()=>wrap.style.transform='',180);}
     await sleep(ms);}
   await sleep(120);G.forEach(g=>g.remove());
-  hero.classList.remove('skill');setF(F.stand);
+  swapOut('skill');setF(F.stand);
   msg('SKILL',`${sk.ic} ${sk.n}`,{aura:'최초는 주먹, 잔! 켄! 바위!\n오라를 모은 주먹이 바벨을 향한다.',card:'카드 한 장에 분홍 오라.\n늘어나고 줄어드는 근육의 성질.',guardian:'감사의 합장.\n금빛 거인이 Moti 뒤에 섰다.',killua:'리듬 있게 걷는 발걸음.\n잔상이 여러 개로 갈라진다.'}[sk.k]);
   busy=false;$('dice').classList.add('ready');}
 
