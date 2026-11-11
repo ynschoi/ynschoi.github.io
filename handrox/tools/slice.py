@@ -27,9 +27,13 @@ for f in range(8):
         if q>8 and wd[q]<mx*.55:hh=q;break
     hx=[x for x in range(CW) if sk[ty:ty+min(hh,9),x].any()];hw=hx[-1]-hx[0]+1;hh=hw;head=[hx[0],ty,hw,hh];heads.append(head)   # 눈·눈썹 때문에 폭이 끊겨서 높이는 폭과 같게 잡음
     hb=c[ty:ty+hh+3,hx[0]:hx[-1]+3];hb[(hb==13)|(hb==14)]=21           # 눈 흰자·이는 신발 색과 분리
-    so=np.argwhere((c==11)|(c==12))                                      # 양말에서 먼 흰색·회색은 신발이 아니라 장비 금속
-    for y,x in np.argwhere((c==13)|(c==14)):
-        if not len(so) or np.abs(so-[y,x]).sum(1).min()>12:c[y,x]=18
+    so=np.argwhere((c==11)|(c==12));wh=(c==13)|(c==14);keep=np.zeros_like(wh)   # 신발 = 양말에 닿은 흰 덩어리(양말 중심에서 14칸 이내). 나머지 흰색·회색은 장비 금속
+    if len(so):
+        cy,cx=so.mean(0);st=[(y+dy,x+dx) for y,x in so for dy,dx in ((1,0),(-1,0),(0,1),(0,-1),(1,1),(1,-1),(2,0),(0,2))]
+        while st:
+            y,x=st.pop()
+            if 0<=y<CH and 0<=x<CW and wh[y,x] and not keep[y,x] and (y-cy)**2+(x-cx)**2<=14**2:keep[y,x]=True;st+=[(y+1,x),(y-1,x),(y,x+1),(y,x-1)]
+    c[wh&~keep]=18
     frames.append(''.join('.' if v<0 else chr(97+v) for v in c.ravel()))
 json.dump({'w':CW,'h':CH,'f':frames,'head':heads},open(name+'.json','w'),separators=(',',':'))
 out=Image.new('RGB',(GW*4,GH*4),(5,5,6))
