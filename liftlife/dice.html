@@ -311,7 +311,17 @@ const TO='Moti', FROM='영수';
 /* ═════════ 플레이 기록 (아티팩트 db): 각 플레이어는 자기 기록만 쓰고, 주인만 모두 봄 ═════════ */
 const LOG={v:1,sessions:0,rolls:0,faces:{},lifts:{},food:{r:0,k:0},drinks:0,skills:{},recent:[]};
 let logDoc=null,logTimer=null,logBusy=false,logDirty=false,IS_OWNER=false,USER=null,DB=null;
-function log(e,d){const now=Date.now();if(!LOG.first)LOG.first=now;LOG.last=now;
+const SHEET_URL='https://script.google.com/macros/s/AKfycbzKhwW_6AYvPPC-tkyQKm8ieApQQ8FBzqIQz8XTEF4f229MXIFBwObfDl8nBG9K1H_o/exec';
+const lsg=k=>{try{return localStorage.getItem(k);}catch(e){return null;}},lss=(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v);}catch(e){}};
+if(location.hash==='#me')lss('moti_me','1');if(location.hash==='#notme')lss('moti_me',null);
+const ME=lsg('moti_me')==='1';   // 내 기기는 시트에 안 보냄
+const VID=(()=>{let v=lsg('moti_vid');if(!v){v='m'+Math.random().toString(36).slice(2,8);lss('moti_vid',v);}return v;})();
+const DEV=(/iPhone|iPad/.test(navigator.userAgent)?'iOS':/Android/.test(navigator.userAgent)?'Android':'PC')+(/KAKAOTALK/i.test(navigator.userAgent)?'·카톡':/Instagram/i.test(navigator.userAgent)?'·인스타':'');
+function sheet(e,k){if(ME||!/github\.io$/.test(location.hostname))return;
+  try{fetch(`${SHEET_URL}?op=log&v=${VID}&ev=${encodeURIComponent('moti:'+e)}&k=${encodeURIComponent(k)}&l=${lang}&d=${encodeURIComponent(DEV)}`,{mode:'no-cors',keepalive:true}).catch(()=>{});}catch(err){}}
+function sheetText(e,d){if(e==='lift')return `${d.k} ${d.grade} ${d.kg}kg${d.kg>=d.pr&&d.grade!=='MISS'?' PR':''} (Lv${d.lv})`;
+  if(e==='start')return `PR ${S.sn}/${S.cj}/${S.sq} · day${S.day} · rolls${S.rolls}`;return d==null?'':String(d);}
+function log(e,d){sheet(e,sheetText(e,d));const now=Date.now();if(!LOG.first)LOG.first=now;LOG.last=now;
   if(e==='roll'){LOG.rolls++;LOG.faces[d]=(LOG.faces[d]||0)+1;}
   if(e==='lift'){const L=LOG.lifts[d.k]||(LOG.lifts[d.k]={n:0,miss:0,best:0});L.n++;if(d.grade==='MISS')L.miss++;L.best=Math.max(L.best,d.kg||0);}
   if(e==='eat')LOG.food[d]=(LOG.food[d]||0)+1;if(e==='drink')LOG.drinks++;if(e==='skill')LOG.skills[d]=(LOG.skills[d]||0)+1;if(e==='start')LOG.sessions++;
@@ -359,7 +369,7 @@ const EN={"밥 한 그릇 뚝딱.\n파워포션 1개! 마시면 스내치 추가
 const EN_X={"밥": "Rice", "잠": "Sleep", "똥": "Poop", "백스쿼트": "Squat", "클린앤저크": "C&J"};
 const EN_K=Object.keys(EN).sort((a,b)=>b.length-a.length);
 function tr(t){if(lang==='ko'||t==null)return t;t=String(t);const x=t.trim();if(EN_X[x]!=null)return t.replace(x,EN_X[x]);for(const k of EN_K)if(t.includes(k))t=t.split(k).join(EN[k]);return t;}
-const SHARE_URL='https://claude.ai/artifact/Cs1xss3g2bppqQWmVQVA5J';   // 외부 브라우저로 열 주소
+const SHARE_URL='https://ynschoi.github.io/moti/';   // 외부 브라우저로 열 주소
 const josa=(w,a,b)=>{const c=w.charCodeAt(w.length-1);return (c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28)?a:b;};
 const TOya=TO+josa(TO,'아','야');
 const LETTER_AT=300;   // 합계가 이 kg을 넘으면 편지
