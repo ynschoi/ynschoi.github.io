@@ -81,7 +81,7 @@
   .lsel{display:flex;gap:8px;margin:2px 0}
   .lsel button{font:700 12px var(--px);color:#fff;padding:6px 12px;border:2px solid var(--violet);background:#0b0820;box-shadow:0 3px 0 #000}
   .lsel button.on{border-color:var(--gold);color:#111;background:var(--gold)}
-  .cover.warned .lsel{display:none}
+  .cover.warned .lsel{margin:0}.cover.warned .lsel button{padding:3px 9px;font-size:11px}
   .hero{position:absolute;bottom:7%;left:0;width:var(--hh,130px);height:var(--hh,130px);margin-left:calc(var(--hh,130px)/-2);z-index:6;pointer-events:none}
   .hero .flip{position:absolute;inset:0;transform-origin:50% 98%}
   .hero.left .flip{transform:scaleX(-1)}
@@ -138,6 +138,7 @@
   .cover .note{font-size:9px;color:var(--violet)}
   .warn{margin:2px 16px;border:2px solid var(--gold);background:#0b0820;padding:8px 10px;font:12px/1.5 var(--font);color:#fff;max-width:330px;cursor:default}
   .warn b{color:var(--gold)}
+  .warn .wh{font-weight:700;color:var(--gold)}.warn .wd{margin-top:2px;color:var(--ink);font-size:.95em}.warn .wd b{color:#fff}
   .cover.warned{gap:5px}.cover.warned .to,.cover.warned .sub,.cover.warned .note,.cover.warned .ins{display:none}.cover.warned .lg{font-size:26px}.cover.warned .tag{font-size:12px}.cover.warned .warn{padding:6px 9px;font-size:11px}
   .warn .row{display:flex;gap:6px;justify-content:center;margin-top:6px;flex-wrap:wrap}
   .warn .row button,.warn .row a{font:700 11px var(--px);padding:5px 9px;border:2px solid var(--gold);color:#fff;text-decoration:none;background:#15102e}
@@ -796,9 +797,12 @@ $('helpBody').innerHTML=helpHTML();
 function inApp(){const u=navigator.userAgent||'';return /KAKAOTALK|Instagram|FBAN|FBAV|FB_IAB|Line\/|NAVER\(|DaumApps|everytimeApp|Whale\/.*inapp|; wv\)/i.test(u);}
 function setupWarn(){const kakao=/KAKAOTALK/i.test(navigator.userAgent||'');if(STORE_OK&&!inApp())return;const w=$('warn');w.hidden=false;$('cover').classList.add('warned');
   const ko=lang==='ko';
-  w.innerHTML=(ko?(STORE_OK?'⚠️ <b>앱 안 브라우저</b>에서는 기록이 사라질 수 있어요.':'⚠️ 이 화면에서는 <b>기록이 저장되지 않아요.</b>'):(STORE_OK?'⚠️ Progress may be lost in an <b>in-app browser</b>.':'⚠️ <b>Progress can’t be saved</b> here.'))+
-   (ko?`<br>오른쪽 위(또는 아래) <b>⋮ · …</b> 메뉴 → <b>다른 브라우저로 열기</b>로 Safari나 Chrome에서 열어 주세요.`:`<br>Use the <b>⋮ · …</b> menu → <b>Open in browser</b> to play in Safari or Chrome.`)+
-   `<div class="row">${kakao?`<a class="y" href="kakaotalk://web/openExternal?url=${encodeURIComponent(SHARE_URL)}" target="_top">${ko?'바깥 브라우저로 열기':'Open outside'}</a>`:''}<button type="button" id="cp">${ko?'링크 복사':'Copy link'}</button><button type="button" id="skip">${ko?'그냥 할래':'Play here'}</button></div>`;
+  const T=ko?{h:STORE_OK?'앱 안 브라우저에서는 기록이 사라질 수 있어요':'여기서는 기록이 저장되지 않아요',
+      d:STORE_OK?'<b>⋮</b> 메뉴 → <b>다른 브라우저로 열기</b>':'Safari나 Chrome에서 열면 PR이 남아요',o:'바깥 브라우저로',c:'링크 복사',k:'그냥 하기'}
+    :{h:STORE_OK?'In-app browsers may lose your progress':'Progress won’t be saved here',
+      d:STORE_OK?'Tap <b>⋮</b> → <b>Open in browser</b>':'Open in Safari or Chrome to keep your PRs',o:'Open outside',c:'Copy link',k:'Play anyway'};
+  w.innerHTML=`<div class="wh">⚠️ ${T.h}</div><div class="wd">${T.d}</div>
+   <div class="row">${kakao?`<a class="y" href="kakaotalk://web/openExternal?url=${encodeURIComponent(SHARE_URL)}" target="_top">${T.o}</a>`:''}<button type="button" id="cp">${T.c}</button><button type="button" id="skip" class="y">${T.k}</button></div>`;
   w.addEventListener('click',e=>e.stopPropagation());
   $('cp').onclick=async()=>{try{await navigator.clipboard.writeText(SHARE_URL);$('cp').textContent=lang==='ko'?'복사됨!':'Copied!';}catch(_){$('cp').textContent=SHARE_URL;}};
   $('skip').onclick=()=>start();}
