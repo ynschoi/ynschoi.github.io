@@ -77,7 +77,7 @@
   .hud{position:absolute;left:8px;top:8px;z-index:9;font-size:10px;background:#0b0820b0;padding:4px 7px}
   .hud b{color:var(--gold);font-weight:400}
   .tb{position:absolute;top:8px;z-index:9;font:700 10px var(--px);color:#fff;background:#0b0820cc;border:2px solid var(--gold);padding:3px 6px}
-  #snd{right:8px}#hlp{right:56px}#lng{right:82px}
+  #snd{right:8px}#hlp{right:56px}#lng{right:82px}#stats{right:118px}.tb[hidden]{display:none}
   .lsel{display:flex;gap:8px;margin:2px 0}
   .lsel button{font:700 12px var(--px);color:#fff;padding:6px 12px;border:2px solid var(--violet);background:#0b0820;box-shadow:0 3px 0 #000}
   .lsel button.on{border-color:var(--gold);color:#111;background:var(--gold)}
@@ -257,6 +257,7 @@
     <canvas class="tfront" id="tfront" width="30" height="22"></canvas>
     <div class="night" id="night"></div>
     <div class="hud" id="hud"></div>
+    <button class="tb" id="stats" type="button" hidden>📊</button>
     <button class="tb" id="lng" type="button">KO</button>
     <button class="tb" id="hlp" type="button">?</button>
     <button class="tb" id="snd" type="button">♪ ON</button>
@@ -291,6 +292,38 @@
 <script>
 /* ═════════ 선물 설정: 이름은 여기서 바꿔요 ═════════ */
 const TO='Moti', FROM='영수';
+/* ═════════ 플레이 기록 (아티팩트 db): 각 플레이어는 자기 기록만 쓰고, 주인만 모두 봄 ═════════ */
+const LOG={v:1,sessions:0,rolls:0,faces:{},lifts:{},food:{r:0,k:0},drinks:0,skills:{},recent:[]};
+let logDoc=null,logTimer=null,logBusy=false,logDirty=false,IS_OWNER=false,USER=null,DB=null;
+function log(e,d){const now=Date.now();if(!LOG.first)LOG.first=now;LOG.last=now;
+  if(e==='roll'){LOG.rolls++;LOG.faces[d]=(LOG.faces[d]||0)+1;}
+  if(e==='lift'){const L=LOG.lifts[d.k]||(LOG.lifts[d.k]={n:0,miss:0,best:0});L.n++;if(d.grade==='MISS')L.miss++;L.best=Math.max(L.best,d.kg||0);}
+  if(e==='eat')LOG.food[d]=(LOG.food[d]||0)+1;if(e==='drink')LOG.drinks++;if(e==='skill')LOG.skills[d]=(LOG.skills[d]||0)+1;if(e==='start')LOG.sessions++;
+  LOG.recent.push({t:now,e,d:d??null});if(LOG.recent.length>40)LOG.recent.splice(0,LOG.recent.length-40);
+  LOG.pr={sn:S.sn,cj:S.cj,sq:S.sq};LOG.lv={...S.lv};LOG.day=S.day;LOG.lang=lang;
+  logDirty=true;clearTimeout(logTimer);logTimer=setTimeout(flushLog,1500);}
+async function flushLog(){if(!logDoc||logBusy||!logDirty)return;logBusy=true;logDirty=false;
+  try{await logDoc.set(JSON.parse(JSON.stringify(LOG)));}catch(e){if(e&&e.code==='invalid_argument')logDoc=null;}logBusy=false;if(logDirty)flushLog();}
+(async()=>{try{if(!window.claude||!claude.use)return;const [db,user]=await Promise.all([claude.use('db'),claude.use('user')]);
+  if(!db||!user)return;DB=db;USER=user;const id=await user.id();IS_OWNER=await user.isOwner();
+  if(IS_OWNER)document.getElementById('stats').hidden=false;
+  if(!id)return;logDoc=db.doc('logs/'+id);
+  try{const old=await logDoc.get();const v=old.exists&&old.data();if(v&&v.v===1){Object.assign(LOG,v,{recent:v.recent||[]});}}catch(e){}
+  if(logDirty||LOG.recent.length)flushLog();}catch(e){}})();
+/* 주인 전용: 모든 플레이어 기록 보기 */
+async function showStats(){if(!DB)return;const box=$('helpBody');box.innerHTML='<h3>📊 Players</h3>Loading…';$('help').hidden=false;
+  try{const q=await DB.collection('logs').orderBy('last','desc').limit(50).get();const rows=q.docs.map(d=>({id:d.id,...d.data()}));
+    let ps={};try{ps=await USER.profiles(rows.map(r=>r.id));}catch(e){}
+    const ago=t=>{const m=Math.round((Date.now()-t)/60000);return m<60?m+'m':m<1440?Math.round(m/60)+'h':Math.round(m/1440)+'d';};
+    const ko=lang==='ko',F={sn:'SN',cj:'CJ',sq:'SQ',eat:'🍚',zzz:'😴',poo:'💩'};
+    box.innerHTML=`<h3>📊 ${ko?'플레이어 기록':'Players'} (${rows.length})</h3>`+(rows.length?rows.map(r=>{const n=(ps[r.id]&&ps[r.id].name)||(ko?'익명':'Anonymous');
+      const pr=r.pr||{},li=r.lifts||{},rec=(r.recent||[]).slice(-6).reverse().map(x=>`${x.e}${x.d!=null?':'+(typeof x.d==='object'?(x.d.k+' '+x.d.grade+' '+x.d.kg):x.d):''}`).join(' · ');
+      return `<div style="border-top:1px solid #4a3f8a;padding:6px 0;font-size:12px"><b>${n.replace(/</g,'&lt;')}</b> · ${ago(r.last)} ${ko?'전':'ago'} · ${ko?'접속':'sessions'} ${r.sessions||0} · 🎲 ${r.rolls||0}<br>
+        PR SN ${pr.sn||'-'} · CJ ${pr.cj||'-'} · SQ ${pr.sq||'-'} · DAY ${r.day||1}<br>
+        ${['sn','cj','sq'].map(k=>li[k]?`${F[k]} ${li[k].n}${ko?'회':'x'} (miss ${li[k].miss})`:'').filter(Boolean).join(' · ')||''} ${r.food?`· 🍚${r.food.r||0} 🧀${r.food.k||0}`:''} · 🧪${r.drinks||0}<br>
+        <span style="color:#8d86c9">${rec}</span></div>`;}).join(''):`<p>${ko?'아직 기록이 없어요.':'No plays yet.'}</p>`)+`<small>${ko?'아무 곳이나 눌러 닫기':'tap anywhere to close'}</small>`;
+  }catch(e){box.innerHTML='<h3>📊</h3>'+(e&&e.code||'error');}}
+
 /* ═════════ 언어: 기본 English, 표지에서 고름 ═════════ */
 let lang='en';try{lang=localStorage.getItem('moti.lang')||'en';}catch(e){}
 const EN={"밥 한 그릇 뚝딱.\n파워포션 1개! 마시면 스내치 추가 느려져요.": "A bowl of rice, gone.\n+1 Power potion! Drink it to slow the snatch pendulum.", "치즈 가득 하차푸리.\n파워포션 ": "Cheesy khachapuri.\n+", "개! 마시면 스내치 추가 느려져요.": " Power potion! Drink it to slow the snatch pendulum.", "치즈 가득 하차푸리.\n이번엔 포션이 안 나왔다… 다음엔 3개?": "Cheesy khachapuri.\nNo potion this time… maybe 3 next time?", "시원하게 쾌변 성공.\n근육포션 1개! 마시면 백스쿼트 연타 시간이 늘어요.": "A clean, glorious poop.\n+1 Muscle potion! Drink it for more squat tap time.", " 시작. 근육이 자는 동안 자랐다.\n": " begins. Muscles grew overnight.\n", "회복포션 1개! 마시면 클린앤저크 게이지에 점수 칸이 생겨요.": "+1 Recovery potion! Drink it to add scoring zones to the C&J gauge.", "kg. 오늘은 기록 깰 수 있을까?\n아래 주사위를 눌러요.": "kg. Can you beat it today?\nTap the dice below.", "의 인생은 주사위에 달렸다.\n밥 · 똥 · 잠 · 그리고 역도. 아래 주사위를 눌러요.": "'s life is up to the dice.\nRice · Poop · Sleep · and lifting. Tap the dice below.", "밥 먹고, 똥 싸고, 잠 자고, 역도만 하는\n": "Eat, poop, sleep, lift. Repeat.\n", "의 인생 주사위.": "'s life dice.", "최초는 주먹, 잔! 켄! 바위!\n오라를 모은 주먹이 바벨을 향한다.": "First comes rock. Jan! Ken! Rock!\nAll the aura in one fist, aimed at the bar.", "카드 한 장에 분홍 오라.\n늘어나고 줄어드는 근육의 성질.": "One card, pink aura.\nMuscles that stretch and snap back.", "감사의 합장.\n금빛 거인이 Moti 뒤에 섰다.": "Hands together in thanks.\nA golden giant rises behind Moti.", "리듬 있게 걷는 발걸음.\n잔상이 여러 개로 갈라진다.": "A rhythmic stalking walk.\nThe afterimages split apart.", "을 마시면 조금 쉬워져요.": " makes it a bit easier.", "! 하지만 PR ": "! But PR ", "kg은 못 넘었다.\n": "kg still stands.\n", "PR 없음 그대로.": "No PR yet.", "바벨을 놓쳤다. PR ": "Dropped the bar. PR ", " 그대로.\n": " unchanged.\n", "kg 성공 (": "kg lifted (", "이전 기록 ": "Previous ", " · 합계 ": " · Total ", " (계속 쌓여요)\n": " (stacks forever)\n", "밥 칸이 나오면 생겨요.": "You get it from Rice.", "잠 칸이 나오면 생겨요.": "You get it from Sleep.", "똥 칸이 나오면 생겨요.": "You get it from Poop.", "\n지금 ": "\nNow ", "다시 왔구나, ": "Welcome back, ", "안녕, ": "Hi, ", "역도 합계 ": "Lifting total ", "추가 노란 곳에 올 때 탭!": "Tap when the pendulum hits yellow!", "꾹 누르고 가운데 칸에서 떼기!": "Hold, then release in the center zone!", "초 동안 다다다 연타!": "s: tap as fast as you can!", "바벨을 놓쳤다…": "Dropped the bar…", "마시면 → ": "Drink → ", " 마시기 (": " drink (", "▶ 시작": "▶ Start", "노란 곳에 가까울수록 무거움": "Closer to yellow = heavier", "가운데 칸에서 떼!": "Release in center!", "포션 마시면 칸 추가": "Potions add zones", "빨강 = 최고 점수": "Red = top score", "회 · 6회부터 PR": " taps · PR from 6", "다다다다!": "TAP TAP TAP!", "꾹 누르고": "Hold", "뭐 먹지?": "What to eat?", "파워포션 1개 확정": "+1 Power potion, guaranteed", "파워포션 0~3개 랜덤!": "0–3 Power potions, random!", "기록은 이 브라우저에 저장돼요": "Progress is saved in this browser", "필살기 · 눌러서 보기": "Special moves · tap to watch", "먹고 싸고 들어라": "Eat Poop Lift", "포션… ": "Potions… ", "1개!": "1!", "2개!!": "2!!", "3개!!! 대박": "3!!! JACKPOT", "하암~": "Yawn~", "잘 자, 내 근육": "Good night, muscles", "오늘도 수고했다": "Good work today", "밥이다": "Rice time", "탄수화물 충전": "Carb loading", "오늘은 밥 세 공기": "Three bowls today", "하차푸리다!!! 🧀": "Khachapuri!!! 🧀", "든든하다 👍": "So full 👍", "행복해~": "Happy~", "배만 부르다…": "Just full…", "신호 왔다…!": "Nature calls…!", "개운~ ✨": "Refreshed~ ✨", "역도 하고 싶다": "I wanna lift", "가볍네": "Light work", "이게 사는 맛이지": "This is living", "근육아 고마워": "Thanks, muscles", "간다...!": "Here we go...!", "집중": "Focus", "후우...": "Phew...", "캬~": "Ahh~", "힘이 솟는다": "Power surge", "아깝다": "So close", "조금만 더": "Just a bit more", "다음엔 넘는다": "Next time", "으아아...": "Argh...", "오늘은 컨디션이...": "Off day...", "바벨이 무거운 게 아니라...": "It's not the bar...", "꿀꺽": "Gulp", "요쓰!!": "YOSH!!", "냠": "nom", "쩝": "munch", "우걱": "chomp", "최초는 주먹…": "First comes rock…", "잔! 켄!": "Jan! Ken!", "바위!!": "ROCK!!", "고무와 껌의 성질 ♦": "Rubber AND gum ♦", "♠ 후훗": "♠ heh", "감사합니다": "Thank you", "영(零)의 손": "Zero Hand", "지곡(肢曲)": "Rhythm Echo", "잡았다": "Got you", "잭팟!!": "JACKPOT!!", "잔켄 펀치!": "JAJANKEN!", "번지껌!": "BUNGEE GUM!", "백식관음!": "KANNON!", "지곡!": "RHYTHM ECHO!", "요쓰!": "YOSH!", "끄으응…": "Nnngh…", "뿌직!!": "PLOP!!", "해탈": "Nirvana", "앙!": "CHOMP!", "쭈~욱": "Stretchy~", "행복…": "Bliss…", "신기록!": "NEW PR!", "밥!": "Rice!", "잠!": "Sleep!", "똥!": "Poop!", "꿀꺽!": "gulp!", " 없음": ": none", "PR 없음": "PR —", "실패": "missed", "🍚 밥 먹음": "🍚 Ate rice", "💩 쾌변": "💩 Smooth poop", "😴 꿀잠": "😴 Deep sleep", "클린앤저크": "Clean & Jerk", "백스쿼트": "Back Squat", "스내치": "Snatch", "클린저크": "C&J", "스쿼트": "Squat", "하차푸리": "Khachapuri", "파워포션": "Power potion", "회복포션": "Recovery potion", "근육포션": "Muscle potion", "잔켄": "Jajanken", "번지껌": "Bungee Gum", "백식관음": "Kannon", "지곡": "Rhythm Echo", "합계": "Total", "포션": "Potion", "가방": "Bag", "파워": "Power", "회복": "Recover", "근육": "Muscle", "진초록": "dark green", "초록": "green", "노랑": "yellow", "빨강": "red"};
@@ -470,7 +503,7 @@ function paint(up){
 const POTGAME={P:'sn',R:'cj',M:'sq'};
 async function drinkNow(p){if(!started){start();return;}if(busy)return;const k=POTGAME[p],name=FACES.find(f=>f.k===k).n;
   if(!S.pot[p]){msg('POTION',`🧪 ${POTN[p]} 없음`,`${{P:'밥',R:'잠',M:'똥'}[p]} 칸이 나오면 생겨요.\n지금 ${name} Lv${S.lv[k]} · ${easeText(k,S.lv[k]).replace(/<[^>]+>/g,'')}`);return;}
-  S.pot[p]--;S.lv[k]++;save();paint();SFX.potion();
+  S.pot[p]--;S.lv[k]++;save();paint();SFX.potion();log('drink',p);
   const el=$({P:'potP',R:'potR',M:'potM'}[p]);el.classList.remove('drink');void el.offsetWidth;el.classList.add('drink');
   const h=head();pop(`${name} Lv${S.lv[k]}`,h.x,h.y-30,15);say(pick(['꿀꺽','캬~','힘이 솟는다']),900);
   msg('POTION',`🧪 ${POTN[p]} 꿀꺽!`,`${name} Lv${S.lv[k]} (계속 쌓여요)\n${easeText(k,S.lv[k]).replace(/<[^>]+>/g,'')}`);
@@ -498,7 +531,7 @@ async function roll(){ac();if(!started){start();return;}if(busy)return;busy=true
   while(k<8){showDie(1+Math.floor(Math.random()*6));SFX.tick();await sleep(35+k*7);k++;}
   await thr;
   showDie(n);d.classList.remove('roll');void d.offsetWidth;d.classList.add('land');SFX.land();renderLegend(n-1);
-  S.rolls++;save();paint();const f=FACES[n-1];banner(f.n+'!',800);actF(f.lift?5:4);await sleep(420);actEnd('mv_dice');
+  S.rolls++;save();paint();const f=FACES[n-1];log('roll',f.k);banner(f.n+'!',800);actF(f.lift?5:4);await sleep(420);actEnd('mv_dice');
   try{if(f.k==='eat')await doEat();else if(f.k==='zzz')await doSleep();else if(f.k==='poo')await doPoo();else await doLift(f.k);}catch(e){console.error(e);}
   busy=false;d.classList.add('ready');}
 
@@ -506,7 +539,7 @@ async function roll(){ac();if(!started){start();return;}if(busy)return;busy=true
 function chooseFood(){if(window.__food)return Promise.resolve(window.__food);const ch=$('choose');ch.hidden=false;
   return new Promise(res=>{ch.onclick=e=>{const b=e.target.closest('button');if(!b)return;ch.hidden=true;SFX.tick();res(b.dataset.f);};});}
 async function doEat(){await walkTo(SPOT.table-14);
-  const kh=(await chooseFood())==='k',name=kh?(Math.random()<.5?'mv_khach':'mv_khach2'):'mv_eat';   // 하차푸리 그림 2종 랜덤
+  const kh=(await chooseFood())==='k';log('eat',kh?'k':'r');const name=kh?(Math.random()<.5?'mv_khach':'mv_khach2'):'mv_eat';   // 하차푸리 그림 2종 랜덤
   say(kh?'하차푸리다!!! 🧀':pick(['밥이다','탄수화물 충전','오늘은 밥 세 공기']),1200);
   await playAct(name,kh?[[0,450],[1,380],[2,450],[3,650],[4,450],[5,420],[6,420],[7,650]]:[[0,380],[1,360],[2,420],[3,380],[4,380],[5,520],[6,480],[7,700]],f=>{
     const h=head();
@@ -554,7 +587,7 @@ async function doLift(k){await walkTo(SPOT.gym-4);setF(F.squat);say(pick(['간�
   await prep(k);
   const r=await mini(k,S.lv[k]);
   closeMG();
-  const before=S[k],isPR=r.kg>before;
+  const before=S[k],isPR=r.kg>before;log('lift',{k,grade:r.grade,kg:r.kg,pr:Math.max(before,r.kg),lv:S.lv[k]});
   if(r.kg>0){await yoss();SFX.thud();SFX.clang();shake();}
   if(isPR){S[k]=r.kg;save();paint(k);SFX.win();banner('NEW PR!',1100);
     await playAct('mv_yoss',[[1,180],[2,260],[3,320],[4,420],[5,480],[6,420],[7,300]],f=>{if(f===4){say('요쓰!!',1000);SFX.thud();}});actEnd('mv_yoss');setF(F.smile);
@@ -593,7 +626,7 @@ function prep(k){openMG();drawStatic();const p=POTK[k],name=FACES.find(f=>f.k===
   const draw=()=>{const L=S.lv[k],c=S.pot[p];overlay(`<div class="t">${name} · PR ${S[k]?S[k]+'kg':'없음'}</div><div class="g" style="font-size:20px">Lv${L}</div>
     <div class="eff">${lang==='ko'?'지금':'Now'} ${easeText(k,L)}${c?`<br>마시면 → ${easeText(k,L+1)}`:''}</div>
     <div class="row"><button id="drink" type="button"${c?'':' disabled'}>🧪 ${lang==='ko'?POTN[p]+' 마시기':'Drink '+tr(POTN[p])} (${c})</button><button class="y" id="go" type="button">▶ 시작</button></div>`);
-    $('drink').onclick=()=>{if(!S.pot[p])return;S.pot[p]--;S.lv[k]++;save();paint();SFX.potion();draw();};
+    $('drink').onclick=()=>{if(!S.pot[p])return;S.pot[p]--;S.lv[k]++;save();paint();SFX.potion();log('drink',p);draw();};
     $('go').onclick=()=>{mgov.hidden=true;res();};};
   draw();});}
 
@@ -718,7 +751,7 @@ const SFXS={
     if(f===11){whoosh(.18,.12);sweep(3000,300,.18,'square',.05);crackle(8,.06,.05);}
     if(f===12)crackle(5,.04);if(f>=13)tone(90,.05,'triangle',.03);},
 };
-async function useSkill(sk){ac();if(!started)start();if(busy)return;busy=true;$('dice').classList.remove('ready');
+async function useSkill(sk){ac();if(!started)start();if(busy)return;busy=true;log('skill',sk.k);$('dice').classList.remove('ready');
   await walkTo(120);face=1;place();
   const L=[$('skl'),$('skl2')],wrap=$('sklw');let top=0;
   const nf=sk.nf||8;L.forEach(el=>{el.style.backgroundImage=`url(${sk.img})`;el.style.backgroundSize=`${nf*100}% 100%`;el.style.backgroundPosition='0 0';});L[1].classList.add('off');L[0].classList.remove('off');
@@ -769,7 +802,7 @@ function setupWarn(){const kakao=/KAKAOTALK/i.test(navigator.userAgent||'');if(S
   w.addEventListener('click',e=>e.stopPropagation());
   $('cp').onclick=async()=>{try{await navigator.clipboard.writeText(SHARE_URL);$('cp').textContent=lang==='ko'?'복사됨!':'Copied!';}catch(_){$('cp').textContent=SHARE_URL;}};
   $('skip').onclick=()=>start();}
-function start(){if(started)return;started=true;ac();$('cover').hidden=true;SFX.morning();banner('DAY '+S.day,1000);
+function start(){if(started)return;started=true;log('start',lang);ac();$('cover').hidden=true;SFX.morning();banner('DAY '+S.day,1000);
   msg('START',S.rolls?`다시 왔구나, ${TO}`:`안녕, ${TO}`,S.rolls?`역도 합계 ${total()}kg. 오늘은 기록 깰 수 있을까?\n아래 주사위를 눌러요.`:`${TO}의 인생은 주사위에 달렸다.\n밥 · 똥 · 잠 · 그리고 역도. 아래 주사위를 눌러요.`);say('역도 하고 싶다',1400);}
 
 function fitApp(){const app=$('app'),vh=(window.visualViewport&&visualViewport.height)||innerHeight;if(!vh)return;
@@ -788,6 +821,7 @@ function setLang(l){lang=l;try{localStorage.setItem('moti.lang',l);}catch(e){}do
   document.querySelectorAll('#lsel button').forEach(b=>b.classList.toggle('on',b.dataset.l===l));$('lng').textContent=l==='ko'?'EN':'KO';
   $('dice').setAttribute('aria-label',l==='ko'?'주사위 굴리기':'Roll the dice');if(!$('warn').hidden){$('warn').hidden=true;$('cover').classList.remove('warned');setupWarn();}}
 $('lsel').addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('button');if(b){SFX.tick();setLang(b.dataset.l);}});
+$('stats').addEventListener('click',()=>{SFX.tick();showStats();});
 $('lng').addEventListener('click',()=>{SFX.tick();setLang(lang==='ko'?'en':'ko');});
 setLang(lang);
 IMG.onload=()=>{};
