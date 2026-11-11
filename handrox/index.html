@@ -301,10 +301,10 @@ const other=s=>s==='L'?'R':'L';
 /* ═════════ 종목 ═════════
    p=진행량, need=목표. down(side) · up(side) · swipe(side,dir) 로 손가락 입력을 받음 */
 const add=(s,n)=>{s.p=Math.min(G.seg.need,s.p+n);};
-const RUN={id:'run',rate:188,need:1000,unit:'m',pxu:.8,nm:['달리기','RUN'],hint:'L ▸ R ▸ L ▸ R',
+const RUN={id:'run',rate:94,need:1000,unit:'m',pxu:.8,nm:['달리기','RUN'],hint:'L ▸ R ▸ L ▸ R',
   how:['L·R 번갈아 탭! 두 손가락으로 달려요','Alternate L·R taps. Run on two fingers!'],
   init(s){s.last=null;s.ph=0;s.tph=0;s.stum=0;},
-  down(s,side){if(s.last===side){s.stum=.2;SFX.bad();fx(L('번갈아!','ALTERNATE!'),'#ff8a7a',120,66,11);return;}s.last=side;add(s,100);s.tph+=Math.PI;SFX.step(side);},
+  down(s,side){if(s.last===side){s.stum=.2;SFX.bad();fx(L('번갈아!','ALTERNATE!'),'#ff8a7a',120,66,11);return;}s.last=side;add(s,50);s.tph+=Math.PI;SFX.step(side);},
   update(s,dt){s.ph+=(s.tph-s.ph)*Math.min(1,dt*20);s.stum=Math.max(0,s.stum-dt);},
   want:s=>s.last?other(s.last):'LR',
   draw(s){scene(s.dp*this.pxu);const m=G.seg.need-s.dp;                       // 결승 아치
