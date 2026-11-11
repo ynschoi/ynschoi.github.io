@@ -327,7 +327,7 @@ const DEV=(/iPhone|iPad/.test(navigator.userAgent)?'iOS':/Android/.test(navigato
 function sheet(e,k){if(ME||!/github\.io$/.test(location.hostname))return;
   try{fetch(`${SHEET_URL}?op=log&v=${VID}&ev=${encodeURIComponent('moti:'+e)}&k=${encodeURIComponent(k)}&l=${lang}&d=${encodeURIComponent(DEV)}`,{mode:'no-cors',keepalive:true}).catch(()=>{});}catch(err){}}
 function sheetText(e,d){if(e==='lift')return `${d.k} ${d.grade} ${d.kg}kg${d.kg>=d.pr&&d.grade!=='MISS'?' PR':''} (Lv${d.lv})`;
-  if(e==='start')return `PR ${S.sn}/${S.cj}/${S.sq} · day${S.day} · rolls${S.rolls}`;return d==null?'':String(d);}
+  if(e==='start')return `PR ${S.sn}/${S.cj}/${S.sq} · day${S.day} · rolls${S.rolls}${RU?' · ru':''}`;return d==null?'':String(d);}
 function log(e,d){sheet(e,sheetText(e,d));const now=Date.now();if(!LOG.first)LOG.first=now;LOG.last=now;
   if(e==='roll'){LOG.rolls++;LOG.faces[d]=(LOG.faces[d]||0)+1;}
   if(e==='lift'){const L=LOG.lifts[d.k]||(LOG.lifts[d.k]={n:0,miss:0,best:0});L.n++;if(d.grade==='MISS')L.miss++;L.best=Math.max(L.best,d.kg||0);}
@@ -376,7 +376,9 @@ const EN={"밥 한 그릇 뚝딱.\n파워포션 1개! 마시면 스내치 추가
 const EN_X={"밥": "Rice", "잠": "Sleep", "똥": "Poop", "백스쿼트": "Squat", "클린앤저크": "C&J"};
 const EN_K=Object.keys(EN).sort((a,b)=>b.length-a.length);
 function tr(t){if(lang==='ko'||t==null)return t;t=String(t);const x=t.trim();if(EN_X[x]!=null)return t.replace(x,EN_X[x]);for(const k of EN_K)if(t.includes(k))t=t.split(k).join(EN[k]);return t;}
-const SHARE_URL='https://ynschoi.github.io/moti/';   // 외부 브라우저로 열 주소
+/* 러시아어 버전: /moti/ru/ 에서만 켜짐 (window.MOTI_RU), 그리고 영어 모드일 때만 나옴 */
+const RU=window.MOTI_RU===true,RUON=()=>RU&&lang==='en';
+const SHARE_URL=RU?'https://ynschoi.github.io/moti/ru/':'https://ynschoi.github.io/moti/';   // 외부 브라우저로 열 주소
 const josa=(w,a,b)=>{const c=w.charCodeAt(w.length-1);return (c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28)?a:b;};
 const TOya=TO+josa(TO,'아','야');
 const LETTER_AT=300;   // 합계가 이 kg을 넘으면 편지
@@ -598,7 +600,7 @@ async function doEat(){await walkTo(SPOT.table-14);
   const q=Math.random(),n=window.__kn??(q<.4?0:q<.7?1:q<.9?2:3),b=$('bubble');
   for(let i=0;i<10;i++){b.textContent=lang==='ko'?`포션… ${i%4}개?`:`Potions… ${i%4}?`;b.classList.add('on');SFX.tick();await sleep(70+i*12);}
   if(n){gotPot('P',n);say(['','1개!','2개!!','3개!!! 대박'][n],1300);banner(n===3?'잭팟!!':'+'+n,1000);if(n===3)SFX.win();}
-  else{say(lang==='en'&&Math.random()<.5?'Хуй с ним':'배만 부르다…',1300);SFX.fail();}
+  else{say(RUON()&&Math.random()<.5?'Хуй с ним':'배만 부르다…',1300);SFX.fail();}
   msg('EAT','🧀 하차푸리',n?`치즈 가득 하차푸리.\n파워포션 ${n}개! 마시면 스내치 추가 느려져요.`:'치즈 가득 하차푸리.\n이번엔 포션이 안 나왔다… 다음엔 3개?');
   await sleep(300);}
 
@@ -623,9 +625,9 @@ function drawTF(){const c=$('tfront'),x=c.getContext('2d');const P=(a,b,w,h,col)
 async function doPoo(){await walkTo(SPOT.toilet);say('신호 왔다…!',900);await sleep(700);
   hero.classList.add('gone');await sleep(250);          // 배경 변기에 앉은 걸로: 캐릭터는 숨기고 클로즈업
   CU.poop.on=i=>{if(i===0)noise(.6,.03,300);if(i===1){SFX.fart();shake();setTimeout(SFX.plop,350);}if(i===2)tone(880,.3,'triangle',.05,300);};
-  const pw=CU.poop.words,q=Math.random();const ru=lang==='en';CU.poop.words=[ru&&q<.3?'Ёпта…':pw[0],pw[1],ru&&q>.7?'Охуенно…':pw[2]];   // 랜덤 러시아어
+  const pw=CU.poop.words,q=Math.random();const ru=RUON();CU.poop.words=[ru&&q<.3?'Ёпта…':pw[0],pw[1],ru&&q>.7?'Охуенно…':pw[2]];   // 랜덤 러시아어
   await closeup('poop');CU.poop.words=pw;
-  const q2=Math.random();hero.classList.remove('gone');setF(F.smile);say(lang==='en'&&q2<.3?'Refreshed~ ✨, ёпта!':'개운~ ✨',1300);gotPot('M');
+  const q2=Math.random();hero.classList.remove('gone');setF(F.smile);say(RUON()&&q2<.3?'Refreshed~ ✨, ёпта!':'개운~ ✨',1300);gotPot('M');
   msg('POOP','💩 쾌변','시원하게 쾌변 성공.\n근육포션 1개! 마시면 백스쿼트 연타 시간이 늘어요.');await sleep(600);setF(F.stand);}
 
 /* ═════════ 역도 3종 ═════════ */
@@ -638,11 +640,11 @@ async function doLift(k){await walkTo(SPOT.gym-4);setF(F.squat);say(pick(['간�
   if(r.kg>0){await yoss();SFX.thud();SFX.clang();shake();}
   if(isPR){S[k]=r.kg;save();paint(k);SFX.win();banner('NEW PR!',1100);
     await playAct('mv_yoss',[[1,180],[2,260],[3,320],[4,420],[5,480],[6,420],[7,300]],f=>{if(f===4){say('요쓰!!',1000);SFX.thud();}});actEnd('mv_yoss');setF(F.smile);
-    say(r.grade==='PERFECT'&&lang==='en'&&Math.random()<.6?'Охуенно!':pick(['가볍네','이게 사는 맛이지','근육아 고마워']),1200);
+    say(r.grade==='PERFECT'&&RUON()&&Math.random()<.6?'Охуенно!':pick(['가볍네','이게 사는 맛이지','근육아 고마워']),1200);
     msg('LIFT',`🏋️ ${name} 신기록!`,`${r.kg}kg 성공 (${r.grade})\n${before?`이전 기록 ${before}kg → `:''}PR ${r.kg}kg · 합계 ${total()}kg`);
-  }else if(r.kg>0){setF(F.smile);say(lang==='en'&&Math.random()<.4?'Хуёвато…':pick(['아깝다','조금만 더','다음엔 넘는다']),1200);
+  }else if(r.kg>0){setF(F.smile);say(RUON()&&Math.random()<.4?'Хуёвато…':pick(['아깝다','조금만 더','다음엔 넘는다']),1200);
     msg('LIFT',`🏋️ ${name} ${r.kg}kg`,`${r.grade}! 하지만 PR ${before}kg은 못 넘었다.\n${POTN[POTK[k]]}을 마시면 조금 쉬워져요.`);
-  }else{SFX.fail();setF(F.bend);shake();{const q=Math.random();if(q<.3)say("It wasn't me ♪",1700);else if(lang==='en'&&q<.5)say('Хуйня…',1500);else if(lang==='en'&&q<.65)say('Иди на хуй!',1500);else say(pick(['으아아...','오늘은 컨디션이...','바벨이 무거운 게 아니라...']),1300);}
+  }else{SFX.fail();setF(F.bend);shake();{const q=Math.random();if(q<.3)say("It wasn't me ♪",1700);else if(RUON()&&q<.5)say('Хуйня…',1500);else if(RUON()&&q<.65)say('Иди на хуй!',1500);else say(pick(['으아아...','오늘은 컨디션이...','바벨이 무거운 게 아니라...']),1300);}
     msg('LIFT',`🏋️ ${name} 실패`,`바벨을 놓쳤다. PR ${before?before+'kg':'없음'} 그대로.\n${POTN[POTK[k]]}을 마시면 조금 쉬워져요.`);}
   await sleep(900);setF(F.stand);paint();
 }
@@ -857,12 +859,12 @@ function start(){if(started)return;started=true;log('start',lang);ac();$('cover'
 
 /* 가만히 있으면 혼잣말 (역도 인사이드 조크) */
 const IDLE=[['Light weight baby!','Light weight baby!'],['Brown Sugar… 아니 프로틴 ♪','Brown Sugar… no, protein ♪'],
-  ['내가 버거킹에서 패티 구워도, ...','If I flipped patties at Burger King, ...'],["It wasn't me ♪","It wasn't me ♪"],[null,'Хуй с ним…'],[null,'Иди на хуй…']];
+  ['내가 버거킹에서 패티 구워도, ...','If I flipped patties at Burger King, ...'],["It wasn't me ♪","It wasn't me ♪"],[null,'Хуй с ним…',1],[null,'Иди на хуй…',1]];
 let idleT=Date.now(),idleLast=-1;
 ['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{idleT=Date.now();},true));
 setInterval(()=>{if(!started||busy||cur||!$('help').hidden||!$('choose').hidden||document.hidden)return;if(Date.now()-idleT<8000)return;
-  const L=lang==='ko'?0:1;let i;do{i=Math.floor(Math.random()*IDLE.length);}while((i===idleLast||IDLE[i][L]==null)&&IDLE.length>1);idleLast=i;
-  let t=IDLE[i][L];if(lang==='en'&&!t.endsWith('...')&&Math.random()<.35)t=t.replace(/[\s!?♪…]+$/,'')+', ёпта!';
+  const L=lang==='ko'?0:1;let i;do{i=Math.floor(Math.random()*IDLE.length);}while((i===idleLast||IDLE[i][L]==null||(IDLE[i][2]&&!RUON()))&&IDLE.length>1);idleLast=i;
+  let t=IDLE[i][L];if(RUON()&&!t.endsWith('...')&&Math.random()<.35)t=t.replace(/[\s!?♪…]+$/,'')+', ёпта!';
   say(t,2600);idleT=Date.now();},1000);
 function fitApp(){const app=$('app'),vh=(window.visualViewport&&visualViewport.height)||innerHeight;if(!vh)return;
   const cs=getComputedStyle(document.documentElement),pad=(parseFloat(cs.paddingTop)||0)+(parseFloat(cs.paddingBottom)||0);
