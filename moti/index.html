@@ -856,12 +856,12 @@ function start(){if(started)return;started=true;log('start',lang);ac();$('cover'
 
 /* 가만히 있으면 혼잣말 (역도 인사이드 조크) */
 const IDLE=[['Light weight baby!','Light weight baby!'],['Brown Sugar… 아니 프로틴 ♪','Brown Sugar… no, protein ♪'],
-  ['내가 버거킹에서 패티 구워도, 그래도 나 사랑해 줄 거야?','If I flipped patties at Burger King, would you still love me?'],["It wasn't me ♪","It wasn't me ♪"]];
+  ['내가 버거킹에서 패티 구워도, ...','If I flipped patties at Burger King, ...'],["It wasn't me ♪","It wasn't me ♪"]];
 let idleT=Date.now(),idleLast=-1;
 ['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{idleT=Date.now();},true));
 setInterval(()=>{if(!started||busy||cur||!$('help').hidden||!$('choose').hidden||document.hidden)return;if(Date.now()-idleT<8000)return;
   let i;do{i=Math.floor(Math.random()*IDLE.length);}while(i===idleLast&&IDLE.length>1);idleLast=i;
-  let t=IDLE[i][lang==='ko'?0:1];if(Math.random()<.35)t=t.replace(/[!?♪]*\s*$/,'')+', ёпта!';
+  let t=IDLE[i][lang==='ko'?0:1];if(!t.endsWith('...')&&Math.random()<.35)t=t.replace(/[!?♪]*\s*$/,'')+', ёпта!';
   say(t,2600);idleT=Date.now();},1000);
 function fitApp(){const app=$('app'),vh=(window.visualViewport&&visualViewport.height)||innerHeight;if(!vh)return;
   const cs=getComputedStyle(document.documentElement),pad=(parseFloat(cs.paddingTop)||0)+(parseFloat(cs.paddingBottom)||0);
