@@ -616,8 +616,9 @@ function drawTF(){const c=$('tfront'),x=c.getContext('2d');const P=(a,b,w,h,col)
 async function doPoo(){await walkTo(SPOT.toilet);say('신호 왔다…!',900);await sleep(700);
   hero.classList.add('gone');await sleep(250);          // 배경 변기에 앉은 걸로: 캐릭터는 숨기고 클로즈업
   CU.poop.on=i=>{if(i===0)noise(.6,.03,300);if(i===1){SFX.fart();shake();setTimeout(SFX.plop,350);}if(i===2)tone(880,.3,'triangle',.05,300);};
-  await closeup('poop');
-  hero.classList.remove('gone');setF(F.smile);say('개운~ ✨',1100);gotPot('M');
+  const pw=CU.poop.words,q=Math.random();CU.poop.words=[q<.3?'Ёпта…':pw[0],pw[1],q>.7?'Охуенно…':pw[2]];   // 랜덤 러시아어
+  await closeup('poop');CU.poop.words=pw;
+  const q2=Math.random();hero.classList.remove('gone');setF(F.smile);say(q2<.3?(lang==='ko'?'개운~ ✨, ёпта!':'Refreshed~ ✨, ёпта!'):'개운~ ✨',1300);gotPot('M');
   msg('POOP','💩 쾌변','시원하게 쾌변 성공.\n근육포션 1개! 마시면 백스쿼트 연타 시간이 늘어요.');await sleep(600);setF(F.stand);}
 
 /* ═════════ 역도 3종 ═════════ */
