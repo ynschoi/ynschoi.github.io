@@ -174,10 +174,10 @@
 'use strict';
 const $=id=>document.getElementById(id),clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const SHARE_URL='https://ynschoi.github.io/handrox/';
-const K=36;                 // 경기 시계 배속: 실제 1초 = 경기 36초 (2~3분 플레이 → 1시간 안팎 기록)
+const K=60;                 // 경기 시계 배속: 실제 1분 = 경기 1시간
 
 /* ═════════ 저장 ═════════ */
-const KEY='handrox.v1';
+const KEY='handrox.v2';   // v2: 시계 60배속으로 바뀌어 예전 기록과 섞이지 않게
 let SAVE={pb:0,splits:null,races:0};
 try{Object.assign(SAVE,JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(SAVE));}catch(e){}}
@@ -284,7 +284,7 @@ const add=(s,n)=>{s.p=Math.min(G.seg.need,s.p+n);};
 const RUN={id:'run',need:1000,unit:'m',pxu:.8,nm:['달리기','RUN'],hint:'L ▸ R ▸ L ▸ R',
   how:['L·R 번갈아 탭! 두 손가락으로 달려요','Alternate L·R taps. Run on two fingers!'],
   init(s){s.last=null;s.ph=0;s.tph=0;s.stum=0;},
-  down(s,side){if(s.last===side){s.stum=.2;SFX.bad();fx(L('번갈아!','ALTERNATE!'),'#ff8a7a',120,66,11);return;}s.last=side;add(s,20);s.tph+=Math.PI;SFX.step(side);},
+  down(s,side){if(s.last===side){s.stum=.2;SFX.bad();fx(L('번갈아!','ALTERNATE!'),'#ff8a7a',120,66,11);return;}s.last=side;add(s,40);s.tph+=Math.PI;SFX.step(side);},
   update(s,dt){s.ph+=(s.tph-s.ph)*Math.min(1,dt*20);s.stum=Math.max(0,s.stum-dt);},
   want:s=>s.last?other(s.last):'LR',
   draw(s){scene(s.dp*this.pxu);const m=G.seg.need-s.dp;                       // 결승 아치
@@ -292,8 +292,8 @@ const RUN={id:'run',need:1000,unit:'m',pxu:.8,nm:['달리기','RUN'],hint:'L ▸
     hero(110,FL,{ph:s.ph,lean:.18,arm:.6+Math.sin(s.ph)*.7,sh:s.stum?3:0});}};
 /* ═════════ 에르그(스키·로잉) 공통 ═════════
    손잡이를 잡은 채 당긴 길이만큼 전진. 끝까지 당기면 되돌아와야 다시 당길 수 있음 (그래서 원을 그리게 됨).
-   손가락 하나 = 한 번에 최대 40m, 두 손잡이 다 잡고 길게 당기면 80m. 초당 2번쯤 돌리면 2:00/500m */
-const ERG={LEN:62,PER:40,
+   손가락 하나 = 한 번에 최대 62m, 두 손잡이 다 잡고 길게 당기면 124m. 초당 2번쯤 돌리면 2:00/500m */
+const ERG={LEN:62,PER:62,
   init(s){s.pos={L:0,R:0};s.arm={L:1,R:1};s.ls={L:-9,R:-9};s.acc=0;s.v=0;s.k=0;s.kf=0;s.sr=0;s.lst=-9;s.snd=-9;s.vd=0;s.pp=0;s.pt=0;},
   grab(s,side){s.pos[side]=0;s.arm[side]=1;},
   stroke(s,side){const d=s.t-s.ls[side];s.ls[side]=s.t;if(d>.12&&d<2)s.sr=1/d;s.lst=s.t;
@@ -325,7 +325,7 @@ const ST=[
   init(s){ERG.init(s);},
   down(s,side){ERG.grab(s,side);},
   move(s,side,dx,dy){ERG.pull(s,side,dy);},
-  swipe(s,side,dir,key){if(key&&dir==='down')ERG.key(s,80);},
+  swipe(s,side,dir,key){if(key&&dir==='down')ERG.key(s,124);},
   update(s,dt){ERG.tick(s,dt);},
   want:()=>'LR',
   draw(s){scene(0);const x=150;c.fillStyle='#444';c.fillRect(x,38,6,FL-38);rr(x-14,FL-5,36,5,1,'#333');
@@ -335,14 +335,14 @@ const ST=[
  {id:'push',need:50,unit:'m',pxu:8,nm:['슬레드 푸시','SLED PUSH'],hint:'L + R',
   how:['L·R 동시에 탭! 두 손가락으로 힘껏 밀어요','Tap L and R together to shove the sled'],
   init(s){s.tp={L:-9,R:-9};s.ph=0;s.tph=0;s.k=0;},
-  down(s,side){s.tp[side]=s.t;if(s.t-s.tp[other(side)]<.13){s.tp.L=s.tp.R=-9;add(s,2.5);s.tph+=Math.PI;s.k=1;SFX.shove();}},
+  down(s,side){s.tp[side]=s.t;if(s.t-s.tp[other(side)]<.13){s.tp.L=s.tp.R=-9;add(s,5);s.tph+=Math.PI;s.k=1;SFX.shove();}},
   update(s,dt){s.ph+=(s.tph-s.ph)*Math.min(1,dt*14);s.k=Math.max(0,s.k-dt*5);},
   want:()=>'LR',
   draw(s){scene(s.dp*this.pxu);sled(150+s.k*3,1);hero(128+s.k*3,FL,{ph:s.ph,lean:.6,arm:-.2,st:11,back:5});}},
  {id:'pull',need:50,unit:'m',nm:['슬레드 풀','SLED PULL'],hint:'L↓  R↓  L↓  R↓',
   how:['L·R 번갈아 아래로 쓸어 줄을 당겨요','Swipe down, alternating L·R, hand over hand'],
   init(s){s.last=null;s.k=0;},
-  swipe(s,side,dir){if(dir!=='down')return;if(s.last===side){SFX.bad();fx(L('번갈아!','ALTERNATE!'),'#ff8a7a',90,66,11);return;}s.last=side;add(s,2.5);s.k=1;SFX.pull();},
+  swipe(s,side,dir){if(dir!=='down')return;if(s.last===side){SFX.bad();fx(L('번갈아!','ALTERNATE!'),'#ff8a7a',90,66,11);return;}s.last=side;add(s,5);s.k=1;SFX.pull();},
   update(s,dt){s.k=Math.max(0,s.k-dt*4);},
   want:s=>s.last?other(s.last):'LR',
   draw(s){scene(0);c.fillStyle='#e5391f';c.fillRect(124,FL,3,10);const sx=262-s.dp/50*132;sled(sx,1);
@@ -352,7 +352,7 @@ const ST=[
   how:['둘 다 꾹 눌렀다가 노란 칸에서 떼면 점프!','Hold both pads, release in the yellow zone to jump'],
   init(s){s.st='idle';s.c=0;s.jt=0;s.w=0;s.ct=0;},
   down(s){if(s.st==='idle'&&both()){s.st='chg';s.c=0;}},
-  up(s){if(s.st!=='chg')return;const v=s.c;let g=0,d=3;if(v>=.72&&v<=.9){g=2;d=10;}else if(v>=.5&&v<=1){g=1;d=6;}
+  up(s){if(s.st!=='chg')return;const v=s.c;let g=0,d=6;if(v>=.72&&v<=.9){g=2;d=20;}else if(v>=.5&&v<=1){g=1;d=12;}
     s.st='jump';s.jt=0;s.jd=d;s.from=s.p;grade(g,120,56);SFX.jump();},
   update(s,dt){if(s.st==='chg'){s.c+=dt/.7;s.ct+=dt;if(s.ct>.07){s.ct=0;SFX.charge(s.c);}if(s.c>1.12){s.st='stum';s.w=.55;SFX.bad();fx(L('너무 오래!','TOO LONG!'),'#ff8a7a',120,60,11);}}
     else if(s.st==='jump'){s.jt+=dt/.3;s.p=Math.min(this.need,s.from+s.jd*Math.min(1,s.jt));if(s.jt>=1){s.st='idle';SFX.thud();if(both()){s.st='chg';s.c=0;}}}
@@ -366,13 +366,13 @@ const ST=[
     const gx=262,gy=24,gh=100,Y=v=>gy+gh*(1-v/1.12);c.fillStyle='#111';c.fillRect(gx-3,gy-3,30,gh+6);c.fillStyle='#3a1418';c.fillRect(gx,gy,24,gh);
     c.fillStyle='#16a34a';c.fillRect(gx,Y(1),24,Y(.5)-Y(1));c.fillStyle='#ffd400';c.fillRect(gx,Y(.9),24,Y(.72)-Y(.9));
     if(s.st==='chg'){c.fillStyle='#fff';c.fillRect(gx-6,Y(Math.min(1.12,s.c))-1.5,36,3);}
-    txt(L('노랑=10m','YELLOW=10m'),gx+12,gy+gh+16,8,'#ffd400');}},
+    txt(L('노랑=20m','YELLOW=20m'),gx+12,gy+gh+16,8,'#ffd400');}},
  {id:'row',erg:1,need:1000,unit:'m',nm:['로잉','ROWING'],hint:'',
   how:['손잡이를 잡은 채 왼쪽으로 길게 당기고, 오른쪽으로 돌아와요','Grab the handle, pull long to the left, glide back right'],
   init(s){ERG.init(s);s.kd=null;},
   down(s,side){ERG.grab(s,side);},
   move(s,side,dx,dy){ERG.pull(s,side,-dx);},
-  swipe(s,side,dir,key){if(!key||dir===s.kd||(dir!=='left'&&dir!=='right'))return;s.kd=dir;ERG.key(s,40);},
+  swipe(s,side,dir,key){if(!key||dir===s.kd||(dir!=='left'&&dir!=='right'))return;s.kd=dir;ERG.key(s,62);},
   update(s,dt){ERG.tick(s,dt);},
   want:()=>'LR',
   draw(s){scene(0);const o=-44;c.fillStyle='#666';c.fillRect(70+o,FL-6,170,3);c.fillRect(74+o,FL-3,4,3);c.fillRect(200+o,FL-3,4,3);
@@ -386,7 +386,7 @@ const ST=[
   how:['둘 다 꾹 잡고 걸어요. 악력이 바닥나기 전에 잠깐 떼요!','Hold both to carry. Let go briefly before your grip runs out!'],
   init(s){s.grip=1;s.v=0;s.lock=0;s.ph=0;},
   update(s,dt){if(s.lock>0){s.lock-=dt;s.v=0;if(s.lock<=0)s.grip=1;return;}
-    if(both()){s.v=Math.min(34,Math.max(14,s.v)+dt*13.5);s.grip-=dt/2.4;add(s,s.v*dt);s.ph+=s.v*dt*.32;
+    if(both()){s.v=Math.min(64,Math.max(28,s.v)+dt*26);s.grip-=dt/2.4;add(s,s.v*dt);s.ph+=s.v*dt*.17;
       if(s.grip<=0){s.grip=0;s.lock=1.3;SFX.drop();fx(L('놓쳤다!','DROPPED!'),'#ff8a7a',120,56);}}
     else{s.v=0;s.grip=Math.min(1,s.grip+dt/.6);}},
   want:()=>'LR',
@@ -400,7 +400,7 @@ const ST=[
   T:.52,
   init(s){s.bt=0;s.last=null;s.lt=-9;s.k=0;s.ph=0;s.tph=0;s.n=0;},
   down(s,side){if(s.bt-s.lt<.26)return;s.lt=s.bt;if(s.last===side){SFX.bad();fx(L('번갈아!','ALTERNATE!'),'#ff8a7a',120,56,11);return;}s.last=side;
-    const f=s.bt%this.T,e=Math.min(f,this.T-f),g=e<.07?2:e<.15?1:0;add(s,[2,6,10][g]);grade(g,120,56);s.k=1;s.tph+=Math.PI;},
+    const f=s.bt%this.T,e=Math.min(f,this.T-f),g=e<.07?2:e<.15?1:0;add(s,[4,12,20][g]);grade(g,120,56);s.k=1;s.tph+=Math.PI;},
   update(s,dt){s.bt+=dt;const n=Math.floor(s.bt/this.T);if(n!==s.n){s.n=n;SFX.tick();}s.k=Math.max(0,s.k-dt*2.6);s.ph+=(s.tph-s.ph)*Math.min(1,dt*12);},
   want:s=>s.last?other(s.last):'LR',
   draw(s){scene(s.dp*this.pxu);const x=120,h=hero(x,FL,{ph:s.ph,cr:s.k*.75,st:13,arm:-1.9});
@@ -412,8 +412,8 @@ const ST=[
   F:.8,
   init(s){s.fly=0;s.ft=0;s.pen=0;s.wait=0;s.k=0;},
   thr(s,n,g){add(s,n);s.fly=1;s.ft=0;s.pen=0;s.k=1;SFX.ball();if(g!=null)grade(g,150,60);},
-  down(s){if(s.wait>0)return;if(!s.fly)return this.thr(s,6,null);const t=s.ft;
-    if(t<.6){s.pen=1;return;}if(s.pen)return this.thr(s,3,0);this.thr(s,t>=.7?10:6,t>=.7?2:1);},
+  down(s){if(s.wait>0)return;if(!s.fly)return this.thr(s,12,null);const t=s.ft;
+    if(t<.6){s.pen=1;return;}if(s.pen)return this.thr(s,6,0);this.thr(s,t>=.7?20:12,t>=.7?2:1);},
   update(s,dt){s.k=Math.max(0,s.k-dt*4);if(s.wait>0){s.wait-=dt;return;}if(s.fly){s.ft+=dt;if(s.ft>this.F+.14){s.fly=0;s.wait=.55;SFX.drop();fx(L('떨어뜨림!','DROPPED!'),'#ff8a7a',150,60);}}},
   want:()=>'LR',
   draw(s){scene(0);c.fillStyle='#3a3a46';c.fillRect(266,8,12,FL-8);c.fillStyle='#ffd400';c.fillRect(256,36,10,4);c.lineWidth=3;c.strokeStyle='#e5391f';c.beginPath();c.arc(262,44,10,0,7);c.stroke();
@@ -448,7 +448,7 @@ async function nextSeg(){const me=G;G.splits.push(G.s.t);SFX.done();G.i++;if(G.i
   const seg=G.seg=SEG(G.i),s=G.s={p:0,dp:0,t:0};seg.init(s);paintInfo();
   if(seg.id==='run'){G.state='play';banner(`RUN ${G.i/2+1}/8`);return;}
   G.state='intro';overlay(`<div class="t">STATION ${(G.i+1)/2}/8</div><div class="g">${L(...seg.nm)}</div><div class="s">${L(...seg.how)}</div><div class="k">${seg.hint}</div>`);
-  await sleep(SAVE.races?1300:2000);if(G!==me)return;overlay(null);G.state='play';SFX.go();banner('GO!',450);}
+  await sleep(SAVE.races?1000:1700);if(G!==me)return;overlay(null);G.state='play';SFX.go();banner('GO!',450);}
 const RANKS=[[55*60,'ELITE 15','엘리트 15'],[65*60,'PRO','프로'],[80*60,'OPEN','오픈'],[100*60,'FINISHER','완주자'],[1e9,'ROXZONE TOURIST','록스존 관광객']];
 function finish(){G.state='done';const tot=G.clock,old=SAVE.pb,oldS=SAVE.splits,isPB=!old||tot<old;SFX.finish();banner('FINISH!',1600);$('rst').hidden=true;
   SAVE.races=(SAVE.races||0)+1;if(isPB){SAVE.pb=tot;SAVE.splits=G.splits.slice();}save();paintInfo();
