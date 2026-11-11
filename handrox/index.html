@@ -116,6 +116,16 @@
   #fePrev{display:block;width:192px;height:192px;margin:4px auto 8px;border:3px solid var(--gold);background:#000;image-rendering:pixelated;touch-action:none;cursor:grab}
   #feZoom{width:192px;margin-bottom:6px;accent-color:var(--gold);touch-action:pan-x}
   .cover #fsel button{padding:4px 10px;font-size:11px}
+  .cust{padding:10px 12px!important}
+  #cuPrev{display:block;width:96px;height:112px;margin:0 auto 6px;background:#050506;border:2px solid var(--gold);image-rendering:pixelated}
+  .crow{display:flex;align-items:center;gap:4px;margin:4px 0;flex-wrap:wrap}
+  .crow span{width:58px;font:10px var(--px);color:var(--dim);text-align:left;flex:none}
+  .crow button{width:24px;height:24px;border:2px solid #44444e;flex:none}
+  .crow button.t{width:auto;padding:0 6px;font:10px/20px var(--px);color:#fff;background:#0c0c10}
+  .crow button.no{background:repeating-linear-gradient(45deg,#333 0 3px,#111 3px 6px)!important}
+  .crow button.on{border-color:#fff;box-shadow:0 0 0 2px var(--gold)}
+  .cust .row button{padding:6px 12px;font-size:12px}
+  #cv,.face{image-rendering:pixelated}
   .res .rk{font:700 13px var(--px);color:#111;background:var(--gold);display:inline-block;padding:3px 10px}
   .res .tm{font:700 40px var(--px);color:var(--gold);text-shadow:3px 3px 0 var(--red);line-height:1.2;font-variant-numeric:tabular-nums}
   .res .pbn{font:12px var(--px);color:var(--dim);margin-bottom:8px}.res .pbn.new{color:var(--green)}
@@ -160,7 +170,7 @@
       <div class="tag" id="cTag"></div>
       <div class="sub">THE WORLD SERIES OF FINGER RACING</div>
       <div class="lsel" id="lsel"><button type="button" data-l="ko">한국어</button><button type="button" data-l="en">English</button></div>
-      <div class="lsel" id="fsel"><button type="button" id="faceBtn"></button><button type="button" id="feDel" hidden>✕</button></div>
+      <div class="lsel" id="fsel"><button type="button" id="charBtn"></button></div>
       <div class="ins">TAP TO START</div>
       <div class="note" id="cNote"></div>
     </div>
@@ -173,6 +183,10 @@
   </section>
 
   <div class="help" id="help" hidden><div id="helpBody"></div></div>
+  <div class="help" id="custPanel" hidden><div class="res cust"><h3 id="cuT"></h3><canvas id="cuPrev" width="192" height="224"></canvas>
+    <div id="cuRows"></div>
+    <div class="row"><button type="button" id="faceBtn"></button><button type="button" id="feDel" hidden>✕</button></div>
+    <div class="row" style="margin-top:8px"><button type="button" id="cuRnd">🎲</button><button type="button" class="y" id="cuOk"></button></div></div></div>
   <input type="file" id="faceFile" accept="image/*" hidden>
   <div class="help" id="facePanel" hidden><div class="res"><h3 id="feT"></h3><canvas id="fePrev" width="192" height="192"></canvas>
     <input type="range" id="feZoom" min="1" max="6" step="0.05" value="1.6" aria-label="zoom"><div class="pbn" id="feN"></div>
@@ -227,62 +241,103 @@ const SFX={
 const cv=$('cv'),mainCtx=cv.getContext('2d');mainCtx.scale(2,2);
 let c=mainCtx;
 const W=320,H=170,FL=142;
-const SK='#f6ceaa',SK2='#d8a983',OL='#14121a';
-function rr(x,y,w,h,r,fill,stroke=OL){c.beginPath();c.moveTo(x+r,y);c.lineTo(x+w-r,y);c.quadraticCurveTo(x+w,y,x+w,y+r);c.lineTo(x+w,y+h-r);c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);c.lineTo(x+r,y+h);c.quadraticCurveTo(x,y+h,x,y+h-r);c.lineTo(x,y+r);c.quadraticCurveTo(x,y,x+r,y);c.closePath();
-  c.fillStyle=fill;c.fill();if(stroke){c.strokeStyle=stroke;c.lineWidth=1.5;c.stroke();}}
-function line(pts,w,col,ol=1){c.lineCap='round';c.lineJoin='round';c.beginPath();c.moveTo(pts[0],pts[1]);for(let i=2;i<pts.length;i+=2)c.lineTo(pts[i],pts[i+1]);
-  if(ol){c.strokeStyle=OL;c.lineWidth=w+2.5;c.stroke();}c.strokeStyle=col;c.lineWidth=w;c.stroke();}
-function disc(x,y,r,fill,stroke=OL){c.beginPath();c.arc(x,y,r,0,7);c.fillStyle=fill;c.fill();if(stroke){c.strokeStyle=stroke;c.lineWidth=1.5;c.stroke();}}
+const OL='#0b0b0e';
+/* 전부 정수 좌표의 사각형으로만 그려서 도트 느낌을 냄 (1칸 = 화면 2픽셀) */
+const R=(x,y,w,h,col)=>{c.fillStyle=col;c.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));};
+function shade(hex,f){const n=parseInt(hex.slice(1),16);return '#'+[n>>16,n>>8&255,n&255].map(v=>Math.round(clamp(v*f,0,255)).toString(16).padStart(2,'0')).join('');}
+function rr(x,y,w,h,r,fill,stroke=OL){x=Math.round(x);y=Math.round(y);w=Math.round(w);h=Math.round(h);
+  if(stroke){R(x+1,y,w-2,h,stroke);R(x,y+1,w,h-2,stroke);R(x+1,y+1,w-2,h-2,fill);}else if(r>=2&&w>4&&h>4){R(x+1,y,w-2,h,fill);R(x,y+1,w,h-2,fill);}else R(x,y,w,h,fill);}
+function pline(x1,y1,x2,y2,w,col){const n=Math.max(1,Math.ceil(Math.max(Math.abs(x2-x1),Math.abs(y2-y1)))),h=w/2;c.fillStyle=col;
+  for(let i=0;i<=n;i++)c.fillRect(Math.round(x1+(x2-x1)*i/n-h),Math.round(y1+(y2-y1)*i/n-h),w,w);}
+function line(pts,w,col,ol=1){w=Math.max(1,Math.round(w));
+  if(ol)for(let i=0;i+3<pts.length;i+=2)pline(pts[i],pts[i+1],pts[i+2],pts[i+3],w+2,OL);
+  for(let i=0;i+3<pts.length;i+=2)pline(pts[i],pts[i+1],pts[i+2],pts[i+3],w,col);}
+function disc(x,y,r,fill,stroke=OL){x=Math.round(x);y=Math.round(y);r=Math.max(1,Math.round(r));if(stroke)disc(x,y,r+1,stroke,null);
+  c.fillStyle=fill;for(let dy=-r;dy<=r;dy++){const hw=Math.round(Math.sqrt(r*r-dy*dy+r*.8));c.fillRect(x-hw,y+dy,hw*2+1,1);}}
+function ring(x,y,r,col,w=2){const n=Math.ceil(r*6.3);c.fillStyle=col;for(let i=0;i<n;i++){const a=i/n*6.2832;c.fillRect(Math.round(x+Math.cos(a)*r-w/2),Math.round(y+Math.sin(a)*r-w/2),w,w);}}
 function txt(t,x,y,size=12,col='#fff',al='center'){c.font=`bold ${size}px Galmuri11, monospace`;c.textAlign=al;c.lineWidth=3;c.lineJoin='round';c.strokeStyle='#111';c.strokeText(t,x,y);c.fillStyle=col;c.fillText(t,x,y);}
 function gauge(x,y,w,h,p,col){c.fillStyle='#111';c.fillRect(x-2,y-2,w+4,h+4);c.fillStyle='#3a1418';c.fillRect(x,y,w,h);c.fillStyle=col;c.fillRect(x,y,w*clamp(p,0,1),h);}
 
 /* ═════════ 내 얼굴: 사진 → 16×16 픽셀아트 → 손바닥에. 사진은 이 브라우저 밖으로 나가지 않음 ═════════ */
-let FACE=null;const FKEY='handrox.face',FN=16;
+let FACE=null;const FKEY='handrox.face',FN=12;
 function pixelate(img,cx,cy,size){let src=img,sx=cx-size/2,sy=cy-size/2,sw=size;
-  for(let n=128;n>=FN;n/=2){const t=document.createElement('canvas');t.width=t.height=n;const x=t.getContext('2d');x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';x.drawImage(src,sx,sy,sw,sw,0,0,n,n);src=t;sx=sy=0;sw=n;}
+  for(const n of [96,48,24,12]){const t=document.createElement('canvas');t.width=t.height=n;const x=t.getContext('2d');x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';x.drawImage(src,sx,sy,sw,sw,0,0,n,n);src=t;sx=sy=0;sw=n;}
   const x=src.getContext('2d'),d=x.getImageData(0,0,FN,FN),a=d.data;
   for(let i=0;i<a.length;i+=4){for(let k=0;k<3;k++)a[i+k]=Math.round(clamp((a[i+k]-128)*1.25+136,0,255)/42.5)*42.5;      // 대비 올리고 색 단계 줄이기
-    const px=(i/4)%FN,py=Math.floor(i/4/FN);if(Math.min(px,FN-1-px)+Math.min(py,FN-1-py)<2)a[i+3]=0;}                       // 모서리 둥글게
+    const px=(i/4)%FN,py=Math.floor(i/4/FN);if(Math.min(px,FN-1-px)+Math.min(py,FN-1-py)<1)a[i+3]=0;}                       // 모서리 둥글게
   x.putImageData(d,0,0);return src;}
 
-/* 경기장 배경: off = 지나온 거리(px) */
-function scene(off=0){
-  c.fillStyle='#101016';c.fillRect(0,0,W,FL);
-  c.fillStyle='#1a1a22';for(let x=-(off*.15%40);x<W;x+=40){c.fillRect(x,0,2,60);}            // 트러스
-  c.fillStyle='#22222c';c.fillRect(0,14,W,3);
-  for(let i=0;i<4;i++){const x=40+i*80;c.fillStyle='#ffd40018';c.beginPath();c.moveTo(x,17);c.lineTo(x-26,FL);c.lineTo(x+26,FL);c.fill();c.fillStyle='#ffd400';c.fillRect(x-3,15,6,3);}
-  const o3=off*.35,k=Math.floor(o3/14);                                                      // 관중
-  for(let i=-1;i<25;i++){const n=i+k,x=i*14-(o3%14),h=((n*7)%5+5)%5;c.fillStyle=['#3b3850','#4b4766','#302d42','#5a5470'][((n%4)+4)%4];c.fillRect(x+2,84-h,10,24+h);c.fillRect(x+4,78-h,6,7);}
-  const o6=off*.7;                                                                           // 광고판
-  c.fillStyle='#0c0c10';c.fillRect(0,104,W,22);
-  for(let x=-(o6%128)-128;x<W;x+=128){c.fillStyle='#ffd400';c.fillRect(x+4,107,88,16);c.font='bold 11px Galmuri11, monospace';c.textAlign='center';c.fillStyle='#111';c.fillText('HANDROX',x+48,119);c.fillStyle='#e5391f';c.fillRect(x+98,107,22,16);}
-  c.fillStyle='#2b2b33';c.fillRect(0,FL-16,W,16);                                            // 바닥
-  c.fillStyle='#34343e';c.fillRect(0,FL,W,H-FL);c.fillStyle='#ffd400';c.fillRect(0,FL+1,W,2);
-  c.fillStyle='#4a4a58';for(let x=-(off%32);x<W;x+=32)c.fillRect(x,FL+8,14,3);
-  c.fillStyle='#26262e';c.fillRect(0,FL+16,W,H-FL-16);
+/* 경기장 배경 (흑백 도트): 사선 조명 줄기 + 흰 테두리 전광판 + 반짝이는 타일 바닥. off = 지나온 거리(px) */
+const BGW=640,BG=(()=>{const t=document.createElement('canvas');t.width=BGW;t.height=FL;const x=t.getContext('2d');let sd=7;const rnd=()=>(sd=(sd*16807)%2147483647)/2147483647;
+  const ang=-.6,ca=Math.cos(ang),sa=Math.sin(ang);
+  for(let k=0;k<26;k++){const cx=rnd()*BGW,cy=rnd()*(FL-10),len=30+rnd()*70,th=3+rnd()*8,br=.35+rnd()*.65;
+    for(let gy=-90;gy<=90;gy+=2)for(let gx=-90;gx<=90;gx+=2){const al=gx*ca+gy*sa,pe=-gx*sa+gy*ca;if(Math.abs(al)>len||Math.abs(pe)>th)continue;
+      const v=Math.pow(1-Math.abs(al)/len,1.4)*Math.pow(1-Math.abs(pe)/th,1.6)*br;if(rnd()>v*1.5)continue;const g=Math.round(70+185*v);x.fillStyle=`rgb(${g},${g},${g})`;
+      for(const dx of [0,-BGW,BGW])x.fillRect(Math.round(cx+gx)+dx,Math.round(cy+gy),1,1);}}
+  return t;})();
+function scene(off=0){c.imageSmoothingEnabled=false;
+  R(0,0,W,H,'#050506');const o1=Math.floor(off*.2)%BGW;c.drawImage(BG,-o1,0);c.drawImage(BG,BGW-o1,0);
+  const o6=Math.floor(off*.7),P=132;                                                         // 전광판
+  for(let x=-(o6%P)-P,n=Math.floor(o6/P)-1;x<W;x+=P,n++){R(x+6,100,100,26,'#e9e9ee');R(x+7,101,98,24,'#08080a');R(x+7,101,98,3,'#3c3c42');
+    for(let i=0;i<98;i+=2)R(x+7+i,102,1,1,'#9a9aa2');
+    const t=((n%2)+2)%2?'PHONE':'HANDROX';c.font='bold 10px Galmuri11, monospace';c.textAlign='center';c.fillStyle='#f2f2f5';[...t].forEach((ch,i)=>c.fillText(ch,x+56+(i-(t.length-1)/2)*11,119));}
+  R(0,FL-16,W,H-FL+16,'#09090b');R(0,FL-16,W,1,'#d9d9de');                                   // 바닥
+  for(const y of [FL-9,FL+3,FL+15])R(0,y,W,1,'#232328');
+  const o=Math.floor(off);for(let x=-(o%30);x<W;x+=30)R(x,FL-15,1,H-FL+15,'#1b1b20');
+  for(let x=-(o6%P)-P;x<W;x+=P)for(const ex of [6,105])for(let i=0;i<10;i++)R(x+ex,FL-14+i*3,1,2,`rgba(255,255,255,${.5-i*.05})`);  // 전광판 반사
 }
 
-/* 주인공: 검지·중지로 달리는 손. (x, y)=발끝이 닿는 바닥. 엄지 끝 좌표를 돌려줌 */
-function leg(hx,hy,fx,fy,col){const Ln=10;let dx=fx-hx,dy=fy-hy,d=Math.hypot(dx,dy)||.01;if(d>Ln*2-.2){const k=(Ln*2-.2)/d;dx*=k;dy*=k;d=Ln*2-.2;fx=hx+dx;fy=hy+dy;}
-  const h=Math.sqrt(Ln*Ln-d*d/4),kx=hx+dx/2+dy/d*h,ky=hy+dy/2-dx/d*h;line([hx,hy,kx,ky,fx,fy],6,col);
-  c.fillStyle='#fff8';c.fillRect(fx+1,fy-2,2,2);}                                             // 손톱
-function hero(x,y,o={}){const ph=o.ph||0,cr=o.cr||0,lean=o.lean||0,arm=o.arm==null?.6:o.arm,up=o.up||0,st=o.st==null?9:o.st,back=o.back||0,sh=o.sh?(Math.random()-.5)*o.sh:0;
-  x+=sh;const hy=y-17+cr*9-up;
-  const foot=i=>{const p=ph+i*Math.PI;return [x-back+Math.sin(p)*st+(i?-2:2),y-up*(o.tuck?.5:1)-Math.max(0,Math.cos(p))*5*Math.min(1,st/9)];};
-  const f0=foot(1),f1=foot(0);
-  leg(x-3,hy,f0[0],f0[1],SK2);
-  c.save();c.translate(x,hy);c.rotate(lean);
-  rr(-6,-29,12,12,2,SK);                                           // 손목
-  rr(-7.5,-27,15,5,1,'#ffd400');                                   // 손목밴드
-  disc(-8,-2,4.5,SK2);disc(-4,0,4.5,SK2);                          // 접은 약지·새끼
-  rr(-10,-20,20,21,6,SK);                                          // 손바닥(몸)
-  if(FACE){c.imageSmoothingEnabled=false;c.drawImage(FACE,-8,-19,16,16);c.imageSmoothingEnabled=true;if(o.dead){c.fillStyle='#fff';c.fillRect(-5,-8,10,1.5);}}
-  else{c.fillStyle=OL;if(o.dead){c.fillRect(2,-13,3,1.5);c.fillRect(6,-13,3,1.5);}else{c.fillRect(3,-14,2,3);c.fillRect(7,-14,2,3);}
-  c.fillStyle='#e58a7a';c.fillRect(0,-9,2,1.5);}
-  const tx=8+Math.cos(arm)*10,ty=-9+Math.sin(arm)*10;line([7,-9,tx,ty],5,SK); // 엄지
-  c.restore();
-  leg(x+3,hy,f1[0],f1[1],SK);
-  const cs=Math.cos(lean),sn=Math.sin(lean);return {tx:x+tx*cs-ty*sn,ty:hy+tx*sn+ty*cs,hy};}
+/* ═════════ 캐릭터: 단순한 픽셀 선수. 피부·머리·옷·반다나·신발을 고를 수 있음 ═════════ */
+const OPT={skin:['#f6ceaa','#e3b48c','#c68f63','#8d5a3b','#5c3a25'],
+  hairS:[['짧은','Short'],['뾰족','Spiky'],['긴','Long'],['포니테일','Ponytail'],['상투','Bun'],['민머리','Bald']],
+  hair:['#2a2018','#6b4423','#c9a24a','#b5451f','#d8d8de','#3b6fd9','#e25aa6'],
+  topS:[['티셔츠','Tee'],['민소매','Tank'],['맨몸','None']],
+  top:['#ffd400','#e5391f','#2f6fe0','#19a35b','#f2f2f2','#2a2a32','#ff7ab8','#7a4be0'],
+  shorts:['#2a2a32','#2f3a66','#e5391f','#f2f2f2','#19a35b','#ffd400'],
+  band:[null,'#e5391f','#ffd400','#f2f2f2','#2f6fe0','#19a35b','#2a2a32'],
+  shoes:['#f2f2f2','#e5391f','#ffd400','#35c46a','#2a2a32']};
+const CKEY='handrox.char',CHAR={skin:0,hairS:1,hair:1,topS:0,top:0,shorts:0,band:1,shoes:0};
+try{const v=JSON.parse(localStorage.getItem(CKEY)||'{}');for(const k in CHAR)if(Number.isInteger(v[k])&&v[k]>=0&&v[k]<OPT[k].length)CHAR[k]=v[k];}catch(e){}
+let CH={};function charColors(){const sk=OPT.skin[CHAR.skin],bare=CHAR.topS===2,tp=bare?sk:OPT.top[CHAR.top];
+  CH={skin:sk,skinD:shade(sk,.8),hair:OPT.hair[CHAR.hair],top:tp,topD:shade(tp,.78),sleeve:CHAR.topS===0,shorts:OPT.shorts[CHAR.shorts],shortsD:shade(OPT.shorts[CHAR.shorts],.75),band:OPT.band[CHAR.band],shoes:OPT.shoes[CHAR.shoes],hs:CHAR.hairS};}
+charColors();
+/* 다리: 엉덩이→발끝 2마디 (무릎은 앞으로). back=뒤쪽 다리(어둡게) */
+function leg(hx,hy,fx,fy,back){const Ln=10;let dx=fx-hx,dy=fy-hy,d=Math.hypot(dx,dy)||.01;if(d>Ln*2-.2){const k=(Ln*2-.2)/d;dx*=k;dy*=k;d=Ln*2-.2;fx=hx+dx;fy=hy+dy;}
+  const h=Math.sqrt(Ln*Ln-d*d/4),kx=hx+dx/2+dy/d*h,ky=hy+dy/2-dx/d*h;
+  line([hx,hy,kx,ky,fx,fy-1],4,back?CH.skinD:CH.skin);line([hx,hy,hx+(kx-hx)*.7,hy+(ky-hy)*.7],4,back?CH.shortsD:CH.shorts,0);
+  R(fx-3,fy-4,8,4,OL);R(fx-2,fy-3,6,2,back?shade(CH.shoes,.75):CH.shoes);}
+function head(cx,cy,dead){const x=Math.round(cx-6),y=Math.round(cy-6),hc=CH.hair,hd=shade(hc,.7);
+  R(x,y-1,12,14,OL);R(x-1,y,14,12,OL);
+  if(FACE){c.imageSmoothingEnabled=false;R(x,y,12,12,CH.skin);c.drawImage(FACE,x,y,12,12);if(dead)R(x+3,y+8,6,1,'#fff');}
+  else{R(x,y,12,12,CH.skin);R(x,y+10,12,2,CH.skinD);
+    if(dead){R(x+7,y+6,3,1,OL);}else{R(x+8,y+5,2,3,OL);R(x+8,y+5,1,1,'#fff');}
+    R(x+9,y+9,2,1,shade(CH.skin,.6));R(x+12,y+6,1,2,CH.skin);
+    const s=CH.hs;if(s!==5){R(x-1,y-1,13,4,hc);R(x-1,y+3,3,5,hc);R(x+2,y+3,8,1,hd);R(x+10,y+2,2,2,hc);R(x-2,y,1,7,OL);R(x-1,y-2,13,1,OL);
+      if(s===1){R(x+1,y-3,2,2,hc);R(x+5,y-4,3,3,hc);R(x+9,y-3,2,2,hc);R(x-3,y+2,2,2,hc);R(x+10,y+3,3,1,hc);}
+      if(s===2){R(x-2,y+3,4,12,hc);R(x-2,y+13,4,2,hd);}
+      if(s===3){R(x-4,y+2,3,3,hc);R(x-5,y+5,2,5,hc);R(x-5,y+9,2,1,hd);}
+      if(s===4){R(x+3,y-5,6,4,hc);R(x+3,y-2,6,1,hd);}}}
+  if(CH.band){R(x-1,y+2,14,2,CH.band);R(x-1,y+4,14,1,shade(CH.band,.7));R(x-3,y+3,2,2,CH.band);R(x-4,y+5,2,3,CH.band);}}
+/* (x, y)=발이 닿는 바닥. 손 위치(tx,ty)·엉덩이(hy)·어깨(sx,sy)를 돌려줌. swing=팔을 앞뒤로 흔듦(달리기) */
+/* 화면에는 1.5배로 크게 (캐릭터 1칸 = 화면 3픽셀). 돌려주는 좌표는 경기장 좌표 */
+function hero(x,y,o={}){const Z=o.z||1.5;x=Math.round(x+(o.sh?(Math.random()-.5)*o.sh:0));y=Math.round(y);
+  const q={...o,sh:0,up:(o.up||0)/Z,back:(o.back||0)/Z,feet:o.feet&&o.feet.map(f=>[(f[0]-x)/Z,(f[1]-y)/Z])};
+  c.save();c.translate(x,y);c.scale(Z,Z);const r=hero0(0,0,q);c.restore();
+  return {tx:x+r.tx*Z,ty:y+r.ty*Z,hy:y+r.hy*Z,sx:x+r.sx*Z,sy:y+r.sy*Z};}
+function hero0(x,y,o={}){const ph=o.ph||0,cr=o.cr||0,lean=o.lean||0,arm=o.arm==null?.6:o.arm,up=o.up||0,st=o.st==null?9:o.st,back=o.back||0;
+  if(o.sh)x+=(Math.random()-.5)*o.sh;x=Math.round(x);const hy=Math.round(y-17+cr*9-up),cs=Math.cos(lean),sn=Math.sin(lean),P=(lx,ly)=>[x+lx*cs-ly*sn,hy+lx*sn+ly*cs];
+  const foot=i=>{if(o.feet)return o.feet[i];const p=ph+i*Math.PI;return [x-back+Math.sin(p)*st+(i?-2:2),y-up*(o.tuck?.5:1)-Math.max(0,Math.cos(p))*5*Math.min(1,st/9)];};
+  const [sx,sy]=P(0,-11),[hx,hy2]=P(1,-19),f0=foot(1),f1=foot(0),a1=arm+lean,a2=(o.swing?Math.PI-arm:arm)+lean,AL=11;
+  const armD=(a,bk,ox)=>{const ex=sx+ox+Math.cos(a)*AL,ey=sy+1+Math.sin(a)*AL;line([sx+ox,sy+1,ex,ey],3,bk?CH.skinD:CH.skin);
+    if(CH.sleeve)line([sx+ox,sy+1,sx+ox+Math.cos(a)*4,sy+1+Math.sin(a)*4],3,bk?CH.topD:CH.top,0);return [ex,ey];};
+  armD(a2,1,-1);
+  if(!o.nolegs)leg(x-2,hy,f0[0],f0[1],1);
+  const [bx,by]=P(0,-2);line([bx,by,sx,sy+2],8,CH.top);line([x,hy,bx,by],8,CH.shorts,0);R(x-5,hy+3,10,2,OL);
+  if(!CH.sleeve&&CH.top!==CH.skin){const [nx,ny]=P(0,-9);line([nx,ny,sx,sy],4,CH.skin,0);}
+  head(hx,hy2,o.dead);
+  if(!o.nolegs)leg(x+2,hy,f1[0],f1[1],0);
+  const [tx,ty]=armD(a1,0,1);
+  return {tx,ty,hy,sx,sy};}
 function kettle(x,y){line([x-3,y-1,x-3,y-6,x+3,y-6,x+3,y-1],2,'#bbb',1);disc(x,y+4,6,'#26262e');c.fillStyle='#ffd400';c.fillRect(x-3,y+3,6,2);}
 function sled(x,w=0){rr(x,FL-7,44,7,2,'#ffd400');c.fillStyle='#555';c.fillRect(x+4,FL-36,4,30);c.fillRect(x+36,FL-36,4,30);
   for(let i=0;i<3+w;i++)rr(x+13,FL-13-i*6,18,6,1,i%2?'#3a3a46':'#1c1c24');}
@@ -309,7 +364,7 @@ const RUN={id:'run',rate:94,need:1000,unit:'m',pxu:.8,nm:['달리기','RUN'],hin
   want:s=>s.last?other(s.last):'LR',
   draw(s){scene(s.dp*this.pxu);const m=G.seg.need-s.dp;                       // 결승 아치
     const ax=120+m*this.pxu;if(ax<W+30){c.fillStyle='#e5391f';c.fillRect(ax,60,5,FL-60);c.fillRect(ax-30,60,65,12);txt(G.i===14?'FINISH':'ROXZONE',ax+2,70,8,'#fff');}
-    hero(110,FL,{ph:s.ph,lean:.18,arm:.6+Math.sin(s.ph)*.7,sh:s.stum?3:0});}};
+    hero(110,FL,{ph:s.ph,lean:.18,arm:1.1+Math.sin(s.ph)*.9,swing:1,sh:s.stum?3:0});}};
 /* ═════════ 에르그(스키·로잉) 공통 ═════════
    손잡이를 잡은 채 당긴 길이만큼 전진. 끝까지 당기면 되돌아와야 다시 당길 수 있음 (그래서 원을 그리게 됨).
    손가락 하나 = 한 번에 최대 62m, 두 손잡이 다 잡고 길게 당기면 124m. 초당 2번쯤 돌리면 2:00/500m */
@@ -358,7 +413,7 @@ const ST=[
   down(s,side){s.tp[side]=s.t;if(s.t-s.tp[other(side)]<.13){s.tp.L=s.tp.R=-9;add(s,2.5);s.tph+=Math.PI;s.k=1;SFX.shove();}},
   update(s,dt){s.ph+=(s.tph-s.ph)*Math.min(1,dt*14);s.k=Math.max(0,s.k-dt*5);},
   want:()=>'LR',
-  draw(s){scene(s.dp*this.pxu);sled(150+s.k*3,1);hero(128+s.k*3,FL,{ph:s.ph,lean:.6,arm:-.2,st:11,back:5});}},
+  draw(s){scene(s.dp*this.pxu);sled(150+s.k*3,1);hero(116+s.k*3,FL,{ph:s.ph,lean:.6,arm:-.2,st:11,back:5});}},
  {id:'pull',rate:45,need:50,unit:'m',nm:['슬레드 풀','SLED PULL'],hint:'L↓  R↓  L↓  R↓',
   how:['L·R 번갈아 아래로 쓸어 줄을 당겨요','Swipe down, alternating L·R, hand over hand'],
   init(s){s.last=null;s.k=0;},
@@ -382,7 +437,7 @@ const ST=[
     if(s.st==='chg')hero(x,FL,{cr:1.15,lean:1.4,arm:.2,st:3,back:9});
     else if(s.st==='jump')hero(x,FL,{up:Math.sin(Math.PI*Math.min(1,s.jt))*30,lean:.3,arm:-1.2,st:7,tuck:1});
     else if(s.st==='stum')hero(x,FL,{cr:1.15,lean:1.5,st:3,back:9,dead:1,sh:2});
-    else hero(x,FL,{arm:.6,st:4});
+    else hero(x,FL,{arm:1.3,st:4});
     const gx=262,gy=24,gh=100,Y=v=>gy+gh*(1-v/1.12);c.fillStyle='#111';c.fillRect(gx-3,gy-3,30,gh+6);c.fillStyle='#3a1418';c.fillRect(gx,gy,24,gh);
     c.fillStyle='#16a34a';c.fillRect(gx,Y(1),24,Y(.5)-Y(1));c.fillStyle='#ffd400';c.fillRect(gx,Y(.9),24,Y(.72)-Y(.9));
     if(s.st==='chg'){c.fillStyle='#fff';c.fillRect(gx-6,Y(Math.min(1.12,s.c))-1.5,36,3);}
@@ -397,9 +452,8 @@ const ST=[
   want:()=>'LR',
   draw(s){scene(0);const o=-44;c.fillStyle='#666';c.fillRect(70+o,FL-6,170,3);c.fillRect(74+o,FL-3,4,3);c.fillRect(200+o,FL-3,4,3);
     disc(238+o,FL-18,14,'#22222c');const a=s.dp*.03;for(let i=0;i<3;i++)line([238+o,FL-18,238+o+Math.cos(a+i*2.09)*12,FL-18+Math.sin(a+i*2.09)*12],2,'#ffd400',0);
-    rr(196+o,FL-14,8,10,1,'#444');const sx=168+o-s.k*52;rr(sx-9,FL-10,16,4,1,'#333');
-    leg(sx-3,FL-17,190+o,FL-11,SK2);
-    const h=hero(sx,FL,{lean:-.15-s.k*.5,arm:-.1,st:0});leg(sx+3,h.hy,194+o,FL-9,SK);
+    rr(196+o,FL-14,8,10,1,'#444');const sx=162+o-s.k*20;rr(sx-9,FL-10,16,4,1,'#333');
+    const h=hero(sx,FL-11+26,{lean:-.1-s.k*.55,arm:.15,feet:[[196+o,FL-6],[192+o,FL-9]]});
     line([h.tx,h.ty,226+o,FL-22],1.5,'#ddd',0);disc(h.tx,h.ty,2.5,'#111','#ddd');
     monitor(200,22,s,this.need);}},
  {id:'carry',rate:13,need:200,unit:'m',pxu:2,nm:['파머스 캐리','FARMERS CARRY'],hint:L('L + R 꾹','HOLD L + R'),
@@ -411,10 +465,10 @@ const ST=[
     else{s.v=0;s.grip=Math.min(1,s.grip+dt/.6);}},
   want:()=>'LR',
   draw(s){scene(s.dp*this.pxu);const x=120,on=both()&&s.lock<=0;
-    if(s.lock>0){kettle(x-14,FL-10);kettle(x+18,FL-10);hero(x,FL,{dead:1,sh:2,arm:-.6});}
-    else if(on){kettle(x-10,FL-20);const h=hero(x,FL,{ph:s.ph,arm:1.5,st:7,cr:.15,sh:s.grip<.25?2:0});kettle(h.tx,h.ty+3);}
-    else{kettle(x-14,FL-10);kettle(x+18,FL-10);hero(x,FL,{arm:-.9+Math.sin(s.t*20)*.3});}
-    gauge(x-20,FL-62,40,5,s.grip,s.grip<.25?'#e5391f':'#35c46a');txt('GRIP',x,FL-66,8,'#fff');}},
+    if(s.lock>0){kettle(x-14,FL-10);kettle(x+18,FL-10);hero(x,FL,{dead:1,sh:2,arm:1.3});}
+    else if(on){kettle(x-8,FL-20);const h=hero(x,FL,{ph:s.ph,arm:1.5,st:7,cr:.15,sh:s.grip<.25?2:0});kettle(h.tx,h.ty+3);}
+    else{kettle(x-14,FL-10);kettle(x+18,FL-10);hero(x,FL,{arm:.9+Math.sin(s.t*20)*.3});}
+    gauge(x-20,FL-80,40,5,s.grip,s.grip<.25?'#e5391f':'#35c46a');txt('GRIP',x,FL-84,8,'#fff');}},
  {id:'lunge',rate:52,need:100,unit:'m',pxu:4,nm:['샌드백 런지','SANDBAG LUNGES'],hint:'♪ L   ♪ R',
   how:['고리가 노란 원에 닿는 박자에 L·R 번갈아 탭','Tap L·R in turn, right as the ring meets the yellow circle'],
   T:.52,
@@ -423,10 +477,10 @@ const ST=[
     const f=s.bt%this.T,e=Math.min(f,this.T-f),g=e<.07?2:e<.15?1:0;add(s,[2,6,10][g]);grade(g,120,56);s.k=1;s.tph+=Math.PI;},
   update(s,dt){s.bt+=dt;const n=Math.floor(s.bt/this.T);if(n!==s.n){s.n=n;SFX.tick();}s.k=Math.max(0,s.k-dt*2.6);s.ph+=(s.tph-s.ph)*Math.min(1,dt*12);},
   want:s=>s.last?other(s.last):'LR',
-  draw(s){scene(s.dp*this.pxu);const x=120,h=hero(x,FL,{ph:s.ph,cr:s.k*.75,st:13,arm:-1.9});
-    rr(x-12,h.hy-38,24,9,4,'#3a3a46');c.fillStyle='#ffd400';c.fillRect(x-3,h.hy-38,6,9);
-    const f=(s.bt%this.T)/this.T,bx=258,by=62;disc(bx,by,26,'#0c0c10aa',null);c.lineWidth=3;c.strokeStyle='#ffd400';c.beginPath();c.arc(bx,by,11,0,7);c.stroke();
-    c.lineWidth=2;c.strokeStyle='#fff';c.beginPath();c.arc(bx,by,11+(1-f)*22,0,7);c.stroke();txt(s.last?other(s.last):'L',bx,by+4,11,'#fff');}},
+  draw(s){scene(s.dp*this.pxu);const x=120,h=hero(x,FL,{ph:s.ph,cr:s.k*.75,st:13,arm:-2.2});
+    rr(h.sx-12,h.sy-4,14,7,2,'#4a4a56');R(h.sx-7,h.sy-3,3,5,'#ffd400');
+    const f=(s.bt%this.T)/this.T,bx=258,by=62;disc(bx,by,26,'#0c0c10',null);ring(bx,by,11,'#ffd400',3);
+    ring(bx,by,11+(1-f)*22,'#fff',2);txt(s.last?other(s.last):'L',bx,by+4,11,'#fff');}},
  {id:'wall',rate:40,need:100,unit:['개','reps'],nm:['월볼','WALL BALLS'],hint:L('탭 ● 탭','TAP ● TAP'),
   how:['탭해서 던지고, 공이 손에 돌아올 때 다시 탭!','Tap to throw. Tap again just as the ball comes back'],
   F:.9,
@@ -436,13 +490,13 @@ const ST=[
     if(t<.4){s.pen=1;return;}if(t<.5)return;if(s.pen)return this.thr(s,3,0);this.thr(s,t>=.7?10:6,t>=.7?2:1);},
   update(s,dt){s.k=Math.max(0,s.k-dt*4);if(s.wait>0){s.wait-=dt;return;}if(s.fly){s.ft+=dt;if(s.ft>this.F+.3){s.fly=0;s.wait=.55;SFX.drop();fx(L('떨어뜨림!','DROPPED!'),'#ff8a7a',150,60);}}},
   want:()=>'LR',
-  draw(s){scene(0);c.fillStyle='#3a3a46';c.fillRect(266,8,12,FL-8);c.fillStyle='#ffd400';c.fillRect(256,36,10,4);c.lineWidth=3;c.strokeStyle='#e5391f';c.beginPath();c.arc(262,44,10,0,7);c.stroke();
+  draw(s){scene(0);c.fillStyle='#3a3a46';c.fillRect(266,8,12,FL-8);c.fillStyle='#ffd400';c.fillRect(256,36,10,4);ring(262,44,10,'#e5391f',3);
     const x=176,near=s.fly&&s.ft>.5,h=hero(x,FL,{cr:(near?.6:0)+(s.wait>0?.4:0),arm:s.fly?-1.3:-.5,st:5,dead:s.wait>0});
     let bx=h.tx+4,by=h.ty-6;
-    if(s.fly){const u=s.ft/this.F,q=u<.5?u*2:(1-u)*2,e=1-(1-Math.min(1,q))**2;bx=x+16+(254-x-16)*e;by=FL-32-(FL-32-44)*e;if(u>1){bx=x+16;by=FL-32+(u-1)*45;}}
+    if(s.fly){const u=s.ft/this.F,q=u<.5?u*2:(1-u)*2,e=1-(1-Math.min(1,q))**2;bx=x+20+(254-x-20)*e;by=FL-46-(FL-46-44)*e;if(u>1){bx=x+20;by=FL-46+(u-1)*45;}}
     else if(s.wait>0){bx=x+26;by=FL-7;}
     disc(bx,by,7,'#c0392b');c.fillStyle='#ffd400';c.fillRect(bx-7,by-1,14,2);
-    if(s.fly){c.fillStyle=s.ft>=.7?'#ffd400':s.ft>=.5?'#35c46a':'#444';c.fillRect(x-24,FL-66,48,6);if(s.ft>=.7)txt('TAP!',x,FL-72,11,'#ffd400');}}}
+    if(s.fly){c.fillStyle=s.ft>=.7?'#ffd400':s.ft>=.5?'#35c46a':'#444';c.fillRect(x-24,FL-80,48,6);if(s.ft>=.7)txt('TAP!',x,FL-86,11,'#ffd400');}}}
 ];
 const SEG=i=>i%2?ST[(i-1)/2]:RUN;
 const unit=seg=>Array.isArray(seg.unit)?L(...seg.unit):seg.unit;
@@ -493,7 +547,7 @@ function loop(t){const dt=Math.min(.05,(t-last)/1000);last=t;
     const w=G.state==='play'&&seg.want?seg.want(s):'';$('pL').classList.toggle('want',w.includes('L'));$('pR').classList.toggle('want',w.includes('R'));
     if(seg.erg)for(const d of ['L','R'])$('p'+d).firstElementChild.style.transform=seg.id==='ski'?`translateY(${s.pos[d]*62}px)`:`translateX(${-s.pos[d]*62}px)`;
     if(G.state==='play'&&s.p>=seg.need)nextSeg();
-  }else{idleT+=dt;scene(idleT*40);hero(150,FL,{ph:idleT*7,lean:.15,arm:.6+Math.sin(idleT*7)*.7});}
+  }else{idleT+=dt;scene(idleT*40);hero(150,FL,{ph:idleT*7,lean:.15,arm:1.1+Math.sin(idleT*7)*.9,swing:1});}
   requestAnimationFrame(loop);}
 
 /* ═════════ 손가락 입력 ═════════ */
@@ -534,26 +588,35 @@ function setLang(l){lang=l;try{localStorage.setItem('handrox.lang',l);}catch(e){
   $('cTag').textContent=L('손가락으로 뛰는 하이록스','The fitness race for fingers');$('cNote').textContent=L('기록은 이 브라우저에 저장돼요','Your best time is saved in this browser');
   $('pLs').textContent=L('왼 손가락','LEFT FINGER');$('pRs').textContent=L('오른 손가락','RIGHT FINGER');
   ST[0].hint=L('잡고 ↓ 당겨 ⟳ 돌리기','GRAB ↓ PULL ⟳ CIRCLE');ST[4].hint=L('잡고 ← 당기기 · 돌아오기 →','GRAB ← PULL · RETURN →');ST[3].hint=L('꾹 ▸ 떼기','HOLD ▸ RELEASE');ST[5].hint=L('L + R 꾹','HOLD L + R');ST[7].hint=L('탭 ● 탭','TAP ● TAP');
+  $('charBtn').textContent=L('🧍 캐릭터 만들기','🧍 Make your character');$('cuT').textContent=L('🧍 내 캐릭터','🧍 Your character');$('cuOk').textContent=L('완료','Done');if(!$('custPanel').hidden)renderCust();
   faceBtnText();$('feT').textContent=L('📷 얼굴 맞추기','📷 Frame your face');$('feN').textContent=L('드래그로 위치, 슬라이더로 확대. 사진은 이 기기에만 저장돼요.','Drag to move, slide to zoom. The photo stays on this device.');$('feNo').textContent=L('취소','Cancel');$('feOk').textContent=L('이 얼굴로','Use this');
   $('helpBody').innerHTML=helpHTML();document.querySelectorAll('#lsel button').forEach(b=>b.classList.toggle('on',b.dataset.l===l));$('lng').textContent=l==='ko'?'EN':'KO';paintInfo();}
 $('lsel').addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('button');if(b){SFX.tick();setLang(b.dataset.l);}});
 $('lng').addEventListener('click',()=>{SFX.tick();setLang(lang==='ko'?'en':'ko');});
-$('fsel').addEventListener('click',e=>e.stopPropagation());$('faceBtn').addEventListener('click',()=>$('faceFile').click());
+$('fsel').addEventListener('click',e=>e.stopPropagation());$('custPanel').addEventListener('click',e=>e.stopPropagation());$('faceBtn').addEventListener('click',()=>$('faceFile').click());
 
 function fitApp(){const app=$('app'),vh=(window.visualViewport&&visualViewport.height)||innerHeight;if(!vh)return;
   app.style.transform='';const avail=vh-4,s=Math.min(1,avail/app.scrollHeight);app.style.transform=s<1?`scale(${s})`:'';appScale=s;document.body.style.height=avail+'px';}
 setTimeout(fitApp,300);if(window.visualViewport)visualViewport.addEventListener('resize',fitApp);addEventListener('resize',fitApp);
 
 /* 얼굴 아이콘 */
-const faceCtx=$('face').getContext('2d');faceCtx.scale(2.6,2.6);
-function drawFaceIcon(){faceCtx.clearRect(0,0,92,92);c=faceCtx;hero(17,37,{ph:.9,arm:-.8,st:6});c=mainCtx;}
+const faceCtx=$('face').getContext('2d');faceCtx.scale(4,4);
+function drawFaceIcon(){faceCtx.clearRect(0,0,23,23);c=faceCtx;hero(10,41,{arm:1.4,st:3,z:1});c=$('cuPrev').getContext('2d');c.setTransform(4,0,0,4,0,0);c.clearRect(0,0,48,56);R(0,50,48,1,'#d9d9de');hero(22,50,{ph:.9,arm:1.1,swing:1,lean:.1,z:1});c=mainCtx;}
+/* 캐릭터 만들기 */
+const CROWS=[['skin','피부','Skin'],['hairS','머리 모양','Hair'],['hair','머리 색','Hair color'],['topS','상의','Top'],['top','상의 색','Top color'],['shorts','하의 색','Shorts'],['band','반다나','Bandana'],['shoes','신발','Shoes']];
+function renderCust(){$('cuRows').innerHTML=CROWS.map(([k,ko,en])=>`<div class="crow"><span>${L(ko,en)}</span>${OPT[k].map((v,i)=>Array.isArray(v)?`<button type="button" class="t${CHAR[k]===i?' on':''}" data-k="${k}" data-i="${i}">${L(...v)}</button>`:`<button type="button" class="${CHAR[k]===i?'on':''}${v?'':' no'}" data-k="${k}" data-i="${i}" style="background:${v||'transparent'}" aria-label="${L(ko,en)} ${i+1}"></button>`).join('')}</div>`).join('');}
+function setChar(){charColors();try{localStorage.setItem(CKEY,JSON.stringify(CHAR));}catch(e){}renderCust();drawFaceIcon();}
+$('cuRows').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;CHAR[b.dataset.k]=+b.dataset.i;SFX.tick();setChar();});
+$('cuRnd').addEventListener('click',()=>{for(const k in CHAR)CHAR[k]=Math.floor(Math.random()*OPT[k].length);SFX.tick();setChar();});
+$('cuOk').addEventListener('click',()=>{$('custPanel').hidden=true;});
+$('charBtn').addEventListener('click',()=>{renderCust();drawFaceIcon();$('custPanel').hidden=false;});
 drawFaceIcon();
 /* 얼굴 고르기: 드래그로 위치, 슬라이더로 확대 */
 const FE={img:null,z:1.6,cx:0,cy:0,out:null};
 function feSize(){return Math.min(FE.img.width,FE.img.height)/FE.z;}
 function feDraw(){const z=feSize();FE.cx=clamp(FE.cx,z/2,FE.img.width-z/2);FE.cy=clamp(FE.cy,z/2,FE.img.height-z/2);FE.out=pixelate(FE.img,FE.cx,FE.cy,z);
   const x=$('fePrev').getContext('2d');x.imageSmoothingEnabled=false;x.clearRect(0,0,192,192);x.drawImage(FE.out,0,0,192,192);}
-function faceBtnText(){$('faceBtn').textContent=FACE?L('📷 얼굴 바꾸기','📷 Change face'):L('📷 내 얼굴','📷 My face');$('feDel').hidden=!FACE;}
+function faceBtnText(){$('faceBtn').textContent=FACE?L('📷 얼굴 사진 바꾸기','📷 Change photo'):L('📷 얼굴에 내 사진 넣기','📷 Use my photo as face');$('feDel').hidden=!FACE;}
 $('faceFile').addEventListener('change',e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const im=new Image();
   im.onload=()=>{FE.img=im;FE.z=1.6;FE.cx=im.width/2;FE.cy=im.height*.42;$('feZoom').value=1.6;$('facePanel').hidden=false;feDraw();};
   im.onerror=()=>{$('faceBtn').textContent=L('사진을 못 읽었어요','Could not read photo');};im.src=URL.createObjectURL(f);});
@@ -564,7 +627,7 @@ $('feZoom').addEventListener('input',e=>{FE.z=+e.target.value;feDraw();});
 $('feOk').addEventListener('click',()=>{FACE=FE.out;try{localStorage.setItem(FKEY,FACE.toDataURL());}catch(e){}$('facePanel').hidden=true;drawFaceIcon();faceBtnText();});
 $('feNo').addEventListener('click',()=>{$('facePanel').hidden=true;});
 $('feDel').addEventListener('click',()=>{FACE=null;try{localStorage.removeItem(FKEY);}catch(e){}drawFaceIcon();faceBtnText();});
-try{const u=localStorage.getItem(FKEY);if(u){const im=new Image();im.onload=()=>{const t=document.createElement('canvas');t.width=t.height=FN;t.getContext('2d').drawImage(im,0,0);FACE=t;drawFaceIcon();faceBtnText();};im.src=u;}}catch(e){}
+try{const u=localStorage.getItem(FKEY);if(u){const im=new Image();im.onload=()=>{const t=document.createElement('canvas');t.width=t.height=FN;t.getContext('2d').drawImage(im,0,0,FN,FN);FACE=t;drawFaceIcon();faceBtnText();};im.src=u;}}catch(e){}
 /* 대회 이름: 폰이면 HANDROX PHONE, PC면 HANDROX HOME */
 const VENUE=(navigator.maxTouchPoints>0||'ontouchstart' in window)?'PHONE':'HOME';$('city').textContent=VENUE;
 setLang(lang);fitApp();requestAnimationFrame(loop);
