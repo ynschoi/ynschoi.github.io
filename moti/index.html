@@ -325,7 +325,7 @@ const ME=lsg('moti_me')==='1';   // 내 기기는 시트에 안 보냄
 const VID=(()=>{let v=lsg('moti_vid');if(!v){v='m'+Math.random().toString(36).slice(2,8);lss('moti_vid',v);}return v;})();
 const DEV=(/iPhone|iPad/.test(navigator.userAgent)?'iOS':/Android/.test(navigator.userAgent)?'Android':'PC')+(/KAKAOTALK/i.test(navigator.userAgent)?'·카톡':/Instagram/i.test(navigator.userAgent)?'·인스타':'');
 function sheet(e,k){if(ME||!/github\.io$/.test(location.hostname))return;
-  try{fetch(`${SHEET_URL}?op=log&v=${VID}&ev=${encodeURIComponent('moti:'+e)}&k=${encodeURIComponent(k)}&l=${lang}&d=${encodeURIComponent(DEV)}`,{mode:'no-cors',keepalive:true}).catch(()=>{});}catch(err){}}
+  try{fetch(`${SHEET_URL}?op=log&v=${VID}&ev=${encodeURIComponent((RU?'motiru:':'moti:')+e)}&k=${encodeURIComponent(k)}&l=${lang}&d=${encodeURIComponent(DEV)}`,{mode:'no-cors',keepalive:true}).catch(()=>{});}catch(err){}}
 function sheetText(e,d){if(e==='lift')return `${d.k} ${d.grade} ${d.kg}kg${d.kg>=d.pr&&d.grade!=='MISS'?' PR':''} (Lv${d.lv})`;
   if(e==='start')return `PR ${S.sn}/${S.cj}/${S.sq} · day${S.day} · rolls${S.rolls}${RU?' · ru':''}`;return d==null?'':String(d);}
 function log(e,d){sheet(e,sheetText(e,d));const now=Date.now();if(!LOG.first)LOG.first=now;LOG.last=now;
