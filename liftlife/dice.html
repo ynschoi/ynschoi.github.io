@@ -510,7 +510,7 @@ async function doLift(k){await walkTo(SPOT.gym-4);setF(F.squat);say(pick(['간�
   const r=await mini(k,S.lv[k]);
   closeMG();
   const before=S[k],isPR=r.kg>before;
-  if(r.kg>0){await yoss();setF(F.stand);setBar(true);$('bb').style.top='56%';SFX.thud();await sleep(500);setBar(false);$('bb').style.top='';SFX.clang();shake();}
+  if(r.kg>0){await yoss();SFX.thud();SFX.clang();shake();}
   if(isPR){S[k]=r.kg;if(k==='cj')S.cjRaw=r.raw;save();paint(k);SFX.win();banner('NEW PR!',1100);
     await playAct('mv_yoss',[[1,180],[2,260],[3,320],[4,420],[5,480],[6,420],[7,300]],f=>{if(f===4){say('요쓰!!',1000);SFX.thud();}});actEnd('mv_yoss');setF(F.smile);
     say(pick(['가볍네','이게 사는 맛이지','근육아 고마워']),1200);
@@ -578,24 +578,18 @@ const GAMES={
  cj:{init(s,L){s.wait=0;s.p=0;s.on=0;s.z=rnd(.55,.72);s.cs=1;s.mul=EASE.cj(L);s.ct=0;},
   update(s,dt){if(s.done)return;if(!s.on){s.wait+=dt;if(s.wait>4)s.end('MISS',0);return;}s.p+=dt*(.35+s.p*.9)*s.cs;s.ct+=dt;if(s.ct>.06){s.ct=0;SFX.charge(s.p);}if(s.p>=1){s.p=1;s.end('MISS',0,300);}},
   draw(c,s){bg(c);const ok=s.done&&s.grade!=='MISS';drawHero(c,ok?F.squat:(s.on?F.bend:F.stand),80,116,0,s.on?s.p*3:0);bar(c,25,140,ok?FLOOR-64:FLOOR-14);
-   // 큰 게이지
-   const gx=192,gy=24,gh=116,Y=v=>gy+gh*(1-v),band=(w,col)=>{const t=Math.min(1,s.z+w),b=Math.max(0,s.z-w);c.fillStyle=col;c.fillRect(gx,Y(t),26,Y(b)-Y(t));};
-   c.fillStyle='#111';c.fillRect(gx-3,gy-3,32,gh+6);c.fillStyle='#3a1020';c.fillRect(gx,gy,26,gh);band(.25,'#14532d');band(.07,'#16a34a');band(.03,'#ffd400');
-   c.fillStyle=s.p>.92?'#d92d20':'#ffffffcc';c.fillRect(gx+7,Y(s.p),12,gh*s.p);c.fillStyle='#fff';c.fillRect(gx-6,Y(s.p)-1,38,3);
-   // 정밀 눈금: 노란 줄 ±0.07 구간을 확대
-   const zx=228,R=.085,ZY=v=>gy+gh*(.5-(v-s.z)/(2*R)),zb=(w,col)=>{c.fillStyle=col;c.fillRect(zx,ZY(s.z+w),14,ZY(s.z-w)-ZY(s.z+w));};
-   c.fillStyle='#111';c.fillRect(zx-2,gy-2,18,gh+4);c.fillStyle='#14532d';c.fillRect(zx,gy,14,gh);
-   zb(.07,'#16a34a');zb(.045,'#4ade80');zb(.03,'#ffd400');zb(.016,'#ffe98a');zb(.008,'#ffffff');
-   c.strokeStyle='#ffd40088';c.lineWidth=1;c.beginPath();c.moveTo(gx+27,Y(s.z+R));c.lineTo(zx-2,gy);c.moveTo(gx+27,Y(s.z-R));c.lineTo(zx-2,gy+gh);c.stroke();
-   if(Math.abs(s.p-s.z)<R){c.fillStyle='#d92d20';c.fillRect(zx-4,ZY(s.p)-1,22,3);}
-   [[0,'+5'],[.045,'+1'],[.07,'+½']].forEach(([w,t])=>txt(c,t,zx+26,ZY(s.z+w)+(w?4:3),w?8:10,w?'#ffd400':'#fff'));
-   txt(c,s.on?'모으는 중… 노란 줄 정중앙에서 떼!':'꾹 누르고 노란 줄 정중앙에서 떼!',222,14,9,'#ffd400');
+   // 게이지 하나: 초록 → 노랑 → 흰 줄(한가운데)
+   const gx=190,gy=20,gh=126,Y=v=>gy+gh*(1-v),band=(w,col)=>{const t=Math.min(1,s.z+w),b=Math.max(0,s.z-w);c.fillStyle=col;c.fillRect(gx,Y(t),34,Y(b)-Y(t));};
+   c.fillStyle='#111';c.fillRect(gx-3,gy-3,40,gh+6);c.fillStyle='#3a1020';c.fillRect(gx,gy,34,gh);
+   band(.07,'#16a34a');band(.03,'#ffd400');band(.012,'#ffffff');
+   c.fillStyle=s.p>.92?'#d92d20':'#ffffffaa';c.fillRect(gx+10,Y(s.p),14,gh*s.p);c.fillStyle='#d92d20';c.fillRect(gx-7,Y(s.p)-1,48,3);
+   txt(c,'꾹 누르고',276,70,11,'#ffd400');txt(c,'흰 줄에서 떼!',276,88,11,'#fff');txt(c,'가까울수록 +kg',276,106,9,'#ddd8ff');
    txt(c,`PR ${S.cj||'-'}`,40,18,10,'#fff');if(s.mul>1)txt(c,`점수 ×${s.mul.toFixed(2)}`,52,32,9,'#5ad1ff');},
   down(s){if(!s.done)s.on=1;},
   up(s,end){if(s.done||!s.on)return;s.on=0;const d=Math.abs(s.p-s.z),base=Math.max(60,S.cjRaw||0),M=v=>r05(v*s.mul);
    if(d>=.25)return end('MISS',0,300);
-   const add=d<.008?5:d<.016?3:d<.03?2:d<.045?1:d<.07?.5:null;
-   if(add!=null){s.raw=base+add;return end(d<.016?'PERFECT':'GREAT',M(s.raw),300);}
+   const add=d<.012?5:d<.03?3:d<.05?2:d<.07?1:null;
+   if(add!=null){s.raw=base+add;return end(d<.012?'PERFECT':d<.03?'GREAT':'GOOD',M(s.raw),300);}
    s.raw=Math.max(40,base-(d-.07)/.18*30);end('GOOD',M(s.raw),300);}},
  /* 2 다다다 연타 → 백스쿼트: 제한 시간 안에 많이 칠수록 무거움 (40kg + 1회당 5kg) */
  sq:{init(s,L){s.t=0;s.lim=EASE.sq(L);s.taps=0;s.need=S.sq?Math.floor((S.sq-40)/5)+1:0;},
@@ -608,7 +602,7 @@ const GAMES={
 let cur=null;
 function mini(k,L){openMG();const g=GAMES[k];return new Promise(async res=>{ // 결과 {grade,kg}
   const s={};g.init(s,L);
-  const name=FACES.find(f=>f.k===k).n,how={sn:'추가 노란 곳에 올 때 탭!',cj:'노란 줄 정중앙에서 떼면 PR +5kg!',sq:`${EASE.sq(L).toFixed(1)}초 동안 다다다 연타!`}[k];
+  const name=FACES.find(f=>f.k===k).n,how={sn:'추가 노란 곳에 올 때 탭!',cj:'꾹 누르고 흰 줄에서 떼기!',sq:`${EASE.sq(L).toFixed(1)}초 동안 다다다 연타!`}[k];
   g.draw(mx,s);overlay(`<div class="t">${name} · Lv${L}</div><div class="g" style="font-size:22px">READY</div><div class="s">${how}</div>`);await sleep(1000);
   overlay(`<div class="g">GO!</div>`);await sleep(350);mgov.hidden=true;
   s.end=(grade,kg=0,delay=0)=>{if(s.done)return;s.done=1;s.grade=grade;s.kg=kg;const pr=S[k];setTimeout(()=>{
@@ -681,7 +675,7 @@ $('help').addEventListener('click',e=>{if(e.target.id==='rs'){e.stopPropagation(
 addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();if(cur&&!cur.s.done&&mgov.hidden){if(!e.repeat)cur.g.down&&cur.g.down(cur.s,cur.s.end,0);}else if(!busy)roll();}});
 addEventListener('keyup',e=>{if((e.key===' '||e.key==='Enter')&&cur&&cur.g.up)cur.g.up(cur.s,cur.s.end);});
 $('helpBody').innerHTML=`<h3>🎲 하는 법</h3>주사위를 굴리면 나온 칸을 ${TO}가 해요.<br>
-<b>1 스내치</b> 추 타이밍 · <b>2 클린앤저크</b> 꾹 눌렀다 놓기 (노란 줄에 가까울수록 PR +0.5~5kg) · <b>3 백스쿼트</b> 1초 연타<br>
+<b>1 스내치</b> 추 타이밍 · <b>2 클린앤저크</b> 꾹 눌렀다 놓기 (흰 줄에 가까울수록 PR +1~5kg) · <b>3 백스쿼트</b> 1초 연타<br>
 <b>4 밥</b> 🍚밥 = 파워포션 1개 · 🧀하차푸리 = 0~3개 랜덤 → 스내치<br><b>5 잠</b> 회복포션 → 클린앤저크 점수 ×1.02씩<br><b>6 똥</b> 근육포션 → 백스쿼트<br>아래 <b>필살기</b> 버튼은 언제든 눌러서 볼 수 있어요.<br>
 포션은 위 포션 칸을 누르거나 역도 시작 전에 마셔요. 마실 때마다 레벨이 올라 아주 조금 쉬워지고, 레벨은 계속 쌓여요.<br>
 기록(PR)은 그 종목 최고 무게예요. 잘해야만 바뀌어요.<br><button class="rs" id="rs" type="button">기록 지우고 처음부터</button><small>made by ${FROM} · 아무 곳이나 눌러 닫기</small>`;
