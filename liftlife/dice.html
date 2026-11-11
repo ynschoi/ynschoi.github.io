@@ -212,6 +212,21 @@
   .cutin b{position:absolute;right:7%;top:50%;transform:translateY(-50%) rotate(-6deg);font:700 54px var(--px);color:#fff;-webkit-text-stroke:3px #111;text-shadow:5px 5px 0 var(--red);white-space:nowrap}
   .cutin.on b{animation:yos .9s steps(1) forwards}
   @keyframes yos{0%,15%{opacity:0}16%{opacity:1;transform:translateY(-50%) rotate(-6deg) scale(1.5)}24%{transform:translateY(-50%) rotate(-6deg) scale(1)}}
+  .admin{position:fixed;inset:0;z-index:50;background:var(--night);overflow:auto;padding:16px;font:13px/1.5 var(--font);color:var(--ink)}
+  .admin[hidden]{display:none}body.adm{overflow:auto}
+  .admin .ah{position:sticky;top:-16px;background:var(--night);padding:6px 0 10px;z-index:1}
+  .admin h3{font:700 16px var(--px);color:var(--gold)}.admin .live{color:#4ade80}
+  .admin .pl{border:2px solid var(--edge);background:#15102e;padding:10px 12px;margin-bottom:10px}
+  .admin .pl.on{border-color:#4ade80}
+  .admin .ph{display:flex;align-items:center;gap:8px}.admin .ph span:last-child{margin-left:auto;color:var(--violet);font-size:12px}
+  .admin .dot{width:9px;height:9px;border-radius:50%;background:#4a3f8a}.admin .pl.on .dot{background:#4ade80;box-shadow:0 0 8px #4ade80}
+  .admin table{width:100%;border-collapse:collapse;margin:6px 0;font-variant-numeric:tabular-nums}
+  .admin th{font:10px var(--px);color:var(--violet);text-align:left}.admin td{font:700 15px var(--px);color:#fff;vertical-align:top}
+  .admin td small{display:block;font:10px var(--font);color:var(--violet)}
+  .admin .meta{font-size:11px;color:var(--violet)}
+  .admin .ev{list-style:none;margin-top:6px;font-size:12px}.admin .ev li{border-top:1px solid #2d2560;padding:2px 0}
+  .admin .ev time{display:inline-block;width:92px;color:var(--violet);font-size:11px}.admin .ev b{color:var(--gold)}
+  .admin .more{font:11px var(--px);color:var(--gold);margin-top:4px;cursor:pointer}
   .help{position:absolute;inset:0;z-index:30;background:#0b0820ee;display:flex;align-items:center;justify-content:center;padding:16px}
   .help[hidden]{display:none}
   .help div{border:3px solid #fff;padding:14px 16px;background:#15102e;max-width:340px;font:13px/1.6 var(--font);color:var(--ink)}
@@ -258,7 +273,6 @@
     <canvas class="tfront" id="tfront" width="30" height="22"></canvas>
     <div class="night" id="night"></div>
     <div class="hud" id="hud"></div>
-    <button class="tb" id="stats" type="button" hidden>📊</button>
     <button class="tb" id="lng" type="button">KO</button>
     <button class="tb" id="hlp" type="button">?</button>
     <button class="tb" id="snd" type="button">♪ ON</button>
@@ -290,6 +304,7 @@
   <div class="help" id="help" hidden><div id="helpBody"></div></div>
 </div>
 
+  <div class="admin" id="admin" hidden><div class="ah"><h3>🛠 Moti · Player monitor</h3><div id="admHead"></div></div><div id="admBody"></div></div>
 <script>
 /* ═════════ 선물 설정: 이름은 여기서 바꿔요 ═════════ */
 const TO='Moti', FROM='영수';
@@ -307,23 +322,36 @@ async function flushLog(){if(!logDoc||logBusy||!logDirty)return;logBusy=true;log
   try{await logDoc.set(JSON.parse(JSON.stringify(LOG)));}catch(e){if(e&&e.code==='invalid_argument')logDoc=null;}logBusy=false;if(logDirty)flushLog();}
 (async()=>{try{if(!window.claude||!claude.use)return;const [db,user]=await Promise.all([claude.use('db'),claude.use('user')]);
   if(!db||!user)return;DB=db;USER=user;const id=await user.id();IS_OWNER=await user.isOwner();
-  if(IS_OWNER)document.getElementById('stats').hidden=false;
+  if(IS_OWNER){addEventListener('hashchange',adminRoute);adminRoute();}
   if(!id)return;logDoc=db.doc('logs/'+id);
   try{const old=await logDoc.get();const v=old.exists&&old.data();if(v&&v.v===1){Object.assign(LOG,v,{recent:v.recent||[]});}}catch(e){}
   if(logDirty||LOG.recent.length)flushLog();}catch(e){}})();
-/* 주인 전용: 모든 플레이어 기록 보기 */
-async function showStats(){if(!DB)return;const box=$('helpBody');box.innerHTML='<h3>📊 Players</h3>Loading…';$('help').hidden=false;
-  try{const q=await DB.collection('logs').orderBy('last','desc').limit(50).get();const rows=q.docs.map(d=>({id:d.id,...d.data()}));
-    let ps={};try{ps=await USER.profiles(rows.map(r=>r.id));}catch(e){}
-    const ago=t=>{const m=Math.round((Date.now()-t)/60000);return m<60?m+'m':m<1440?Math.round(m/60)+'h':Math.round(m/1440)+'d';};
-    const ko=lang==='ko',F={sn:'SN',cj:'CJ',sq:'SQ',eat:'🍚',zzz:'😴',poo:'💩'};
-    box.innerHTML=`<h3>📊 ${ko?'플레이어 기록':'Players'} (${rows.length})</h3>`+(rows.length?rows.map(r=>{const n=(ps[r.id]&&ps[r.id].name)||(ko?'익명':'Anonymous');
-      const pr=r.pr||{},li=r.lifts||{},rec=(r.recent||[]).slice(-6).reverse().map(x=>`${x.e}${x.d!=null?':'+(typeof x.d==='object'?(x.d.k+' '+x.d.grade+' '+x.d.kg):x.d):''}`).join(' · ');
-      return `<div style="border-top:1px solid #4a3f8a;padding:6px 0;font-size:12px"><b>${n.replace(/</g,'&lt;')}</b> · ${ago(r.last)} ${ko?'전':'ago'} · ${ko?'접속':'sessions'} ${r.sessions||0} · 🎲 ${r.rolls||0}<br>
-        PR SN ${pr.sn||'-'} · CJ ${pr.cj||'-'} · SQ ${pr.sq||'-'} · DAY ${r.day||1}<br>
-        ${['sn','cj','sq'].map(k=>li[k]?`${F[k]} ${li[k].n}${ko?'회':'x'} (miss ${li[k].miss})`:'').filter(Boolean).join(' · ')||''} ${r.food?`· 🍚${r.food.r||0} 🧀${r.food.k||0}`:''} · 🧪${r.drinks||0}<br>
-        <span style="color:#8d86c9">${rec}</span></div>`;}).join(''):`<p>${ko?'아직 기록이 없어요.':'No plays yet.'}</p>`)+`<small>${ko?'아무 곳이나 눌러 닫기':'tap anywhere to close'}</small>`;
-  }catch(e){box.innerHTML='<h3>📊</h3>'+(e&&e.code||'error');}}
+/* 관리자 화면 (주인만): 링크 뒤에 #admin. 플레이어 기록을 실시간으로 보여줌 */
+let adminUnsub=null,adminRows=[],adminNames={},adminOpen={};
+function adminRoute(){const on=location.hash==='#admin'&&IS_OWNER&&DB;$('admin').hidden=!on;document.body.classList.toggle('adm',!!on);
+  if(on&&!adminUnsub){$('admBody').textContent='Loading…';
+    adminUnsub=DB.collection('logs').orderBy('last','desc').limit(200).onSnapshot(async q=>{adminRows=q.docs.map(d=>({id:d.id,...d.data()}));
+      const need=adminRows.map(r=>r.id).filter(id=>!(id in adminNames));if(need.length){try{Object.assign(adminNames,await USER.profiles(need));}catch(e){}}renderAdmin();},
+      e=>{$('admBody').textContent='Error: '+(e&&e.code);});
+    setInterval(()=>{if(!$('admin').hidden)renderAdmin();},30000);}}
+const EVN={start:'▶ 시작 / start',roll:'🎲',lift:'🏋️',eat:'🍽',drink:'🧪',skill:'✨'};
+function evText(x){const d=x.d;if(x.e==='lift')return `🏋️ ${({sn:'Snatch',cj:'C&J',sq:'Squat'})[d.k]} <b>${d.grade}</b> ${d.kg}kg${d.kg>=d.pr?' 🔥PR':''}`;
+  if(x.e==='roll')return '🎲 '+({sn:'Snatch',cj:'C&J',sq:'Squat',eat:'Rice',zzz:'Sleep',poo:'Poop'})[d];
+  if(x.e==='eat')return d==='k'?'🧀 Khachapuri':'🍚 Rice';if(x.e==='drink')return '🧪 '+({P:'Power',R:'Recovery',M:'Muscle'})[d];
+  if(x.e==='skill')return '✨ '+({aura:'Jajanken',card:'Bungee Gum',guardian:'Kannon',killua:'Rhythm Echo'})[d];if(x.e==='start')return '▶ Start ('+d+')';return x.e;}
+function renderAdmin(){const now=Date.now(),ago=t=>{if(!t)return '-';const m=Math.floor((now-t)/60000);return m<1?'just now':m<60?m+'m ago':m<1440?Math.floor(m/60)+'h ago':Math.floor(m/1440)+'d ago';},
+  tm=t=>new Date(t).toLocaleString([], {month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
+  const live=adminRows.filter(r=>now-r.last<3*60000).length;
+  $('admHead').innerHTML=`<b>${adminRows.length}</b> players · <span class="live">● ${live} playing now</span>`;
+  $('admBody').innerHTML=adminRows.length?adminRows.map(r=>{const n=(adminNames[r.id]&&adminNames[r.id].name)||'Anonymous',pr=r.pr||{},li=r.lifts||{},on=now-r.last<3*60000;
+    const st=['sn','cj','sq'].map(k=>{const l=li[k];return `<td>${pr[k]||'-'}<small>${l?`${l.n} tries · ${l.miss} miss`:''}</small></td>`;}).join('');
+    const rec=(r.recent||[]).slice().reverse();
+    return `<div class="pl${on?' on':''}" data-id="${r.id}"><div class="ph"><span class="dot"></span><b>${n.replace(/</g,'&lt;')}</b><span>${ago(r.last)}</span></div>
+      <table><tr><th>Snatch</th><th>C&amp;J</th><th>Squat</th></tr><tr>${st}</tr></table>
+      <div class="meta">DAY ${r.day||1} · 🎲 ${r.rolls||0} · sessions ${r.sessions||0} · 🍚${(r.food||{}).r||0} 🧀${(r.food||{}).k||0} · 🧪${r.drinks||0} · lang ${r.lang||'-'} · since ${r.first?tm(r.first):'-'}</div>
+      <ol class="ev">${rec.slice(0,adminOpen[r.id]?40:8).map(x=>`<li><time>${tm(x.t)}</time>${evText(x)}</li>`).join('')}</ol>
+      ${rec.length>8?`<button class="more" type="button">${adminOpen[r.id]?'less':'all '+rec.length}</button>`:''}</div>`;}).join(''):'<p>No plays yet. Share the link and wait for your friend to play.</p>';}
+document.addEventListener('click',e=>{const b=e.target.closest('#admin .more');if(b){const id=b.closest('.pl').dataset.id;adminOpen[id]=!adminOpen[id];renderAdmin();}});
 
 /* ═════════ 언어: 기본 English, 표지에서 고름 ═════════ */
 let lang='en';try{lang=localStorage.getItem('moti.lang')||'en';}catch(e){}
@@ -825,7 +853,6 @@ function setLang(l){lang=l;try{localStorage.setItem('moti.lang',l);}catch(e){}do
   document.querySelectorAll('#lsel button').forEach(b=>b.classList.toggle('on',b.dataset.l===l));$('lng').textContent=l==='ko'?'EN':'KO';
   $('dice').setAttribute('aria-label',l==='ko'?'주사위 굴리기':'Roll the dice');if(!$('warn').hidden){$('warn').hidden=true;$('cover').classList.remove('warned');setupWarn();}}
 $('lsel').addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('button');if(b){SFX.tick();setLang(b.dataset.l);}});
-$('stats').addEventListener('click',()=>{SFX.tick();showStats();});
 $('lng').addEventListener('click',()=>{SFX.tick();setLang(lang==='ko'?'en':'ko');});
 setLang(lang);
 IMG.onload=()=>{};
