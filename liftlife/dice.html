@@ -502,12 +502,12 @@ async function doSleep(){
 function drawTF(){const c=$('tfront'),x=c.getContext('2d');const P=(a,b,w,h,col)=>{x.fillStyle=col;x.fillRect(a,b,w,h);};
   P(0,0,28,3,'#ddd');P(1,2,26,6,'#fff');P(3,8,20,6,'#e6e6e6');P(7,14,12,6,'#e6e6e6');P(1,7,26,1,'#cfcfcf');
   const w=heroH()*.46;c.style.left=(toPx(hx)-w*.5)+'px';c.style.bottom='5%';c.style.width=w+'px';c.style.height=(w*22/30)+'px';}
-async function doPoo(){await walkTo(SPOT.toilet+66.5*KU()/GW()*240);
-  await playAct('mv_poop',[[0,450],[1,450],[2,550],[3,600],[4,480],[5,550],[6,450],[7,750]],f=>{const h=head();
-    if(f===1)say('끄으으응...',1500);if(f===3)pop('💦',h.x+16,h.y,14);if(f===4){SFX.fart();shake();pop('뿌직!',h.x,h.y-20,26);}
-    if(f===5)SFX.plop();if(f===7)say('개운~ ✨',1100);});
-  actEnd('mv_poop');gotPot('M');
-  msg('POOP','💩 쾌변','시원하게 쾌변 성공.\n근육포션 1개! 마시면 백스쿼트 연타 시간이 늘어요.');await sleep(400);}
+async function doPoo(){await walkTo(SPOT.toilet);say('신호 왔다…!',900);await sleep(700);
+  hero.classList.add('gone');await sleep(250);          // 배경 변기에 앉은 걸로: 캐릭터는 숨기고 클로즈업
+  CU.poop.on=i=>{if(i===0)noise(.6,.03,300);if(i===1){SFX.fart();shake();setTimeout(SFX.plop,350);}if(i===2)tone(880,.3,'triangle',.05,300);};
+  await closeup('poop');
+  hero.classList.remove('gone');setF(F.smile);say('개운~ ✨',1100);gotPot('M');
+  msg('POOP','💩 쾌변','시원하게 쾌변 성공.\n근육포션 1개! 마시면 백스쿼트 연타 시간이 늘어요.');await sleep(600);setF(F.stand);}
 
 /* ═════════ 역도 3종 ═════════ */
 async function doLift(k){await walkTo(SPOT.gym-4);setF(F.squat);say(pick(['간다...!','집중','후우...']),900);await sleep(600);
@@ -530,12 +530,13 @@ async function doLift(k){await walkTo(SPOT.gym-4);setF(F.squat);say(pick(['간�
 
 /* 성공 컷: 상반신 클로즈업 + 요쓰! (전용 그림이 오면 YOSS_IMG/YOSS_F만 바꾸면 됨) */
 /* 클로즈업 컷: 상반신 3컷 가로 시트 + 큰 글자. 새 그림이 오면 CU에 한 줄 추가 */
-const CU={yoss:{img:'yoss.webp',word:'요쓰!',ms:[260,240,400]}};
+const CU={yoss:{img:'yoss.webp',word:'요쓰!',ms:[260,240,400]},
+  poop:{img:'cu_poop.webp',words:['끄으응…','뿌직!!','해탈'],ms:[900,800,900],quiet:1}};
 async function closeup(key){const cu=CU[key];if(!cu)return;const c=$('cutin'),f=$('cutF'),h=(c.offsetHeight||GH()*.58)*1.08;
-  c.querySelector('b').textContent=cu.word;
+  c.querySelector('b').textContent=cu.word||cu.words[0];
   f.style.backgroundImage=`url(${cu.img})`;f.style.width=h+'px';f.style.height=h+'px';f.style.backgroundSize='300% 100%';f.style.backgroundPosition='0 0';f.style.bottom='-8%';
-  c.classList.remove('on');void c.offsetWidth;c.style.animationDuration=(cu.ms.reduce((a,b)=>a+b,0)/1000)+'s';c.classList.add('on');SFX.win();tone(880,.25,'square',.05,400,.15);
-  for(let i=0;i<3;i++){f.style.backgroundPosition=(i*50)+'% 0';await sleep(cu.ms[i]);}c.classList.remove('on');}
+  c.classList.remove('on');void c.offsetWidth;c.style.animationDuration=(cu.ms.reduce((a,b)=>a+b,0)/1000)+'s';c.classList.add('on');if(!cu.quiet){SFX.win();tone(880,.25,'square',.05,400,.15);}
+  for(let i=0;i<3;i++){f.style.backgroundPosition=(i*50)+'% 0';if(cu.words){const w=c.querySelector('b');w.textContent=cu.words[i];w.style.animation='none';void w.offsetWidth;w.style.animation='';}cu.on&&cu.on(i);await sleep(cu.ms[i]);}c.classList.remove('on');}
 const yoss=()=>closeup('yoss');
 
 function showLetter(){SFX.win();banner('💌',1000);msg('LETTER',`💌 ${TO}에게`,`${TOya}, 너는 진짜 밥 먹고 똥 싸고 잠 자고 역도만 하더라.\n근데 그게 제일 멋있어. 오늘도 PR 갱신하자 💪\nFrom. ${FROM}`,'letter');}
