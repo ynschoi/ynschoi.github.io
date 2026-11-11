@@ -523,13 +523,18 @@ let walkT=null;
 const MV={"mv_walk": {"cw": 172, "ch": 304, "ax": 82, "fy": 295, "end": -2, "img": "mv_walk.webp"}, "mv_eat": {"cw": 148, "ch": 302, "ax": 66, "fy": 293, "end": 0, "img": "mv_eat.webp"}, "mv_khach": {"cw": 143, "ch": 301, "ax": 72, "fy": 292, "end": 2, "img": "mv_khach.webp"}, "mv_poop": {"cw": 219, "ch": 300, "ax": 146, "fy": 291, "end": -32, "img": "mv_poop.webp"}, "mv_sleep": {"cw": 330, "ch": 337, "ax": 252, "fy": 329, "end": -24, "img": "mv_sleep.webp"}, "mv_potion": {"cw": 155, "ch": 308, "ax": 78, "fy": 299, "end": -8, "img": "mv_potion.webp"}, "mv_dice": {"cw": 168, "ch": 301, "ax": 76, "fy": 293, "end": -2, "img": "mv_dice.webp"}};
 MV.mv_yoss={"cw": 159, "ch": 299, "ax": 82, "fy": 291, "end": 0, "img": "mv_yoss.webp"};   // 전신 요쓰! (팔짱 → 주먹 내리며 외침 → 풀기)
 Object.assign(MV,{"mv_potion2": {"cw": 135, "ch": 307, "ax": 69, "fy": 298, "end": -4, "img": "mv_potion2.webp"}, "mv_khach2": {"cw": 204, "ch": 302, "ax": 91, "fy": 294, "end": -29, "img": "mv_khach2.webp"}});   // 두 번째 버전 (랜덤)
-Object.values(MV).forEach(m=>{const i=new Image();i.src=m.img;});
+/* 그림 미리 받아서 디코딩해 두기 (폰에서 바꿔 끼울 때 잠깐 사라지는 것 방지). 참조를 계속 들고 있어서 버려지지 않게 함 */
+const IMGC={};
+function ready(src){let c=IMGC[src];if(!c){const im=new Image();im.decoding='async';im.src=src;
+  c=IMGC[src]={im,p:(im.decode?im.decode():new Promise((r,j)=>{im.onload=r;im.onerror=j;})).catch(()=>{})};}
+  return Promise.race([c.p,sleep(1500)]);}
+Object.values(MV).forEach(m=>ready(m.img));
 const KU=()=>heroH()/300;
 function actSet(name){const m=MV[name],el=$('act');el.style.backgroundImage=`url(${m.img})`;
   el.style.left=((.49875-m.ax/300)*100)+'%';el.style.top=((.98-m.fy/300)*100)+'%';el.style.width=(m.cw/300*100)+'%';el.style.height=(m.ch/300*100)+'%';hero.classList.add('acting');}
 function actF(i){$('act').style.backgroundPosition=(i/7*100)+'% 0';}
 function actEnd(name){hero.classList.remove('acting');if(name){hx+=MV[name].end*KU()/GW()*240;place();}setF(F.stand);}
-async function playAct(name,seq,on){actSet(name);for(const [f,ms] of seq){actF(f);on&&on(f);await sleep(ms);}}
+async function playAct(name,seq,on){await ready(MV[name].img);actSet(name);await nextPaint();for(const [f,ms] of seq){actF(f);on&&on(f);await sleep(ms);}}
 function bgPt(fx,fy){const gw=GW(),gh=GH(),dw=Math.max(gw,gh*BG_AR),dh=dw/BG_AR;return{x:fx*dw-(dw-gw)/2,y:fy*dh-(dh-gh)/2};}
 function walkTo(x){return new Promise(res=>{if(Math.abs(x-hx)<1){res();return;}face=x>hx?1:-1;place();actSet('mv_walk');let k=0;actF(0);
   clearInterval(walkT);walkT=setInterval(()=>{actF(++k%8);if(k%4===0)SFX.step();},95);let last=performance.now();
@@ -786,7 +791,8 @@ const SKILLS=[
           9:[[-40,.3],[40,.3],[-85,.15],[85,.15]],10:[[-55,.3],[55,.3],[-110,.15],[110,.15]],11:[[-25,.25],[25,.25]],
           12:[[-55,.4],[-110,.25],[-165,.15]],13:[[-50,.3],[-100,.15]]}},
 ];
-SKILLS.forEach(sk=>{const i=new Image();i.src=sk.img;});
+SKILLS.forEach(sk=>ready(sk.img));
+const nextPaint=()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
 $('skills').insertAdjacentHTML('beforeend',SKILLS.map((sk,i)=>`<button type="button" data-i="${i}"><i>${sk.ic}</i><span>${sk.n}</span></button>`).join(''));
 $('skills').addEventListener('click',e=>{const b=e.target.closest('button');if(b)useSkill(SKILLS[+b.dataset.i]);});
 const SFXS={
@@ -811,6 +817,7 @@ async function useSkill(sk){ac();if(!started)start();if(busy)return;busy=true;lo
   await walkTo(120);face=1;place();
   const L=[$('skl'),$('skl2')],wrap=$('sklw');let top=0;
   const nf=sk.nf||8;L.forEach(el=>{el.style.backgroundImage=`url(${sk.img})`;el.style.backgroundSize=`${nf*100}% 100%`;el.style.backgroundPosition='0 0';});L[1].classList.add('off');L[0].classList.remove('off');
+  await ready(sk.img);   // 필살기 그림이 준비된 뒤에 바꿔 끼움
   hero.classList.add('skill');
   const G=[];if(sk.ghost){for(let i=0;i<4;i++){const g=document.createElement('div');g.className='gh';g.style.backgroundImage=`url(${sk.img})`;g.style.backgroundSize=`${nf*100}% 100%`;wrap.insertBefore(g,wrap.firstChild);G.push(g);}}
   for(const [f,ms] of sk.seq){
