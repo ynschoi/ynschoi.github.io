@@ -386,8 +386,8 @@ const LETTER_AT=300;   // 합계가 이 kg을 넘으면 편지
 
 /* ═════════ 주사위 6면 ═════════ */
 const FACES=[
-  {k:'sn',n:'스내치',lift:1},{k:'eat',n:'밥'},{k:'cj',n:'클린앤저크',lift:1},
-  {k:'zzz',n:'잠'},{k:'sq',n:'백스쿼트',lift:1},{k:'poo',n:'똥'}];
+  {k:'sn',n:'스내치',lift:1},{k:'eat',n:'밥'},{k:'zzz',n:'잠'},
+  {k:'cj',n:'클린앤저크',lift:1},{k:'sq',n:'백스쿼트',lift:1},{k:'poo',n:'똥'}];
 const PIPS={1:[[50,50]],2:[[28,28],[72,72]],3:[[26,26],[50,50],[74,74]],4:[[28,28],[72,28],[28,72],[72,72]],5:[[26,26],[74,26],[50,50],[26,74],[74,74]],6:[[30,24],[70,24],[30,50],[70,50],[30,76],[70,76]]};
 
 /* ═════════ 상태 ═════════ */
@@ -840,12 +840,12 @@ $('help').addEventListener('click',e=>{if(e.target.id==='rs'){e.stopPropagation(
 addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();if(cur&&!cur.s.done&&mgov.hidden){if(!e.repeat)cur.g.down&&cur.g.down(cur.s,cur.s.end,0);}else if(!busy)roll();}});
 addEventListener('keyup',e=>{if((e.key===' '||e.key==='Enter')&&cur&&cur.g.up)cur.g.up(cur.s,cur.s.end);});
 function helpHTML(){return lang==='ko'?`<h3>🎲 하는 법</h3>주사위를 굴리면 나온 칸을 ${TO}가 해요.<br>
-<b>1 스내치</b> 추 타이밍 · <b>3 클린앤저크</b> 꾹 눌렀다 놓기 (포션 마실수록 진초록·노랑·빨강 칸이 생겨요) · <b>5 백스쿼트</b> 1초 연타<br>
-<b>2 밥</b> 🍚밥 = 파워포션 1개 · 🧀하차푸리 = 0~3개 랜덤 → 스내치<br><b>4 잠</b> 회복포션 → 클린앤저크 게이지에 높은 점수 칸 추가<br><b>6 똥</b> 근육포션 → 백스쿼트<br>아래 <b>필살기</b> 버튼은 언제든 눌러서 볼 수 있어요.<br>
+<b>1 스내치</b> 추 타이밍 · <b>4 클린앤저크</b> 꾹 눌렀다 놓기 (포션 마실수록 진초록·노랑·빨강 칸이 생겨요) · <b>5 백스쿼트</b> 1초 연타<br>
+<b>2 밥</b> 🍚밥 = 파워포션 1개 · 🧀하차푸리 = 0~3개 랜덤 → 스내치<br><b>3 잠</b> 회복포션 → 클린앤저크 게이지에 높은 점수 칸 추가<br><b>6 똥</b> 근육포션 → 백스쿼트<br>아래 <b>필살기</b> 버튼은 언제든 눌러서 볼 수 있어요.<br>
 포션은 위 포션 칸을 누르거나 역도 시작 전에 마셔요. 마실 때마다 레벨이 올라 아주 조금 쉬워지고, 레벨은 계속 쌓여요.<br>
 기록(PR)은 그 종목 최고 무게예요. 잘해야만 바뀌어요.<br>처음엔 쑥쑥 오르다가 세계신기록 1.2배(스내치 270 · 클린앤저크 320.4 · 백스쿼트 588kg)에 가까울수록 점점 덜 올라요.<br><button class="rs" id="rs" type="button">기록 지우고 처음부터</button><small>made by ${FROM} · 아무 곳이나 눌러 닫기</small>`:`<h3>🎲 How to play</h3>Roll the dice and ${TO} does whatever comes up.<br>
-<b>1 Snatch</b> pendulum timing · <b>3 Clean &amp; Jerk</b> hold and release (potions add dark green · yellow · red zones) · <b>5 Back Squat</b> 1-second tap frenzy<br>
-<b>2 Rice</b> 🍚 rice = +1 Power potion · 🧀 khachapuri = 0–3 random → snatch<br><b>4 Sleep</b> Recovery potion → higher-scoring zones on the C&amp;J gauge<br><b>6 Poop</b> Muscle potion → squat<br>Tap the <b>special moves</b> below any time.<br>
+<b>1 Snatch</b> pendulum timing · <b>4 Clean &amp; Jerk</b> hold and release (potions add dark green · yellow · red zones) · <b>5 Back Squat</b> 1-second tap frenzy<br>
+<b>2 Rice</b> 🍚 rice = +1 Power potion · 🧀 khachapuri = 0–3 random → snatch<br><b>3 Sleep</b> Recovery potion → higher-scoring zones on the C&amp;J gauge<br><b>6 Poop</b> Muscle potion → squat<br>Tap the <b>special moves</b> below any time.<br>
 Drink potions by tapping the potion bag, or before a lift. Every drink makes that lift a little easier, and it stacks forever.<br>
 Your PR is your best weight per lift, and it only goes up if you actually lift better.<br>Gains start fast and slow down near 1.2× the world record (snatch 270 · C&amp;J 320.4 · squat 588kg).<br><button class="rs" id="rs" type="button">Reset all progress</button><small>made by ${FROM} · tap anywhere to close</small>`;}
 $('helpBody').innerHTML=helpHTML();
