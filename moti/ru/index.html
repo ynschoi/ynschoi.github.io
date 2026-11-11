@@ -315,7 +315,7 @@
 <script>window.MOTI_RU=true;</script>
 <script>
 /* ═════════ 선물 설정: 이름은 여기서 바꿔요 ═════════ */
-const TO='Moti', FROM='영수';
+const TO='Moti', FROM='Youngsu';
 /* ═════════ 플레이 기록 (아티팩트 db): 각 플레이어는 자기 기록만 쓰고, 주인만 모두 봄 ═════════ */
 const LOG={v:1,sessions:0,rolls:0,faces:{},lifts:{},food:{r:0,k:0},drinks:0,skills:{},recent:[]};
 let logDoc=null,logTimer=null,logBusy=false,logDirty=false,IS_OWNER=false,USER=null,DB=null;
@@ -880,7 +880,7 @@ function fitApp(){const app=$('app'),vh=(window.visualViewport&&visualViewport.h
   document.body.style.height=avail+'px';}
 setTimeout(fitApp,300);if(window.visualViewport)visualViewport.addEventListener('resize',fitApp);
 addEventListener('resize',()=>{fitApp();place();});
-$('coverTo').textContent=`FOR ${TO} · FROM ${FROM}`;
+$('coverTo').textContent=`For ${TO} From ${FROM}`;
 setupWarn();
 drawRoom();setF(F.stand);place();paint();renderLegend(-1);showDie(6);fitApp();
 const ORIG=new Map();(function walk(n){for(const c of n.childNodes){if(c.nodeType===3&&/[가-힣]/.test(c.data))ORIG.set(c,c.data);else if(c.nodeType===1&&c.id!=='win'&&c.id!=='helpBody'&&c.id!=='legend'&&c.id!=='warn')walk(c);}})($('app'));
