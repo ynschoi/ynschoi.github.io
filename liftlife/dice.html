@@ -561,6 +561,17 @@ function bg(c){if(STAGE.complete&&STAGE.naturalWidth){c.imageSmoothingEnabled=tr
 c.fillStyle='#3b2f72';c.fillRect(0,0,W,FLOOR);c.fillStyle='#433680';for(let x=0;x<W;x+=16)c.fillRect(x,0,1,FLOOR);
   c.fillStyle='#6b4a33';c.fillRect(0,FLOOR,W,H-FLOOR);c.fillStyle='#5a3d2a';for(let y=FLOOR+6;y<H;y+=7)c.fillRect(0,y,W,1);
   c.fillStyle='#222';c.fillRect(20,FLOOR-2,110,5);c.fillStyle='#ffd400';c.fillRect(24,FLOOR,102,1);}
+/* 정면 역도 시트 */
+const LIFTS={"mv_cj": {"cw": 251, "ch": 320, "ax": 126, "fy": 296, "img": "mv_cj.webp"}, "mv_sn": {"cw": 277, "ch": 304, "ax": 138, "fy": 295, "img": "mv_sn.webp"}, "mv_sq": {"cw": 265, "ch": 298, "ax": 133, "fy": 291, "img": "mv_sq.webp"}};
+for(const m of Object.values(LIFTS)){m.im=new Image();m.im.src=m.img;}
+/* 성공·실패 동작 순서 [컷, ms] */
+const LSEQ={sn:{ok:[[2,140],[3,140],[4,160],[5,260],[6,520],[7,600]],no:[[2,200],[1,700]]},
+            cj:{ok:[[1,150],[2,230],[3,230],[4,150],[5,300],[6,500],[7,600]],no:[[1,220],[0,700]]},
+            sq:{ok:[[4,220],[5,380],[7,700]],no:[[6,1000]]}};
+const LX=88,LSZ=100;   // 미니게임 캔버스 안 위치·크기 (히어로 상자 기준)
+function liftF(s,idle){if(s.anim){let t=performance.now()-s.anim.t0;for(const [f,ms] of s.anim.seq){if(t<ms)return f;t-=ms;}return s.anim.seq[s.anim.seq.length-1][0];}return idle;}
+function drawLift(c,k,f,sh=0){const m=LIFTS['mv_'+k];if(!m||!m.im.complete||!m.im.naturalWidth)return false;const z=LSZ/300;
+  c.imageSmoothingEnabled=true;c.drawImage(m.im,f*m.cw,0,m.cw,m.ch,LX-m.ax*z+(sh?rnd(-sh,sh):0),FLOOR+2-m.fy*z,m.cw*z,m.ch*z);c.imageSmoothingEnabled=false;return true;}
 function drawHero(c,f,x=75,size=118,dy=0,sh=0){if(!IMG.complete)return;c.drawImage(IMG,f*400,0,400,400,x-size/2+(sh?rnd(-sh,sh):0),FLOOR+4-size-dy,size,size);}
 function plates(c,x,y,dir){['#1b1b22','#1b1b22','#1b1b22'].forEach((col,i)=>{const h=[30,26,22][i];c.fillStyle='#6b6b7a';c.fillRect(x+dir*i*5-1,y-h/2-1,6,h+2);c.fillStyle=col;c.fillRect(x+dir*i*5,y-h/2,4,h);c.fillStyle='#3a3a46';c.fillRect(x+dir*i*5+1,y-h/2+2,1,h-4);});}
 function bar(c,x1,x2,y){c.fillStyle='#111';c.fillRect(x1-1,y-2,x2-x1+2,5);c.fillStyle='#d8d8e4';c.fillRect(x1,y-1,x2-x1,3);plates(c,x1,y,1);plates(c,x2-4,y,-1);}
@@ -571,7 +582,7 @@ const GAMES={
  /* 1 추 타이밍 → 스내치: 가운데에 가까울수록 무거움 (40~110kg) */
  sn:{init(s,L){s.t=0;s.sp=rnd(2.6,3.2)*EASE.sn(L);s.tg=rnd(-35,35);s.a=0;},
   update(s,dt){if(s.hit==null){s.t+=dt;s.a=Math.sin(s.t*s.sp)*60;}},
-  draw(c,s){bg(c);const ok=s.hit!=null&&s.grade!=='MISS';drawHero(c,ok?F.knee:F.bend,70,110,ok?14:0);
+  draw(c,s){bg(c);const ok=s.hit!=null&&s.grade!=='MISS';if(!drawLift(c,'sn',liftF(s,1)))drawHero(c,ok?F.knee:F.bend,70,110,ok?14:0);
    const cx=225,cy=128,R=88,r=d=>Math.PI*1.5+d*Math.PI/180;c.lineWidth=12;c.strokeStyle='#111';c.beginPath();c.arc(cx,cy,R,r(-63),r(63));c.stroke();
    c.lineWidth=8;c.strokeStyle='#4a3f8a';c.beginPath();c.arc(cx,cy,R,r(-60),r(60));c.stroke();
    [[25,'#14532d'],[7,'#16a34a'],[2.5,'#ffd400']].forEach(([w,col])=>{c.strokeStyle=col;c.beginPath();c.arc(cx,cy,R,r(Math.max(-60,s.tg-w)),r(Math.min(60,s.tg+w)));c.stroke();});
@@ -583,7 +594,7 @@ const GAMES={
  /* 4 꾹 눌렀다 놓기 → 클린앤저크: 사다리 방식. 노란 줄에 가까울수록 지금 PR 위에 조금씩 더해짐 → 정밀하면 계속 PR 갱신 */
  cj:{init(s,L){s.wait=0;s.p=0;s.on=0;s.z=rnd(.55,.72);s.cs=1;s.mul=1;s.bands=cjBands(L);s.ct=0;},
   update(s,dt){if(s.done)return;if(!s.on){s.wait+=dt;if(s.wait>4)s.end('MISS',0);return;}s.p+=dt*(.35+s.p*.9)*s.cs;s.ct+=dt;if(s.ct>.06){s.ct=0;SFX.charge(s.p);}if(s.p>=1){s.p=1;s.end('MISS',0,300);}},
-  draw(c,s){bg(c);const ok=s.done&&s.grade!=='MISS';drawHero(c,ok?F.squat:(s.on?F.bend:F.stand),80,116,0,s.on?s.p*3:0);bar(c,25,140,ok?FLOOR-64:FLOOR-14);
+  draw(c,s){bg(c);const ok=s.done&&s.grade!=='MISS';if(!drawLift(c,'cj',liftF(s,0),s.on&&!s.done?s.p*2.5:0)){drawHero(c,ok?F.squat:(s.on?F.bend:F.stand),80,116,0,s.on?s.p*3:0);bar(c,25,140,ok?FLOOR-64:FLOOR-14);}
    // 게이지 하나: 초록 → 노랑 → 흰 줄(한가운데)
    const gx=190,gy=20,gh=126,Y=v=>gy+gh*(1-v),band=(w,col)=>{const t=Math.min(1,s.z+w),b=Math.max(0,s.z-w);c.fillStyle=col;c.fillRect(gx,Y(t),34,Y(b)-Y(t));};
    c.fillStyle='#111';c.fillRect(gx-3,gy-3,40,gh+6);c.fillStyle='#3a1020';c.fillRect(gx,gy,34,gh);
@@ -600,7 +611,7 @@ const GAMES={
  /* 2 다다다 연타 → 백스쿼트: 제한 시간 안에 많이 칠수록 무거움 (40kg + 1회당 5kg) */
  sq:{init(s,L){s.t=0;s.lim=EASE.sq(L);s.taps=0;s.need=S.sq?Math.floor((S.sq-40)/5)+1:0;},
   update(s,dt){if(s.done)return;s.t+=dt;if(s.t>=s.lim){s.t=s.lim;const n=s.taps,rate=n/s.lim;if(n<3)return s.end('MISS',0,300);s.end(rate>=8?'PERFECT':rate>=6?'GREAT':'GOOD',40+n*5,300);}},
-  draw(c,s){bg(c);const kg=40+s.taps*5,ok=s.done&&s.grade!=='MISS';drawHero(c,ok?F.stand:F.squat,90,118,0,s.done?0:1.5);bar(c,40,140,ok?98:86-Math.min(1,s.taps/20)*6);
+  draw(c,s){bg(c);const kg=40+s.taps*5,ok=s.done&&s.grade!=='MISS';if(!drawLift(c,'sq',liftF(s,s.taps?3:2),s.done?0:1.5)){drawHero(c,ok?F.stand:F.squat,90,118,0,s.done?0:1.5);bar(c,40,140,ok?98:86-Math.min(1,s.taps/20)*6);}
    gauge(c,200,34,100,10,1-s.t/s.lim,'#ffd400');txt(c,(s.lim-s.t).toFixed(1)+'초',250,62,13,'#fff');
    txt(c,`${kg}kg`,250,96,20,'#ffd400');txt(c,`${s.taps}회`+(s.need?` · PR까지 ${Math.max(0,s.need-s.taps)}회`:''),250,118,10,'#fff');},
   down(s){if(s.done)return;s.taps++;SFX.tap();}},
@@ -611,7 +622,9 @@ function mini(k,L){openMG();const g=GAMES[k];return new Promise(async res=>{ // 
   const name=FACES.find(f=>f.k===k).n,how={sn:'추가 노란 곳에 올 때 탭!',cj:'꾹 누르고 가운데 칸에서 떼기!',sq:`${EASE.sq(L).toFixed(1)}초 동안 다다다 연타!`}[k];
   g.draw(mx,s);overlay(`<div class="t">${name} · Lv${L}</div><div class="g" style="font-size:22px">READY</div><div class="s">${how}</div>`);await sleep(1000);
   overlay(`<div class="g">GO!</div>`);await sleep(350);mgov.hidden=true;
-  s.end=(grade,kg=0,delay=0)=>{if(s.done)return;s.done=1;s.grade=grade;s.kg=kg;const pr=S[k];setTimeout(()=>{
+  s.end=(grade,kg=0,delay=0)=>{if(s.done)return;s.done=1;s.grade=grade;s.kg=kg;const pr=S[k];
+    if(LIFTS['mv_'+k]){const q=LSEQ[k][grade==='MISS'?'no':'ok'];s.anim={seq:q,t0:performance.now()};delay=Math.max(delay,q.reduce((a,b)=>a+b[1],0)-200);}
+    setTimeout(()=>{
     overlay(`<div class="g${grade==='MISS'?' miss':''}">${grade}</div><div class="kg">${grade==='MISS'?'바벨을 놓쳤다…':kg+'kg'}</div><div class="s">${kg>pr?'NEW PR!':`PR ${pr?pr+'kg':'-'}`}</div>`);
     setTimeout(()=>{cur=null;res({grade,kg,raw:s.raw});},1300);},delay);};
   cur={g,s};let last=performance.now();
