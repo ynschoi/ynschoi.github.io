@@ -32,14 +32,21 @@ function loadBald(){return baldP||(baldP=Promise.all(Object.keys(MAN).filter(n=>
     const W=c.width,H=c.height,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d',{willReadFrequently:true});x.drawImage(c,0,0);const base=x.getImageData(0,0,W,H);
     const fc=document.createElement('canvas');fc.width=f.width;fc.height=f.height;const fx=fc.getContext('2d',{willReadFrequently:true});fx.drawImage(f,0,0);
     sheets[n]={m,cv,x,base,W,H,bald:1,f:fx.getImageData(0,0,f.width,f.height)};})).catch(e=>{baldP=null;throw e;}));}
-H3.setHead=async(art,hair)=>{if(!art){bald=false;H3.icon();return 0;}await loadBald();const t0=performance.now(),AW=art.width,AH=art.height,A=art.getContext('2d',{willReadFrequently:true}).getImageData(0,0,AW,AH).data,hc=hair?hex(hair):null;
-  for(const s of Object.values(sheets)){if(!s.bald)continue;const out=new ImageData(new Uint8ClampedArray(s.base.data),s.W,s.H),o=out.data,F=s.f.data,fw=s.f.width,fh=s.f.height,W=s.W,H=s.H;
-    for(let fy=0;fy<fh;fy++)for(let fx=0;fx<fw;fx++){const q=(fy*fw+fx)*4;if(F[q+3]<128)continue;const b=F[q+2],front=b>=90,hr=hc&&((b>=38&&b<77)||b>=128);if(!front&&!hr)continue;
-      const ai=front?((Math.min(AH-1,(1-F[q+1]/255)*AH|0))*AW+Math.min(AW-1,F[q]/255*AW|0))*4:0,aa=front?A[ai+3]/255:0;if(!aa&&!hr)continue;
-      for(let dy=0;dy<2;dy++)for(let dx=0;dx<2;dx++){const X=fx*2+dx,Y=fy*2+dy;if(X>=W||Y>=H)continue;const i=(Y*W+X)*4;if(o[i+3]<8)continue;const sh=Math.min(1.12,(o[i]*.3+o[i+1]*.59+o[i+2]*.11)/205);
-        let r=o[i],g=o[i+1],bl=o[i+2];if(hr){r=hc[0]*sh;g=hc[1]*sh;bl=hc[2]*sh;}if(aa){r+=(A[ai]*sh-r)*aa;g+=(A[ai+1]*sh-g)*aa;bl+=(A[ai+2]*sh-bl)*aa;}o[i]=r;o[i+1]=g;o[i+2]=bl;}}
-    s.x.putImageData(out,0,0);}
-  bald=true;H3.icon();return performance.now()-t0;};
+/* 그림 = 머리 둘레 전체를 펼친 512×256 그림(가로 = 둘레, 가운데 = 얼굴 앞, 양끝 = 뒤통수 / 세로 = 정수리→턱). 지도(f) 빨강·초록이 그 좌표 */
+const paintSheet=(s,A,AW,AH)=>{const out=new ImageData(new Uint8ClampedArray(s.base.data),s.W,s.H),o=out.data,F=s.f.data,fw=s.f.width,fh=s.f.height,W=s.W,H=s.H,sc=W/fw;
+  for(let fy=0;fy<fh;fy++)for(let fx=0;fx<fw;fx++){const q=(fy*fw+fx)*4;if(F[q+3]<128)continue;const ai=((Math.min(AH-1,F[q+1]/255*AH|0))*AW+Math.min(AW-1,F[q]/255*AW|0))*4,aa=A[ai+3]/255;if(!aa)continue;
+    for(let dy=0;dy<sc;dy++)for(let dx=0;dx<sc;dx++){const X=fx*sc+dx,Y=fy*sc+dy;if(X>=W||Y>=H)continue;const i=(Y*W+X)*4;if(o[i+3]<8)continue;const sh=Math.min(1.12,(o[i]*.3+o[i+1]*.59+o[i+2]*.11)/205);
+      o[i]+=(A[ai]*sh-o[i])*aa;o[i+1]+=(A[ai+1]*sh-o[i+1])*aa;o[i+2]+=(A[ai+2]*sh-o[i+2])*aa;}}
+  s.x.putImageData(out,0,0);};
+H3.setHead=async(art)=>{if(!art){bald=false;H3.icon();return 0;}await loadBald();const t0=performance.now(),AW=art.width,AH=art.height,A=art.getContext('2d',{willReadFrequently:true}).getImageData(0,0,AW,AH).data;
+  for(const s of Object.values(sheets))if(s.bald)paintSheet(s,A,AW,AH);bald=true;H3.icon();return performance.now()-t0;};
+/* 그리기 화면용 머리 돌려 보기: b_hturn 한 칸(앞 기준 16방향 + 위에서 8방향)에 그림을 입혀 ctx에 그리고, 화면 점 → 그림 좌표 찾기 */
+H3.headView=async(ctx,f,art)=>{await loadBald();const s=sheets.b_hturn;if(!s)return false;const m=s.m,AW=art.width,AH=art.height,A=art.getContext('2d',{willReadFrequently:true}).getImageData(0,0,AW,AH).data;
+  if(!s.one){s.one={};}const key=f;if(!s.one[key]){const c=document.createElement('canvas');c.width=m.w;c.height=m.h;const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(s.cv,f*m.w,0,m.w,m.h,0,0,m.w,m.h);
+    const fc=document.createElement('canvas'),fw=s.f.width/m.n;fc.width=fw;fc.height=s.f.height;const fx=fc.getContext('2d',{willReadFrequently:true});fx.putImageData(s.f,-f*fw,0);
+    s.one[key]={m,W:m.w,H:m.h,x,base:x.getImageData(0,0,m.w,m.h),f:fx.getImageData(0,0,fw,s.f.height),cv:c};}
+  const v=s.one[key];paintSheet(v,A,AW,AH);ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);ctx.imageSmoothingQuality='high';ctx.drawImage(v.cv,0,0,ctx.canvas.width,ctx.canvas.height);return v;};
+H3.headUV=(v,px,py)=>{if(!v)return null;const F=v.f.data,fw=v.f.width,fh=v.f.height,x=Math.floor(px*fw),y=Math.floor(py*fh);if(x<0||y<0||x>=fw||y>=fh)return null;const q=(y*fw+x)*4;return F[q+3]<128?null:[F[q]/255,F[q+1]/255];};
 const frameOf=(n,pose,o)=>{const N=sheets[n].m.n;if(pose==='run'||pose==='runf'||pose==='push'||pose==='carry')return ((Math.round((o.ph||0)/(Math.PI*2)*N)%N)+N)%N;return Math.round(Math.min(1,Math.max(0,o.k||0))*(N-1));return 0;};
 /* 자세 하나 = 그림 한 칸. 원점(x,y) = 발밑, 로잉은 발 관절 */
 H3.show=(pose,x,y,o={})=>{if(!H3.ok)return false;const n0=sheets[pose]?pose:'run',n=bald&&sheets['b_'+n0]?'b_'+n0:n0,s=sheets[n],f=frameOf(n,pose,o),u=HEIGHT*(o.z||1),pt=s.m.pts[f];

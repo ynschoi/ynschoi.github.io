@@ -9,7 +9,7 @@ meta=json.load(open(src+'/meta.json'));man={}
 for name,m in meta.items():
     n=len(m['frames']);W,H=m['w'],m['h'];C=np.zeros((H,W*n,4),np.uint8);M=np.zeros((H,W*n),np.uint8)
     for i in range(n):
-        c=np.array(Image.open(f'{src}/{name}_{i}_c.png').convert('RGBA'));mk=np.array(Image.open(f'{src}/{name}_{i}_m.png').convert('RGBA'))
+        c=np.array(Image.open(f'{src}/{name}_{i}_c.png').convert('RGBA'));mk=np.array(Image.open(f'{src}/{name}_{i}_m.png').convert('RGBA').resize((c.shape[1],c.shape[0]),Image.NEAREST))
         k=np.round(mk[...,0]/36).astype(np.uint8);k[mk[...,3]<128]=0
         for _ in range(3):                                   # 가장자리(색은 있는데 부위가 비어 있는 픽셀)를 옆 부위로 채움
             z=(k==0)&(c[...,3]>0)
