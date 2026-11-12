@@ -4,7 +4,13 @@
 /* 새 선수(assets/hero_rig.glb, Tripo+Higgsfield 리깅 24관절)를 자세별로 찍음. render.cjs가 window.bake(job)를 부름.
    자세는 세계 기준 회전으로 넣음: S=몸 옆축(앞뒤로 굽히기), F=앞축(옆으로 벌리기). 얼굴은 +x */
 import * as THREE from 'three';import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
-const g=await new GLTFLoader().loadAsync('assets/hero_rig.glb');const obj=g.scene;const B={};obj.traverse(o=>{if(o.isBone)B[o.name]=o;});
+import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
+/* ?model=파일.glb : 다른 캐릭터(뼈 이름이 다른 리깅). 뼈 이름을 지금 이름으로 맞춰 부르고, 얼굴이 +z인 모델은 +x로 돌려 놓음 */
+const MQ=new URLSearchParams(location.search).get('model');
+const g=await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).loadAsync(MQ||'assets/hero_rig.glb');let obj=g.scene;const B={};obj.traverse(o=>{if(o.isBone)B[o.name]=o;});
+if(MQ){const AL={Hips:'Hip',Spine:'Waist',Spine1:'Spine01',Spine2:'Spine02',Neck:'NeckTwist01',Head:'Head',LeftShoulder:'L_Clavicle',LeftArm:'L_Upperarm',LeftForeArm:'L_Forearm',LeftHand:'L_Hand',RightShoulder:'R_Clavicle',RightArm:'R_Upperarm',RightForeArm:'R_Forearm',RightHand:'R_Hand',
+    LeftUpLeg:'L_Thigh',LeftLeg:'L_Calf',LeftFoot:'L_Foot',LeftToeBase:'L_ToeBase',RightUpLeg:'R_Thigh',RightLeg:'R_Calf',RightFoot:'R_Foot',RightToeBase:'R_ToeBase'};
+  for(const k in AL)if(B[AL[k]])B[k]=B[AL[k]];const w=new THREE.Group();w.rotation.y=+(new URLSearchParams(location.search).get('ry')||0);w.position.y=-.49;w.add(obj);obj=w;}
 /* 머리 갈아끼우기 (?head=머리.glb&cut=목 자르는 높이 비율): 원래 머리(Head 뼈에 붙은 면)를 지우고, 새 머리를 같은 자리·크기로 Head 뼈에 붙임. 리깅은 그대로 */
 const HQ=new URLSearchParams(location.search),HEADURL=HQ.get('head');
 if(HEADURL){obj.updateMatrixWorld(true);let sk;obj.traverse(o=>{if(o.isSkinnedMesh)sk=o;});const geo=sk.geometry,ji=geo.attributes.skinIndex,jw=geo.attributes.skinWeight,pos=geo.attributes.position,names=sk.skeleton.bones.map(b=>b.name);
