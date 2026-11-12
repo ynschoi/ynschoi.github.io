@@ -533,7 +533,7 @@ const ST=[
   /* 3D 선수: 누르는 동안 버피(쪼그려 → 엎드림), 떼면 브로드 점프(공중에서 다리 접음) */
   draw(s){scene(s.p*this.pxu);const x=110,y=FL+4;
     if(s.st==='jump'){const up=Math.sin(Math.PI*Math.min(1,s.jt))*22;H3.shadow(x+10,y-1,40-up*.8);H3.show('bbjj',x,y-up,{k:Math.min(1,s.jt)});}
-    else{const k=s.st==='chg'?Math.min(1,s.c):s.st==='stum'?1:0;H3.shadow(x+(k>.5?20:0),y-1,k>.5?60:40);H3.show('bbj',x+(s.st==='stum'?(Math.random()-.5)*3:0),y,{k});}
+    else{const k=s.st==='chg'?Math.min(1,s.c/.66):s.st==='stum'?1:0;   /* 노란 칸(.72)에 닿기 전에 엎드림까지 끝남 */H3.shadow(x+(k>.5?20:0),y-1,k>.5?60:40);H3.show('bbj',x+(s.st==='stum'?(Math.random()-.5)*3:0),y,{k});}
     const gx=262,gy=24,gh=100,Y=v=>gy+gh*(1-v/1.12);c.fillStyle='#111';c.fillRect(gx-3,gy-3,30,gh+6);c.fillStyle='#3a1418';c.fillRect(gx,gy,24,gh);
     c.fillStyle='#16a34a';c.fillRect(gx,Y(1),24,Y(.5)-Y(1));c.fillStyle='#ffd400';c.fillRect(gx,Y(.9),24,Y(.72)-Y(.9));
     if(s.st==='chg'){c.fillStyle='#fff';c.fillRect(gx-6,Y(Math.min(1.12,s.c))-1.5,36,3);}
