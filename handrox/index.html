@@ -173,7 +173,7 @@ try{Promise.all([document.fonts.load('12px Galmuri9'),document.fonts.load('bold 
   .pod .st{margin-top:3px;font-size:18px;color:#d8d8e0;background:#3a3a46;height:34px;padding-top:4px}.pod .p1 .st{background:var(--gold);color:#111;height:50px;font-size:22px}.pod .p1 .nm,.pod .p1 .tv{color:var(--gold)}.pod .p3 .st{background:#5a3a22;color:#f0b070;height:24px;font-size:15px;padding-top:2px}.pod .cr{font-size:13px}
   .av{display:block;margin:0 auto 3px;width:26px;height:26px;border-radius:50%;background:#2c2c38 center/cover;border:1px solid #444}.av.me{border:2px solid var(--gold)}
   .res.lb .vs{display:flex;align-items:center;justify-content:space-around;margin:4px 0 6px;font:12px var(--px)}.res.lb .vs .d{color:var(--dim);font-size:11px}.res.lb .vsx{font:700 24px var(--px);color:var(--red);text-shadow:2px 2px 0 #000}
-  .flow{width:100%;display:block;margin:2px 0 4px}.flow .t{font:9px var(--px);fill:#888}.flow .rd{fill:#ff8a7a}.flow .gr{fill:var(--green)}
+  .flow{width:100%;display:block;margin:2px 0 4px}.flow.sm{width:70%;margin:0 auto}.lbseg.wrapb{flex-wrap:wrap}.lbseg.wrapb button{flex:1 1 30%}.flow .t{font:9px var(--px);fill:#888}.flow .rd{fill:#ff8a7a}.flow .gr{fill:var(--green)}
   .fsum{font:12px var(--px);line-height:1.7;margin:2px 0 6px}.res.lb .rd{color:#ff8a7a}.res.lb .gr{color:var(--green)}
   .sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:0 0 10px}.sgrid div{border:1px solid #2a2a36;padding:4px 2px;font:11px var(--px)}.sgrid i{display:block;font-style:normal;color:var(--dim);font-size:9px}.sgrid b{font-weight:400;font-variant-numeric:tabular-nums}
   .lbl div{cursor:pointer}.lbl div.gap{display:block;text-align:center;color:var(--dim);padding:0;cursor:default}.res.lb th{font:11px var(--px);color:var(--dim);text-align:right;padding:3px 4px}.res.lb td:nth-child(4){text-align:right;color:var(--dim);font-variant-numeric:tabular-nums}.res.lb td.up{color:var(--green)}.res.lb td:nth-child(3){color:#fff;width:auto}
@@ -740,7 +740,7 @@ function lbDraw(){const B=$('lbBody'),k=LBV.k;B.textContent='';B.append(el('h3',
     const list=el('div','lbl'),add=(x,i)=>{const d=el('div',x.r.id===LB.uid?'me':'');d.append(el('i','',String(i+1)),el('span','',nickOk(x.r.name)||'???'),el('b','',tf(x.v)));d.onclick=()=>lbDetail(x.r,i+1);list.append(d);};
     rows.slice(3,10).forEach((x,i)=>add(x,i+3));if(mine>=10){list.append(el('div','gap','⋮'));add(rows[mine],mine);}
     msg.textContent=mine>=0?L(`내 순위 ${mine+1}위 / ${rows.length}명`,`You: #${mine+1} of ${rows.length}`):L(`${rows.length}명`,`${rows.length} players`);B.append(pod,list,msg);}
-  const fb=el('button','',L('👥 친구 추가','👥 Add friend'));fb.type='button';fb.onclick=lbFriend;lbButtons(B,fb);}
+  const fb=el('button','',L('👥 친구','👥 Friends'));fb.type='button';fb.onclick=lbFriend;const sb=el('button','',L('📊 능력치','📊 Stats'));sb.type='button';sb.onclick=()=>lbStats();const w=el('span');w.style.cssText='display:contents';w.append(sb,fb);lbButtons(B,w);}
 /* 친구 추가: 내 코드 보여 주고, 친구 코드를 넣으면 친구 목록(나만 보는 칸)에 넣음 */
 function lbFriend(){const B=$('lbBody');B.textContent='';B.append(el('h3','',L('👥 친구 추가','👥 Add friend')),el('div','lbm',L('내 친구 코드','My friend code')));
   const mc=el('div','tm',LB.code());mc.style.letterSpacing='4px';B.append(mc);const f=el('div','lbn'),inp=el('input'),ok=el('button','',L('추가','Add')),msg=el('div','lbm',L('친구 코드 6자리를 넣어요','Enter a 6-letter code'));
@@ -750,6 +750,29 @@ function lbFriend(){const B=$('lbBody');B.textContent='';B.append(el('h3','',L('
       LBV.fr=await within(LB.addFriend(r.id));msg.textContent=L(`${nickOk(r.name)||'???'} 님을 친구로 추가했어요`,`Added ${nickOk(r.name)||'???'}`);inp.value='';}catch(e){msg.textContent=L('추가하지 못했어요','Could not add');}};
   inp.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')ok.onclick();});f.append(inp,ok);B.append(f,msg);
   const bk=el('button','',L('← 순위','← Back'));bk.type='button';bk.onclick=()=>LBV.rows?lbDraw():lbShow();lbButtons(B,bk);}
+/* ── 능력치 그래프 ── 9칸(RUN + 8종목). 칸마다 모든 선수 기록 중 가장 빠른 = 바깥(1), 가장 느린 = 안쪽(0.2). 노랑 = 나, 회색 = 비교 대상 */
+const bs9=r=>{const v=[1,2,3,4,5,6,7,8,9].map(k=>lbVal(r,k));return v.every(x=>typeof x==='number'&&x>0)?v:null;};
+function myBs(){const v=Array.isArray(SAVE.bs)&&SAVE.bs.length===9?SAVE.bs:null;if(v)return v;const r=LBV.rows&&LBV.rows.find(x=>x.id===LB.uid);return r?bs9(r):null;}
+const avg9=rs=>{const a=rs.map(bs9).filter(Boolean);return a.length?a[0].map((_,k)=>a.reduce((s,x)=>s+x[k],0)/a.length):null;};
+function radar(series){const all=(LBV.rows||[]).map(bs9).filter(Boolean).concat(series.map(x=>x.v)),lo=[],hi=[];for(let k=0;k<9;k++){lo[k]=Math.min(...all.map(x=>x[k]));hi[k]=Math.max(...all.map(x=>x[k]));}
+  const sc=(v,k)=>hi[k]-lo[k]<1?.7:.2+.8*(hi[k]-v)/(hi[k]-lo[k]),W=280,cx=140,cy=118,R=88,pt=(k,r)=>[cx+R*r*Math.cos(-Math.PI/2+k*2*Math.PI/9),cy+R*r*Math.sin(-Math.PI/2+k*2*Math.PI/9)];
+  const poly=(f,attr)=>`<polygon points="${[...Array(9)].map((_,k)=>pt(k,f(k)).map(n=>n.toFixed(1)).join(',')).join(' ')}" ${attr}/>`;
+  let h=[.4,.7,1].map(g=>poly(()=>g,'fill="none" stroke="#33333d"')).join('')+[...Array(9)].map((_,k)=>{const [x,y]=pt(k,1);return `<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="#2a2a36"/>`;}).join('');
+  series.forEach(x=>{h+=poly(k=>sc(x.v[k],k),`fill="${x.c}33" stroke="${x.c}" stroke-width="2" stroke-linejoin="round"`);});
+  h+=[...Array(9)].map((_,k)=>{const [x,y]=pt(k,1.17);return `<text x="${x.toFixed(1)}" y="${(y+3).toFixed(1)}" class="t" text-anchor="middle">${KEYS9[k+1]}</text>`;}).join('');
+  const sv=document.createElementNS('http://www.w3.org/2000/svg','svg');sv.setAttribute('viewBox',`0 0 ${W} 240`);sv.setAttribute('class','flow');sv.innerHTML=h;return {sv,sc};}
+/* 내 능력치: 비교 대상 = 전체 평균 / 친구 평균 / 친구 한 명씩 */
+function lbStats(sel){const B=$('lbBody');B.textContent='';B.append(el('h3','',L('📊 내 능력치','📊 My stats')));const mine=myBs();
+  if(!mine){B.append(el('div','lbm',L('완주하면 능력치가 보여요','Finish a race to see your stats')));}
+  else{const fr=(LBV.rows||[]).filter(r=>LBV.fr.includes(r.id)&&bs9(r)),opts=[['all',L('전체 평균','All avg'),avg9((LBV.rows||[]).filter(r=>r.id!==LB.uid))]];
+    if(fr.length>1)opts.push(['fa',L('친구 평균','Friends avg'),avg9(fr)]);fr.forEach(r=>opts.push([r.id,nickOk(r.name)||'???',bs9(r)]));
+    const cur=opts.find(o=>o[0]===sel&&o[2])||opts.find(o=>o[2]);const sg=el('div','lbseg wrapb');opts.forEach(o=>{if(!o[2])return;const b=el('button',cur&&o[0]===cur[0]?'on':'',o[1]);b.type='button';b.onclick=()=>lbStats(o[0]);sg.append(b);});B.append(sg);
+    const {sv,sc}=radar(cur?[{v:cur[2],c:'#9a9aa8'},{v:mine,c:'#ffd400'}]:[{v:mine,c:'#ffd400'}]);B.append(sv);
+    const lg=el('div','lbm'),me1=el('span','','■ '+L('나','Me'));me1.style.color='var(--gold)';lg.append(me1);if(cur){lg.append('   ');const g=el('span','','■ '+cur[1]);g.style.color='#aaa';lg.append(g);}B.append(lg);
+    if(cur){const d=[...Array(9)].map((_,k)=>[KEYS9[k+1],sc(mine[k],k)-sc(cur[2][k],k),mine[k]-cur[2][k]]).sort((a,b)=>b[1]-a[1]),sm=el('div','fsum'),f=v=>(v<0?'-':'+')+fmtS(Math.abs(v));
+      const l1=el('div');l1.append(L('강점 ','Strong: '),el('span','gr',d.slice(0,2).filter(x=>x[1]>0).map(x=>`${x[0]} ${f(x[2])}`).join(' · ')||L('아직 없음','none yet')));const l2=el('div');l2.append(L('약점 ','Weak: '),el('span','rd',d.slice(-2).reverse().filter(x=>x[1]<0).map(x=>`${x[0]} ${f(x[2])}`).join(' · ')||L('없음','none')));sm.append(l1,l2);B.append(sm);}
+    if(!fr.length)B.append(el('div','lbm',L('친구를 추가하면 친구와도 비교해요','Add friends to compare with them')));}
+  const bk=el('button','',L('← 순위','← Back'));bk.type='button';bk.onclick=()=>LBV.rows?lbDraw():lbShow();lbButtons(B,bk);}
 /* 비교 = 레이스 흐름: 가로 = 경기 순서(달리기·종목 16구간), 세로 = 상대와 벌어진 시간(위로 갈수록 내가 뒤처짐) */
 function lbDetail(r,rank){const B=$('lbBody'),me=r.id===LB.uid,sp=okSp(r),my=!me&&Array.isArray(SAVE.splits)&&SAVE.splits.length===16?SAVE.splits:null;B.textContent='';
   const vs=el('div','vs'),side=(nm,t,m)=>{const d=el('div','p');d.append(avEl(m,44),el('div',m?'y':'',nm),el('div','d',t?fmt(t):'-'));return d;};
@@ -757,7 +780,10 @@ function lbDetail(r,rank){const B=$('lbBody'),me=r.id===LB.uid,sp=okSp(r),my=!me
   if(!sp)B.append(el('div','lbm',L('이 기록에는 구간 기록이 없어요','No split times for this record')));
   else if(!my){const g=el('div','sgrid');[[L('달리기','Run'),lbVal(r,1)],...ST.map((st,n)=>[KEYS9[n+2],sp[n*2+1]])].forEach(([n,v])=>{const c=el('div');c.append(el('i','',n),el('b','',fmtS(v)));g.append(c);});B.append(g);
     if(!me)B.append(el('div','lbm',L('완주하면 이 사람과 레이스 흐름을 비교해요','Finish a race to compare race flow')));}
-  else{let a=0;const gap=sp.map((v,i)=>(a+=my[i]-v));const W=280,Hh=130,mx=Math.max(30,...gap.map(Math.abs)),X=i=>14+i*(W-28)/15,Y=v=>Hh/2-v/mx*(Hh/2-12);
+  else{const tb=bs9(r),mb=myBs(),tab=tb&&mb?(LBV.dt||'flow'):'flow';
+    if(tb&&mb){const sg=el('div','lbseg');[['flow',L('레이스 흐름','Race flow')],['radar',L('능력치','Stats')]].forEach(([v,t])=>{const b=el('button',tab===v?'on':'',t);b.type='button';b.onclick=()=>{LBV.dt=v;lbDetail(r,rank);};sg.append(b);});B.append(sg);}
+    if(tab==='radar'){const {sv}=radar([{v:tb,c:'#9a9aa8'},{v:mb,c:'#ffd400'}]);B.append(sv);const lg=el('div','lbm'),a1=el('span','','■ '+L('나','Me')),a2=el('span','','■ '+(nickOk(r.name)||'???'));a1.style.color='var(--gold)';a2.style.color='#aaa';lg.append(a1,'   ',a2);B.append(lg);}
+    else{let a=0;const gap=sp.map((v,i)=>(a+=my[i]-v));const W=280,Hh=130,mx=Math.max(30,...gap.map(Math.abs)),X=i=>14+i*(W-28)/15,Y=v=>Hh/2-v/mx*(Hh/2-12);
     const ns='http://www.w3.org/2000/svg',sv=document.createElementNS(ns,'svg');sv.setAttribute('viewBox',`0 0 ${W} ${Hh+16}`);sv.setAttribute('class','flow');
     let h=`<line x1="0" x2="${W}" y1="${Hh/2}" y2="${Hh/2}" stroke="#666" stroke-dasharray="3 3"/><text x="4" y="11" class="t rd">${L('뒤처짐 ▲','behind ▲')}</text><text x="4" y="${Hh-3}" class="t gr">${L('앞섬 ▼','ahead ▼')}</text>`;
     for(let i=1;i<16;i+=2)h+=`<rect x="${X(i)-6}" y="0" width="12" height="${Hh}" fill="#ffffff08"/><text x="${X(i)}" y="${Hh+12}" class="t" text-anchor="middle">${KEYS9[(i-1)/2+2].slice(0,2)}</text>`;
@@ -765,7 +791,7 @@ function lbDetail(r,rank){const B=$('lbBody'),me=r.id===LB.uid,sp=okSp(r),my=!me
     const run=gap.length&&my.filter((_,i)=>i%2===0).reduce((x,y)=>x+y,0)-sp.filter((_,i)=>i%2===0).reduce((x,y)=>x+y,0),st=ST.map((_,n)=>[KEYS9[n+2],my[n*2+1]-sp[n*2+1]]),all=[[L('달리기','Run'),run],...st];
     const worst=all.reduce((a,b)=>b[1]>a[1]?b:a),best=all.reduce((a,b)=>b[1]<a[1]?b:a),sm=el('div','fsum'),dt=v=>(v<0?'-':'+')+fmtS(Math.abs(v));
     const l1=el('div');l1.append(L('제일 많이 잃은 곳 ','Lost most: '),el('span','rd',`${worst[0]} ${dt(worst[1])}`));sm.append(l1);if(best[1]<0){const l2=el('div');l2.append(L('앞선 곳 ','Gained: '),el('span','gr',`${best[0]} ${dt(best[1])}`));sm.append(l2);}B.append(sm);
-    const g=el('div','sgrid');all.forEach(([n,v])=>{const c=el('div');c.append(el('i','',n),el('b',v<0?'gr':'rd',dt(v)));g.append(c);});B.append(g);}
+    const g=el('div','sgrid');all.forEach(([n,v])=>{const c=el('div');c.append(el('i','',n),el('b',v<0?'gr':'rd',dt(v)));g.append(c);});B.append(g);}}
   const bk=el('button','',L('← 순위','← Back'));bk.type='button';bk.onclick=()=>LBV.rows?lbDraw():lbShow();const row=el('div','row');row.append(bk);
   if(!me&&!LBV.fr.includes(r.id)){const af=el('button','',L('👥 친구 추가','👥 Add'));af.type='button';af.onclick=async()=>{af.disabled=true;try{LBV.fr=await within(LB.addFriend(r.id));af.textContent=L('✓ 친구','✓ Friend');}catch(e){af.disabled=false;af.textContent=L('실패','Failed');}};row.append(af);}
   const x=el('button','y',L('닫기','Close'));x.type='button';x.onclick=()=>{$('lbPanel').hidden=true;};row.append(x);B.append(row);}
