@@ -1,0 +1,30 @@
+<!doctype html><meta charset="utf-8"><body style="margin:0;background:#000">
+<script type="importmap">{"imports":{"three":"/three/build/three.module.js","three/addons/":"/three/examples/jsm/"}}</script>
+<script type="module">
+/* 3D 선수를 정해진 자세·각도로 찍어서 색 그림과 부위 마스크를 돌려줌. render.cjs가 이 페이지를 열고 window.bake(job)를 부름 */
+import * as THREE from 'three';import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {autoRig,POSES,wpos} from './rig.mjs';
+const g=await new GLTFLoader().loadAsync('assets/hero.glb');let mesh=null;g.scene.traverse(o=>{if(o.isMesh&&!mesh)mesh=o;});
+const ld=src=>new Promise(r=>{const im=new Image();im.onload=()=>r(im);im.src=src;});
+const [tex,mask]=await Promise.all([ld('assets/hero_tex.jpg'),ld('assets/hero_mask.png')]);
+const cT=new THREE.Texture(tex);cT.flipY=false;cT.colorSpace=THREE.SRGBColorSpace;cT.needsUpdate=true;
+/* 마스크: 부위 번호 k를 빨강 k*36으로 (가까운 픽셀만, 섞지 않음) */
+const mc=document.createElement('canvas');mc.width=mask.width;mc.height=mask.height;const mx=mc.getContext('2d');mx.drawImage(mask,0,0);const md=mx.getImageData(0,0,mc.width,mc.height);
+for(let i=0;i<md.data.length;i+=4){const k=md.data[i];md.data[i]=k*36;md.data[i+1]=0;md.data[i+2]=0;md.data[i+3]=255;}mx.putImageData(md,0,0);
+const mT=new THREE.CanvasTexture(mc);mT.flipY=false;mT.magFilter=mT.minFilter=THREE.NearestFilter;mT.generateMipmaps=false;mT.colorSpace=THREE.NoColorSpace;
+const colorMat=new THREE.MeshLambertMaterial({map:cT}),maskMat=new THREE.MeshBasicMaterial({map:mT});
+const R0=autoRig(mesh),obj=new THREE.Group();obj.add(R0.mesh);const R={obj,mesh:R0.mesh,bones:R0.bones};
+const sc=new THREE.Scene();sc.add(obj);const L1=new THREE.HemisphereLight(0xffffff,0x40404c,2.4),L2=new THREE.DirectionalLight(0xffffff,1.6);L2.position.set(-1,2,3);sc.add(L1,L2);
+const cvA=document.createElement('canvas'),cvB=document.createElement('canvas');
+const rA=new THREE.WebGLRenderer({canvas:cvA,antialias:true,alpha:true,preserveDrawingBuffer:true}),rB=new THREE.WebGLRenderer({canvas:cvB,antialias:false,alpha:true,preserveDrawingBuffer:true});
+rA.outputColorSpace=THREE.SRGBColorSpace;rB.outputColorSpace=THREE.LinearSRGBColorSpace;rA.setClearColor(0,0);rB.setClearColor(0,0);
+/* job: {pose, o, yaw, box:[x0,x1,y0,y1](모델 단위, 원점=발밑/anchor), ppu} */
+window.bake=job=>{const [x0,x1,y0,y1]=job.box,W=Math.round((x1-x0)*job.ppu),H=Math.round((y1-y0)*job.ppu);
+  obj.position.set(0,0,0);obj.scale.setScalar(1);obj.rotation.set(0,job.yaw,0);obj.updateMatrixWorld(true);
+  const r=POSES[job.pose](R,{t:0,...job.o});obj.updateMatrixWorld(true);
+  if(r.anchor){const [ax,ay]=wpos(R,r.anchor);obj.position.set(-ax,ay,0);}else obj.position.set(0,.5+(r.dy||0),0);   /* 원점 = anchor 관절 또는 발밑(통통 튀는 높이 포함) */
+  obj.updateMatrixWorld(true);const cam=new THREE.OrthographicCamera(x0,x1,y1,y0,-10,10);cam.position.z=5;
+  const out={w:W,h:H};for(const [rr,cv,mat,key] of [[rA,cvA,colorMat,'c'],[rB,cvB,maskMat,'m']]){rr.setSize(W,H,false);R.mesh.material=mat;rr.render(sc,cam);out[key]=cv.toDataURL('image/png');}
+  const p=k=>{const [x,y]=wpos(R,k);return [+x.toFixed(4),+(-y).toFixed(4)];};out.pts={hand:p('handN'),hips:p('hips'),head:p('head')};return out;};
+window.READY=true;
+</script>

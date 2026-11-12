@@ -147,7 +147,7 @@
 <div class="app" id="app">
   <section class="info">
     <div class="bar1">
-      <canvas class="face" id="face" width="92" height="92"></canvas>
+      <canvas class="face" id="face" width="192" height="192"></canvas>
       <div class="clk"><small id="segNo">HANDROX</small><b id="clock">0:00:00</b></div>
       <div class="total">BEST<b id="pb">-</b></div>
     </div>
@@ -161,7 +161,7 @@
 
   <section class="game" id="game">
     <canvas id="cv" width="640" height="340"></canvas>
-    <canvas id="cv3" width="320" height="170"></canvas>
+    <canvas id="cv3" width="960" height="510"></canvas>
     <button class="tb" id="rst" type="button" hidden>↺</button>
     <button class="tb" id="lng" type="button">KO</button>
     <button class="tb" id="hlp" type="button">?</button>
@@ -635,7 +635,7 @@ setTimeout(fitApp,300);if(window.visualViewport)visualViewport.addEventListener(
 
 /* 얼굴 아이콘 */
 const faceCtx=$('face').getContext('2d');faceCtx.scale(4,4);
-function drawFaceIcon(){H3.icon&&H3.icon();}
+function drawFaceIcon(){H3.icon&&H3.icon();}   /* 얼굴 아이콘 = 구운 3D 머리 그림 */
 /* 캐릭터 만들기 */
 const CROWS=[['skin','피부','Skin'],['hairS','머리 모양','Hair'],['hair','머리 색','Hair color'],['topS','상의','Top'],['top','상의 색','Top color'],['shorts','하의 색','Shorts'],['band','반다나','Bandana'],['capS','모자','Hat'],['cap','모자 색','Hat color'],['sun','선글라스','Sunglasses'],['shoes','신발','Shoes']];
 function renderCust(){$('cuRows').innerHTML=CROWS.map(([k,ko,en])=>`<div class="crow"><span>${L(ko,en)}</span>${OPT[k].map((v,i)=>Array.isArray(v)?`<button type="button" class="t${CHAR[k]===i?' on':''}" data-k="${k}" data-i="${i}">${L(...v)}</button>`:`<button type="button" class="${CHAR[k]===i?'on':''}${v?'':' no'}" data-k="${k}" data-i="${i}" style="background:${v||'transparent'}" aria-label="${L(ko,en)} ${i+1}"></button>`).join('')}</div>`).join('');}
@@ -672,15 +672,13 @@ window.onH3Progress=p=>insT(L(`선수 준비 중… ${Math.round(p*100)}%`,`Load
 window.onH3Ready=()=>{insT('TAP TO START');drawFaceIcon();};
 window.onH3Fail=why=>{const el=$('cIns');if(!el)return;el.innerHTML=`${L('선수를 불러오지 못했어요','Could not load the athlete')}<br><button type="button" id="h3retry" style="margin-top:6px;border:2px solid var(--gold);padding:4px 10px;font-size:12px">${L('다시 시도','Retry')}</button>`;
   el.style.animation='none';$('h3retry').onclick=e=>{e.stopPropagation();location.reload();};console.warn('3D:',why);};
-setTimeout(()=>{if(H3.why==='loading'&&!window.H3MOD)onH3Fail('three.js did not load');},25000);
 /* 3D 선수 색 = 캐릭터 만들기에서 고른 색 (3D 모델은 모양을 못 바꾸고 색만 바뀜) */
 /* 처음 값(모델 원래 색)을 고른 칸은 null → 원본 텍스처를 그대로 씀 (다시 칠하면 명암·결이 뭉개져서) */
 window.handroxColors=()=>{const D={skin:0,hair:1,top:0,shorts:0,band:0,shoes:0},o=(k,v)=>CHAR[k]===D[k]?null:v;
   return {skin:o('skin',OPT.skin[CHAR.skin]),hair:o('hair',OPT.hair[CHAR.hair]),top:CHAR.topS===2?OPT.skin[CHAR.skin]:o('top',OPT.top[CHAR.top]),
     shorts:o('shorts',OPT.shorts[CHAR.shorts]),band:o('band',OPT.band[CHAR.band]||'#f2f2f2'),shoes:o('shoes',OPT.shoes[CHAR.shoes])};};
 </script>
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
-<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js">
-<script type="module" src="hero3d.js?v=20261112b" onerror="onH3Fail('hero3d.js')"></script>
+<script>/*HERO_MAN*/window.HERO_MAN={"run":{"c":"run_c_9d6e9f75.webp","m":"run_m_991e561e.png","n":12,"w":312,"h":296,"box":[-0.6,0.6,-0.04,1.1],"ppu":260,"ref":[55.7,131.2,78.6,142.2,43.5,188.3,188.2],"pts":[{"hand":[0.0065,0.2884],"hips":[0.0171,0.265],"head":[0.0503,0.5016]},{"hand":[-0.0435,0.2563],"hips":[0.0171,0.2603],"head":[0.0503,0.4969]},{"hand":[-0.0839,0.2402],"hips":[0.0171,0.2475],"head":[0.0503,0.4841]},{"hand":[-0.0987,0.2251],"hips":[0.0171,0.23],"head":[0.0503,0.4666]},{"hand":[-0.0839,0.2402],"hips":[0.0171,0.2475],"head":[0.0503,0.4841]},{"hand":[-0.0435,0.2563],"hips":[0.0171,0.2603],"head":[0.0503,0.4969]},{"hand":[0.0065,0.2884],"hips":[0.0171,0.265],"head":[0.0503,0.5016]},{"hand":[0.0424,0.3328],"hips":[0.0171,0.2603],"head":[0.0503,0.4969]},{"hand":[0.0559,0.3648],"hips":[0.0171,0.2475],"head":[0.0503,0.4841]},{"hand":[0.0578,0.3646],"hips":[0.0171,0.23],"head":[0.0503,0.4666]},{"hand":[0.0559,0.3648],"hips":[0.0171,0.2475],"head":[0.0503,0.4841]},{"hand":[0.0424,0.3328],"hips":[0.0171,0.2603],"head":[0.0503,0.4969]}]},"row":{"c":"row_c_d1f4c4bb.webp","m":"row_m_d84e2ede.png","n":11,"w":286,"h":278,"box":[-0.7,0.4,-0.12,0.95],"ppu":260,"ref":[55.6,125.6,77.8,160.4,49.7,190.7,169.5],"pts":[{"hand":[0.1616,0.1726],"hips":[-0.067,0.0533],"head":[0.0618,0.25]},{"hand":[0.1504,0.1726],"hips":[-0.0782,0.0534],"head":[0.0506,0.25]},{"hand":[0.126,0.1705],"hips":[-0.1025,0.0513],"head":[0.0262,0.2479]},{"hand":[0.0991,0.1661],"hips":[-0.1263,0.0453],"head":[-0.0029,0.2459]},{"hand":[0.0596,0.167],"hips":[-0.1432,0.0384],"head":[-0.0593,0.2612]},{"hand":[0.0139,0.1656],"hips":[-0.1532,0.0335],"head":[-0.1358,0.2728]},{"hand":[-0.0283,0.1526],"hips":[-0.1602,0.0323],"head":[-0.2114,0.2661]},{"hand":[-0.064,0.1082],"hips":[-0.1647,0.0313],"head":[-0.2585,0.2495]},{"hand":[-0.1042,0.0703],"hips":[-0.1653,0.0311],"head":[-0.2652,0.2463]},{"hand":[-0.1504,0.0599],"hips":[-0.1653,0.0311],"head":[-0.2652,0.2463]},{"hand":[-0.1713,0.063],"hips":[-0.1653,0.0311],"head":[-0.2652,0.2463]}]},"turn":{"c":"turn_c_ce844cab.webp","m":"turn_m_c0a83e15.png","n":12,"w":386,"h":458,"box":[-0.46,0.46,-0.03,1.06],"ppu":420,"ref":[59.9,133.4,79.5,159.3,48.1,188.5,194.9],"pts":[{"hand":[-0.1551,0.1872],"hips":[0.01,0.23],"head":[0.01,0.47]},{"hand":[-0.0705,0.1872],"hips":[0.0173,0.23],"head":[0.0173,0.47]},{"hand":[0.033,0.1872],"hips":[0.02,0.23],"head":[0.02,0.47]},{"hand":[0.1277,0.1872],"hips":[0.0173,0.23],"head":[0.0173,0.47]},{"hand":[0.1881,0.1872],"hips":[0.01,0.23],"head":[0.01,0.47]},{"hand":[0.1982,0.1872],"hips":[0.0001,0.23],"head":[0.0001,0.47]},{"hand":[0.1551,0.1872],"hips":[-0.01,0.23],"head":[-0.01,0.47]},{"hand":[0.0705,0.1872],"hips":[-0.0173,0.23],"head":[-0.0173,0.47]},{"hand":[-0.033,0.1872],"hips":[-0.02,0.23],"head":[-0.02,0.47]},{"hand":[-0.1277,0.1872],"hips":[-0.0173,0.23],"head":[-0.0173,0.47]},{"hand":[-0.1881,0.1872],"hips":[-0.01,0.23],"head":[-0.01,0.47]},{"hand":[-0.1982,0.1872],"hips":[-0.0001,0.23],"head":[-0.0001,0.47]}]},"icon":{"c":"icon_c_6ce2e4ed.webp","m":"icon_m_74a352e9.png","n":1,"w":192,"h":192,"box":[-0.32,0.32,0.42,1.06],"ppu":300,"ref":[61.8,132.3,81.0,76.4,1.0,181.5,1.0],"pts":[{"hand":[-0.1819,0.1872],"hips":[0.0053,0.23],"head":[0.0053,0.47]}]}};/*END_HERO_MAN*/</script>
+<script src="hero_spr.js"></script>
 </body>
 </html>
