@@ -14,11 +14,12 @@
 <meta name="theme-color" content="#0c0c10">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/galmuri.css">
+<style>@font-face{font-family:Galmuri9;src:url(fonts/Galmuri9.woff2) format("woff2");font-display:swap}</style>
 <style>
   /* 게임보이 3단 (Moti와 같은 틀): 정보창 / 경기장 / 손가락 패드 — 한 화면 고정 */
   :root{
     --night:#0c0c10; --panel:#17171e; --edge:#3a3a48; --gold:#ffd400; --red:#e5391f; --dim:#8d8da0; --ink:#e4e4ee; --green:#35c46a;
-    --px:'Galmuri11','Galmuri9',ui-monospace,monospace; --font:'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif;
+    --px:'Galmuri9','Galmuri11',ui-monospace,monospace; --font:'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif;
     color-scheme:dark;
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
@@ -75,16 +76,17 @@
   /* 로고 시안 D: 흰 HANDROX + 노란 밑줄 + 노란 글씨 */
   .cover .logo .lw{border-bottom:5px solid var(--gold);padding-bottom:4%}
   .cover .logo .lt{width:88%;height:auto;display:block;margin-top:4%;filter:brightness(0) invert(77%) sepia(91%) saturate(1500%) hue-rotate(5deg) drop-shadow(0 2px 0 #000)}
-  .cover .tag{font-size:15px;color:#fff;text-shadow:2px 2px 0 #000}
+  .cover .tag{font-size:16px;color:#fff;text-shadow:2px 2px 0 #000}
   .cover .city{font-size:26px;font-weight:700;letter-spacing:10px;margin:-6px -10px 0 0;color:#fff;line-height:1;transform:skewX(-9deg)}
   .cover{gap:5px}
   [hidden]{display:none!important}
   .cover .sub{font-size:10px;color:#111;background:var(--gold);padding:2px 8px;letter-spacing:1px}
-  .cover .ins{font-size:14px;animation:blink 1s steps(1) infinite;margin-top:2px}
+  .cover .ins{font-size:17px;letter-spacing:2px;animation:blink 1s steps(1) infinite;margin-top:2px}
   .cover .note{display:none}
-  .lsel{display:flex;gap:8px;margin:2px 0}
-  .lsel button{font:700 12px var(--px);color:#fff;padding:6px 12px;border:2px solid var(--dim);background:#0c0c10;box-shadow:0 3px 0 #000}
-  .lsel button.on{border-color:var(--gold);color:#111;background:var(--gold)}
+  /* 첫 페이지 시안 2: 박스 없이, 점으로 구분하고 고른 것 앞에 ▶ */
+  .lsel{display:flex;gap:10px;align-items:center;margin:2px 0}.lsel i{font-style:normal;color:#55556a}
+  .lsel button{font:15px var(--px);color:#e4e4ee;padding:4px 2px}
+  .lsel button.on{color:var(--gold)}.lsel button.on::before{content:'▶ ';font-size:11px}
 
   /* ═══ 아래: 손가락 패드 ═══ */
   .pad{background:linear-gradient(#22222c,#14141a);padding:10px 12px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px;touch-action:none;cursor:pointer}
@@ -120,7 +122,7 @@
   .res{text-align:center}
   #fePrev{display:block;width:192px;height:192px;margin:4px auto 8px;border:3px solid var(--gold);background:#000;image-rendering:pixelated;touch-action:none;cursor:grab}
   #feZoom{width:192px;margin-bottom:6px;accent-color:var(--gold);touch-action:pan-x}
-  .cover #fsel button{padding:4px 10px;font-size:11px}
+  .cover #fsel button{font:14px var(--px);color:#e4e4ee;padding:2px 2px 4px;border-bottom:2px solid #8d8da0}
   .cust{padding:10px 12px!important}
   #cuPrev3{display:none;width:144px;height:168px;margin:0 auto 6px;background:#050506;border:2px solid var(--gold);touch-action:none;cursor:grab}
   #cuPrev3{display:block!important}#cuPrev{display:none!important}
@@ -176,7 +178,7 @@
       <div class="logo" role="img" aria-label="HANDROX — The Ultimate Finger Race"><img class="lw" src="logo_word.png" alt="" width="998" height="123"><img class="lt" src="logo_tag.png" alt="" width="997" height="47"></div>
       <div class="city" id="city" hidden>PHONE</div>
       <div class="tag" id="cTag"></div>
-      <div class="lsel" id="lsel"><button type="button" data-l="ko">한국어</button><button type="button" data-l="en">English</button></div>
+      <div class="lsel" id="lsel"><button type="button" data-l="ko">한국어</button><i>·</i><button type="button" data-l="en">English</button></div>
       <div class="lsel" id="fsel"><button type="button" id="charBtn"></button></div>
       <div class="ins" id="cIns">선수 준비 중…</div>
       <div class="note" id="cNote"></div>
