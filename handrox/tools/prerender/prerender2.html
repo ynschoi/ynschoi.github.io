@@ -31,14 +31,14 @@ const POSE={
    W('RightUpLeg',S,.15+1.25*up(-s)-.35*up(s));W('RightLeg',S,-(.25+1.7*up(-s)+.5*up(s)));
    armDown(.75);W('LeftArm',S,-1.1*s);W('LeftForeArm',S,1.6);W('RightArm',S,1.1*s);W('RightForeArm',S,1.6);
    return {bounce:.045*Math.abs(c)};},
- /* 스키에르그(뒷모습용), 실제 동작처럼 팔을 몸 앞에서 위→아래로(앞뒤 방향). 팔을 옆으로 내리면 랫풀다운처럼 등이 좁아 보였음.
-    k 0=팔을 머리 위 앞쪽으로 뻗음 → 0.5 몸 앞으로 내리며 엉덩이 뒤로 빼고 숙임 → 1 손이 허벅지 옆까지, 무릎 굽힘 */
- skib({k}){const e=k*k*(3-2*k),hinge=Math.sin(Math.PI*Math.min(1,e*1.15))*.85+e*.15;
-   W('Hips',S,-.55*hinge);W('Spine',S,-.35*hinge);W('Head',S,-.1*hinge);   /* 머리도 상체를 따라 같이 숙임 (예전엔 머리만 들고 있어 어색했음) */
-   W('LeftUpLeg',S,.55*hinge+.15*e);W('RightUpLeg',S,.55*hinge+.15*e);W('LeftLeg',S,-.7*e);W('RightLeg',S,-.7*e);flatFoot('LeftFoot');flatFoot('RightFoot');
-   const th=(72-185*e)*Math.PI/180;
-   for(const [sd,z] of [['Left',-.28],['Right',.28]]){aim(sd+'Arm',sd+'ForeArm',new THREE.Vector3(Math.cos(th),Math.sin(th),z));
-     aim(sd+'ForeArm',sd+'Hand',new THREE.Vector3(Math.cos(th-.35*Math.sin(Math.PI*e)),Math.sin(th-.35*Math.sin(Math.PI*e)),z*.6));}
+ /* 스키에르그 (참고 사진 3컷): ① 곧게 서서 팔을 머리 위로 쭉 ② 팔은 편 채로 몸 앞으로 내리며 엉덩이를 빼고 숙임 ③ 손이 엉덩이 뒤까지, 깊게 숙이고 무릎 굽힘.
+    팔·머리는 몸통 기준으로 움직여서 함께 따라감 (예전엔 팔을 세계 기준으로 따로 움직여 몸·머리·손이 따로 놀았음). 팔꿈치는 펴진 채 */
+ skib({k}){const sm=x=>x*x*(3-2*x),e=sm(k),D=Math.PI/180,T=(6+42*e)*D,kb=(4+20*e)*D;   /* 머리가 커서 너무 깊이 숙이면 머리가 가슴에 묻힘 → 최대 48° */
+   W('Hips',S,-T);W('LeftUpLeg',S,T+kb);W('RightUpLeg',S,T+kb);W('LeftLeg',S,-2*kb);W('RightLeg',S,-2*kb);flatFoot('LeftFoot');flatFoot('RightFoot');
+   W('Head',S,.1+.25*e);                                              /* 머리는 등과 한 줄, 살짝만 들어 앞을 봄 */
+   const phi=T+(2+154*e)*D;   /* 팔이 짧아 바로 위로 올리면 머리에 파묻혀서, 처음엔 앞쪽 위로 */                                     /* 팔 방향 = 몸통 기울기 + 몸통 기준 팔 각도(머리 위 → 엉덩이 뒤) */
+   const wz=.42-.22*e;   /* 시작: 팔을 거의 수직으로 위로 (팔 길이가 짧아 손은 귀 높이까지) */   /* 처음엔 팔을 머리 옆으로 벌려 머리에 가려지지 않게, 내릴수록 몸에 붙임 */
+   for(const [sd,z] of [['Left',-wz],['Right',wz]]){const d=new THREE.Vector3(Math.sin(phi),Math.cos(phi),z);aim(sd+'Arm',sd+'ForeArm',d);aim(sd+'ForeArm',sd+'Hand',d);}
    return {feet:1};},
  row({k}){const L=Math.min(1,k/.55),Bk=Math.max(0,Math.min(1,(k-.25)/.5)),A=Math.max(0,Math.min(1,(k-.55)/.45)),lr=(a,b,t)=>a+(b-a)*t;
    const th=lr(1.9,1.45,L),kn=lr(2.3,.15,L);W('LeftUpLeg',S,th);W('RightUpLeg',S,th);W('LeftLeg',S,-kn);W('RightLeg',S,-kn);

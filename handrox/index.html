@@ -27,7 +27,7 @@
   body{font-family:var(--px);color:#fff;-webkit-tap-highlight-color:transparent}
   button{all:unset;cursor:pointer;touch-action:manipulation}
   button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-  .app{position:relative;max-width:440px;margin:0 auto;display:grid;grid-template-rows:auto 252px auto;grid-template-columns:minmax(0,1fr);width:100%;background:var(--night);transform-origin:50% 0}
+  .app{position:relative;max-width:440px;margin:0 auto;display:grid;grid-template-rows:auto var(--gh,252px) auto;grid-template-columns:minmax(0,1fr);width:100%;background:var(--night);transform-origin:50% 0}
 
   /* ═══ 위: 정보창 ═══ */
   .info{padding:10px 12px 8px;display:flex;flex-direction:column;gap:8px}
@@ -255,6 +255,9 @@ const SFX={
 const cv=$('cv'),mainCtx=cv.getContext('2d');mainCtx.scale(2,2);
 let c=mainCtx;
 const W=320,H=170,FL=142;
+/* 경기장 화면 비율: 가로 320 고정, 세로 HV는 실제 화면 비율로 (예전엔 320×170으로 고정해 폰에서 위아래로 늘어나 보였음).
+   그림은 원래 170 높이 기준으로 그리고 위쪽 여유(OFF)는 배경 그림의 윗부분으로 채움 */
+let HV=170,OFF=0;
 const OL='#0b0b0e';
 /* 전부 정수 좌표의 사각형으로만 그려서 도트 느낌을 냄 (1칸 = 화면 2픽셀) */
 const R=(x,y,w,h,col)=>{c.fillStyle=col;c.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));};
@@ -289,13 +292,13 @@ const BGW=640,BG=(()=>{const t=document.createElement('canvas');t.width=BGW;t.he
       const v=Math.pow(1-Math.abs(al)/len,1.4)*Math.pow(1-Math.abs(pe)/th,1.6)*br;if(rnd()>v*1.5)continue;const g=Math.round(70+185*v);x.fillStyle=`rgb(${g},${g},${g})`;
       for(const dx of [0,-BGW,BGW])x.fillRect(Math.round(cx+gx)+dx,Math.round(cy+gy),1,1);}}
   return t;})();
-function scene(off=0){c.setTransform(2,0,0,2,0,0);c.clearRect(0,0,W,H);   /* 배경 그림은 hero_spr.js가 아래 캔버스(cvbg)에 그림 */
+function scene(off=0){c.setTransform(2,0,0,2,0,2*OFF);c.clearRect(-2,-OFF-2,W+4,HV+4);   /* 배경 그림은 hero_spr.js가 아래 캔버스(cvbg)에 그림 */
   H3.bg(!G||!G.seg||G.seg.id==='run'?'run':'zone',off);}
 /* 고정 배경 (스키 구역 등) */
-function sceneK(kind){c.setTransform(2,0,0,2,0,0);c.clearRect(0,0,W,H);H3.bg(kind,0);}
+function sceneK(kind){c.setTransform(2,0,0,2,0,2*OFF);c.clearRect(-2,-OFF-2,W+4,HV+4);H3.bg(kind,0);}
 const HEIGHT3=115;
 /* 정면 달리기 배경 (달리기 구간 전용) */
-function sceneF(off,bob){c.setTransform(2,0,0,2,0,0);c.clearRect(0,0,W,H);H3.bg('runf',off,bob);}
+function sceneF(off,bob){c.setTransform(2,0,0,2,0,2*OFF);c.clearRect(-2,-OFF-2,W+4,HV+4);H3.bg('runf',off,bob);}
 
 /* ═════════ 캐릭터: 단순한 픽셀 선수. 피부·머리·옷·반다나·신발을 고를 수 있음 ═════════ */
 const OPT={skin:['#f6ceaa','#e3b48c','#c68f63','#8d5a3b','#5c3a25'],
@@ -510,7 +513,7 @@ const ST=[
     H3.img('row_seat',sx-sw/2,railTop-sh,sw,sh);const ch=Q(1145,445);H3.line(ch[0],ch[1],h.hand[0],h.hand[1],1,'#c8c8d0');
     H3.show('row',FX,seatY,{k:s.k});H3.rect(h.hand[0]-5,h.hand[1]-2,10,4,'#ffd400','#26262e');
     monitor(200,22,s,this.need);}},
- {id:'carry',rate:13,need:200,unit:'m',pxu:2,nm:['파머스 캐리','FARMERS CARRY'],hint:L('L + R 꾹','HOLD L + R'),
+ {id:'carry',rate:26,need:100,unit:'m',pxu:2,nm:['파머스 캐리','FARMERS CARRY'],hint:L('L + R 꾹','HOLD L + R'),
   how:['둘 다 꾹 잡고 걸어요. 악력이 바닥나기 전에 잠깐 떼요!','Hold both to carry. Let go briefly before your grip runs out!'],
   init(s){s.grip=1;s.v=0;s.lock=0;s.ph=0;},
   update(s,dt){if(s.lock>0){s.lock-=dt;s.v=0;if(s.lock<=0)s.grip=1;return;}
@@ -523,24 +526,29 @@ const ST=[
     else if(on){kettle(x-8,FL-20);const h=hero(x,FL,{ph:s.ph,arm:1.5,st:7,cr:.15,sh:s.grip<.25?2:0});kettle(h.tx,h.ty+3);}
     else{kettle(x-14,FL-10);kettle(x+18,FL-10);hero(x,FL,{arm:.9+Math.sin(s.t*20)*.3});}
     gauge(x-20,FL-80,40,5,s.grip,s.grip<.3?((s.t*8|0)%2?'#e5391f':'#ffd400'):'#35c46a');txt('GRIP',x,FL-84,8,'#fff');}},
- {id:'lunge',rate:52,need:100,unit:'m',pxu:4,nm:['샌드백 런지','SANDBAG LUNGES'],hint:'',
-  how:['불이 들어온 원(L 또는 R)의 고리가 노란 칸에 닿을 때 그쪽을 탭','Tap the lit side (L or R) when its ring hits the yellow band'],
-  T:.62,            /* 한 걸음 박자. 고리가 T초 동안 줄어들어 노란 칸에 닿음 */
-  ZONES:[[.045,10,2],[.1,7,1],[.17,4,0]],   /* [허용 오차(초), 거리 m, 등급]. 버피처럼 가까울수록 더 멀리 */
-  init(s){s.bt=0;s.hit=-1;s.k=0;s.ph=0;s.tph=0;s.n=0;},
-  side:(s)=>Math.round(s.bt/.62)%2?'R':'L',
-  down(s,side){const n=Math.round(s.bt/this.T),e=Math.abs(s.bt-n*this.T),want=n%2?'R':'L';
-    if(n===s.hit)return;if(side!==want){SFX.bad();fx(L('반대쪽!','WRONG SIDE!'),'#ff8a7a',120,56,11);s.hit=n;return;}
-    const z=this.ZONES.find(q=>e<q[0]);s.hit=n;if(!z){SFX.thud();fx(L('박자 놓침','OFF BEAT'),'#aaa',120,56,10);return;}
-    add(s,z[1]);grade(z[2],120,56);s.k=1;s.tph+=Math.PI;},
-  update(s,dt){s.bt+=dt;const n=Math.floor(s.bt/this.T);if(n!==s.n){s.n=n;SFX.tick();}s.k=Math.max(0,s.k-dt*2.6);s.ph+=(s.tph-s.ph)*Math.min(1,dt*12);},
-  want:s=>Math.round(s.bt/.62)%2?'R':'L',
-  draw(s){scene(s.dp*this.pxu);const x=120,h=hero(x,FL,{ph:s.ph,cr:s.k*.75,st:13,arm:-2.2});
+ /* 런지: 버피처럼 '꾹 눌렀다 노란 칸에서 떼기'. 불 켜진 쪽(L/R)을 누르면 무릎이 내려가고, 무릎이 노란 칸에 왔을 때 떼면 10m.
+    한 번 하면 반대쪽으로 불이 넘어감. 너무 오래 누르면 무릎이 바닥에 쿵 → 잠깐 멈춤 */
+ {id:'lunge',rate:36,need:100,unit:'m',pxu:4,nm:['샌드백 런지','SANDBAG LUNGES'],hint:'',
+  how:['불 켜진 쪽(L·R)을 꾹 눌러 무릎을 내리고, 노란 칸에서 떼요. 번갈아!','Hold the lit side to sink, release on yellow. Then the other side!'],
+  init(s){s.side='L';s.st='idle';s.c=0;s.rz=0;s.k=0;s.ph=0;s.tph=0;s.w=0;s.ct=0;s.last=0;},
+  down(s,side){if(s.st!=='idle')return;if(side!==s.side){SFX.bad();fx(L('반대쪽!','OTHER SIDE!'),'#ff8a7a',120,52,11);return;}s.st='down';s.c=0;},
+  up(s,side){if(s.st!=='down'||side!==s.side)return;const v=s.c;let g=0,d=3;if(v>=.72&&v<=.92){g=2;d=10;}else if(v>=.5&&v<=1){g=1;d=6;}
+    grade(g,120,52);s.st='rise';s.rz=0;s.from=s.p;s.jd=d;s.last=v;s.side=other(side);s.tph+=Math.PI;SFX.step(side);},
+  update(s,dt){s.ph+=(s.tph-s.ph)*Math.min(1,dt*10);
+    if(s.st==='down'){s.c+=dt/.55;s.k=Math.min(1,s.c);s.ct+=dt;if(s.ct>.07){s.ct=0;SFX.charge(s.c);}if(s.c>1.12){s.st='stum';s.w=.45;SFX.thud();fx(L('무릎 쿵!','KNEE DOWN!'),'#ff8a7a',120,52,11);}}
+    else if(s.st==='rise'){s.rz+=dt/.25;s.p=Math.min(this.need,s.from+s.jd*Math.min(1,s.rz));s.k=s.last*(1-Math.min(1,s.rz));if(s.rz>=1){s.st='idle';s.k=0;}}
+    else if(s.st==='stum'){s.w-=dt;s.k=1;if(s.w<=0){s.st='idle';s.k=0;}}},
+  want:s=>s.side,
+  draw(s){scene(s.dp*this.pxu);const x=110,h=hero(x,FL,{ph:s.ph,cr:s.k*.85,st:13,arm:-2.2,sh:s.st==='stum'?2:0});
     rr(h.sx-12,h.sy-4,14,7,2,'#4a4a56');R(h.sx-7,h.sy-3,3,5,'#ffd400');
-    const T=this.T,n=Math.round(s.bt/T),nxt=Math.ceil(s.bt/T),want=n%2?'R':'L',f=1-(nxt*T-s.bt)/T;
-    ['L','R'].forEach((sd,i)=>{const bx=226+i*56,by=62,lit=(nxt%2?'R':'L')===sd;disc(bx,by,25,lit?'#16161e':'#0c0c10',null);
-      ring(bx,by,13,'#14532d',9);ring(bx,by,13,'#16a34a',5);ring(bx,by,13,'#ffd400',2);          /* 진초록·초록·노랑 = 4·7·10m */
-      if(lit)ring(bx,by,13+(1-f)*22,'#fff',2);txt(sd,bx,by+4,12,lit?'#fff':'#55556a');});}},
+    const gx=252,gy=24,gh=100,Y=v=>gy+gh*(v/1.12);                          /* 아래로 내려가는 게이지 = 무릎 높이 */
+    c.fillStyle='#111';c.fillRect(gx-3,gy-3,30,gh+6);c.fillStyle='#3a1418';c.fillRect(gx,gy,24,gh);
+    c.fillStyle='#16a34a';c.fillRect(gx,Y(.5),24,Y(1)-Y(.5));c.fillStyle='#ffd400';c.fillRect(gx,Y(.72),24,Y(.92)-Y(.72));
+    c.fillStyle='#e5391f';c.fillRect(gx,Y(1.08),24,Y(1.12)-Y(1.08));
+    if(s.st==='down'||s.st==='stum'){c.fillStyle='#fff';c.fillRect(gx-6,Y(Math.min(1.12,s.c))-1.5,36,3);}
+    txt(L('노랑=10m','YELLOW=10m'),gx+12,gy+gh+14,8,'#ffd400');
+    ['L','R'].forEach((sd,i)=>{const on=s.side===sd;rr(206+i*0,30+i*30,26,22,4,on?'#ffd400':'#1c1c24',on?'#111':'#33333d');txt(sd,219,46+i*30,13,on?'#111':'#55556a');});
+    txt(L('꾹 → 떼기','HOLD → RELEASE'),219,98,8,'#fff');}},
  {id:'wall',rate:40,need:100,unit:['개','reps'],nm:['월볼','WALL BALLS'],hint:'L + R',
   how:['L·R 동시에 탭해서 던지고, 공이 돌아올 때 다시 둘 다 탭!','Tap L+R together to throw, and again as the ball comes back'],
   F:.9,
@@ -653,7 +661,7 @@ The race clock is tuned to read like real Hyrox splits (about 1 real minute = 1 
 function setLang(l){lang=l;try{localStorage.setItem('handrox.lang',l);}catch(e){}document.documentElement.lang=l;
   $('cTag').textContent=L('손가락으로 뛰는 하이록스','The fitness race for fingers');$('cNote').textContent=L('기록은 이 브라우저에 저장돼요','Your best time is saved in this browser');
   $('pLs').textContent=L('왼 손가락','LEFT FINGER');$('pRs').textContent=L('오른 손가락','RIGHT FINGER');
-  ST[0].hint=L('잡고 ↓ 당겨 ⟳ 돌리기','GRAB ↓ PULL ⟳ CIRCLE');ST[4].hint=L('잡고 ← 당기기 · 돌아오기 →','GRAB ← PULL · RETURN →');ST[3].hint=L('꾹 ▸ 떼기','HOLD ▸ RELEASE');ST[5].hint=L('L + R 꾹','HOLD L + R');ST[2].hint=L('L↓ ▸ R↓ 끝까지','L↓ ▸ R↓ ALL THE WAY');ST[6].hint=L('불 켜진 쪽 ♪','LIT SIDE ♪');
+  ST[0].hint=L('잡고 ↓ 당겨 ⟳ 돌리기','GRAB ↓ PULL ⟳ CIRCLE');ST[4].hint=L('잡고 ← 당기기 · 돌아오기 →','GRAB ← PULL · RETURN →');ST[3].hint=L('꾹 ▸ 떼기','HOLD ▸ RELEASE');ST[5].hint=L('L + R 꾹','HOLD L + R');ST[2].hint=L('L↓ ▸ R↓ 끝까지','L↓ ▸ R↓ ALL THE WAY');ST[6].hint=L('L 꾹·떼기 ▸ R 꾹·떼기','HOLD L ▸ HOLD R');
   $('charBtn').textContent=L('캐릭터 만들기 ›','Make your character ›');$('cuT').textContent=L('🧍 내 캐릭터','🧍 Your character');$('cuOk').textContent=L('완료','Done');if(!$('custPanel').hidden)renderCust();
   faceBtnText();$('feT').textContent=L('📷 얼굴 맞추기','📷 Frame your face');$('feN').textContent=L('드래그로 위치, 슬라이더로 확대. 사진은 이 기기에만 저장돼요.','Drag to move, slide to zoom. The photo stays on this device.');$('feNo').textContent=L('취소','Cancel');$('feOk').textContent=L('이 얼굴로','Use this');
   $('helpBody').innerHTML=helpHTML();document.querySelectorAll('#lsel button').forEach(b=>b.classList.toggle('on',b.dataset.l===l));$('lng').textContent=l==='ko'?'EN':'KO';paintInfo();}
@@ -662,7 +670,13 @@ $('lng').addEventListener('click',()=>{SFX.tick();setLang(lang==='ko'?'en':'ko')
 $('fsel').addEventListener('click',e=>e.stopPropagation());$('custPanel').addEventListener('click',e=>e.stopPropagation());$('faceBtn').addEventListener('click',()=>$('faceFile').click());
 
 function fitApp(){const app=$('app'),vh=(window.visualViewport&&visualViewport.height)||innerHeight;if(!vh)return;
-  app.style.transform='';const avail=vh-4,s=Math.min(1,avail/app.scrollHeight);app.style.transform=s<1?`scale(${s})`:'';appScale=s;document.body.style.height=avail+'px';}
+  const cs=getComputedStyle(document.documentElement),pd=(parseFloat(cs.paddingTop)||0)+(parseFloat(cs.paddingBottom)||0);
+  app.style.transform='';app.style.setProperty('--gh','252px');const avail=vh-pd-4,gw=$('game').clientWidth||320,extra=avail-app.scrollHeight;
+  /* 남는 세로 공간만큼 경기장을 키움. 배경 그림 비율(320:213)까지 */
+  const gh=Math.round(Math.min(gw*213/320+6,252+Math.max(0,extra)));app.style.setProperty('--gh',gh+'px');
+  HV=clamp(320*($('game').clientHeight||gh-6)/gw,150,213.3);OFF=HV-170;window.HV=HV;
+  const cvh=Math.round(2*HV);if(cv.height!==cvh)cv.height=cvh;
+  const sc=Math.min(1,avail/app.scrollHeight);app.style.transform=sc<1?`scale(${sc})`:'';appScale=sc;document.body.style.height=avail+'px';}
 setTimeout(fitApp,300);if(window.visualViewport)visualViewport.addEventListener('resize',fitApp);addEventListener('resize',fitApp);
 
 /* 얼굴 아이콘 */

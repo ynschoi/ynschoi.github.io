@@ -36,9 +36,10 @@ H3.shadow=(x,y,w)=>{if(H3.ok)queue.push({shadow:[x,y,w]});};
 /* 배경: run(달리기) / zone(운동 구역). off = 지나온 거리(경기장 px) — 반복해서 흘러감 */
 let bgReq=null;H3.bg=(kind,off,bob=0)=>{bgReq={kind,off,bob};};
 let cv3=null,c3=null,sc=1;
-function fit(){if(!cv3)return;const w=cv3.offsetWidth||GW,dpr=Math.min(3,window.devicePixelRatio||1),W=Math.round(w*dpr),H=Math.round(W*GH/GW);
-  if(cv3.width!==W){cv3.width=W;cv3.height=H;}sc=W/GW;}
-H3.frame=()=>{if(!H3.ok)return;recolor();fit();c3.setTransform(1,0,0,1,0,0);c3.clearRect(0,0,cv3.width,cv3.height);c3.setTransform(sc,0,0,sc,0,0);c3.imageSmoothingEnabled=true;c3.imageSmoothingQuality='high';
+function fit(){if(!cv3)return;const w=cv3.offsetWidth||GW,dpr=Math.min(3,window.devicePixelRatio||1),W=Math.round(w*dpr),H=Math.round(W*(window.HV||GH)/GW);
+  if(cv3.width!==W||cv3.height!==H){cv3.width=W;cv3.height=H;}sc=W/GW;OFFp=((window.HV||GH)-GH)*sc;}
+let OFFp=0;
+H3.frame=()=>{if(!H3.ok)return;recolor();fit();c3.setTransform(1,0,0,1,0,0);c3.clearRect(0,0,cv3.width,cv3.height);c3.setTransform(sc,0,0,sc,0,OFFp);c3.imageSmoothingEnabled=true;c3.imageSmoothingQuality='high';
   for(const q of queue){
     if(q.img){c3.drawImage(q.img,q.x,q.y,q.w,q.h);continue;}
     if(q.shadow){const [x,y,w]=q.shadow;c3.save();c3.filter='blur(1.5px)';c3.fillStyle='rgba(0,0,0,.42)';c3.beginPath();c3.ellipse(x,y,w/2,3.2,0,0,7);c3.fill();c3.restore();continue;}
@@ -46,8 +47,9 @@ H3.frame=()=>{if(!H3.ok)return;recolor();fit();c3.setTransform(1,0,0,1,0,0);c3.c
     if(q.rect){const [x,y,w,h]=q.rect;c3.fillStyle=q.ol;c3.beginPath();c3.roundRect(x-.6,y-.6,w+1.2,h+1.2,h/2);c3.fill();c3.fillStyle=q.col;c3.beginPath();c3.roundRect(x,y,w,h,h/2);c3.fill();continue;}
     const m=q.s.m,g=q.u/m.ppu;c3.drawImage(q.s.cv,q.f*m.w,0,m.w,m.h,q.x+m.box[0]*q.u,q.y-m.box[3]*q.u,m.w*g,m.h*g);}queue=[];
   if(cbg&&bgReq){const im=IM['bg_'+bgReq.kind],w=GW*sc,h=GH*sc,o=((bgReq.off*.7)%GW+GW)%GW*sc;cbg.setTransform(1,0,0,1,0,0);
-    if(cvbg.width!==cv3.width){cvbg.width=cv3.width;cvbg.height=cv3.height;}cbg.imageSmoothingQuality='high';
-    if(bgReq.kind==='runf')runfBg(im,w,h,bgReq.off,bgReq.bob);else{cbg.drawImage(im,-o,0,w,h);cbg.drawImage(im,w-o,0,w,h);}bgReq=null;}
+    if(cvbg.width!==cv3.width||cvbg.height!==cv3.height){cvbg.width=cv3.width;cvbg.height=cv3.height;}cbg.imageSmoothingQuality='high';
+    const ih=w*im.height/im.width,iy=OFFp+h-ih;   /* 그림 아래쪽(바닥)을 경기장 170 기준선에 맞추고 위쪽은 남는 만큼 보임 */
+    if(bgReq.kind==='runf')runfBg(im,w,ih,iy,bgReq.off,bgReq.bob);else{cbg.drawImage(im,-o,iy,w,ih);cbg.drawImage(im,w-o,iy,w,ih);}bgReq=null;}
   const pc=document.getElementById('cuPrev3');if(pc&&pc.offsetParent){const s=sheets.turn,N=s.m.n,i=((Math.round(prevSpin/(Math.PI*2)*N)%N)+N)%N,x=pc.getContext('2d');
     x.clearRect(0,0,pc.width,pc.height);const k=Math.min(pc.width/s.m.w,pc.height/s.m.h);x.imageSmoothingQuality='high';x.drawImage(s.cv,i*s.m.w,0,s.m.w,s.m.h,(pc.width-s.m.w*k)/2,(pc.height-s.m.h*k)/2,s.m.w*k,s.m.h*k);}};
 H3.icon=()=>{const fc=document.getElementById('face'),s=sheets.icon;if(!fc||!s)return;const x=fc.getContext('2d');x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,fc.width,fc.height);x.imageSmoothingQuality='high';x.drawImage(s.cv,0,0,s.m.w,s.m.h,0,0,fc.width,fc.height);};
@@ -55,7 +57,7 @@ H3.colors=()=>window.handroxColors?handroxColors():{};
 let cvbg=null,cbg=null;
 /* 정면 트랙: 배경은 고정, 바닥 가로줄과 펜스 빛이 소실점 쪽으로 빨려 들어감 (선수가 카메라 쪽으로 달려오니 바닥은 멀어짐).
    off = 지나온 거리(경기장 px). 40px마다 줄 한 칸. bob = 걸음마다 화면 흔들림(px) */
-function runfBg(im,w,h,off,bob){const k=sc,vx=GW/2,vy=97.3,t=1-((off/40)%1+1)%1;cbg.drawImage(im,0,-bob*k,w,h+bob*k);cbg.save();cbg.scale(k,k);cbg.translate(0,-bob);
+function runfBg(im,w,ih,iy,off,bob){const k=sc,vx=GW/2,vy=635/1024*GW*im.height/im.width-(GW*im.height/im.width-GH),t=1-((off/40)%1+1)%1;cbg.drawImage(im,0,iy-bob*k,w,ih+bob*k);cbg.save();cbg.translate(0,OFFp);cbg.scale(k,k);cbg.translate(0,-bob);
   for(let i=0;i<8;i++){const u=(i+t)/8,y=vy+(GH-vy)*u**2.4,half=(y-vy)*1.9;cbg.strokeStyle=`rgba(200,200,210,${(40+120*u)/255})`;cbg.lineWidth=(1+u*5)/3;cbg.beginPath();cbg.moveTo(vx-half,y);cbg.lineTo(vx+half,y);cbg.stroke();}
   for(let i=0;i<6;i++){const u=(i+t)/6,y=vy+(GH-vy)*.62*u**2.4,x=(y-vy)*3.1;cbg.fillStyle=`rgba(255,230,120,${(60+120*u)/255})`;
     for(const sg of [-1,1]){cbg.beginPath();cbg.ellipse(vx+sg*x,y,(6*u+2)/3,(2*u+1)/3,0,0,7);cbg.fill();}}
