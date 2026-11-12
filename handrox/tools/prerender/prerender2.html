@@ -51,6 +51,11 @@ const POSE={
    flatFoot('LeftFoot');flatFoot('RightFoot');
    for(const [sd,z] of [['Left',-.2],['Right',.2]]){const d=V(-.55*c+1*t,-1*c+.55*t,z);aim(sd+'Arm',sd+'ForeArm',d);aim(sd+'ForeArm',sd+'Hand',d);}
    return {feet:1};},
+ /* 파머스 캐리: 허리 곧게, 짧고 빠른 걸음, 팔은 몸 옆으로 쭉 내려 케틀벨을 듦(어깨 살짝 내려감) */
+ carry({ph}){const s=Math.sin(ph),c=Math.cos(ph),V=(x,y,z)=>new THREE.Vector3(x,y,z);W('Spine',S,.04);
+   W('LeftUpLeg',S,.42*s);W('LeftLeg',S,-(.15+.7*Math.max(0,-c)));W('RightUpLeg',S,-.42*s);W('RightLeg',S,-(.15+.7*Math.max(0,c)));
+   for(const [sd,z] of [['Left',-.2],['Right',.2]]){const d=V(.03,-1,z);aim(sd+'Arm',sd+'ForeArm',d);aim(sd+'ForeArm',sd+'Hand',d);}
+   return {bounce:Math.abs(c)*.015};},
  runf({ph}){const s=Math.sin(ph),c=Math.cos(ph),up=x=>Math.max(0,x);
    W('Spine',S,-.28);W('Head',S,.16);   /* S축 +는 상체가 뒤로 젖혀짐 → 앞으로 숙이려면 −. 머리는 다시 들어 카메라를 봄 */W('Hips',F,.06*s);W('Spine',F,-.08*s);
    W('LeftUpLeg',S,.15+1.25*up(s)-.35*up(-s));W('LeftLeg',S,-(.25+1.7*up(s)+.5*up(-s)));
