@@ -87,9 +87,12 @@ H3.frame=t=>{if(!H3.ok)return;applyColors(H3.colors());
 H3.colors=()=>window.handroxColors?window.handroxColors():{};
 
 async function init(){const cv=document.getElementById('cv3');if(!cv)return;
-  try{const g=await new GLTFLoader().loadAsync(window.HERO_URL||'hero.glb');let mesh=null;g.scene.traverse(o=>{if(o.isMesh&&!mesh)mesh=o;});if(!mesh)throw Error('no mesh');
-    const mask=await new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src='hero_mask.png';});
-    const tex=prepColors(mesh.material.map,mask);mesh.material=new THREE.MeshLambertMaterial({map:tex});
+  try{const u=window.HERO_URL||'hero.glb';let g;          /* .txt = base64로 담은 GLB (아티팩트용). 텍스처는 hero_tex.png로 따로 */
+    if(u.endsWith('.txt')){const t=(await (await fetch(u)).text()).trim(),bin=Uint8Array.from(atob(t),c=>c.charCodeAt(0));g=await new GLTFLoader().parseAsync(bin.buffer,'');}
+    else g=await new GLTFLoader().loadAsync(u);let mesh=null;g.scene.traverse(o=>{if(o.isMesh&&!mesh)mesh=o;});if(!mesh)throw Error('no mesh');
+    const img=src=>new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=()=>rej(Error('image '+src));im.src=src;});
+    const [texImg,mask]=await Promise.all([img('hero_tex.png'),img('hero_mask.png')]);
+    const tex=prepColors({image:texImg,flipY:false},mask);mesh.material=new THREE.MeshLambertMaterial({map:tex});
     let src;if(g.scene.getObjectByProperty('type','SkinnedMesh')){H3.why='rigged GLB: 외부 리그 이름 매핑은 아직 미검증';throw Error(H3.why);} else src=autoRig(mesh);
     stage=makeView(cv,GW,GH,true);stageR=rigged(src);stage.sc.add(stageR.obj);
     const pc=document.getElementById('cuPrev3');
