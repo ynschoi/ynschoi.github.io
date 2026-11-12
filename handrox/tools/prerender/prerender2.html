@@ -31,6 +31,26 @@ const POSE={
    flatFoot('LeftFoot');flatFoot('RightFoot');
    for(const [sd,z] of [['Left',-.16],['Right',.16]]){const d=new THREE.Vector3(1,-.05,z);aim(sd+'Arm',sd+'ForeArm',d);aim(sd+'ForeArm',sd+'Hand',d);}
    return {feet:1};},
+ /* 슬레드 풀: 썰매 쪽(앞)을 보고 다리를 앞뒤로 벌려 버티고, 몸을 뒤로 젖히며 줄을 가슴→엉덩이까지 끌어당김. k=0 팔 쭉 뻗음, k=1 끝까지 당김 */
+ pull({k}){const e=k*k*(3-2*k),V=(x,y,z)=>new THREE.Vector3(x,y,z),lr=(a,b)=>a+(b-a)*e;
+   W('Hips',S,lr(.05,.38));W('Spine',S,lr(-.12,.15));W('Head',S,lr(.0,-.15));
+   W('LeftUpLeg',S,lr(.6,.75));W('LeftLeg',S,-.75);W('RightUpLeg',S,lr(-.2,-.05));W('RightLeg',S,-.55);flatFoot('LeftFoot');flatFoot('RightFoot');
+   for(const [sd,z] of [['Left',-.12],['Right',.12]]){aim(sd+'Arm',sd+'ForeArm',V(lr(1,-.15),lr(-.12,-1),z));aim(sd+'ForeArm',sd+'Hand',V(lr(1,1),lr(-.12,.15),z*.5));}
+   return {feet:1};},
+ /* 버피: k 0→.4 쪼그려 손 짚기, .4→1 다리 뒤로 차서 엎드려 버팀(플랭크). 몸 전체가 앞으로 눕기 때문에 원점은 '바닥에 닿은 가장 낮은 곳' */
+ bbj({k}){const sm=x=>x*x*(3-2*x),a=sm(Math.min(1,k/.4)),b=sm(Math.max(0,(k-.4)/.6)),V=(x,y,z)=>new THREE.Vector3(x,y,z);
+   W('Hips',S,-1.38*b);W('Spine',S,-.55*a*(1-b));W('Head',S,.35*a+.55*b);
+   for(const sd of ['Left','Right']){W(sd+'UpLeg',S,1.7*a*(1-b));W(sd+'Leg',S,-2.1*a*(1-b));}
+   flatFoot('LeftFoot');flatFoot('RightFoot');if(b>0)for(const f of ['LeftFoot','RightFoot'])W(f,S,-1.1*b);
+   for(const [sd,z] of [['Left',-.2],['Right',.2]]){const d=b>0?V(.12*(1-b),-1,z):V(.35*a,-1+.15*(1-a),z*(1-a)+z*.6*a);aim(sd+'Arm',sd+'ForeArm',d);aim(sd+'ForeArm',sd+'Hand',d);}
+   return {ground:1};},
+ /* 브로드 점프: k 0 쪼그림(팔 뒤로) → .5 공중(다리 접고 팔 앞으로) → 1 착지 쪼그림 */
+ bbjj({k}){const t=Math.sin(Math.PI*k),c=1-t,V=(x,y,z)=>new THREE.Vector3(x,y,z);
+   W('Spine',S,-.55*c-.25*t);W('Head',S,.35*c+.2*t);
+   for(const sd of ['Left','Right']){W(sd+'UpLeg',S,1.25*c+.95*t);W(sd+'Leg',S,-(1.7*c+1.3*t));}
+   flatFoot('LeftFoot');flatFoot('RightFoot');
+   for(const [sd,z] of [['Left',-.2],['Right',.2]]){const d=V(-.55*c+1*t,-1*c+.55*t,z);aim(sd+'Arm',sd+'ForeArm',d);aim(sd+'ForeArm',sd+'Hand',d);}
+   return {feet:1};},
  runf({ph}){const s=Math.sin(ph),c=Math.cos(ph),up=x=>Math.max(0,x);
    W('Spine',S,-.28);W('Head',S,.16);   /* S축 +는 상체가 뒤로 젖혀짐 → 앞으로 숙이려면 −. 머리는 다시 들어 카메라를 봄 */W('Hips',F,.06*s);W('Spine',F,-.08*s);
    W('LeftUpLeg',S,.15+1.25*up(s)-.35*up(-s));W('LeftLeg',S,-(.25+1.7*up(s)+.5*up(-s)));
@@ -57,7 +77,9 @@ const blank=document.createElement('canvas');
 window.bake=job=>{const [x0,x1,y0,y1]=job.box,Wd=Math.round((x1-x0)*job.ppu),Ht=Math.round((y1-y0)*job.ppu);
   for(const k in B)B[k].quaternion.copy(rest[k]);root.position.set(0,0,0);root.rotation.set(0,0,0);root.updateMatrixWorld(true);
   const res=POSE[job.pose](job.o||{});root.rotation.set(0,job.yaw||0,0);root.updateMatrixWorld(true);
-  if(res.feet){const a=wp('LeftFoot'),b=wp('RightFoot');root.position.set(0,-Math.min(a.y,b.y)+.074,0);}   /* 발목 관절 높이(0.074)만큼 띄워 발바닥이 0에 */
+  if(res.ground){const P=n=>wp(n),f=[P('LeftFoot'),P('RightFoot')],c=[f[0].y-.074,f[1].y-.074,P('LeftHand').y-.035,P('RightHand').y-.035,P('Spine2').y-.13,P('Head').y-.16];
+    root.position.set(-(f[0].x+f[1].x)/2,-Math.min(...c),0);}   /* 버피: 발 x=0, 가장 낮은 곳이 바닥 */
+  else if(res.feet){const a=wp('LeftFoot'),b=wp('RightFoot');root.position.set(0,-Math.min(a.y,b.y)+.074,0);}   /* 발목 관절 높이(0.074)만큼 띄워 발바닥이 0에 */
   else if(res.anchor){const a=wp(res.anchor[0]),h=wp(res.anchor[1]);root.position.set(-a.x,-h.y,0);}else root.position.set(0,.49+(res.bounce||0),0);   /* 발바닥 = 0 */
   root.updateMatrixWorld(true);let cam;if(job.persp){const D=job.persp,cy=(y0+y1)/2;cam=new THREE.PerspectiveCamera(2*Math.atan((y1-y0)/2/D)*180/Math.PI,(x1-x0)/(y1-y0),.1,50);cam.position.set((x0+x1)/2,cy+.15,D);cam.lookAt((x0+x1)/2,cy,0);}else{cam=new THREE.OrthographicCamera(x0,x1,y1,y0,-10,10);cam.position.z=5;}r.setSize(Wd,Ht,false);r.render(sc,cam);
   blank.width=Wd;blank.height=Ht;const p=n=>{const v=wp(n);return [+v.x.toFixed(4),+v.y.toFixed(4)];};

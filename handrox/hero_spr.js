@@ -4,7 +4,7 @@
    예전 이름(H3)과 같은 사용법: H3.show(자세,x,y,옵션) → 손·엉덩이 위치 반환, H3.frame()에서 실제로 그림 */
 (function(){
 const MAN=window.HERO_MAN,HEIGHT=115,GW=320,GH=170,BASE='spr/';   /* HEIGHT = 모델 1단위가 경기장 몇 px인지 (선수 키 ≈ 113px) */
-const ART={bg_ski:'art/bg_ski.jpg',ski_machine:'art/ski_machine.webp',bg_runf:'art/bg_runf.jpg',bg_run:'art/bg_run.jpg',bg_zone:'art/bg_zone.jpg',row_machine:'art/row_machine.webp',row_seat:'art/row_seat.webp',sled:'art/sled.webp'},IM={};
+const ART={bg_ski:'art/bg_ski.jpg',ski_machine:'art/ski_machine.webp',bg_runf:'art/bg_runf.jpg',bg_run:'art/bg_run.jpg',bg_zone:'art/bg_zone.jpg',row_machine:'art/row_machine.webp',row_seat:'art/row_seat.webp',sled:'art/sled.webp',sled_pull:'art/sled_pull.webp'},IM={};
 const H3=window.H3;Object.assign(H3,{ok:false,why:'loading'});
 const sheets={};let queue=[],colorKey='',prevSpin=0;
 const hex=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
@@ -24,9 +24,9 @@ function recolor(){const cols=window.handroxColors?handroxColors():{},key=JSON.s
       const f=Math.min(1.7,(d[i]*.3+d[i+1]*.59+d[i+2]*.11)/(ref[k]||1));o[i]=Math.min(255,t[0]*f);o[i+1]=Math.min(255,t[1]*f);o[i+2]=Math.min(255,t[2]*f);}
     s.x.putImageData(out,0,0);}
   H3.icon();}
-const frameOf=(n,pose,o)=>{const N=sheets[n].m.n;if(pose==='run'||pose==='runf'||pose==='push')return ((Math.round((o.ph||0)/(Math.PI*2)*N)%N)+N)%N;if(pose==='row'||pose==='skib')return Math.round(Math.min(1,Math.max(0,o.k||0))*(N-1));return 0;};
+const frameOf=(n,pose,o)=>{const N=sheets[n].m.n;if(pose==='run'||pose==='runf'||pose==='push')return ((Math.round((o.ph||0)/(Math.PI*2)*N)%N)+N)%N;return Math.round(Math.min(1,Math.max(0,o.k||0))*(N-1));return 0;};
 /* 자세 하나 = 그림 한 칸. 원점(x,y) = 발밑, 로잉은 발 관절 */
-H3.show=(pose,x,y,o={})=>{if(!H3.ok)return false;const n=pose==='row'||pose==='skib'||pose==='push'?pose:pose==='runf'?'runf':'run',s=sheets[n],f=frameOf(n,pose,o),u=HEIGHT*(o.z||1),pt=s.m.pts[f];
+H3.show=(pose,x,y,o={})=>{if(!H3.ok)return false;const n=sheets[pose]?pose:'run',s=sheets[n],f=frameOf(n,pose,o),u=HEIGHT*(o.z||1),pt=s.m.pts[f];
   if(!o.peek)queue.push({s,f,x,y,u});const P=a=>[x+a[0]*u,y-a[1]*u];return {hand:P(pt.hand),handR:pt.handR?P(pt.handR):P(pt.hand),hips:P(pt.hips)};};
 /* 기구 그림·선·손잡이도 같은 대기열에 (경기장 좌표). 선수보다 먼저 부르면 뒤에, 나중에 부르면 앞에 그려짐 */
 H3.img=(k,x,y,w,h)=>{if(H3.ok)queue.push({img:IM[k],x,y,w,h});};
