@@ -67,7 +67,7 @@ function wpos(R,k){R.bones[k].getWorldPosition(_v);return [_v.x,-_v.y];}
 /* ── 색 ── 마스크 번호: 1 피부 2 머리 3 상의 4 반바지 5 밴드 6 신발 */
 let baseTex=null,maskPx=null,texCv=null,texCtx=null,texture=null,refLum=null,lastColors='';
 function prepColors(map,maskImg){const w=map.image.width,h=map.image.height;texCv=document.createElement('canvas');texCv.width=w;texCv.height=h;texCtx=texCv.getContext('2d');
-  texCtx.drawImage(map.image,0,0);baseTex=texCtx.getImageData(0,0,w,h);const m=document.createElement('canvas');m.width=w;m.height=h;const mx=m.getContext('2d');mx.drawImage(maskImg,0,0,w,h);
+  texCtx.drawImage(map.image,0,0);baseTex=texCtx.getImageData(0,0,w,h);const m=document.createElement('canvas');m.width=w;m.height=h;const mx=m.getContext('2d');mx.imageSmoothingEnabled=false;mx.drawImage(maskImg,0,0,w,h);
   maskPx=mx.getImageData(0,0,w,h).data;refLum=new Float32Array(8);const cnt=new Float32Array(8),d=baseTex.data;
   for(let i=0;i<d.length;i+=4){const k=maskPx[i];refLum[k]+=d[i]*.3+d[i+1]*.59+d[i+2]*.11;cnt[k]++;}for(let k=0;k<8;k++)refLum[k]=refLum[k]/(cnt[k]||1);
   texture=new THREE.CanvasTexture(texCv);texture.flipY=map.flipY;texture.colorSpace=THREE.SRGBColorSpace;return texture;}
@@ -79,7 +79,8 @@ function applyColors(cols){const key=JSON.stringify(cols);if(!texture||key===las
   texCtx.putImageData(out,0,0);texture.needsUpdate=true;}
 
 /* ── 장면 ── 경기장 위 레이어(320×170 픽셀) + 캐릭터 만들기 미리보기 */
-function makeView(canvas,w,h,ortho){const r=new THREE.WebGLRenderer({canvas,antialias:false,alpha:true,powerPreference:'low-power'});r.setPixelRatio(1);r.setSize(w,h,false);r.outputColorSpace=THREE.SRGBColorSpace;
+/* px = 실제로 그리는 해상도 배율. 예전엔 경기장과 같은 320×170으로 그려 도트처럼 보였지만 너무 뭉개져서, 화면 해상도로 그림 */
+function makeView(canvas,w,h,ortho,px){const r=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'low-power'});r.setPixelRatio(1);r.setSize(Math.round(w*px),Math.round(h*px),false);r.outputColorSpace=THREE.SRGBColorSpace;
   const sc=new THREE.Scene();sc.add(new THREE.HemisphereLight(0xffffff,0x40404c,2.4));const d=new THREE.DirectionalLight(0xffffff,1.6);d.position.set(-1,2,3);sc.add(d);
   const cam=ortho?new THREE.OrthographicCamera(0,w,0,-h,-500,500):new THREE.PerspectiveCamera(28,w/h,.1,20);if(!ortho){cam.position.set(0,0,3.2);}
   return {r,sc,cam,w,h};}
@@ -103,12 +104,12 @@ async function init(){const cv=document.getElementById('cv3');if(!cv)return;
     if(u.endsWith('.txt')){const t=(await (await fetch(u)).text()).trim(),bin=Uint8Array.from(atob(t),c=>c.charCodeAt(0));g=await new GLTFLoader().parseAsync(bin.buffer,'');}
     else g=await new GLTFLoader().loadAsync(u);let mesh=null;g.scene.traverse(o=>{if(o.isMesh&&!mesh)mesh=o;});if(!mesh)throw Error('no mesh');
     const img=src=>new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=()=>rej(Error('image '+src));im.src=src;});
-    const [texImg,mask]=await Promise.all([img('hero_tex.png'),img('hero_mask.png')]);
+    const [texImg,mask]=await Promise.all([img('hero_tex.jpg'),img('hero_mask.png')]);
     const tex=prepColors({image:texImg,flipY:false},mask);mesh.material=new THREE.MeshLambertMaterial({map:tex});
     let src;if(g.scene.getObjectByProperty('type','SkinnedMesh')){H3.why='rigged GLB: 외부 리그 이름 매핑은 아직 미검증';throw Error(H3.why);} else src=autoRig(mesh);
-    stage=makeView(cv,GW,GH,true);stageR=rigged(src);stage.sc.add(stageR.obj);
+    const DPR=Math.min(3,window.devicePixelRatio||1);stage=makeView(cv,GW,GH,true,Math.max(2,DPR*1.5));stageR=rigged(src);stage.sc.add(stageR.obj);
     const pc=document.getElementById('cuPrev3');
-    if(pc){prev=makeView(pc,192,224,false);prevR=rigged(src);prevR.obj.position.y=0;prevR.obj.scale.setScalar(.95);prev.sc.add(prevR.obj);
+    if(pc){prev=makeView(pc,192,224,false,Math.max(1,DPR));prevR=rigged(src);prevR.obj.position.y=0;prevR.obj.scale.setScalar(.95);prev.sc.add(prevR.obj);
       let d=null;pc.addEventListener('pointerdown',e=>{d=e.clientX;try{pc.setPointerCapture(e.pointerId);}catch(_){}});pc.addEventListener('pointermove',e=>{if(d==null)return;prevSpin+=(e.clientX-d)*.02;d=e.clientX;});
       ['pointerup','pointercancel'].forEach(v=>pc.addEventListener(v,()=>{d=null;}));}
     H3.ok=true;H3.why='ok';document.documentElement.classList.add('has3d');}
