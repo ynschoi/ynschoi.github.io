@@ -34,7 +34,7 @@ H3.line=(x1,y1,x2,y2,w,col)=>{if(H3.ok)queue.push({line:[x1,y1,x2,y2],w,col});};
 H3.rect=(x,y,w,h,col,ol)=>{if(H3.ok)queue.push({rect:[x,y,w,h],col,ol});};
 H3.shadow=(x,y,w)=>{if(H3.ok)queue.push({shadow:[x,y,w]});};
 /* 배경: run(달리기) / zone(운동 구역). off = 지나온 거리(경기장 px) — 반복해서 흘러감 */
-let bgReq=null;H3.bg=(kind,off,bob=0)=>{bgReq={kind,off,bob};};
+let bgReq=null;H3.bg=(kind,off,bob=0,dim=0)=>{bgReq={kind,off,bob,dim};};
 let cv3=null,c3=null,sc=1;
 function fit(){if(!cv3)return;const w=cv3.offsetWidth||GW,dpr=Math.min(3,window.devicePixelRatio||1),W=Math.round(w*dpr),H=Math.round(W*(window.HV||GH)/GW);
   if(cv3.width!==W||cv3.height!==H){cv3.width=W;cv3.height=H;}sc=W/GW;OFFp=((window.HV||GH)-GH)*sc;}
@@ -49,7 +49,9 @@ H3.frame=()=>{if(!H3.ok)return;recolor();fit();c3.setTransform(1,0,0,1,0,0);c3.c
   if(cbg&&bgReq){const im=IM['bg_'+bgReq.kind],w=GW*sc,h=GH*sc,o=((bgReq.off*.7)%GW+GW)%GW*sc;cbg.setTransform(1,0,0,1,0,0);
     if(cvbg.width!==cv3.width||cvbg.height!==cv3.height){cvbg.width=cv3.width;cvbg.height=cv3.height;}cbg.imageSmoothingQuality='high';
     const ih=w*im.height/im.width,iy=OFFp+h-ih;   /* 그림 아래쪽(바닥)을 경기장 170 기준선에 맞추고 위쪽은 남는 만큼 보임 */
-    if(bgReq.kind==='runf')runfBg(im,w,ih,iy,bgReq.off,bgReq.bob);else{cbg.drawImage(im,-o,iy,w,ih);cbg.drawImage(im,w-o,iy,w,ih);}bgReq=null;}
+    if(bgReq.kind==='runf')runfBg(im,w,ih,iy,bgReq.off,bgReq.bob);else{cbg.drawImage(im,-o,iy,w,ih);cbg.drawImage(im,w-o,iy,w,ih);}
+    if(bgReq.dim){const H2=cvbg.height,g=cbg.createRadialGradient(w/2,H2*.62,H2*.15,w/2,H2*.62,w*.62);   /* 기구 종목: 가장자리를 어둡게 해 선수에 시선이 가게 */
+      g.addColorStop(0,'rgba(8,8,11,.15)');g.addColorStop(1,'rgba(8,8,11,.72)');cbg.fillStyle=g;cbg.fillRect(0,0,w,H2);}bgReq=null;}
   const pc=document.getElementById('cuPrev3');if(pc&&pc.offsetParent){const s=sheets.turn,N=s.m.n,i=((Math.round(prevSpin/(Math.PI*2)*N)%N)+N)%N,x=pc.getContext('2d');
     x.clearRect(0,0,pc.width,pc.height);const k=Math.min(pc.width/s.m.w,pc.height/s.m.h);x.imageSmoothingQuality='high';x.drawImage(s.cv,i*s.m.w,0,s.m.w,s.m.h,(pc.width-s.m.w*k)/2,(pc.height-s.m.h*k)/2,s.m.w*k,s.m.h*k);}};
 H3.icon=()=>{const fc=document.getElementById('face'),s=sheets.icon;if(!fc||!s)return;const x=fc.getContext('2d');x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,fc.width,fc.height);x.imageSmoothingQuality='high';x.drawImage(s.cv,0,0,s.m.w,s.m.h,0,0,fc.width,fc.height);};
