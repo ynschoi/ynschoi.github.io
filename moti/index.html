@@ -84,7 +84,7 @@
   .hud{position:absolute;left:8px;top:8px;z-index:9;font-size:10px;background:#0b0820b0;padding:4px 7px}
   .hud b{color:var(--gold);font-weight:400}
   .tb{position:absolute;top:8px;z-index:9;font:700 10px var(--px);color:#fff;background:#0b0820cc;border:2px solid var(--gold);padding:3px 6px}
-  #snd{right:8px}#hlp{right:56px}#lng{right:82px}#stats{right:118px}.tb[hidden]{display:none}
+  #snd{right:8px}#hlp{right:56px}#lng{right:82px}#lbb{right:118px}#stats{right:154px}.tb[hidden]{display:none}
   .lsel{display:flex;gap:8px;margin:2px 0}
   .lsel button{font:700 12px var(--px);color:#fff;padding:6px 12px;border:2px solid var(--violet);background:#0b0820;box-shadow:0 3px 0 #000}
   .lsel button.on{border-color:var(--gold);color:#111;background:var(--gold)}
@@ -235,6 +235,14 @@
   .admin .ev{list-style:none;margin-top:6px;font-size:12px}.admin .ev li{border-top:1px solid #2d2560;padding:2px 0}
   .admin .ev time{display:inline-block;width:92px;color:var(--violet);font-size:11px}.admin .ev b{color:var(--gold)}
   .admin .more{font:11px var(--px);color:var(--gold);margin-top:4px;cursor:pointer}
+  .lbp>div{width:min(340px,92%);max-height:88%;overflow:auto}
+  .help.lbp .lbme{display:flex;gap:6px;margin:4px 0 8px;border:0;padding:0;background:none;min-width:0;max-width:none}
+  .lbme input{flex:1;min-width:0;font:13px var(--font);padding:6px 8px;border:2px solid var(--edge);background:#0b0820;color:#fff}
+  .lbme button{font:700 12px var(--px);padding:6px 10px;border:2px solid var(--gold);background:var(--gold);color:#111}
+  #lbList{list-style:none;font:13px/1.4 var(--font)}
+  #lbList li{display:grid;grid-template-columns:26px 1fr auto;gap:6px;align-items:baseline;border-top:1px solid #2d2560;padding:5px 0}
+  #lbList li.me{color:var(--gold)}#lbList li .r{font:700 13px var(--px);color:var(--violet)}#lbList li:nth-child(-n+3) .r{color:var(--gold)}
+  #lbList li .t{font:700 14px var(--px);color:#fff;font-variant-numeric:tabular-nums}#lbList li small{display:block;font-size:10px;color:var(--violet)}
   .help{position:absolute;inset:0;z-index:30;background:#0b0820ee;display:flex;align-items:center;justify-content:center;padding:16px}
   .help[hidden]{display:none}
   .help div{border:3px solid #fff;padding:14px 16px;background:#15102e;max-width:340px;font:13px/1.6 var(--font);color:var(--ink)}
@@ -281,6 +289,7 @@
     <canvas class="tfront" id="tfront" width="30" height="22"></canvas>
     <div class="night" id="night"></div>
     <div class="hud" id="hud"></div>
+    <button class="tb" id="lbb" type="button">🏆</button>
     <button class="tb" id="lng" type="button">KO</button>
     <button class="tb" id="hlp" type="button">?</button>
     <button class="tb" id="snd" type="button">♪ ON</button>
@@ -310,6 +319,9 @@
   </section>
 
   <div class="help" id="help" hidden><div id="helpBody"></div></div>
+  <div class="help lbp" id="lbp" hidden><div><h3 id="lbT">🏆</h3>
+    <div class="lbme"><input id="lbName" maxlength="12" autocomplete="off"><button type="button" id="lbSave">OK</button></div>
+    <ol id="lbList"></ol><small id="lbNote"></small></div></div>
 </div>
 
   <div class="admin" id="admin" hidden><div class="ah"><h3>🛠 Moti · Player monitor</h3><div id="admHead"></div></div><div id="admBody"></div></div>
@@ -656,7 +668,7 @@ async function doLift(k){await walkTo(SPOT.gym-4);setF(F.squat);say(pick(['간�
   closeMG();
   const before=S[k],isPR=r.kg>before;log('lift',{k,grade:r.grade,kg:r.kg,pr:Math.max(before,r.kg),lv:S.lv[k]});
   if(r.kg>0){await yoss();SFX.thud();SFX.clang();shake();}
-  if(isPR){S[k]=r.kg;save();paint(k);SFX.win();banner('NEW PR!',1100);
+  if(isPR){S[k]=r.kg;save();lbSend();paint(k);SFX.win();banner('NEW PR!',1100);
     await playAct('mv_yoss',[[1,180],[2,260],[3,320],[4,420],[5,480],[6,420],[7,300]],f=>{if(f===4){say('요쓰!!',1000);SFX.thud();}});actEnd('mv_yoss');setF(F.smile);
     say(r.grade==='PERFECT'&&RUON()&&Math.random()<.6?'Охуенно!':pick(['가볍네','이게 사는 맛이지','근육아 고마워']),1200);
     msg('LIFT',`🏋️ ${name} 신기록!`,`${r.kg}kg 성공 (${r.grade})\n${before?`이전 기록 ${before}kg → `:''}PR ${r.kg}kg · 합계 ${total()}kg`);
@@ -849,7 +861,7 @@ $('cover').addEventListener('click',start);
 $('snd').addEventListener('click',()=>{sound=!sound;$('snd').textContent=sound?'♪ ON':'♪ OFF';});
 $('hlp').addEventListener('click',()=>{$('help').hidden=false;});
 $('help').addEventListener('click',e=>{if(e.target.id==='rs'){e.stopPropagation();if(e.target.dataset.ok){try{localStorage.removeItem(KEY);}catch(_){}location.reload();}else{e.target.dataset.ok=1;e.target.textContent=lang==='ko'?'한 번 더 누르면 지워져요':'Tap again to erase';}return;}$('help').hidden=true;});
-addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();if(cur&&!cur.s.done&&mgov.hidden){if(!e.repeat)cur.g.down&&cur.g.down(cur.s,cur.s.end,0);}else if(!busy)roll();}});
+addEventListener('keydown',e=>{if(e.target&&e.target.tagName==='INPUT')return;if(e.key===' '||e.key==='Enter'){e.preventDefault();if(cur&&!cur.s.done&&mgov.hidden){if(!e.repeat)cur.g.down&&cur.g.down(cur.s,cur.s.end,0);}else if(!busy)roll();}});
 addEventListener('keyup',e=>{if((e.key===' '||e.key==='Enter')&&cur&&cur.g.up)cur.g.up(cur.s,cur.s.end);});
 function helpHTML(){return lang==='ko'?`<h3>🎲 하는 법</h3>주사위를 굴리면 나온 칸을 ${TO}가 해요.<br>
 <b>1 스내치</b> 추 타이밍 · <b>4 클린앤저크</b> 꾹 눌렀다 놓기 (포션 마실수록 진초록·노랑·빨강 칸이 생겨요) · <b>5 백스쿼트</b> 1초 연타<br>
@@ -882,7 +894,7 @@ const IDLE=[['Light weight baby!','Light weight baby!'],['Brown Sugar… 아니 
   ['내가 버거킹에서 패티 구워도, ...','If I flipped patties at Burger King, ...'],["It wasn't me ♪","It wasn't me ♪"],[null,'Хуй с ним…',1],[null,'Иди на хуй…',1]];
 let idleT=Date.now(),idleLast=-1;
 ['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{idleT=Date.now();},true));
-let idleGap=6000;setInterval(()=>{if(!started||busy||cur||!$('help').hidden||!$('choose').hidden||document.hidden)return;if(Date.now()-idleT<idleGap)return;idleGap=5000+Math.random()*5000;
+let idleGap=6000;setInterval(()=>{if(!started||busy||cur||!$('help').hidden||!$('lbp').hidden||!$('choose').hidden||document.hidden)return;if(Date.now()-idleT<idleGap)return;idleGap=5000+Math.random()*5000;
   const L=lang==='ko'?0:1,ok=IDLE.filter(x=>x[L]!=null&&!(x[2]&&!RUON())),i=IDLE.indexOf(pick(ok));
   let t=IDLE[i][L];if(RUON()&&!t.endsWith('...')&&Math.random()<.35)t=t.replace(/[\s!?♪…]+$/,'')+', ёпта!';
   say(t,2600);idleT=Date.now();},1000);
@@ -902,6 +914,25 @@ function setLang(l){lang=l;try{localStorage.setItem('moti.lang',l);}catch(e){}do
   document.querySelectorAll('#lsel button').forEach(b=>b.classList.toggle('on',b.dataset.l===l));$('lng').textContent=l==='ko'?'EN':'KO';
   $('dice').setAttribute('aria-label',l==='ko'?'주사위 굴리기':'Roll the dice');if(!$('warn').hidden){$('warn').hidden=true;$('cover').classList.remove('warned');setupWarn();}}
 $('lsel').addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('button');if(b){SFX.tick();setLang(b.dataset.l);}});
+/* ═════════ 공유 리더보드 (구글 시트 leaderboard 탭) ═════════ */
+const LB_ON=/github\.io$/.test(location.hostname);
+const myName=()=>lsg('moti_name')||'';
+function lbSend(){if(!LB_ON||!(S.sn||S.cj||S.sq))return Promise.resolve(null);
+  const u=`${SHEET_URL}?op=lb&v=${VID}&n=${encodeURIComponent(myName()||'Player-'+VID.slice(1,5))}&sn=${S.sn}&cj=${S.cj}&sq=${S.sq}&r=${RU?'ru':''}`;
+  return fetch(u).then(r=>r.json()).then(j=>j.board).catch(()=>null);}
+function lbLoad(){if(!LB_ON)return Promise.resolve(null);return fetch(`${SHEET_URL}?op=board`).then(r=>r.json()).then(j=>j.board).catch(()=>null);}
+function lbRender(b){const ko=lang==='ko',L=$('lbList');
+  if(!b){L.innerHTML=`<li><span></span><span>${ko?'순위를 불러오지 못했어요':'Could not load the board'}</span></li>`;return;}
+  if(!b.length){L.innerHTML=`<li><span></span><span>${ko?'아직 아무도 없어요. 첫 신기록을 세워 보세요!':'No one yet. Set the first PR!'}</span></li>`;return;}
+  L.innerHTML=b.map((r,i)=>`<li class="${r.v===VID?'me':''}"><span class="r">${i+1}</span><span>${String(r.name||'Player').replace(/[<&]/g,'')}<small>SN ${r.sn||'-'} · CJ ${r.cj||'-'} · SQ ${r.sq||'-'}</small></span><span class="t">${r.total}kg</span></li>`).join('');}
+async function openLB(){const ko=lang==='ko';$('lbp').hidden=false;$('lbT').textContent=ko?'🏆 리더보드 · 역도 합계':'🏆 Leaderboard · total';
+  $('lbName').value=myName();$('lbName').placeholder=ko?'내 이름 (12자)':'Your name (12 chars)';$('lbSave').textContent=ko?'저장':'Save';
+  $('lbNote').textContent=LB_ON?(ko?'신기록을 세우면 자동으로 올라가요 · 바깥을 눌러 닫기':'Your score is posted on every new PR · tap outside to close'):(ko?'리더보드는 ynschoi.github.io/moti 에서만 돼요':'The leaderboard works on ynschoi.github.io/moti only');
+  $('lbList').innerHTML=`<li><span></span><span>${ko?'불러오는 중…':'Loading…'}</span></li>`;lbRender(await lbLoad());}
+$('lbb').addEventListener('click',()=>{SFX.tick();openLB();});
+$('lbp').addEventListener('click',e=>{if(e.target.id==='lbp')$('lbp').hidden=true;});
+$('lbSave').addEventListener('click',async()=>{const n=$('lbName').value.trim().slice(0,12);lss('moti_name',n||null);SFX.potion();
+  $('lbList').innerHTML=`<li><span></span><span>…</span></li>`;lbRender(await lbSend()||await lbLoad());});
 $('lng').addEventListener('click',()=>{SFX.tick();setLang(lang==='ko'?'en':'ko');});
 setLang(lang);
 IMG.onload=()=>{};
