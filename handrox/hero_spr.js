@@ -13,8 +13,10 @@ function build(n,m,c,k){const W=c.width,H=c.height,cv=document.createElement('ca
     for(let i=0;i<cls.length;i++)cls[i]=Math.round(md[i*4]/36);x.putImageData(base,0,0);sheets[n]={m,cv,x,base,cls,W,H,plain:{m,cv:pc}};}
 function load(){const names=Object.keys(MAN).filter(n=>!n.startsWith('b_')&&!n.startsWith('g_')),files=names.flatMap(n=>[MAN[n].c,MAN[n].m]),arts=Object.keys(ART);let done=0;const total=files.length+arts.length;
   const img=f=>new Promise((res,rej)=>{const im=new Image();im.decoding='async';im.onload=()=>{done++;window.onH3Progress&&onH3Progress(done/total);res(im);};im.onerror=()=>rej(Error(f));im.src=f.startsWith('art/')?f:BASE+f;});
-  const artP=Promise.all(arts.map(async k=>{IM[k]=await img(ART[k]);}));
-  return Promise.all(names.map(async n=>{const m=MAN[n],[c,k]=await Promise.all([img(m.c),img(m.m)]);build(n,m,c,k);})).then(()=>artP);}
+  /* 첫 화면에 쓸 정면 달리기·배경을 먼저 받아 바로 보여 주고, 나머지는 그다음에 */
+  const one=async n=>{const m=MAN[n],[c,k]=await Promise.all([img(m.c),img(m.m)]);build(n,m,c,k);};
+  const first=Promise.all([one('runf'),(async()=>{IM.bg_runf=await img(ART.bg_runf);})()]).then(()=>{H3.coverOk=true;H3.tCover=performance.now();window.onH3Cover&&onH3Cover();});
+  return first.then(()=>Promise.all(names.filter(n=>n!=='runf').map(one))).then(()=>Promise.all(arts.filter(k=>k!=='bg_runf').map(async k=>{IM[k]=await img(ART[k]);})));}
 /* 두 번째 캐릭터(여자 선수, g_*): 고른 사람만 받음 */
 let girl=false,girlP=null;
 function loadGirl(){return girlP||(girlP=Promise.all(Object.keys(MAN).filter(n=>n.startsWith('g_')).map(async n=>{const m=MAN[n],ld=f=>new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=()=>rej(Error(f));im.src=BASE+f;}),[c,k]=await Promise.all([ld(m.c),ld(m.m)]);build(n,m,c,k);})).then(()=>{colorKey='';}).catch(e=>{girlP=null;throw e;}));}
@@ -63,7 +65,7 @@ const texCache=new WeakMap();
 H3.texSheet=async(n0,tex)=>{await loadBald();const src=sheets['b_'+n0];if(!src)return null;let m=texCache.get(tex);if(!m){m={};texCache.set(tex,m);}
   if(!m[n0]){const c=document.createElement('canvas');c.width=src.W;c.height=src.H;const x=c.getContext('2d',{willReadFrequently:true}),v={m:src.m,W:src.W,H:src.H,x,base:src.base,f:src.f,cv:c};
     paintSheet(v,tex.getContext('2d',{willReadFrequently:true}).getImageData(0,0,tex.width,tex.height).data,tex.width,tex.height);m[n0]=v;}return m[n0];};
-H3.drawTo=(ctx,pose,o,cx,footY,u)=>{if(!H3.ok)return false;o=o||{};const n0=sheets[pose]?pose:'run',n=o.plain?n0:pick(n0),s=o.sheet||(o.plain&&sheets[n0].plain)||sheets[n],f=frameOf(n0,pose,o),m=s.m,g=u/m.ppu,pt=m.pts[f];   /* plain = 남의 선수(기본 모습) */
+H3.drawTo=(ctx,pose,o,cx,footY,u)=>{if(!H3.ok&&!(H3.coverOk&&sheets[pose]))return false;o=o||{};const n0=sheets[pose]?pose:'run',n=o.plain?n0:pick(n0),s=o.sheet||(o.plain&&sheets[n0].plain)||sheets[n],f=frameOf(n0,pose,o),m=s.m,g=u/m.ppu,pt=m.pts[f];   /* plain = 남의 선수(기본 모습) */
   ctx.drawImage(s.cv,f*m.w,0,m.w,m.h,cx+m.box[0]*u,footY-m.box[3]*u,m.w*g,m.h*g);const P=a=>[cx+a[0]*u,footY-a[1]*u];return {hand:P(pt.hand),handR:P(pt.handR||pt.hand)};};
 H3.img2=k=>IM[k];
 /* 기구 그림·선·손잡이도 같은 대기열에 (경기장 좌표). 선수보다 먼저 부르면 뒤에, 나중에 부르면 앞에 그려짐 */
