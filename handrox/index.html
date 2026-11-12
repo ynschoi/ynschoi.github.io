@@ -175,7 +175,8 @@ try{Promise.all([document.fonts.load('12px Galmuri9'),document.fonts.load('bold 
   .dwr button.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}.dwr button.w{width:auto;padding:0 8px}
   .res.ph{width:100%;max-width:330px}.res.ph h3{font:700 16px var(--px);color:var(--gold);margin:0 0 8px}.phcv{width:100%;max-width:300px;aspect-ratio:4/5;display:block;margin:0 auto 6px;border:2px solid #fff;background:#000}
   .phk{gap:4px}.phk button{height:28px;font-size:11px}.phflash{position:absolute;inset:0;background:#fff;animation:phf .45s ease-out forwards;pointer-events:none}@keyframes phf{from{opacity:1}to{opacity:0}}
-  .res.lb{width:100%;max-width:340px}.res.lb h3{font:700 18px var(--px);color:var(--gold);margin:0 0 8px}
+  .res.lb{width:100%;max-width:340px}
+  .res.lb .row{gap:5px}.res.lb .row button{padding:8px 8px;white-space:nowrap}.res.lb h3{font:700 18px var(--px);color:var(--gold);margin:0 0 8px}
   .lbl{max-height:52vh;overflow:auto;margin:0 0 10px;border-top:1px solid #2a2a36}
   .lbl div{display:grid;grid-template-columns:30px 1fr auto;gap:6px;font:13px var(--px);padding:5px 4px;border-bottom:1px solid #2a2a36;text-align:left;font-variant-numeric:tabular-nums}
   .lbseg{display:flex;gap:4px;margin:0 0 6px}.lbseg button{flex:1;font:12px var(--px);padding:6px 0;border:1.5px solid #444;background:#0c0c10;color:var(--dim)}.lbseg button.on{background:var(--gold);border-color:var(--gold);color:#111}
@@ -740,13 +741,13 @@ const LB={db:null,uid:null,p:null,
   async top(n=500){const q=await this.db.collection('scores').orderBy('t','asc').limit(n).get();return q.docs.map(d=>({id:d.id,...(d.data()||{})})).filter(r=>(typeof r.t==='number'&&r.t>0)||Array.isArray(r.bs));},
   /* 한 사람 한 줄: name, t(최고 합계), sp(그 경기 구간 16개), bs(종목별 최고 9개: 달리기 합계 + 8종목), code(친구 코드) */
   code(){let h=2166136261;for(const ch of String(this.uid))h=Math.imul(h^ch.charCodeAt(0),16777619)>>>0;const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let o='';for(let k=0;k<6;k++){o+=A[h%32];h=((h>>>5)^Math.imul(h,2654435761))>>>0;}return o;},
-  async submit(name,t){const ref=this.db.doc('scores/'+this.uid),cur=await ref.get(),o=cur.exists&&cur.data(),r1=v=>Math.round(v*10)/10;
+  async submit(name,t){const ref=this.db.doc('scores/'+this.uid),cur=await ref.get(),o=cur.exists&&cur.data(),r1=v=>Math.round(v*10)/10,hd=headData();
     const sp=Array.isArray(SAVE.splits)&&SAVE.splits.length===16?SAVE.splits.map(r1):null,bs=Array.isArray(SAVE.bs)&&SAVE.bs.length===9?SAVE.bs.map(r1):null,code=this.code();
-    if(o&&typeof o.t==='number'&&o.t>0&&o.t<=t){const u={};if(o.name!==name)u.name=name;if(o.code!==code)u.code=code;if(sp&&!Array.isArray(o.sp)&&Math.abs(o.t-t)<.06)u.sp=sp;if(bs&&JSON.stringify(o.bs)!==JSON.stringify(bs))u.bs=bs;if(Object.keys(u).length)await ref.update(u);return false;}
-    await ref.set({name,t:r1(t),at:Date.now(),code,...(sp?{sp}:{}),...(bs?{bs}:{}),...(o&&Array.isArray(o.fr)?{fr:o.fr}:{})});return true;},
+    if(o&&typeof o.t==='number'&&o.t>0&&o.t<=t){const u={};if(o.name!==name)u.name=name;if(o.code!==code)u.code=code;if(sp&&!Array.isArray(o.sp)&&Math.abs(o.t-t)<.06)u.sp=sp;if(bs&&JSON.stringify(o.bs)!==JSON.stringify(bs))u.bs=bs;if(o.hd!==hd)u.hd=hd;if(Object.keys(u).length)await ref.update(u);return false;}
+    await ref.set({name,t:r1(t),at:Date.now(),code,hd,...(sp?{sp}:{}),...(bs?{bs}:{}),...(o&&Array.isArray(o.fr)?{fr:o.fr}:{})});return true;},
   /* 종목별 기록만 바로 올림 (완주 전이어도). 닉네임이 있을 때만. 완주 기록이 없으면 t=0 줄로 만들어 종목 순위에만 나옴 */
   syncBs(){this.sq=(this.sq||Promise.resolve()).then(async()=>{if(!SAVE.nick||!await this.init())return;const r1=v=>Math.round(v*10)/10,bs=SAVE.bs.map(v=>v?r1(v):0),ref=this.db.doc('scores/'+this.uid),cur=await ref.get(),o=cur.exists&&cur.data();
-    if(o){const u={bs};if(o.name!==SAVE.nick)u.name=SAVE.nick;await ref.update(u);}else await ref.set({name:SAVE.nick,t:0,at:Date.now(),code:this.code(),bs});}).catch(()=>{});return this.sq;},
+    const hd=headData();if(o){const u={bs};if(o.name!==SAVE.nick)u.name=SAVE.nick;if(o.hd!==hd)u.hd=hd;await ref.update(u);}else await ref.set({name:SAVE.nick,t:0,at:Date.now(),code:this.code(),bs,hd});}).catch(()=>{});return this.sq;},
   fref(){return this.db.collection('data/users/'+this.uid).doc('friends');},   /* 친구 목록: 나만 보는 칸 */
   async friends(){const d=await this.fref().get();const v=d.exists&&d.data();return Array.isArray(v&&v.ids)?v.ids.filter(x=>typeof x==='string').slice(0,200):[];},
   async addFriend(id){const ids=await this.friends();if(id===this.uid||ids.includes(id))return ids;ids.push(id);await this.fref().set({ids});
@@ -758,6 +759,13 @@ const LB={db:null,uid:null,p:null,
 const USE={q:Promise.resolve(),d:null,hit(f){this.q=this.q.then(async()=>{if(!await LB.init())return;const ref=LB.db.doc('stats/'+LB.uid);
     if(!this.d){const c=await ref.get();this.d=(c.exists&&c.data())||{starts:0,fin:0,seg:{},first:Date.now()};}
     f(this.d);Object.assign(this.d,{last:Date.now(),dev:matchMedia('(pointer:coarse)').matches?'touch':'pc',lang,nick:SAVE.nick||''});await ref.set(this.d);}).catch(()=>{});}};
+/* 순위에 올릴 때 내 머리 그림도 같이 (256×128로 줄여 작은 그림 한 장). 그림이 없으면 '' = 기본 캐릭터 */
+function headData(){if(!DW.saved)return '';const t=document.createElement('canvas');t.width=256;t.height=128;t.getContext('2d').drawImage(DW.saved,0,0,256,128);let d=t.toDataURL('image/webp',.82);if(!d.startsWith('data:image/webp'))d=t.toDataURL('image/png');return d.length<60000?d:'';}
+/* 남의 머리 그림 불러오기: 그림 주소(data:image/...)만 받고, 512×256 캔버스로 */
+const HDC=new Map();function headTex(hd){if(typeof hd!=='string'||!/^data:image\/(webp|png);base64,[A-Za-z0-9+/=]+$/.test(hd))return Promise.resolve(null);if(HDC.has(hd))return HDC.get(hd);
+  const p=new Promise(res=>{const im=new Image();im.onload=()=>{const t=document.createElement('canvas');t.width=512;t.height=256;t.getContext('2d').drawImage(im,0,0,512,256);res(t);};im.onerror=()=>res(null);im.src=hd;});HDC.set(hd,p);return p;}
+/* 한 사람 선수 그리기 옵션: 나 = 지금 모습, 남 = 그 사람이 올린 머리(없으면 기본 캐릭터) */
+async function whoOpt(r,pose){if(r.id===LB.uid)return {};const t=await headTex(r.hd);if(t){const sh=await H3.texSheet(pose,t).catch(()=>null);if(sh)return {sheet:sh};}return {plain:1};}
 const nickOk=v=>String(v||'').replace(/\s+/g,' ').trim().slice(0,8),within=(pr,ms=10000)=>Promise.race([pr,new Promise((_,j)=>setTimeout(()=>j(Error('timeout')),ms))]);
 const el=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e;};
 /* ── 순위표 ── 모두/친구 + 종목 칩(ALL·RUN·SKI…). 1~3위는 시상대, 4~10위 목록, 내가 10등 밖이면 ⋮ 아래에 내 줄. 줄을 누르면 레이스 흐름 비교.
@@ -765,7 +773,8 @@ const el=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=
 const KEYS9=['ALL','RUN','SKI','PUSH','PULL','BBJ','ROW','CARRY','LUNGE','WALL'],LBV={scope:'all',k:0,rows:null,fr:[]};
 const okSp=r=>Array.isArray(r.sp)&&r.sp.length===16&&r.sp.every(v=>typeof v==='number')?r.sp:null;
 function lbVal(r,k){if(!k)return r.t>0?r.t:null;if(Array.isArray(r.bs)&&r.bs.length===9&&typeof r.bs[k-1]==='number'&&r.bs[k-1]>0)return r.bs[k-1];const sp=okSp(r);if(!sp)return null;return k===1?sp.filter((_,i)=>i%2===0).reduce((a,b)=>a+b,0):sp[(k-2)*2+1];}
-const avEl=(me,big)=>{const a=el('span','av');const m=window.HERO_MAN&&HERO_MAN.icon;if(m)a.style.backgroundImage=`url(spr/${m.c})`;if(me)a.classList.add('me');if(big)a.style.width=a.style.height=big+'px';return a;};
+const avEl=(me,big,r)=>{const a=el('span','av');const m=window.HERO_MAN&&HERO_MAN.icon;if(m)a.style.backgroundImage=`url(spr/${m.c})`;if(me)a.classList.add('me');if(big)a.style.width=a.style.height=big+'px';
+  if(r)whoOpt(r,'icon').then(o=>{const c=document.createElement('canvas');c.width=c.height=96;const x=c.getContext('2d'),ic=window.HERO_MAN&&HERO_MAN.icon;if(!ic)return;const u=96/(ic.box[1]-ic.box[0]);if(H3.drawTo(x,'icon',o,48,96+ic.box[2]*u,u))a.style.backgroundImage=`url(${c.toDataURL()})`;}).catch(()=>{});return a;};
 async function lbShow(){const B=$('lbBody');B.textContent='';$('lbPanel').hidden=false;const msg=el('div','lbm',L('불러오는 중…','Loading…'));B.append(el('h3','',L('🏆 순위','🏆 LEADERBOARD')),msg);
   try{if(!await LB.init())throw 0;const [rows,fr]=await within(Promise.all([LB.top(),LB.friends().catch(()=>[])]));LBV.rows=rows;LBV.fr=[...new Set([...fr,...rows.filter(r=>Array.isArray(r.fr)&&r.fr.includes(LB.uid)).map(r=>r.id)])];lbDraw();}catch(e){msg.textContent=L('순위를 불러오지 못했어요','Could not load the leaderboard');lbButtons(B);}}
 function lbButtons(B,extra){const row=el('div','row');if(extra)row.append(extra);const x=el('button','y',L('닫기','Close'));x.type='button';x.onclick=()=>{$('lbPanel').hidden=true;};row.append(x);B.append(row);}
@@ -781,6 +790,7 @@ function lbDraw(){const B=$('lbBody'),k=LBV.k;B.textContent='';B.append(el('h3',
     msg.textContent=mine>=0?L(`내 순위 ${mine+1}위 / ${rows.length}명`,`You: #${mine+1} of ${rows.length}`):L(`${rows.length}명`,`${rows.length} players`);B.append(pod,list,msg);}
   const fb=el('button','',L('👥 친구','👥 Friends'));fb.type='button';fb.onclick=lbFriend;const sb=el('button','',L('📊 능력치','📊 Stats'));sb.type='button';sb.onclick=()=>lbStats();const w=el('span');w.style.cssText='display:contents';w.append(sb,fb);lbButtons(B,w);}
 /* 시상대: CHAMPIONS 화면 앞 ONE·TWO·THREE 단상에 1~3위 선수가 순위 깃발을 들고 섬. 누르면 그 사람 비교 */
+async function podiumAsync(top,tf){const o=await Promise.all(top.map(r=>r?whoOpt(r.r,'flag'):null));return o;}
 function podium(top,tf){const W=300,Hh=212,cv=el('canvas','podc');cv.width=W*2;cv.height=Hh*2;const x=cv.getContext('2d');x.scale(2,2);
   const g=x.createLinearGradient(0,0,0,Hh);g.addColorStop(0,'#1a1a22');g.addColorStop(1,'#0c0c10');x.fillStyle=g;x.fillRect(0,0,W,Hh);
   x.fillStyle='#262a52';x.fillRect(34,8,232,92);x.strokeStyle='#3a3f78';x.lineWidth=1;for(let i=-10;i<24;i++){x.beginPath();x.moveTo(34+i*14,100);x.lineTo(34+i*14+60,8);x.stroke();}x.strokeStyle='#555';x.strokeRect(34,8,232,92);
@@ -789,11 +799,11 @@ function podium(top,tf){const W=300,Hh=212,cv=el('canvas','podc');cv.width=W*2;c
   const B=[[150,150,96,'ONE',0],[54,166,92,'TWO',1],[246,174,92,'THREE',2]];
   for(const [cx,ty,bw,lab,n] of B){x.fillStyle='#2a2a33';x.fillRect(cx-bw/2,ty,bw,Hh-ty);x.fillStyle='#3a3a46';x.fillRect(cx-bw/2,ty,bw,4);x.fillStyle='#fff';x.font='bold 15px Galmuri11, monospace';x.fillText(lab,cx,ty+21);
     const r=top[n];if(!r)continue;x.fillStyle=n?'#c8c8d4':'#ffd400';x.font='10px Galmuri11, monospace';x.fillText(nickOk(r.r.name)||'???',cx,ty+34);x.fillStyle='#8d8da0';x.font='9px Galmuri11, monospace';x.fillText(tf(r.v),cx,Math.min(Hh-3,ty+45));}
-  for(const [cx,ty,bw,lab,n] of B){const r=top[n];if(!r)continue;const u=n?84:92,h=H3.drawTo(x,'flag',{plain:r.r.id!==LB.uid},cx,ty+1,u);if(!h)continue;
+  const people=async()=>{const opts=await podiumAsync(top,tf);for(const [cx,ty,bw,lab,n] of B){const r=top[n];if(!r)continue;const u=n?84:92,h=H3.drawTo(x,'flag',opts[n]||{plain:1},cx,ty+1,u);if(!h)continue;
     const fx0=Math.min(h.hand[0],h.handR[0])-6,fx1=Math.max(h.hand[0],h.handR[0])+6,fy0=Math.min(h.hand[1],h.handR[1])-3,fh=u*.36,dark=n>0;
     x.fillStyle=dark?'#141418':'#f4f4f6';x.fillRect(fx0,fy0,fx1-fx0,fh);x.fillStyle='#d8d8e0';x.fillRect(fx0,fy0-1.5,fx1-fx0,1.5);
     x.fillStyle=dark?'#f4f4f6':'#141418';x.font=`bold ${fh*.62}px Galmuri11, monospace`;x.fillText(String(n+1),(fx0+fx1)/2,fy0+fh*.66);x.font='5px Galmuri11, monospace';x.fillText('HANDROX',(fx0+fx1)/2,fy0+fh-3);
-    x.fillStyle='#e5391f';x.fillRect(fx0+3,fy0+fh*.74,(fx1-fx0)-6,1.2);}
+    x.fillStyle='#e5391f';x.fillRect(fx0+3,fy0+fh*.74,(fx1-fx0)-6,1.2);}};people();
   cv.onclick=e=>{const rc=cv.getBoundingClientRect(),px=(e.clientX-rc.left)/rc.width*W,n=px<102?1:px>198?2:0;if(top[n])lbDetail(top[n].r,n+1);};return cv;}
 /* 친구 추가: 내 코드 보여 주고, 친구 코드를 넣으면 친구 목록(나만 보는 칸)에 넣음 */
 function lbFriend(){const B=$('lbBody');B.textContent='';B.append(el('h3','',L('👥 친구 추가','👥 Add friend')),el('div','lbm',L('내 친구 코드','My friend code')));
@@ -833,7 +843,7 @@ function lbStats(sel){const B=$('lbBody');B.textContent='';B.append(el('h3','',L
   const bk=el('button','',L('← 순위','← Back'));bk.type='button';bk.onclick=()=>LBV.rows?lbDraw():lbShow();lbButtons(B,bk);}
 /* 비교 = 레이스 흐름: 가로 = 경기 순서(달리기·종목 16구간), 세로 = 상대와 벌어진 시간(위로 갈수록 내가 뒤처짐) */
 function lbDetail(r,rank){const B=$('lbBody'),me=r.id===LB.uid,sp=okSp(r),my=!me&&Array.isArray(SAVE.splits)&&SAVE.splits.length===16?SAVE.splits:null;B.textContent='';
-  const vs=el('div','vs'),side=(nm,t,m)=>{const d=el('div','p');d.append(avEl(m,44),el('div',m?'y':'',nm),el('div','d',t?fmt(t):'-'));return d;};
+  const vs=el('div','vs'),side=(nm,t,m)=>{const d=el('div','p');d.append(avEl(m,44,m?null:r),el('div',m?'y':'',nm),el('div','d',t?fmt(t):'-'));return d;};
   if(my){vs.append(side(L('나','Me'),SAVE.pb,1),el('div','vsx','VS'),side(nickOk(r.name)||'???',r.t,0));}else{vs.append(side(`${rank}${L('위','')} · ${nickOk(r.name)||'???'}`,r.t,me));}B.append(vs);
   if(!sp)B.append(el('div','lbm',L('이 기록에는 구간 기록이 없어요','No split times for this record')));
   else if(!my){const g=el('div','sgrid');[[L('달리기','Run'),lbVal(r,1)],...ST.map((st,n)=>[KEYS9[n+2],sp[n*2+1]])].forEach(([n,v])=>{const c=el('div');c.append(el('i','',n),el('b','',fmtS(v)));g.append(c);});B.append(g);
@@ -851,6 +861,7 @@ function lbDetail(r,rank){const B=$('lbBody'),me=r.id===LB.uid,sp=okSp(r),my=!me
     const l1=el('div');l1.append(L('제일 많이 잃은 곳 ','Lost most: '),el('span','rd',`${worst[0]} ${dt(worst[1])}`));sm.append(l1);if(best[1]<0){const l2=el('div');l2.append(L('앞선 곳 ','Gained: '),el('span','gr',`${best[0]} ${dt(best[1])}`));sm.append(l2);}B.append(sm);
     const g=el('div','sgrid');all.forEach(([n,v])=>{const c=el('div');c.append(el('i','',n),el('b',v<0?'gr':'rd',dt(v)));g.append(c);});B.append(g);}}
   const bk=el('button','',L('← 순위','← Back'));bk.type='button';bk.onclick=()=>LBV.rows?lbDraw():lbShow();const row=el('div','row');row.append(bk);
+  {const cap=el('button','',L('📸 사진','📸 Photo'));cap.type='button';cap.onclick=()=>personPhoto(r,rank);row.append(cap);}
   if(!me&&!LBV.fr.includes(r.id)){const af=el('button','',L('👥 친구 추가','👥 Add'));af.type='button';af.onclick=async()=>{af.disabled=true;try{LBV.fr=await within(LB.addFriend(r.id));af.textContent=L('✓ 친구','✓ Friend');}catch(e){af.disabled=false;af.textContent=L('실패','Failed');}};row.append(af);}
   const x=el('button','y',L('닫기','Close'));x.type='button';x.onclick=()=>{$('lbPanel').hidden=true;};row.append(x);B.append(row);}
 /* 완주 화면 아래: 닉네임이 있으면 최고 기록을 바로 올리고, 없으면 한 번 입력받음 */
@@ -881,16 +892,21 @@ function drawCover(t){const cv=$('cvCov');if(!cv||$('cover').hidden)return;const
 /* ═════════ 기록 사진 ═════════ 기록판 앞에서 포즈를 골라 찍음. 4:5 사진 한 장(1080×1350)으로 만들어 저장·공유 */
 const POSES=[['환호','Cheer'],['양팔 알통','Double flex'],['한팔 알통','Flex'],['만세','Hands up'],['주먹 불끈','Fist pump']];let PH={k:0,url:null,blob:null,cd:0};
 /* 기록판 벽: 경기장 화면(c)과 사진(1080×1350) 양쪽에 같은 그림. W×Hh 칸, top = 맨 위 y */
-function photoWall(x,W,Hh,top=0,dy=0){const u=W/320;x.save();x.translate(0,top);const g=x.createLinearGradient(0,0,0,Hh);g.addColorStop(0,'#16161c');g.addColorStop(1,'#0a0a0d');x.fillStyle=g;x.fillRect(0,0,W,Hh);
+function photoWall(x,W,Hh,top=0,dy=0,tm=null){if(tm==null)tm=G.clock;const u=W/320;x.save();x.translate(0,top);const g=x.createLinearGradient(0,0,0,Hh);g.addColorStop(0,'#16161c');g.addColorStop(1,'#0a0a0d');x.fillStyle=g;x.fillRect(0,0,W,Hh);
   x.font=`${9*u}px Galmuri11, monospace`;x.fillStyle='rgba(255,255,255,.07)';x.textAlign='center';for(let r=0;r<Hh/(27*u)+1;r++)for(let q=-1;q<6;q++)x.fillText('HANDROX',(q*68+(r%2)*34+18)*u,(16+r*27)*u);
   x.fillStyle='#fff';x.font=`bold ${30*u}px Galmuri11, monospace`;x.save();x.translate(0,dy*u);x.fillText('H A N D R O X',W/2,36*u);
   x.fillStyle='rgba(0,0,0,.85)';x.fillRect(58*u,44*u,204*u,60*u);x.strokeStyle='#333';x.lineWidth=1.2*u;x.strokeRect(58*u,44*u,204*u,60*u);
-  x.textAlign='left';x.fillStyle='#d8d8e0';x.font=`${10*u}px Galmuri11, monospace`;x.fillText('FINISH TIME',68*u,59*u);x.fillStyle='#fff';x.font=`bold ${30*u}px Galmuri11, monospace`;x.fillText(fmt(G.clock),66*u,90*u);
+  x.textAlign='left';x.fillStyle='#d8d8e0';x.font=`${10*u}px Galmuri11, monospace`;x.fillText('FINISH TIME',68*u,59*u);x.fillStyle='#fff';x.font=`bold ${30*u}px Galmuri11, monospace`;x.fillText(fmt(tm),66*u,90*u);
   x.fillStyle='#ffd400';x.fillRect(68*u,95*u,70*u,2.5*u);x.textAlign='right';x.fillStyle='#8d8da0';x.font=`${7*u}px Galmuri11, monospace`;x.fillText(`${VENUE} · ${new Date().toISOString().slice(0,10)}`,254*u,59*u);x.restore();
   const fy=Hh-(Hh>300?60*u:12*u),fl=x.createRadialGradient(W/2,fy,10*u,W/2,fy,150*u);fl.addColorStop(0,'rgba(255,212,0,.16)');fl.addColorStop(1,'rgba(255,212,0,0)');x.fillStyle=fl;x.fillRect(0,0,W,Hh);x.restore();}
 function photoDraw(cv,k){const x=cv.getContext('2d'),W=cv.width,Hh=cv.height,u=W/1080;x.setTransform(1,0,0,1,0,0);photoWall(x,W,Hh,0);
   x.fillStyle='rgba(0,0,0,.5)';x.beginPath();x.ellipse(W/2,1245*u,250*u,30*u,0,0,7);x.fill();x.imageSmoothingQuality='high';H3.drawTo(x,'fin',{k:k/4},W/2,1250*u,720*u);
   if(SAVE.nick){x.textAlign='center';x.fillStyle='#ffd400';x.fillRect(W/2-230*u,1272*u,460*u,62*u);x.fillStyle='#111';x.font=`bold ${46*u}px Galmuri11, monospace`;x.fillText(nickOk(SAVE.nick),W/2,1318*u);}}
+/* 순위표의 한 사람을 기록 사진 카드로 저장 (그 사람 머리 그림·기록·닉네임) */
+async function personPhoto(r,rank){const big=document.createElement('canvas');big.width=1080;big.height=1350;const x=big.getContext('2d');photoWall(x,1080,1350,0,0,r.t||0);const o=await whoOpt(r,'fin');x.fillStyle='rgba(0,0,0,.5)';x.beginPath();x.ellipse(540,1245,250,30,0,0,7);x.fill();x.imageSmoothingQuality='high';H3.drawTo(x,'fin',{k:0,...o},540,1250,720);
+  x.textAlign='center';x.fillStyle='#ffd400';x.fillRect(310,1272,460,62);x.fillStyle='#111';x.font='bold 46px Galmuri11, monospace';x.fillText(`${rank}${L('위','')} ${nickOk(r.name)||'???'}`,540,1318);
+  big.toBlob(async b=>{const fn=`HANDROX_${(nickOk(r.name)||'player').replace(/[^\w가-힣]/g,'')}.png`;try{const d=window.claude&&claude.use?await claude.use('downloads'):null;if(d){await d.save({filename:fn,data:b});return;}}catch(e){if(e&&e.code==='declined')return;}
+    const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=fn;document.body.append(a);a.click();a.remove();},'image/png');}
 /* 패드 자리: 포즈 5개 + 📸 버튼(3·2·1 뒤 찰칵) + 건너뛰기 */
 function phBar(){const B=$('phBar');B.textContent='';B.hidden=false;const chips=el('div','phk');POSES.forEach((p,i)=>{const b=el('button',i===PH.k?'on':'',L(...p));b.type='button';b.onclick=e=>{e.stopPropagation();PH.k=i;SFX.tick&&SFX.tick();[...chips.children].forEach((c,j)=>c.classList.toggle('on',j===i));};chips.append(b);});
   const sh=el('button','shut','📸'),sk=el('button','skip',L('건너뛰기','Skip'));sh.type=sk.type='button';sh.onclick=e=>{e.stopPropagation();if(PH.cd)return;PH.cd=performance.now();B.hidden=true;};sk.onclick=e=>{e.stopPropagation();B.hidden=true;photoClose();};
@@ -1015,7 +1031,7 @@ $('drawBtn').addEventListener('click',async()=>{DW.tex=newTex();if(DW.saved)DW.t
 $('drawPanel').addEventListener('click',e=>e.stopPropagation());
 $('dwNo').addEventListener('click',()=>{$('drawPanel').hidden=true;});
 $('dwOk').addEventListener('click',async()=>{const t=newTex();t.getContext('2d').drawImage(DW.tex,0,0);DW.saved=t;try{localStorage.setItem(HKEY,JSON.stringify({img:t.toDataURL('image/png')}));}catch(e){}
-  $('dwOk').textContent=L('입히는 중…','Applying…');await headApply();$('drawPanel').hidden=true;drawBtnText();});
+  $('dwOk').textContent=L('입히는 중…','Applying…');await headApply();$('drawPanel').hidden=true;drawBtnText();if(SAVE.nick)LB.syncBs();});
 $('drawDel').addEventListener('click',()=>{DW.saved=null;try{localStorage.removeItem(HKEY);}catch(e){}headApply();drawBtnText();});
 try{localStorage.removeItem('handrox.head');const v=JSON.parse(localStorage.getItem(HKEY)||'null');if(v&&v.img){const im=new Image();im.onload=()=>{const t=newTex();t.getContext('2d').drawImage(im,0,0,512,256);DW.saved=t;drawBtnText();headApply();};im.src=v.img;}}catch(e){}
 function drawFaceIcon(){H3.icon&&H3.icon();}   /* 얼굴 아이콘 = 구운 3D 머리 그림 */

@@ -52,7 +52,12 @@ const frameOf=(n,pose,o)=>{const N=sheets[n].m.n;if(pose==='run'||pose==='runf'|
 H3.show=(pose,x,y,o={})=>{if(!H3.ok)return false;const n0=sheets[pose]?pose:'run',n=bald&&sheets['b_'+n0]?'b_'+n0:n0,s=sheets[n],f=frameOf(n,pose,o),u=HEIGHT*(o.z||1),pt=s.m.pts[f];
   const fx=o.fx?-1:1;if(!o.peek)queue.push({s,f,x,y,u,fx});const P=a=>[x+fx*a[0]*u,y-a[1]*u];return {hand:P(pt.hand),handR:pt.handR?P(pt.handR):P(pt.hand),hips:P(pt.hips),head:pt.head?P(pt.head):P(pt.hips)};};
 /* 다른 캔버스(기록 사진)에 선수 한 칸을 바로 그림. u = 모델 1단위가 몇 px인지 (선수 키 ≈ u) */
-H3.drawTo=(ctx,pose,o,cx,footY,u)=>{if(!H3.ok)return false;o=o||{};const n0=sheets[pose]?pose:'run',n=bald&&!o.plain&&sheets['b_'+n0]?'b_'+n0:n0,s=o.plain&&sheets[n0].plain||sheets[n],f=frameOf(n0,pose,o),m=s.m,g=u/m.ppu,pt=m.pts[f];   /* plain = 남의 선수(기본 모습) */
+/* 남이 그린 머리(그림 캔버스)를 입힌 선수 한 칸. 그림마다 한 번만 칠해 둠 */
+const texCache=new WeakMap();
+H3.texSheet=async(n0,tex)=>{await loadBald();const src=sheets['b_'+n0];if(!src)return null;let m=texCache.get(tex);if(!m){m={};texCache.set(tex,m);}
+  if(!m[n0]){const c=document.createElement('canvas');c.width=src.W;c.height=src.H;const x=c.getContext('2d',{willReadFrequently:true}),v={m:src.m,W:src.W,H:src.H,x,base:src.base,f:src.f,cv:c};
+    paintSheet(v,tex.getContext('2d',{willReadFrequently:true}).getImageData(0,0,tex.width,tex.height).data,tex.width,tex.height);m[n0]=v;}return m[n0];};
+H3.drawTo=(ctx,pose,o,cx,footY,u)=>{if(!H3.ok)return false;o=o||{};const n0=sheets[pose]?pose:'run',n=bald&&!o.plain&&sheets['b_'+n0]?'b_'+n0:n0,s=o.sheet||(o.plain&&sheets[n0].plain)||sheets[n],f=frameOf(n0,pose,o),m=s.m,g=u/m.ppu,pt=m.pts[f];   /* plain = 남의 선수(기본 모습) */
   ctx.drawImage(s.cv,f*m.w,0,m.w,m.h,cx+m.box[0]*u,footY-m.box[3]*u,m.w*g,m.h*g);const P=a=>[cx+a[0]*u,footY-a[1]*u];return {hand:P(pt.hand),handR:P(pt.handR||pt.hand)};};
 H3.img2=k=>IM[k];
 /* 기구 그림·선·손잡이도 같은 대기열에 (경기장 좌표). 선수보다 먼저 부르면 뒤에, 나중에 부르면 앞에 그려짐 */
