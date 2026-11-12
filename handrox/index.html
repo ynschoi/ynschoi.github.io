@@ -83,9 +83,9 @@ try{Promise.all([document.fonts.load('12px Galmuri9'),document.fonts.load('bold 
   .cover .ctop{position:absolute;top:12px;right:14px;display:flex;gap:16px}
   .cover .ctop button{font:14px var(--px);color:#8d8da0;padding:2px 4px}
   .cover .logo{width:74%;max-width:300px;display:flex;flex-direction:column;align-items:center}
-  .cover .logo .lw{width:100%;height:auto;display:block}
+  .cover .logo .lw{font:700 clamp(40px,13vw,58px)/1 var(--px);letter-spacing:4px;color:#fff;text-shadow:3px 3px 0 var(--red),6px 6px 0 #000;white-space:nowrap}   /* 갈무리 픽셀 글꼴 로고 */
   .cover .logo .lb{width:104%;margin-top:6%;padding:2.2% 0;background:var(--gold);display:flex;justify-content:center;clip-path:polygon(4% 0,100% 0,96% 100%,0 100%)}
-  .cover .logo .lb img{width:84%;height:auto;display:block;filter:brightness(0)}
+  .cover .logo .lb span{font:700 clamp(11px,3.4vw,14px)/1.2 var(--px);letter-spacing:2px;color:#111;white-space:nowrap}
   .cover .tag{font-size:17px;color:#fff;margin-top:-4px}
   .cover .gap{height:10px}
   .cover .city,.cover .note{display:none}
@@ -226,7 +226,7 @@ try{Promise.all([document.fonts.load('12px Galmuri9'),document.fonts.load('bold 
 
   <div class="cover" id="cover">
       <div class="ctop"><button type="button" id="cLb" hidden aria-label="leaderboard">🏆</button><button type="button" id="cHlp">?</button><button type="button" id="cSnd">♪</button></div>
-      <div class="logo" role="img" aria-label="HANDROX — The Ultimate Finger Race"><img class="lw" src="logo_word.png" alt="" width="998" height="123"><div class="lb"><img src="logo_tag.png" alt="" width="997" height="47"></div></div>
+      <div class="logo" role="img" aria-label="HANDROX — The Ultimate Finger Race"><div class="lw">HANDROX</div><div class="lb"><span>THE ULTIMATE FINGER RACE</span></div></div>
       <div class="city" id="city" hidden>PHONE</div>
       <div class="tag" id="cTag"></div>
       <div class="gap"></div>
