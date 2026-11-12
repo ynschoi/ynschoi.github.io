@@ -163,6 +163,7 @@ try{Promise.all([document.fonts.load('12px Galmuri9'),document.fonts.load('bold 
   .res.lb{width:100%;max-width:340px}.res.lb h3{font:700 18px var(--px);color:var(--gold);margin:0 0 8px}
   .lbl{max-height:52vh;overflow:auto;margin:0 0 10px;border-top:1px solid #2a2a36}
   .lbl div{display:grid;grid-template-columns:30px 1fr auto;gap:6px;font:13px var(--px);padding:5px 4px;border-bottom:1px solid #2a2a36;text-align:left;font-variant-numeric:tabular-nums}
+  .lbl div{cursor:pointer}.lbl div.gap{display:block;text-align:center;color:var(--dim);padding:0;cursor:default}.res.lb th{font:11px var(--px);color:var(--dim);text-align:right;padding:3px 4px}.res.lb td:nth-child(4){text-align:right;color:var(--dim);font-variant-numeric:tabular-nums}.res.lb td.up{color:var(--green)}.res.lb td:nth-child(3){color:#fff;width:auto}
   .lbl div.me{background:#ffd40022;color:var(--gold)}.lbl i{font-style:normal;color:var(--dim)}.lbl div:nth-child(-n+3) i{color:var(--gold)}
   .lbn{display:flex;gap:6px;justify-content:center;margin:6px 0 10px}.lbn input{font:14px var(--px);width:130px;padding:8px;background:#0c0c10;color:#fff;border:2px solid #555;text-align:center}
   .lbn button{font:700 13px var(--px);padding:8px 12px;border:2px solid var(--gold);background:var(--gold);color:#111}.lbm{font:12px var(--px);color:var(--dim);min-height:16px;margin:4px 0}
@@ -683,18 +684,31 @@ function finish(){G.state='done';const tot=G.clock,old=SAVE.pb,oldS=SAVE.splits,
    깃허브 주소처럼 저장소가 없는 곳에서는 init()이 false → 순위 버튼·등록 칸이 안 보임. 다른 서버를 붙일 땐 LB의 init/top/submit만 바꾸면 됨 */
 const LB={db:null,uid:null,p:null,
   init(){return this.p||(this.p=(async()=>{try{if(!window.claude||!claude.use)return false;const [db,user]=await Promise.all([claude.use('db'),claude.use('user')]);if(!db||!user)return false;this.uid=await user.id();this.db=db;return !!this.uid;}catch(e){return false;}})());},
-  async top(n=50){const q=await this.db.collection('scores').orderBy('t','asc').limit(n).get();return q.docs.map(d=>({id:d.id,...(d.data()||{})})).filter(r=>typeof r.t==='number'&&r.t>0);},
+  async top(n=500){const q=await this.db.collection('scores').orderBy('t','asc').limit(n).get();return q.docs.map(d=>({id:d.id,...(d.data()||{})})).filter(r=>typeof r.t==='number'&&r.t>0);},
   async submit(name,t){const ref=this.db.doc('scores/'+this.uid),cur=await ref.get(),o=cur.exists&&cur.data();
-    if(o&&typeof o.t==='number'&&o.t<=t){if(o.name!==name)await ref.update({name});return false;}await ref.set({name,t:Math.round(t*10)/10,at:Date.now()});return true;}};
+    const sp=Array.isArray(SAVE.splits)&&SAVE.splits.length===16?SAVE.splits.map(v=>Math.round(v*10)/10):null;   /* 구간 기록(달리기 8 + 종목 8)도 같이 올려 서로 비교 */
+    if(o&&typeof o.t==='number'&&o.t<=t){const u={};if(o.name!==name)u.name=name;if(sp&&!Array.isArray(o.sp)&&Math.abs(o.t-t)<.06)u.sp=sp;if(Object.keys(u).length)await ref.update(u);return false;}
+    await ref.set({name,t:Math.round(t*10)/10,at:Date.now(),...(sp?{sp}:{})});return true;}};
 const nickOk=v=>String(v||'').replace(/\s+/g,' ').trim().slice(0,8),within=(pr,ms=10000)=>Promise.race([pr,new Promise((_,j)=>setTimeout(()=>j(Error('timeout')),ms))]);
 const el=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e;};
-/* 순위표 창. 이름은 남이 쓴 글자라 textContent로만 넣음 */
+/* 순위표 창: 위 10명 + (내가 10등 밖이면) 내 줄을 실제 등수와 함께 맨 아래에. 줄을 누르면 그 사람 구간 기록을 내 최고 기록과 비교. 이름은 남이 쓴 글자라 textContent로만 넣음 */
 async function lbShow(){const B=$('lbBody');B.textContent='';B.append(el('h3','',L('🏆 순위','🏆 LEADERBOARD')));const msg=el('div','lbm',L('불러오는 중…','Loading…')),list=el('div','lbl'),row=el('div','row'),x=el('button','y',L('닫기','Close'));
   x.type='button';x.onclick=()=>{$('lbPanel').hidden=true;};row.append(x);B.append(msg,list,row);$('lbPanel').hidden=false;
-  try{if(!await LB.init())throw 0;const rows=await within(LB.top());msg.textContent=rows.length?'':L('아직 기록이 없어요. 첫 번째로 완주해 보세요!','No records yet. Be the first to finish!');
-    rows.forEach((r,i)=>{const d=el('div',r.id===LB.uid?'me':'');d.append(el('i','',String(i+1)),el('span','',nickOk(r.name)||'???'),el('b','',fmt(r.t)));list.append(d);});
-    const mine=rows.findIndex(r=>r.id===LB.uid);if(mine>=0)msg.textContent=L(`내 순위 ${mine+1}위`,`Your rank: #${mine+1}`);}
+  try{if(!await LB.init())throw 0;const rows=await within(LB.top()),mine=rows.findIndex(r=>r.id===LB.uid);
+    const add=(r,i)=>{const d=el('div',r.id===LB.uid?'me':'');d.append(el('i','',String(i+1)),el('span','',nickOk(r.name)||'???'),el('b','',fmt(r.t)));d.onclick=()=>lbDetail(r,i+1);list.append(d);};
+    rows.slice(0,10).forEach(add);if(mine>=10){list.append(el('div','gap','⋮'));add(rows[mine],mine);}
+    msg.textContent=!rows.length?L('아직 기록이 없어요. 첫 번째로 완주해 보세요!','No records yet. Be the first to finish!'):mine>=0?L(`내 순위 ${mine+1}위 / ${rows.length}명 · 줄을 누르면 구간 기록 비교`,`Your rank #${mine+1} of ${rows.length} · tap a row to compare`):L(`${rows.length}명 · 줄을 누르면 구간 기록`,`${rows.length} players · tap a row for splits`);}
   catch(e){msg.textContent=L('순위를 불러오지 못했어요','Could not load the leaderboard');}}
+/* 한 사람의 전체 기록: 달리기 합계 + 8종목. 내 최고 기록이 있으면 옆에 나란히, 내가 빠른 종목은 초록 */
+function lbDetail(r,rank){const B=$('lbBody'),me=r.id===LB.uid,sp=Array.isArray(r.sp)&&r.sp.length===16&&r.sp.every(v=>typeof v==='number')?r.sp:null,my=!me&&Array.isArray(SAVE.splits)&&SAVE.splits.length===16?SAVE.splits:null;
+  B.textContent='';B.append(el('h3','',`${rank}${L('위','')} · ${nickOk(r.name)||'???'}`),el('div','tm',fmt(r.t)));
+  if(!sp)B.append(el('div','lbm',L('이 기록에는 구간 기록이 없어요','No split times for this record')));
+  else{const run=a=>a.filter((_,i)=>i%2===0).reduce((x,y)=>x+y,0),t=el('table'),line=(nm,a,b,head)=>{const tr=el('tr');tr.append(el(head?'th':'td','',nm),el(head?'th':'td','',head?a:fmtS(a)));
+        if(my||head&&b){const c=el(head?'th':'td','',head?b:fmtS(b));tr.append(c);if(!head){const d=el('td',b<a?'up':'',(b<a?'-':'+')+fmtS(Math.abs(b-a)));tr.append(d);}else tr.append(el('th','',''));}t.append(tr);};
+    line('',nickOk(r.name)||'???',my?L('나','Me'):'',1);line(L('달리기 8km','Run 8km'),run(sp),my&&run(my));ST.forEach((st,n)=>line(L(...st.nm),sp[n*2+1],my&&my[n*2+1]));
+    if(my){const tr=el('tr');tr.append(el('td','',L('합계','Total')),el('td','',fmt(r.t)),el('td','',fmt(SAVE.pb)),el('td',SAVE.pb<r.t?'up':'',(SAVE.pb<r.t?'-':'+')+fmtS(Math.abs(SAVE.pb-r.t))));t.append(tr);}
+    B.append(t);if(!my&&!me)B.append(el('div','lbm',L('완주하면 내 기록과 비교돼요','Finish a race to compare with yours')));}
+  const row=el('div','row'),bk=el('button','',L('← 순위','← Back')),x=el('button','y',L('닫기','Close'));bk.type=x.type='button';bk.onclick=lbShow;x.onclick=()=>{$('lbPanel').hidden=true;};row.append(bk,x);B.append(row);}
 /* 완주 화면 아래: 닉네임이 있으면 최고 기록을 바로 올리고, 없으면 한 번 입력받음 */
 async function lbResult(){const box=$('lbRes');if(!box||!await LB.init()||!$('lbRes'))return;const b=$('lbRes');b.textContent='';const msg=el('div','lbm');
   const send=async()=>{msg.textContent=L('순위 등록 중…','Submitting…');try{await within(LB.submit(SAVE.nick,SAVE.pb));const rows=await within(LB.top()),i=rows.findIndex(r=>r.id===LB.uid);
