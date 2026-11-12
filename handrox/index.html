@@ -551,20 +551,21 @@ const ST=[
     한 번 하면 반대쪽으로 불이 넘어감. 너무 오래 누르면 무릎이 바닥에 쿵 → 잠깐 멈춤 */
  {id:'lunge',rate:36,need:100,unit:'m',pxu:4,nm:['샌드백 런지','SANDBAG LUNGES'],hint:'',
   how:['불 켜진 쪽(L·R)을 꾹 눌러 무릎을 내리고, 노란 칸에서 떼요. 번갈아!','Hold the lit side to sink, release on yellow. Then the other side!'],
-  init(s){s.side='L';s.st='idle';s.c=0;s.rz=0;s.k=0;s.ph=0;s.tph=0;s.w=0;s.ct=0;s.last=0;},
-  down(s,side){if(s.st!=='idle')return;if(side!==s.side){SFX.bad();fx(L('반대쪽!','OTHER SIDE!'),'#ff8a7a',120,52,11);return;}s.st='down';s.c=0;},
-  up(s,side){if(s.st!=='down'||side!==s.side)return;const v=s.c;let g=0,d=3;if(v>=.72&&v<=.92){g=2;d=10;}else if(v>=.5&&v<=1){g=1;d=6;}
-    grade(g,120,52);s.st='rise';s.rz=0;s.from=s.p;s.jd=d;s.last=v;s.side=other(side);s.tph+=Math.PI;SFX.step(side);},
+  init(s){s.side='L';s.st='idle';s.c=0;s.rz=0;s.cb=0;s.k=0;s.ph=0;s.tph=0;s.w=0;s.ct=0;s.last=0;},
+  down(s,side){if(s.st==='rise'){s.p=Math.min(this.need,s.from+s.jd);s.st='idle';s.k=0;}   /* 일어나는 중에 눌러도 바로 다음 런지 */
+    if(s.st!=='idle')return;if(side!==s.side){SFX.bad();fx(L('반대쪽!','OTHER SIDE!'),'#ff8a7a',120,52,11);return;}s.st='down';s.c=0;},
+  up(s,side){if(s.st!=='down'||side!==s.side)return;const v=s.c;let g=0,d=3;if(v>=.66&&v<=.92){g=2;s.cb=(s.cb||0)+1;d=10+Math.min(4,s.cb-1);}else{s.cb=0;if(v>=.45&&v<=1){g=1;d=6;}}
+    grade(g,120,52);if(s.cb>=2)fx(s.cb+' COMBO','#ffd400',120,66,9);s.st='rise';s.rz=0;s.from=s.p;s.jd=d;s.last=v;s.side=other(side);s.tph+=Math.PI;SFX.step(side);},
   update(s,dt){s.ph+=(s.tph-s.ph)*Math.min(1,dt*10);
-    if(s.st==='down'){s.c+=dt/1.1;s.k=Math.min(1,s.c);s.ct+=dt;if(s.ct>.07){s.ct=0;SFX.charge(s.c);}if(s.c>1.12){s.st='stum';s.w=.45;SFX.thud();fx(L('무릎 쿵!','KNEE DOWN!'),'#ff8a7a',120,52,11);}}
-    else if(s.st==='rise'){s.rz+=dt/.25;s.p=Math.min(this.need,s.from+s.jd*Math.min(1,s.rz));s.k=s.last*(1-Math.min(1,s.rz));if(s.rz>=1){s.st='idle';s.k=0;}}
+    if(s.st==='down'){s.c+=dt/Math.max(.5,.8-(s.cb||0)*.04);s.k=Math.min(1,s.c);s.ct+=dt;if(s.ct>.07){s.ct=0;SFX.charge(s.c);}if(s.c>1.12){s.st='stum';s.w=.45;SFX.thud();fx(L('무릎 쿵!','KNEE DOWN!'),'#ff8a7a',120,52,11);}}
+    else if(s.st==='rise'){s.rz+=dt/.18;s.p=Math.min(this.need,s.from+s.jd*Math.min(1,s.rz));s.k=s.last*(1-Math.min(1,s.rz));if(s.rz>=1){s.st='idle';s.k=0;}}
     else if(s.st==='stum'){s.w-=dt;s.k=1;if(s.w<=0){s.st='idle';s.k=0;}}},
   want:s=>s.side,
   draw(s){scene(s.dp*this.pxu);const x=110,h=hero(x,FL,{ph:s.ph,cr:s.k*.85,st:13,arm:-2.2,sh:s.st==='stum'?2:0});
     rr(h.sx-12,h.sy-4,14,7,2,'#4a4a56');R(h.sx-7,h.sy-3,3,5,'#ffd400');
     const gx=252,gy=24,gh=100,Y=v=>gy+gh*(v/1.12);                          /* 아래로 내려가는 게이지 = 무릎 높이 */
     c.fillStyle='#111';c.fillRect(gx-3,gy-3,30,gh+6);c.fillStyle='#3a1418';c.fillRect(gx,gy,24,gh);
-    c.fillStyle='#16a34a';c.fillRect(gx,Y(.5),24,Y(1)-Y(.5));c.fillStyle='#ffd400';c.fillRect(gx,Y(.72),24,Y(.92)-Y(.72));
+    c.fillStyle='#16a34a';c.fillRect(gx,Y(.45),24,Y(1)-Y(.45));c.fillStyle='#ffd400';c.fillRect(gx,Y(.66),24,Y(.92)-Y(.66));
     c.fillStyle='#e5391f';c.fillRect(gx,Y(1.08),24,Y(1.12)-Y(1.08));
     if(s.st==='down'||s.st==='stum'){c.fillStyle='#fff';c.fillRect(gx-6,Y(Math.min(1.12,s.c))-1.5,36,3);}
     ['L','R'].forEach((sd,i)=>{const on=s.side===sd;rr(206+i*0,30+i*30,26,22,4,on?'#ffd400':'#1c1c24',on?'#111':'#33333d');txt(sd,219,46+i*30,13,on?'#111':'#55556a');});
