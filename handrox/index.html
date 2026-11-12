@@ -566,12 +566,14 @@ const ST=[
     한 번 하면 반대쪽으로 불이 넘어감. 너무 오래 누르면 무릎이 바닥에 쿵 → 잠깐 멈춤 */
  {id:'lunge',rate:36,need:100,unit:'m',pxu:4,nm:['샌드백 런지','SANDBAG LUNGES'],hint:'',
   how:['불 켜진 쪽(L·R)을 꾹 눌러 무릎을 내리고, 노란 칸에서 떼요. 번갈아!','Hold the lit side to sink, release on yellow. Then the other side!'],
-  init(s){s.side='L';s.st='idle';s.c=0;s.rz=0;s.cb=0;s.k=0;s.ph=0;s.tph=0;s.w=0;s.ct=0;s.last=0;},
-  down(s,side){if(s.st==='rise'){s.p=Math.min(this.need,s.from+s.jd);s.st='idle';s.k=0;}   /* 일어나는 중에 눌러도 바로 다음 런지 */
-    if(s.st!=='idle')return;if(side!==s.side){SFX.bad();fx(L('반대쪽!','OTHER SIDE!'),'#ff8a7a',120,52,11);return;}s.st='down';s.c=0;},
-  up(s,side){if(s.st!=='down'||side!==s.side)return;const v=s.c;let g=0,d=3;if(v>=.66&&v<=.92){g=2;s.cb=(s.cb||0)+1;d=10+Math.min(4,s.cb-1);}else{s.cb=0;if(v>=.45&&v<=1){g=1;d=6;}}
-    grade(g,120,52);if(s.cb>=2)fx(s.cb+' COMBO','#ffd400',120,66,9);s.st='rise';s.rz=0;s.from=s.p;s.jd=d;s.last=v;s.side=other(side);s.tph+=Math.PI;SFX.step(side);},
-  update(s,dt){s.ph+=(s.tph-s.ph)*Math.min(1,dt*10);
+  init(s){s.side='L';s.st='idle';s.c=0;s.rz=0;s.cb=0;s.k=0;s.ph=0;s.tph=0;s.w=0;s.ct=0;s.last=0;s.hd={L:0,R:0};},
+  /* 미리 눌러 둔 쪽(hd=2: 아직 안 쓴 누름)은 차례가 오면 바로 시작 — 앞 손을 떼기 전에 다음 손을 눌러도 먹힘 */
+  go(s){if(s.st==='rise'){s.p=Math.min(this.need,s.from+s.jd);s.st='idle';s.k=0;}if(s.st==='idle'&&s.hd[s.side]===2){s.hd[s.side]=1;s.st='down';s.c=0;}},
+  down(s,side){s.hd[side]=2;if(side===s.side){if(s.st==='rise'||s.st==='idle')this.go(s);return;}
+    if(s.st==='idle'){s.hd[side]=1;SFX.bad();fx(L('반대쪽!','OTHER SIDE!'),'#ff8a7a',120,52,11);}},
+  up(s,side){s.hd[side]=0;if(s.st!=='down'||side!==s.side)return;const v=s.c;let g=0,d=3;if(v>=.66&&v<=.92){g=2;s.cb=(s.cb||0)+1;d=10+Math.min(4,s.cb-1);}else{s.cb=0;if(v>=.45&&v<=1){g=1;d=6;}}
+    grade(g,120,52);if(s.cb>=2)fx(s.cb+' COMBO','#ffd400',120,66,9);s.st='rise';s.rz=0;s.from=s.p;s.jd=d;s.last=v;s.side=other(side);s.tph+=Math.PI;SFX.step(side);if(s.hd[s.side]===2)this.go(s);},
+  update(s,dt){s.ph+=(s.tph-s.ph)*Math.min(1,dt*10);if(s.st==='idle'&&s.hd[s.side]===2)this.go(s);
     if(s.st==='down'){s.c+=dt/Math.max(.5,.8-(s.cb||0)*.04);s.k=Math.min(1,s.c);s.ct+=dt;if(s.ct>.07){s.ct=0;SFX.charge(s.c);}if(s.c>1.12){s.st='stum';s.w=.45;SFX.thud();fx(L('무릎 쿵!','KNEE DOWN!'),'#ff8a7a',120,52,11);}}
     else if(s.st==='rise'){s.rz+=dt/.18;s.p=Math.min(this.need,s.from+s.jd*Math.min(1,s.rz));s.k=s.last*(1-Math.min(1,s.rz));if(s.rz>=1){s.st='idle';s.k=0;}}
     else if(s.st==='stum'){s.w-=dt;s.k=1;if(s.w<=0){s.st='idle';s.k=0;}}},
