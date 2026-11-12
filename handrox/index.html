@@ -14,7 +14,13 @@
 <meta name="theme-color" content="#0c0c10">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/galmuri.css">
-<style>@font-face{font-family:Galmuri9;src:url(fonts/Galmuri9.woff2) format("woff2");font-display:swap}</style>
+<link rel="preload" href="fonts/Galmuri9.woff2" as="font" type="font/woff2" crossorigin>
+<style>@font-face{font-family:Galmuri9;src:url(fonts/Galmuri9.woff2) format("woff2");font-display:block}
+@font-face{font-family:Galmuri11;src:url(fonts/Galmuri9.woff2) format("woff2");font-display:block}
+html:not(.fr) body{visibility:hidden}</style>
+<script>/* 글꼴이 준비된 뒤에 화면을 보여 줌 (처음에 다른 글꼴로 잠깐 보이는 것 방지). 1.5초 넘으면 그냥 보여 줌 */
+(function(){var d=document.documentElement,go=function(){d.classList.add('fr');};setTimeout(go,1500);
+try{Promise.all([document.fonts.load('12px Galmuri9'),document.fonts.load('bold 12px Galmuri11')]).then(go,go);}catch(e){go();}})();</script>
 <style>
   /* 게임보이 3단 (Moti와 같은 틀): 정보창 / 경기장 / 손가락 패드 — 한 화면 고정 */
   :root{
