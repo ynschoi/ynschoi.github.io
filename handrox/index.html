@@ -56,7 +56,8 @@
 
   /* ═══ 가운데: 경기장 ═══ */
   .game{position:relative;overflow:hidden;background:#111;border-top:3px solid #fff;border-bottom:3px solid #fff}
-  #cv{position:absolute;inset:0;width:100%;height:100%;display:block}
+  #cv,#cv3{position:absolute;inset:0;width:100%;height:100%;display:block}
+  #cv3{pointer-events:none;z-index:1;image-rendering:pixelated}
   .tb{position:absolute;top:8px;z-index:9;font:700 10px var(--px);color:#fff;background:#0c0c10cc;border:2px solid var(--gold);padding:3px 6px}
   #snd{right:8px}#hlp{right:56px}#lng{right:82px}#rst{left:8px}.tb[hidden]{display:none}
   .banner{position:absolute;left:0;right:0;top:20%;z-index:15;text-align:center;font-size:30px;font-weight:700;color:var(--gold);-webkit-text-stroke:2px #111;text-shadow:4px 4px 0 var(--red);opacity:0;transform:scale(.5);transition:.15s;pointer-events:none}
@@ -117,6 +118,8 @@
   #feZoom{width:192px;margin-bottom:6px;accent-color:var(--gold);touch-action:pan-x}
   .cover #fsel button{padding:4px 10px;font-size:11px}
   .cust{padding:10px 12px!important}
+  #cuPrev3{display:none;width:144px;height:168px;margin:0 auto 6px;background:#050506;border:2px solid var(--gold);image-rendering:pixelated;touch-action:none;cursor:grab}
+  .has3d #cuPrev3{display:block}.has3d #cuPrev{display:none}
   #cuPrev{display:block;width:192px;height:128px;margin:0 auto 6px;background:#050506;border:2px solid var(--gold);image-rendering:pixelated}
   .crow{display:flex;align-items:center;gap:4px;margin:4px 0;flex-wrap:wrap}
   .crow span{width:58px;font:10px var(--px);color:var(--dim);text-align:left;flex:none}
@@ -158,6 +161,7 @@
 
   <section class="game" id="game">
     <canvas id="cv" width="640" height="340"></canvas>
+    <canvas id="cv3" width="320" height="170"></canvas>
     <button class="tb" id="rst" type="button" hidden>↺</button>
     <button class="tb" id="lng" type="button">KO</button>
     <button class="tb" id="hlp" type="button">?</button>
@@ -183,7 +187,7 @@
   </section>
 
   <div class="help" id="help" hidden><div id="helpBody"></div></div>
-  <div class="help" id="custPanel" hidden><div class="res cust"><h3 id="cuT"></h3><canvas id="cuPrev" width="384" height="256"></canvas>
+  <div class="help" id="custPanel" hidden><div class="res cust"><h3 id="cuT"></h3><canvas id="cuPrev" width="384" height="256"></canvas><canvas id="cuPrev3" width="192" height="224" aria-label="3D 캐릭터, 좌우로 끌어서 돌리기"></canvas>
     <div id="cuRows"></div>
     <div class="row"><button type="button" id="faceBtn"></button><button type="button" id="feDel" hidden>✕</button></div>
     <div class="row" style="margin-top:8px"><button type="button" id="cuRnd">🎲</button><button type="button" class="y" id="cuOk"></button></div></div></div>
@@ -390,7 +394,7 @@ const RUN={id:'run',rate:94,need:1000,unit:'m',pxu:.8,nm:['달리기','RUN'],hin
   want:s=>s.last?other(s.last):'LR',
   draw(s){scene(s.dp*this.pxu);const m=G.seg.need-s.dp;                       // 결승 아치
     const ax=120+m*this.pxu;if(ax<W+30){c.fillStyle='#e5391f';c.fillRect(ax,60,5,FL-60);c.fillRect(ax-30,60,65,12);txt(G.i===14?'FINISH':'ROXZONE',ax+2,70,8,'#fff');}
-    hero(110,FL,{ph:s.ph,lean:.18,arm:1.1+Math.sin(s.ph)*.9,swing:1,sh:s.stum?3:0});}};
+    if(!(window.H3&&H3.show('run',110+(s.stum?(Math.random()-.5)*3:0),FL,{ph:s.ph})))hero(110,FL,{ph:s.ph,lean:.18,arm:1.1+Math.sin(s.ph)*.9,swing:1,sh:s.stum?3:0});}};
 /* ═════════ 에르그(스키·로잉) 공통 ═════════
    손잡이를 잡은 채 당긴 길이만큼 전진. 끝까지 당기면 되돌아와야 다시 당길 수 있음 (그래서 원을 그리게 됨).
    손가락 하나 = 한 번에 최대 62m, 두 손잡이 다 잡고 길게 당기면 124m. 초당 2번쯤 돌리면 2:00/500m */
@@ -570,7 +574,8 @@ function loop(t){const dt=Math.min(.05,(t-last)/1000);last=t;
     const w=G.state==='play'&&seg.want?seg.want(s):'';$('pL').classList.toggle('want',w.includes('L'));$('pR').classList.toggle('want',w.includes('R'));
     if(seg.erg)for(const d of ['L','R'])$('p'+d).firstElementChild.style.transform=seg.id==='ski'?`translateY(${s.pos[d]*62}px)`:`translateX(${-s.pos[d]*62}px)`;
     if(G.state==='play'&&s.p>=seg.need)nextSeg();
-  }else{idleT+=dt;scene(idleT*40);hero(150,FL,{ph:idleT*7,lean:.15,arm:1.1+Math.sin(idleT*7)*.9,swing:1});}
+  }else{idleT+=dt;scene(idleT*40);if(!(window.H3&&H3.show('run',150,FL,{ph:idleT*7})))hero(150,FL,{ph:idleT*7,lean:.15,arm:1.1+Math.sin(idleT*7)*.9,swing:1});}
+  if(window.H3)H3.frame(t);
   requestAnimationFrame(loop);}
 
 /* ═════════ 손가락 입력 ═════════ */
@@ -655,6 +660,11 @@ try{const u=localStorage.getItem(FKEY);if(u){const im=new Image();im.onload=()=>
 const VENUE=(navigator.maxTouchPoints>0||'ontouchstart' in window)?'PHONE':'HOME';$('city').textContent=VENUE;
 setLang(lang);fitApp();requestAnimationFrame(loop);
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitApp);
+/* 3D 선수 색 = 캐릭터 만들기에서 고른 색 (3D 모델은 모양을 못 바꾸고 색만 바뀜) */
+window.handroxColors=()=>({skin:OPT.skin[CHAR.skin],hair:OPT.hair[CHAR.hair],top:CHAR.topS===2?OPT.skin[CHAR.skin]:OPT.top[CHAR.top],
+  shorts:OPT.shorts[CHAR.shorts],band:OPT.band[CHAR.band]||'#f2f2f2',shoes:OPT.shoes[CHAR.shoes]});
 </script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module" src="hero3d.js"></script>
 </body>
 </html>
