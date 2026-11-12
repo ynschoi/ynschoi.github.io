@@ -87,7 +87,7 @@ H3.frame=t=>{if(!H3.ok)return;applyColors(H3.colors());
 H3.colors=()=>window.handroxColors?window.handroxColors():{};
 
 async function init(){const cv=document.getElementById('cv3');if(!cv)return;
-  try{const g=await new GLTFLoader().loadAsync('hero.glb');let mesh=null;g.scene.traverse(o=>{if(o.isMesh&&!mesh)mesh=o;});if(!mesh)throw Error('no mesh');
+  try{const g=await new GLTFLoader().loadAsync(window.HERO_URL||'hero.glb');let mesh=null;g.scene.traverse(o=>{if(o.isMesh&&!mesh)mesh=o;});if(!mesh)throw Error('no mesh');
     const mask=await new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src='hero_mask.png';});
     const tex=prepColors(mesh.material.map,mask);mesh.material=new THREE.MeshLambertMaterial({map:tex});
     let src;if(g.scene.getObjectByProperty('type','SkinnedMesh')){H3.why='rigged GLB: 외부 리그 이름 매핑은 아직 미검증';throw Error(H3.why);} else src=autoRig(mesh);
