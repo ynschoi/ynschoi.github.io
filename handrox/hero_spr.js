@@ -27,9 +27,9 @@ function recolor(){const cols=window.handroxColors?handroxColors():{},key=JSON.s
 const frameOf=(n,pose,o)=>{const N=sheets[n].m.n;if(pose==='run'||pose==='runf'||pose==='push'||pose==='carry')return ((Math.round((o.ph||0)/(Math.PI*2)*N)%N)+N)%N;return Math.round(Math.min(1,Math.max(0,o.k||0))*(N-1));return 0;};
 /* 자세 하나 = 그림 한 칸. 원점(x,y) = 발밑, 로잉은 발 관절 */
 H3.show=(pose,x,y,o={})=>{if(!H3.ok)return false;const n=sheets[pose]?pose:'run',s=sheets[n],f=frameOf(n,pose,o),u=HEIGHT*(o.z||1),pt=s.m.pts[f];
-  if(!o.peek)queue.push({s,f,x,y,u});const P=a=>[x+a[0]*u,y-a[1]*u];return {hand:P(pt.hand),handR:pt.handR?P(pt.handR):P(pt.hand),hips:P(pt.hips)};};
+  const fx=o.fx?-1:1;if(!o.peek)queue.push({s,f,x,y,u,fx});const P=a=>[x+fx*a[0]*u,y-a[1]*u];return {hand:P(pt.hand),handR:pt.handR?P(pt.handR):P(pt.hand),hips:P(pt.hips)};};
 /* 기구 그림·선·손잡이도 같은 대기열에 (경기장 좌표). 선수보다 먼저 부르면 뒤에, 나중에 부르면 앞에 그려짐 */
-H3.img=(k,x,y,w,h)=>{if(H3.ok)queue.push({img:IM[k],x,y,w,h});};
+H3.img=(k,x,y,w,h,fx)=>{if(H3.ok)queue.push({img:IM[k],x,y,w,h,fx});};
 H3.line=(x1,y1,x2,y2,w,col)=>{if(H3.ok)queue.push({line:[x1,y1,x2,y2],w,col});};
 H3.rect=(x,y,w,h,col,ol)=>{if(H3.ok)queue.push({rect:[x,y,w,h],col,ol});};
 H3.shadow=(x,y,w)=>{if(H3.ok)queue.push({shadow:[x,y,w]});};
@@ -41,11 +41,11 @@ function fit(){if(!cv3)return;const w=cv3.offsetWidth||GW,dpr=Math.min(3,window.
 let OFFp=0;
 H3.frame=()=>{if(!H3.ok)return;recolor();fit();c3.setTransform(1,0,0,1,0,0);c3.clearRect(0,0,cv3.width,cv3.height);c3.setTransform(sc,0,0,sc,0,OFFp);c3.imageSmoothingEnabled=true;c3.imageSmoothingQuality='high';
   for(const q of queue){
-    if(q.img){c3.drawImage(q.img,q.x,q.y,q.w,q.h);continue;}
+    if(q.img){if(q.fx){c3.save();c3.translate(q.x+q.w,q.y);c3.scale(-1,1);c3.drawImage(q.img,0,0,q.w,q.h);c3.restore();}else c3.drawImage(q.img,q.x,q.y,q.w,q.h);continue;}
     if(q.shadow){const [x,y,w]=q.shadow;c3.save();c3.filter='blur(1.5px)';c3.fillStyle='rgba(0,0,0,.42)';c3.beginPath();c3.ellipse(x,y,w/2,3.2,0,0,7);c3.fill();c3.restore();continue;}
     if(q.line){c3.strokeStyle=q.col;c3.lineWidth=q.w;c3.lineCap='round';c3.beginPath();c3.moveTo(q.line[0],q.line[1]);c3.lineTo(q.line[2],q.line[3]);c3.stroke();continue;}
     if(q.rect){const [x,y,w,h]=q.rect;c3.fillStyle=q.ol;c3.beginPath();c3.roundRect(x-.6,y-.6,w+1.2,h+1.2,h/2);c3.fill();c3.fillStyle=q.col;c3.beginPath();c3.roundRect(x,y,w,h,h/2);c3.fill();continue;}
-    const m=q.s.m,g=q.u/m.ppu;c3.drawImage(q.s.cv,q.f*m.w,0,m.w,m.h,q.x+m.box[0]*q.u,q.y-m.box[3]*q.u,m.w*g,m.h*g);}queue=[];
+    const m=q.s.m,g=q.u/m.ppu;if(q.fx<0){c3.save();c3.translate(q.x,0);c3.scale(-1,1);c3.drawImage(q.s.cv,q.f*m.w,0,m.w,m.h,m.box[0]*q.u,q.y-m.box[3]*q.u,m.w*g,m.h*g);c3.restore();}else c3.drawImage(q.s.cv,q.f*m.w,0,m.w,m.h,q.x+m.box[0]*q.u,q.y-m.box[3]*q.u,m.w*g,m.h*g);}queue=[];
   if(cbg&&bgReq){const im=IM['bg_'+bgReq.kind],w=GW*sc,h=GH*sc,o=((bgReq.off*.7)%GW+GW)%GW*sc;cbg.setTransform(1,0,0,1,0,0);
     if(cvbg.width!==cv3.width||cvbg.height!==cv3.height){cvbg.width=cv3.width;cvbg.height=cv3.height;}cbg.imageSmoothingQuality='high';
     const ih=w*im.height/im.width,iy=OFFp+h-ih;   /* 그림 아래쪽(바닥)을 경기장 170 기준선에 맞추고 위쪽은 남는 만큼 보임 */
