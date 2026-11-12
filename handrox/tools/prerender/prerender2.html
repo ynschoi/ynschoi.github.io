@@ -17,11 +17,17 @@ if(HEADURL){obj.updateMatrixWorld(true);let sk;obj.traverse(o=>{if(o.isSkinnedMe
   const hb=new THREE.Box3();for(const i of k2){v.fromBufferAttribute(p2,i);hb.expandByPoint(v);}
   /* 새 머리 색: 생성 모델의 얼룩진(조명이 구워진) 텍스처 대신 몸과 같은 피부색 한 가지로 칠하고, 아주 어두운 픽셀(점 눈)만 검게 남김 */
   const im=hm.material.map.image,tc=document.createElement('canvas');tc.width=im.width;tc.height=im.height;const tx=tc.getContext('2d');tx.drawImage(im,0,0);const td=tx.getImageData(0,0,tc.width,tc.height),D=td.data,SK=[236,200,166];
-  for(let i=0;i<D.length;i+=4){const l=D[i]*.3+D[i+1]*.59+D[i+2]*.11,e=l<(+HQ.get('eye')||38);D[i]=e?18:SK[0];D[i+1]=e?16:SK[1];D[i+2]=e?16:SK[2];}tx.putImageData(td,0,0);
+  for(let i=0;i<D.length;i+=4){const l=D[i]*.3+D[i+1]*.59+D[i+2]*.11,e=l<(+HQ.get('eye')||0);   /* eye=38이면 점 눈을 남김. 기본은 눈 없이 매끈한 얼굴(각자 그린 얼굴을 붙일 자리) */D[i]=e?18:SK[0];D[i+1]=e?16:SK[1];D[i+2]=e?16:SK[2];}tx.putImageData(td,0,0);
   const ht=new THREE.CanvasTexture(tc);ht.flipY=hm.material.map.flipY;ht.colorSpace=THREE.SRGBColorSpace;const hmat=new THREE.MeshStandardMaterial({map:ht,roughness:.85,metalness:0});
   const sc=(bb.max.y-bb.min.y)/(hb.max.y-hb.min.y)*(+HQ.get('hs')||.93),head=new THREE.Mesh(g2,hmat),piv=new THREE.Group();
   head.position.set(-(hb.min.x+hb.max.x)/2,-hb.min.y,-(hb.min.z+hb.max.z)/2);piv.add(head);piv.scale.setScalar(sc);piv.rotation.y=Math.PI/2;   /* 새 머리 얼굴 +z → 선수 얼굴 +x */
-  piv.position.set((bb.min.x+bb.max.x)/2+(+HQ.get('hx')||0),bb.min.y+(+HQ.get('hy')||0),(bb.min.z+bb.max.z)/2);obj.add(piv);obj.updateMatrixWorld(true);B.Head.attach(piv);window.HEADINFO={old:[bb.min.toArray(),bb.max.toArray()],sc};}
+  piv.position.set((bb.min.x+bb.max.x)/2+(+HQ.get('hx')||0),bb.min.y+(+HQ.get('hy')||0),(bb.min.z+bb.max.z)/2);obj.add(piv);obj.updateMatrixWorld(true);B.Head.attach(piv);window.HEADINFO={old:[bb.min.toArray(),bb.max.toArray()],sc};
+  /* 얼굴 자리 지도: 머리 앞면에 정사각형 얼굴 칸을 정해, 화면의 각 점이 그 칸의 어디(u=빨강, v=초록)인지 따로 찍어 둠 → 게임이 각자 그린 얼굴을 자세마다 맞춰 입힘 */
+  const HW=hb.max.x-hb.min.x,HH=hb.max.y-hb.min.y,fs=HH*(+HQ.get('fs')||.62),fcx=(hb.min.x+hb.max.x)/2,fcy=hb.min.y+HH*(+HQ.get('fy')||.40);
+  window.FACEPASS={head,mat:hmat,sk,skMat:sk.material,hide:new THREE.MeshBasicMaterial({colorWrite:false}),   /* 몸은 색 없이 깊이만 → 팔이 얼굴을 가리는 자리는 얼굴 칸에서 빠짐 */
+    
+    uv:new THREE.ShaderMaterial({uniforms:{c:{value:new THREE.Vector2(fcx,fcy)},s:{value:fs}},vertexShader:'varying vec3 p;varying vec3 n;void main(){p=position;n=normal;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+      fragmentShader:'uniform vec2 c;uniform float s;varying vec3 p;varying vec3 n;void main(){vec2 u=(p.xy-c)/s+.5;float ok=step(0.,u.x)*step(u.x,1.)*step(0.,u.y)*step(u.y,1.)*step(.15,normalize(n).z);gl_FragColor=vec4(u*ok,0.,ok);}'})};}
 const rest={};for(const k in B)rest[k]=B[k].quaternion.clone();
 obj.updateMatrixWorld(true);const restW={};for(const k in B){restW[k]=new THREE.Quaternion();B[k].getWorldQuaternion(restW[k]);}
 /* 발을 기본 자세의 세계 방향으로 되돌림 → 무릎·엉덩이를 굽혀도 발바닥이 바닥에 평평 */
@@ -117,6 +123,9 @@ window.bake=job=>{const [x0,x1,y0,y1]=job.box,Wd=Math.round((x1-x0)*job.ppu),Ht=
   else if(res.anchor){const a=wp(res.anchor[0]),h=wp(res.anchor[1]);root.position.set(-a.x,-h.y,0);}else root.position.set(0,.49+(res.bounce||0),0);   /* 발바닥 = 0 */
   root.updateMatrixWorld(true);let cam;if(job.persp){const D=job.persp,cy=(y0+y1)/2;cam=new THREE.PerspectiveCamera(2*Math.atan((y1-y0)/2/D)*180/Math.PI,(x1-x0)/(y1-y0),.1,50);cam.position.set((x0+x1)/2,cy+.15,D);cam.lookAt((x0+x1)/2,cy,0);}else{cam=new THREE.OrthographicCamera(x0,x1,y1,y0,-10,10);cam.position.z=5;}r.setSize(Wd,Ht,false);r.render(sc,cam);
   blank.width=Wd;blank.height=Ht;const p=n=>{const v=wp(n);return [+v.x.toFixed(4),+v.y.toFixed(4)];};
-  return {w:Wd,h:Ht,c:cv.toDataURL('image/png'),m:blank.toDataURL('image/png'),pts:{hand:p('LeftHand'),handR:p('RightHand'),hips:p('Hips'),head:p('Head')}};};
+  const cURL=cv.toDataURL('image/png');let fURL=null;
+  if(window.FACEPASS){const P=window.FACEPASS,tm=r.toneMapping,cs=r.outputColorSpace;P.head.material=P.uv;P.sk.material=P.hide;r.toneMapping=THREE.NoToneMapping;r.outputColorSpace=THREE.LinearSRGBColorSpace;r.render(sc,cam);fURL=cv.toDataURL('image/png');
+    P.head.material=P.mat;P.sk.material=P.skMat;r.toneMapping=tm;r.outputColorSpace=cs;}
+  return {w:Wd,h:Ht,c:cURL,f:fURL,m:blank.toDataURL('image/png'),pts:{hand:p('LeftHand'),handR:p('RightHand'),hips:p('Hips'),head:p('Head')}};};
 window.READY=true;
 </script>

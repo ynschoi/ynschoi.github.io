@@ -24,6 +24,6 @@ const JOBS=process.env.ONLY==='prev'?{prev:[['idle',{},-Math.PI/2],['idle',{},-.
   p.on('pageerror',e=>console.log('ERR',e.message));await p.goto('http://localhost:8790/tools/prerender/'+PAGE);await p.waitForFunction(()=>window.READY,null,{timeout:120000});
   const meta={};for(const [name,jobs] of Object.entries(JOBS)){meta[name]={frames:[]};
     for(let i=0;i<jobs.length;i++){const r=await p.evaluate(j=>window.bake(j),jobs[i]);if(r.pts&&!r.pts.hand.length)throw 0;
-      for(const k of ['c','m'])fs.writeFileSync(path.join(OUT,`${name}_${i}_${k}.png`),Buffer.from(r[k].split(',')[1],'base64'));
+      for(const k of ['c','m','f'])if(r[k])fs.writeFileSync(path.join(OUT,`${name}_${i}_${k}.png`),Buffer.from(r[k].split(',')[1],'base64'));
       meta[name].frames.push(r.pts);meta[name].w=r.w;meta[name].h=r.h;meta[name].box=jobs[i].box;meta[name].ppu=jobs[i].ppu;}console.log(name,jobs.length);}
   fs.writeFileSync(path.join(OUT,'meta.json'),JSON.stringify(meta));await b.close();srv.close();})();
