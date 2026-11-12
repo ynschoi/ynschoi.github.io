@@ -259,6 +259,7 @@ const SHARE_URL='https://ynschoi.github.io/handrox/';
 const KEY='handrox.v3';   // v2: 시계 60배속으로 바뀌어 예전 기록과 섞이지 않게
 let SAVE={pb:0,splits:null,races:0};
 try{Object.assign(SAVE,JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(e){}
+if(!(Array.isArray(SAVE.bs)&&SAVE.bs.length===9)&&Array.isArray(SAVE.splits)&&SAVE.splits.length===16){const sp=SAVE.splits;SAVE.bs=[sp.filter((_,i)=>i%2===0).reduce((a,b)=>a+b,0),...[1,3,5,7,9,11,13,15].map(i=>sp[i])];}   /* 예전 기록: 최고 경기 구간으로 종목별 기록을 채움 */
 function save(){try{localStorage.setItem(KEY,JSON.stringify(SAVE));}catch(e){}}
 
 /* ═════════ 언어 ═════════ */
@@ -680,14 +681,14 @@ function hint(seg){$('hint').innerHTML=seg?seg.hint:`<small>${L('여기를 두 �
 async function countdown(){for(const n of [3,2,1]){overlay(`<div class="g" style="font-size:44px">${n}</div>`);SFX.beep();await sleep(650);}overlay(null);SFX.go();}
 async function newRace(){FX.length=0;G={i:-1,clock:0,splits:[],state:'wait',seg:null,s:null};$('result').hidden=true;$('rst').hidden=false;$('clock').textContent=fmt(0);
   const me=G;G.seg=RUN;G.s={p:0,dp:0,t:0,rt:0};RUN.init(G.s);G.i=0;paintInfo();await countdown();if(G!==me)return;G.state='play';banner('RUN 1/8');USE.hit(d=>{d.starts=(d.starts||0)+1;});}
-async function nextSeg(){const me=G;G.splits.push(G.s.rt);SFX.done();G.i++;if(G.i>=16)return finish();{const k='s'+G.i;USE.hit(d=>{d.seg=d.seg||{};d.seg[k]=(d.seg[k]||0)+1;});}
+async function nextSeg(){const me=G;G.splits.push(G.s.rt);if(G.i%2===1){const k=(G.i-1)/2+1,v=G.s.rt;if(!Array.isArray(SAVE.bs)||SAVE.bs.length!==9)SAVE.bs=Array(9).fill(0);if(!SAVE.bs[k]||v<SAVE.bs[k]){SAVE.bs[k]=v;save();LB.syncBs();}}SFX.done();G.i++;if(G.i>=16)return finish();{const k='s'+G.i;USE.hit(d=>{d.seg=d.seg||{};d.seg[k]=(d.seg[k]||0)+1;});}
   const seg=G.seg=SEG(G.i),s=G.s={p:0,dp:0,t:0,rt:0};seg.init(s);paintInfo();
   if(seg.id==='run'){G.state='play';banner(`RUN ${G.i/2+1}/8`);return;}
   G.state='intro';overlay(`<div class="t">STATION ${(G.i+1)/2}/8</div><div class="g">${L(...seg.nm)}</div><div class="s">${L(...seg.how)}</div><div class="k">${seg.hint}</div>`);
   await sleep(SAVE.races?1000:1700);if(G!==me)return;overlay(null);G.state='play';SFX.go();banner('GO!',450);}
 const RANKS=[[55*60,'ELITE 15','엘리트 15'],[65*60,'PRO','프로'],[80*60,'OPEN','오픈'],[100*60,'FINISHER','완주자'],[1e9,'ROXZONE TOURIST','록스존 관광객']];
 function finish(){USE.hit(d=>{d.fin=(d.fin||0)+1;d.best=Math.round(Math.min(G.clock,SAVE.pb||1e9)*10)/10;});G.state='done';const tot=G.clock,old=SAVE.pb,oldS=SAVE.splits,isPB=!old||tot<old;SFX.finish();banner('FINISH!',1600);$('rst').hidden=true;
-  SAVE.races=(SAVE.races||0)+1;{const run=G.splits.filter((_,i)=>i%2===0).reduce((a,b)=>a+b,0),cur=[run,...ST.map((_,n)=>G.splits[n*2+1])],ob=Array.isArray(SAVE.bs)&&SAVE.bs.length===9?SAVE.bs:null;SAVE.bs=cur.map((v,k)=>ob?Math.min(ob[k],v):v);}if(isPB){SAVE.pb=tot;SAVE.splits=G.splits.slice();}save();paintInfo();
+  SAVE.races=(SAVE.races||0)+1;{const run=G.splits.filter((_,i)=>i%2===0).reduce((a,b)=>a+b,0),cur=[run,...ST.map((_,n)=>G.splits[n*2+1])],ob=Array.isArray(SAVE.bs)&&SAVE.bs.length===9?SAVE.bs:null;SAVE.bs=cur.map((v,k)=>ob&&ob[k]>0?Math.min(ob[k],v):v);}if(isPB){SAVE.pb=tot;SAVE.splits=G.splits.slice();}save();paintInfo();
   const rk=RANKS.find(r=>tot<r[0]),runT=G.splits.filter((_,i)=>i%2===0).reduce((a,b)=>a+b,0),oldRun=oldS?oldS.filter((_,i)=>i%2===0).reduce((a,b)=>a+b,0):0;
   const d=(a,b)=>b?`<td class="${a<b?'up':''}">${a<b?'-':'+'}${fmtS(Math.abs(a-b))}</td>`:'<td></td>';
   const rows=`<tr><td>${L('달리기 8km','Run 8km')}</td><td>${fmtS(runT)}</td>${d(runT,oldRun)}</tr>`+ST.map((st,n)=>{const v=G.splits[n*2+1];return `<tr><td>${L(...st.nm)}</td><td>${fmtS(v)}</td>${d(v,oldS&&oldS[n*2+1])}</tr>`;}).join('');
@@ -703,13 +704,16 @@ function finish(){USE.hit(d=>{d.fin=(d.fin||0)+1;d.best=Math.round(Math.min(G.cl
    깃허브 주소처럼 저장소가 없는 곳에서는 init()이 false → 순위 버튼·등록 칸이 안 보임. 다른 서버를 붙일 땐 LB의 init/top/submit만 바꾸면 됨 */
 const LB={db:null,uid:null,p:null,
   init(){return this.p||(this.p=(async()=>{try{if(!window.claude||!claude.use)return false;const [db,user]=await Promise.all([claude.use('db'),claude.use('user')]);if(!db||!user)return false;this.uid=await user.id();this.db=db;return !!this.uid;}catch(e){return false;}})());},
-  async top(n=500){const q=await this.db.collection('scores').orderBy('t','asc').limit(n).get();return q.docs.map(d=>({id:d.id,...(d.data()||{})})).filter(r=>typeof r.t==='number'&&r.t>0);},
+  async top(n=500){const q=await this.db.collection('scores').orderBy('t','asc').limit(n).get();return q.docs.map(d=>({id:d.id,...(d.data()||{})})).filter(r=>(typeof r.t==='number'&&r.t>0)||Array.isArray(r.bs));},
   /* 한 사람 한 줄: name, t(최고 합계), sp(그 경기 구간 16개), bs(종목별 최고 9개: 달리기 합계 + 8종목), code(친구 코드) */
   code(){let h=2166136261;for(const ch of String(this.uid))h=Math.imul(h^ch.charCodeAt(0),16777619)>>>0;const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let o='';for(let k=0;k<6;k++){o+=A[h%32];h=((h>>>5)^Math.imul(h,2654435761))>>>0;}return o;},
   async submit(name,t){const ref=this.db.doc('scores/'+this.uid),cur=await ref.get(),o=cur.exists&&cur.data(),r1=v=>Math.round(v*10)/10;
     const sp=Array.isArray(SAVE.splits)&&SAVE.splits.length===16?SAVE.splits.map(r1):null,bs=Array.isArray(SAVE.bs)&&SAVE.bs.length===9?SAVE.bs.map(r1):null,code=this.code();
-    if(o&&typeof o.t==='number'&&o.t<=t){const u={};if(o.name!==name)u.name=name;if(o.code!==code)u.code=code;if(sp&&!Array.isArray(o.sp)&&Math.abs(o.t-t)<.06)u.sp=sp;if(bs&&JSON.stringify(o.bs)!==JSON.stringify(bs))u.bs=bs;if(Object.keys(u).length)await ref.update(u);return false;}
+    if(o&&typeof o.t==='number'&&o.t>0&&o.t<=t){const u={};if(o.name!==name)u.name=name;if(o.code!==code)u.code=code;if(sp&&!Array.isArray(o.sp)&&Math.abs(o.t-t)<.06)u.sp=sp;if(bs&&JSON.stringify(o.bs)!==JSON.stringify(bs))u.bs=bs;if(Object.keys(u).length)await ref.update(u);return false;}
     await ref.set({name,t:r1(t),at:Date.now(),code,...(sp?{sp}:{}),...(bs?{bs}:{})});return true;},
+  /* 종목별 기록만 바로 올림 (완주 전이어도). 닉네임이 있을 때만. 완주 기록이 없으면 t=0 줄로 만들어 종목 순위에만 나옴 */
+  syncBs(){this.sq=(this.sq||Promise.resolve()).then(async()=>{if(!SAVE.nick||!await this.init())return;const r1=v=>Math.round(v*10)/10,bs=SAVE.bs.map(v=>v?r1(v):0),ref=this.db.doc('scores/'+this.uid),cur=await ref.get(),o=cur.exists&&cur.data();
+    if(o){const u={bs};if(o.name!==SAVE.nick)u.name=SAVE.nick;await ref.update(u);}else await ref.set({name:SAVE.nick,t:0,at:Date.now(),code:this.code(),bs});}).catch(()=>{});return this.sq;},
   fref(){return this.db.collection('data/users/'+this.uid).doc('friends');},   /* 친구 목록: 나만 보는 칸 */
   async friends(){const d=await this.fref().get();const v=d.exists&&d.data();return Array.isArray(v&&v.ids)?v.ids.filter(x=>typeof x==='string').slice(0,200):[];},
   async addFriend(id){const ids=await this.friends();if(id===this.uid||ids.includes(id))return ids;ids.push(id);await this.fref().set({ids});return ids;},
@@ -725,7 +729,7 @@ const el=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=
    이름은 남이 쓴 글자라 textContent로만 넣음 */
 const KEYS9=['ALL','RUN','SKI','PUSH','PULL','BBJ','ROW','CARRY','LUNGE','WALL'],LBV={scope:'all',k:0,rows:null,fr:[]};
 const okSp=r=>Array.isArray(r.sp)&&r.sp.length===16&&r.sp.every(v=>typeof v==='number')?r.sp:null;
-function lbVal(r,k){if(!k)return r.t;if(Array.isArray(r.bs)&&r.bs.length===9&&typeof r.bs[k-1]==='number')return r.bs[k-1];const sp=okSp(r);if(!sp)return null;return k===1?sp.filter((_,i)=>i%2===0).reduce((a,b)=>a+b,0):sp[(k-2)*2+1];}
+function lbVal(r,k){if(!k)return r.t>0?r.t:null;if(Array.isArray(r.bs)&&r.bs.length===9&&typeof r.bs[k-1]==='number'&&r.bs[k-1]>0)return r.bs[k-1];const sp=okSp(r);if(!sp)return null;return k===1?sp.filter((_,i)=>i%2===0).reduce((a,b)=>a+b,0):sp[(k-2)*2+1];}
 const avEl=(me,big)=>{const a=el('span','av');const m=window.HERO_MAN&&HERO_MAN.icon;if(m)a.style.backgroundImage=`url(spr/${m.c})`;if(me)a.classList.add('me');if(big)a.style.width=a.style.height=big+'px';return a;};
 async function lbShow(){const B=$('lbBody');B.textContent='';$('lbPanel').hidden=false;const msg=el('div','lbm',L('불러오는 중…','Loading…'));B.append(el('h3','',L('🏆 순위','🏆 LEADERBOARD')),msg);
   try{if(!await LB.init())throw 0;const [rows,fr]=await within(Promise.all([LB.top(),LB.friends().catch(()=>[])]));LBV.rows=rows;LBV.fr=fr;lbDraw();}catch(e){msg.textContent=L('순위를 불러오지 못했어요','Could not load the leaderboard');lbButtons(B);}}
@@ -751,8 +755,8 @@ function lbFriend(){const B=$('lbBody');B.textContent='';B.append(el('h3','',L('
   inp.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')ok.onclick();});f.append(inp,ok);B.append(f,msg);
   const bk=el('button','',L('← 순위','← Back'));bk.type='button';bk.onclick=()=>LBV.rows?lbDraw():lbShow();lbButtons(B,bk);}
 /* ── 능력치 그래프 ── 9칸(RUN + 8종목). 칸마다 모든 선수 기록 중 가장 빠른 = 바깥(1), 가장 느린 = 안쪽(0.2). 노랑 = 나, 회색 = 비교 대상 */
-const bs9=r=>{const v=[1,2,3,4,5,6,7,8,9].map(k=>lbVal(r,k));return v.every(x=>typeof x==='number'&&x>0)?v:null;};
-function myBs(){const v=Array.isArray(SAVE.bs)&&SAVE.bs.length===9?SAVE.bs:null;if(v)return v;const r=LBV.rows&&LBV.rows.find(x=>x.id===LB.uid);return r?bs9(r):null;}
+const bs9=r=>{const v=[1,2,3,4,5,6,7,8,9].map(k=>lbVal(r,k));if(v.some(x=>!x))return null;return v.every(x=>typeof x==='number'&&x>0)?v:null;};
+function myBs(){const v=Array.isArray(SAVE.bs)&&SAVE.bs.length===9&&SAVE.bs.every(x=>x>0)?SAVE.bs:null;if(v)return v;const r=LBV.rows&&LBV.rows.find(x=>x.id===LB.uid);return r?bs9(r):null;}
 const avg9=rs=>{const a=rs.map(bs9).filter(Boolean);return a.length?a[0].map((_,k)=>a.reduce((s,x)=>s+x[k],0)/a.length):null;};
 function radar(series){const all=(LBV.rows||[]).map(bs9).filter(Boolean).concat(series.map(x=>x.v)),lo=[],hi=[];for(let k=0;k<9;k++){lo[k]=Math.min(...all.map(x=>x[k]));hi[k]=Math.max(...all.map(x=>x[k]));}
   const sc=(v,k)=>hi[k]-lo[k]<1?.7:.2+.8*(hi[k]-v)/(hi[k]-lo[k]),W=280,cx=140,cy=118,R=88,pt=(k,r)=>[cx+R*r*Math.cos(-Math.PI/2+k*2*Math.PI/9),cy+R*r*Math.sin(-Math.PI/2+k*2*Math.PI/9)];
@@ -797,13 +801,13 @@ function lbDetail(r,rank){const B=$('lbBody'),me=r.id===LB.uid,sp=okSp(r),my=!me
   const x=el('button','y',L('닫기','Close'));x.type='button';x.onclick=()=>{$('lbPanel').hidden=true;};row.append(x);B.append(row);}
 /* 완주 화면 아래: 닉네임이 있으면 최고 기록을 바로 올리고, 없으면 한 번 입력받음 */
 async function lbResult(){const box=$('lbRes');if(!box||!await LB.init()||!$('lbRes'))return;const b=$('lbRes');b.textContent='';const msg=el('div','lbm');
-  const send=async()=>{msg.textContent=L('순위 등록 중…','Submitting…');try{await within(LB.submit(SAVE.nick,SAVE.pb));const rows=await within(LB.top()),i=rows.findIndex(r=>r.id===LB.uid);
+  const send=async()=>{msg.textContent=L('순위 등록 중…','Submitting…');try{await within(LB.submit(SAVE.nick,SAVE.pb));const rows=(await within(LB.top())).filter(r=>r.t>0),i=rows.findIndex(r=>r.id===LB.uid);
       msg.textContent='';const a=el('button','',i>=0?L(`🏆 내 순위 ${i+1}위 · 순위 보기`,`🏆 Rank #${i+1} · view`):L('🏆 순위 보기','🏆 Leaderboard'));a.type='button';a.style.cssText='font:700 13px var(--px);padding:7px 12px;border:2px solid var(--gold);background:#0c0c10;color:var(--gold);margin-bottom:8px';a.onclick=lbShow;msg.append(a);}
     catch(e){msg.textContent=L('순위 등록에 실패했어요 (쓰기 권한이 없을 수 있어요)','Could not submit (you may not have write access)');}};
   if(SAVE.nick){b.append(msg);return send();}
   const f=el('div','lbn'),inp=el('input'),ok=el('button','',L('순위 등록','Submit'));inp.maxLength=8;inp.placeholder=L('닉네임 (8자)','Nickname (8)');inp.autocomplete='off';ok.type='button';
   ok.onclick=()=>{const n=nickOk(inp.value);if(!n){inp.focus();return;}SAVE.nick=n;save();f.remove();send();};inp.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')ok.onclick();});f.append(inp,ok);b.append(f,msg);}
-LB.init().then(ok=>{if(ok)$('cLb').hidden=false;});
+LB.init().then(ok=>{if(ok){$('cLb').hidden=false;if(SAVE.nick&&Array.isArray(SAVE.bs))LB.syncBs();}});
 $('cLb').addEventListener('click',e=>{e.stopPropagation();lbShow();});
 
 /* 메인 루프 */
