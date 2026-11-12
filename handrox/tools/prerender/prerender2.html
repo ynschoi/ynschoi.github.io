@@ -6,9 +6,17 @@
 import * as THREE from 'three';import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 const g=await new GLTFLoader().loadAsync('assets/hero_rig.glb');const obj=g.scene;const B={};obj.traverse(o=>{if(o.isBone)B[o.name]=o;});
 const rest={};for(const k in B)rest[k]=B[k].quaternion.clone();
+obj.updateMatrixWorld(true);const restW={};for(const k in B){restW[k]=new THREE.Quaternion();B[k].getWorldQuaternion(restW[k]);}
+/* 발을 기본 자세의 세계 방향으로 되돌림 → 무릎·엉덩이를 굽혀도 발바닥이 바닥에 평평 */
+const flatFoot=n=>{const b=B[n];b.parent.updateWorldMatrix(true,false);const pq=new THREE.Quaternion();b.parent.getWorldQuaternion(pq);b.quaternion.copy(pq.invert().multiply(restW[n]));b.updateMatrixWorld(true);};
 const F=new THREE.Vector3(1,0,0),S=new THREE.Vector3(0,0,1);
 const W=(n,ax,a)=>{const b=B[n];b.parent.updateWorldMatrix(true,false);const pq=new THREE.Quaternion();b.parent.getWorldQuaternion(pq);const wq=new THREE.Quaternion();b.getWorldQuaternion(wq);
   b.quaternion.copy(pq.invert().multiply(new THREE.Quaternion().setFromAxisAngle(ax,a).multiply(wq)));b.updateMatrixWorld(true);};
+const wp=n=>{const v=new THREE.Vector3();B[n].getWorldPosition(v);return v;};
+/* 뼈가 자식 쪽을 향하는 방향을 세계 기준 dir로 돌림 */
+const aim=(bone,child,dir)=>{const a=wp(bone),b=wp(child),cur=b.clone().sub(a).normalize(),q=new THREE.Quaternion().setFromUnitVectors(cur,dir.clone().normalize());
+  const bn=B[bone];bn.parent.updateWorldMatrix(true,false);const pq=new THREE.Quaternion();bn.parent.getWorldQuaternion(pq);const wq=new THREE.Quaternion();bn.getWorldQuaternion(wq);
+  bn.quaternion.copy(pq.invert().multiply(q.multiply(wq)));bn.updateMatrixWorld(true);};
 const armDown=a=>{W('LeftArm',F,-a);W('RightArm',F,a);};
 const POSE={
  idle(){armDown(.15);return {};},
@@ -23,6 +31,15 @@ const POSE={
    W('RightUpLeg',S,.15+1.25*up(-s)-.35*up(s));W('RightLeg',S,-(.25+1.7*up(-s)+.5*up(s)));
    armDown(.75);W('LeftArm',S,-1.1*s);W('LeftForeArm',S,1.6);W('RightArm',S,1.1*s);W('RightForeArm',S,1.6);
    return {bounce:.045*Math.abs(c)};},
+ /* 스키에르그(뒷모습용), 실제 동작처럼 팔을 몸 앞에서 위→아래로(앞뒤 방향). 팔을 옆으로 내리면 랫풀다운처럼 등이 좁아 보였음.
+    k 0=팔을 머리 위 앞쪽으로 뻗음 → 0.5 몸 앞으로 내리며 엉덩이 뒤로 빼고 숙임 → 1 손이 허벅지 옆까지, 무릎 굽힘 */
+ skib({k}){const e=k*k*(3-2*k),hinge=Math.sin(Math.PI*Math.min(1,e*1.15))*.85+e*.15;
+   W('Hips',S,-.55*hinge);W('Spine',S,-.35*hinge);W('Head',S,-.1*hinge);   /* 머리도 상체를 따라 같이 숙임 (예전엔 머리만 들고 있어 어색했음) */
+   W('LeftUpLeg',S,.55*hinge+.15*e);W('RightUpLeg',S,.55*hinge+.15*e);W('LeftLeg',S,-.7*e);W('RightLeg',S,-.7*e);flatFoot('LeftFoot');flatFoot('RightFoot');
+   const th=(72-185*e)*Math.PI/180;
+   for(const [sd,z] of [['Left',-.28],['Right',.28]]){aim(sd+'Arm',sd+'ForeArm',new THREE.Vector3(Math.cos(th),Math.sin(th),z));
+     aim(sd+'ForeArm',sd+'Hand',new THREE.Vector3(Math.cos(th-.35*Math.sin(Math.PI*e)),Math.sin(th-.35*Math.sin(Math.PI*e)),z*.6));}
+   return {feet:1};},
  row({k}){const L=Math.min(1,k/.55),Bk=Math.max(0,Math.min(1,(k-.25)/.5)),A=Math.max(0,Math.min(1,(k-.55)/.45)),lr=(a,b,t)=>a+(b-a)*t;
    const th=lr(1.9,1.45,L),kn=lr(2.3,.15,L);W('LeftUpLeg',S,th);W('RightUpLeg',S,th);W('LeftLeg',S,-kn);W('RightLeg',S,-kn);
    W('Spine',S,lr(-.5,.45,Bk));armDown(.15);W('LeftArm',S,lr(1.5,.1,A));W('RightArm',S,lr(1.5,.1,A));W('LeftForeArm',S,lr(0,1.6,A));W('RightForeArm',S,lr(0,1.6,A));
@@ -31,13 +48,13 @@ const sc=new THREE.Scene();const root=new THREE.Group();root.add(obj);sc.add(roo
 const cv=document.createElement('canvas');const r=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true,preserveDrawingBuffer:true});r.outputColorSpace=THREE.SRGBColorSpace;r.toneMapping=THREE.ACESFilmicToneMapping;r.setClearColor(0,0);
 sc.environment=new THREE.PMREMGenerator(r).fromScene(new RoomEnvironment(),.04).texture;const d=new THREE.DirectionalLight(0xffffff,1.1);d.position.set(1,2,3);sc.add(d);
 const blank=document.createElement('canvas');
-const wp=n=>{const v=new THREE.Vector3();B[n].getWorldPosition(v);return v;};
 window.bake=job=>{const [x0,x1,y0,y1]=job.box,Wd=Math.round((x1-x0)*job.ppu),Ht=Math.round((y1-y0)*job.ppu);
   for(const k in B)B[k].quaternion.copy(rest[k]);root.position.set(0,0,0);root.rotation.set(0,0,0);root.updateMatrixWorld(true);
   const res=POSE[job.pose](job.o||{});root.rotation.set(0,job.yaw||0,0);root.updateMatrixWorld(true);
-  if(res.anchor){const a=wp(res.anchor[0]),h=wp(res.anchor[1]);root.position.set(-a.x,-h.y,0);}else root.position.set(0,.49+(res.bounce||0),0);   /* 발바닥 = 0 */
+  if(res.feet){const a=wp('LeftFoot'),b=wp('RightFoot');root.position.set(0,-Math.min(a.y,b.y)+.074,0);}   /* 발목 관절 높이(0.074)만큼 띄워 발바닥이 0에 */
+  else if(res.anchor){const a=wp(res.anchor[0]),h=wp(res.anchor[1]);root.position.set(-a.x,-h.y,0);}else root.position.set(0,.49+(res.bounce||0),0);   /* 발바닥 = 0 */
   root.updateMatrixWorld(true);let cam;if(job.persp){const D=job.persp,cy=(y0+y1)/2;cam=new THREE.PerspectiveCamera(2*Math.atan((y1-y0)/2/D)*180/Math.PI,(x1-x0)/(y1-y0),.1,50);cam.position.set((x0+x1)/2,cy+.15,D);cam.lookAt((x0+x1)/2,cy,0);}else{cam=new THREE.OrthographicCamera(x0,x1,y1,y0,-10,10);cam.position.z=5;}r.setSize(Wd,Ht,false);r.render(sc,cam);
   blank.width=Wd;blank.height=Ht;const p=n=>{const v=wp(n);return [+v.x.toFixed(4),+v.y.toFixed(4)];};
-  return {w:Wd,h:Ht,c:cv.toDataURL('image/png'),m:blank.toDataURL('image/png'),pts:{hand:p('LeftHand'),hips:p('Hips'),head:p('Head')}};};
+  return {w:Wd,h:Ht,c:cv.toDataURL('image/png'),m:blank.toDataURL('image/png'),pts:{hand:p('LeftHand'),handR:p('RightHand'),hips:p('Hips'),head:p('Head')}};};
 window.READY=true;
 </script>
