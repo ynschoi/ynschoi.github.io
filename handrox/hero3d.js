@@ -54,7 +54,15 @@ const POSES={
     arm(R,'N',1.25,.05,.15);arm(R,'F',1.25,-.05,.15);leg(R,'N',0,0);leg(R,'F',0,0);return {dy:0};},
   run(R,o){const p=o.ph,s=Math.sin(p),c=Math.cos(p);setW(R,'hips',qa(Z,-.12));setW(R,'spine',qa(Z,-.2));setW(R,'neck',qa(Z,-.2));setW(R,'head',qa(Z,-.05+.04*c));
     leg(R,'N',.75*s,.35+.9*Math.max(0,-c),.2);leg(R,'F',-.75*s,.35+.9*Math.max(0,c),.2);
-    arm(R,'N',1.3,-.85*s,1.3);arm(R,'F',1.3,.85*s,1.3);return {dy:Math.abs(c)*.035};}};
+    arm(R,'N',1.3,-.85*s,1.3);arm(R,'F',1.3,.85*s,1.3);return {dy:Math.abs(c)*.035};},
+  /* 로잉: k 0=캐치(무릎 접고 앞으로) → 1=피니시(다리 펴고 뒤로 젖히고 손잡이를 가슴으로).
+     당길 때 다리→허리→팔 순서, 돌아올 때 팔→허리→다리 순서가 k 하나로 저절로 됨. 발은 발판에 고정(anchor) */
+  row(R,o){const k=Math.min(1,Math.max(0,o.k||0)),L=sm(0,.55,k),B=sm(.25,.75,k),A=sm(.55,1,k),lr=(a,b,t)=>a+(b-a)*t,lean=lr(-.8,.6,B);
+    setW(R,'hips',qa(Z,lean*.5));setW(R,'spine',qa(Z,lean));setW(R,'neck',qa(Z,lean*.6));setW(R,'head',qa(Z,lean*.35));
+    const a1=lr(2.3,1.55,L),a2=lr(.35,1.5,L);leg(R,'N',a1,a1-a2,-.6);leg(R,'F',a1,a1-a2,-.6);
+    const sw=lr(1.55,-.2,A),el=lr(-.1,1.75,A);arm(R,'N',1.3,sw,el);arm(R,'F',1.3,sw,el);return {anchor:'footN'};}};
+const _v=new THREE.Vector3();
+function wpos(R,k){R.bones[k].getWorldPosition(_v);return [_v.x,-_v.y];}
 
 /* ── 색 ── 마스크 번호: 1 피부 2 머리 3 상의 4 반바지 5 밴드 6 신발 */
 let baseTex=null,maskPx=null,texCv=null,texCtx=null,texture=null,refLum=null,lastColors='';
@@ -78,10 +86,14 @@ function makeView(canvas,w,h,ortho){const r=new THREE.WebGLRenderer({canvas,anti
 function rigged(src){const obj=new THREE.Group();const m=SkeletonUtils.clone(src.mesh);obj.add(m);const bones={};m.skeleton.bones.forEach(b=>bones[b.name]=b);return {obj,mesh:m,bones};}
 
 let RIG=null,stage=null,stageR=null,want=null,cleared=true,prev=null,prevR=null,prevYaw=-1.05,prevSpin=0;
-H3.show=(pose,x,y,o={})=>{if(!H3.ok)return false;want={pose,x,y,o};return true;};
+/* 자세를 바로 잡고 손·엉덩이 위치(경기장 좌표)를 돌려줌 → 2D 쪽에서 체인·의자를 거기에 맞춰 그림. 렌더는 H3.frame에서 */
+H3.show=(pose,x,y,o={})=>{if(!H3.ok)return false;const R=stageR;R.obj.visible=true;R.obj.position.set(x,-y,0);R.obj.scale.setScalar(HEIGHT*(o.z||1));R.obj.rotation.y=o.yaw??-.55;
+  R.obj.updateMatrixWorld(true);const r=POSES[pose](R,{t:performance.now()/1000,...o});
+  if(r.anchor){R.obj.updateMatrixWorld(true);const [ax,ay]=wpos(R,r.anchor);R.obj.position.x+=x-ax;R.obj.position.y+=ay-y;}
+  else R.obj.position.y=-y+HEIGHT*(o.z||1)*(.5+r.dy);
+  R.obj.updateMatrixWorld(true);want=true;return {hand:wpos(R,'handN'),hips:wpos(R,'hips')};};
 H3.frame=t=>{if(!H3.ok)return;applyColors(H3.colors());
-  if(want){const R=stageR,w=want;R.obj.visible=true;R.obj.position.set(w.x,-w.y,0);R.obj.scale.setScalar(HEIGHT);R.obj.rotation.y=w.o.yaw??-.55;
-    R.obj.updateMatrixWorld(true);const r=POSES[w.pose](R,{t:t/1000,...w.o});R.obj.position.y=-w.y+HEIGHT*.5+r.dy*HEIGHT;stage.r.render(stage.sc,stage.cam);cleared=false;want=null;}
+  if(want){stage.r.render(stage.sc,stage.cam);cleared=false;want=false;}
   else if(!cleared){stage.r.clear();cleared=true;}
   const pc=document.getElementById('cuPrev3');if(prev&&pc&&pc.offsetParent){prevR.obj.rotation.y=prevYaw+prevSpin;POSES.idle(prevR,{t:t/1000});prev.r.render(prev.sc,prev.cam);}};
 H3.colors=()=>window.handroxColors?window.handroxColors():{};

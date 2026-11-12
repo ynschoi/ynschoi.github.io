@@ -481,7 +481,13 @@ const ST=[
   update(s,dt){ERG.tick(s,dt);},
   want:()=>'LR',
   draw(s){scene(0);if(Math.abs(s.k-(s.kp||0))>.01){s.drv=s.k>(s.kp||0);s.kp=s.k;}
-    const q=Math.round(clamp(s.k,0,1)*3);sprite('row',s.drv===false?4+(3-q):q,44,FL-91,1.5);
+    const FX=128,FY=FL-10,WX=190,WY=FL-26,r3=window.H3&&H3.ok;
+    if(r3){rr(20,FL-10,160,5,1,'#3a3a44');R(26,FL-5,4,5,'#26262e');R(132,FL-5,4,5,'#26262e');        /* 3D 선수용 로잉머신: 레일·발판·플라이휠 */
+      disc(WX,WY,22,'#26262e');ring(WX,WY,15,'#ffd400',2);const a=s.dp*.05;for(let i=0;i<3;i++)pline(WX,WY,WX+Math.cos(a+i*2.09)*13,WY+Math.sin(a+i*2.09)*13,2,'#ffd400');
+      disc(WX,WY,3,'#c8c8d0');R(WX-24,FL-8,46,8,'#26262e');R(FX+2,FL-10,WX-FX-20,5,'#3a3a44');rr(FX+2,FL-26,7,20,2,'#4a4a56');
+      const h=H3.show('row',FX+3,FY,{k:s.k,yaw:-.12,z:1.15});rr(h.hips[0]-11,h.hips[1]+3,22,5,2,'#1c1c22');R(h.hips[0]-2,h.hips[1]+8,4,FL-10-h.hips[1]-8,'#26262e');
+      pline(WX-14,WY-4,h.hand[0],h.hand[1],1,'#c8c8d0');}
+    else{const q=Math.round(clamp(s.k,0,1)*3);sprite('row',s.drv===false?4+(3-q):q,44,FL-91,1.5);}
     monitor(200,22,s,this.need);}},
  {id:'carry',rate:13,need:200,unit:'m',pxu:2,nm:['파머스 캐리','FARMERS CARRY'],hint:L('L + R 꾹','HOLD L + R'),
   how:['둘 다 꾹 잡고 걸어요. 악력이 바닥나기 전에 잠깐 떼요!','Hold both to carry. Let go briefly before your grip runs out!'],
