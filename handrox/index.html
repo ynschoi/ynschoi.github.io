@@ -160,6 +160,12 @@ try{Promise.all([document.fonts.load('12px Galmuri9'),document.fonts.load('bold 
   .res .row{display:flex;gap:8px;justify-content:center}
   .res .row button{font:700 13px var(--px);padding:9px 14px;border:2px solid var(--gold);background:#0c0c10;color:#fff;box-shadow:0 3px 0 #000}
   .res .row button.y{background:var(--gold);color:#111}
+  .res.lb{width:100%;max-width:340px}.res.lb h3{font:700 18px var(--px);color:var(--gold);margin:0 0 8px}
+  .lbl{max-height:52vh;overflow:auto;margin:0 0 10px;border-top:1px solid #2a2a36}
+  .lbl div{display:grid;grid-template-columns:30px 1fr auto;gap:6px;font:13px var(--px);padding:5px 4px;border-bottom:1px solid #2a2a36;text-align:left;font-variant-numeric:tabular-nums}
+  .lbl div.me{background:#ffd40022;color:var(--gold)}.lbl i{font-style:normal;color:var(--dim)}.lbl div:nth-child(-n+3) i{color:var(--gold)}
+  .lbn{display:flex;gap:6px;justify-content:center;margin:6px 0 10px}.lbn input{font:14px var(--px);width:130px;padding:8px;background:#0c0c10;color:#fff;border:2px solid #555;text-align:center}
+  .lbn button{font:700 13px var(--px);padding:8px 12px;border:2px solid var(--gold);background:var(--gold);color:#111}.lbm{font:12px var(--px);color:var(--dim);min-height:16px;margin:4px 0}
   .res .row button:active{transform:translateY(2px);box-shadow:0 1px 0 #000}
   @media (prefers-reduced-motion:reduce){.cover .ins,.chip.on em,.chip.rn i{animation:none}}
 </style>
@@ -199,7 +205,7 @@ try{Promise.all([document.fonts.load('12px Galmuri9'),document.fonts.load('bold 
   </section>
 
   <div class="cover" id="cover">
-      <div class="ctop"><button type="button" id="cHlp">?</button><button type="button" id="cSnd">♪</button></div>
+      <div class="ctop"><button type="button" id="cLb" hidden aria-label="leaderboard">🏆</button><button type="button" id="cHlp">?</button><button type="button" id="cSnd">♪</button></div>
       <div class="logo" role="img" aria-label="HANDROX — The Ultimate Finger Race"><img class="lw" src="logo_word.png" alt="" width="998" height="123"><div class="lb"><img src="logo_tag.png" alt="" width="997" height="47"></div></div>
       <div class="city" id="city" hidden>PHONE</div>
       <div class="tag" id="cTag"></div>
@@ -219,6 +225,7 @@ try{Promise.all([document.fonts.load('12px Galmuri9'),document.fonts.load('bold 
     <input type="range" id="feZoom" min="1" max="6" step="0.05" value="1.6" aria-label="zoom"><div class="pbn" id="feN"></div>
     <div class="row"><button type="button" id="feNo"></button><button type="button" class="y" id="feOk"></button></div></div></div>
   <div class="help" id="result" hidden><div class="res" id="resBody"></div></div>
+  <div class="help" id="lbPanel" hidden><div class="res lb" id="lbBody"></div></div>
 </div>
 <script>
 'use strict';
@@ -666,10 +673,38 @@ function finish(){G.state='done';const tot=G.clock,old=SAVE.pb,oldS=SAVE.splits,
   const rows=`<tr><td>${L('달리기 8km','Run 8km')}</td><td>${fmtS(runT)}</td>${d(runT,oldRun)}</tr>`+ST.map((st,n)=>{const v=G.splits[n*2+1];return `<tr><td>${L(...st.nm)}</td><td>${fmtS(v)}</td>${d(v,oldS&&oldS[n*2+1])}</tr>`;}).join('');
   setTimeout(()=>{if(!G||G.state!=='done')return;$('resBody').innerHTML=`<span class="rk">${L(rk[2],rk[1])}</span><div class="tm">${fmt(tot)}</div>
     <div class="pbn${isPB?' new':''}">${isPB?(old?L(`★ 신기록! (이전 ${fmt(old)})`,`★ NEW BEST! (was ${fmt(old)})`):L('★ 첫 완주 기록!','★ First finish!')):L(`최고 기록 ${fmt(old)}`,`Best ${fmt(old)}`)}</div>
-    <table>${rows}</table><div class="row"><button type="button" id="share">${L('기록 공유','Share')}</button><button type="button" class="y" id="again">${L('다시 뛰기','Race again')}</button></div>`;
-    $('result').hidden=false;
+    <table>${rows}</table><div id="lbRes"></div><div class="row"><button type="button" id="share">${L('기록 공유','Share')}</button><button type="button" class="y" id="again">${L('다시 뛰기','Race again')}</button></div>`;
+    $('result').hidden=false;lbResult();
     $('again').onclick=()=>newRace();
     $('share').onclick=async()=>{const text=`HANDROX ${VENUE} 🖐 ${fmt(tot)} (${rk[1]})`;try{if(navigator.share){await navigator.share({text,url:SHARE_URL});return;}await navigator.clipboard.writeText(text+' '+SHARE_URL);$('share').textContent=L('복사됨!','Copied!');}catch(e){}};},1500);}
+
+/* ───── 리더보드 ─────
+   기록 저장소: claude.ai 페이지의 공유 DB (scores/<사람 id> 한 줄 = 그 사람 최고 기록. 자기 줄만 쓸 수 있음).
+   깃허브 주소처럼 저장소가 없는 곳에서는 init()이 false → 순위 버튼·등록 칸이 안 보임. 다른 서버를 붙일 땐 LB의 init/top/submit만 바꾸면 됨 */
+const LB={db:null,uid:null,p:null,
+  init(){return this.p||(this.p=(async()=>{try{if(!window.claude||!claude.use)return false;const [db,user]=await Promise.all([claude.use('db'),claude.use('user')]);if(!db||!user)return false;this.uid=await user.id();this.db=db;return !!this.uid;}catch(e){return false;}})());},
+  async top(n=50){const q=await this.db.collection('scores').orderBy('t','asc').limit(n).get();return q.docs.map(d=>({id:d.id,...(d.data()||{})})).filter(r=>typeof r.t==='number'&&r.t>0);},
+  async submit(name,t){const ref=this.db.doc('scores/'+this.uid),cur=await ref.get(),o=cur.exists&&cur.data();
+    if(o&&typeof o.t==='number'&&o.t<=t){if(o.name!==name)await ref.update({name});return false;}await ref.set({name,t:Math.round(t*10)/10,at:Date.now()});return true;}};
+const nickOk=v=>String(v||'').replace(/\s+/g,' ').trim().slice(0,8),within=(pr,ms=10000)=>Promise.race([pr,new Promise((_,j)=>setTimeout(()=>j(Error('timeout')),ms))]);
+const el=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e;};
+/* 순위표 창. 이름은 남이 쓴 글자라 textContent로만 넣음 */
+async function lbShow(){const B=$('lbBody');B.textContent='';B.append(el('h3','',L('🏆 순위','🏆 LEADERBOARD')));const msg=el('div','lbm',L('불러오는 중…','Loading…')),list=el('div','lbl'),row=el('div','row'),x=el('button','y',L('닫기','Close'));
+  x.type='button';x.onclick=()=>{$('lbPanel').hidden=true;};row.append(x);B.append(msg,list,row);$('lbPanel').hidden=false;
+  try{if(!await LB.init())throw 0;const rows=await within(LB.top());msg.textContent=rows.length?'':L('아직 기록이 없어요. 첫 번째로 완주해 보세요!','No records yet. Be the first to finish!');
+    rows.forEach((r,i)=>{const d=el('div',r.id===LB.uid?'me':'');d.append(el('i','',String(i+1)),el('span','',nickOk(r.name)||'???'),el('b','',fmt(r.t)));list.append(d);});
+    const mine=rows.findIndex(r=>r.id===LB.uid);if(mine>=0)msg.textContent=L(`내 순위 ${mine+1}위`,`Your rank: #${mine+1}`);}
+  catch(e){msg.textContent=L('순위를 불러오지 못했어요','Could not load the leaderboard');}}
+/* 완주 화면 아래: 닉네임이 있으면 최고 기록을 바로 올리고, 없으면 한 번 입력받음 */
+async function lbResult(){const box=$('lbRes');if(!box||!await LB.init()||!$('lbRes'))return;const b=$('lbRes');b.textContent='';const msg=el('div','lbm');
+  const send=async()=>{msg.textContent=L('순위 등록 중…','Submitting…');try{await within(LB.submit(SAVE.nick,SAVE.pb));const rows=await within(LB.top()),i=rows.findIndex(r=>r.id===LB.uid);
+      msg.textContent='';const a=el('button','',i>=0?L(`🏆 내 순위 ${i+1}위 · 순위 보기`,`🏆 Rank #${i+1} · view`):L('🏆 순위 보기','🏆 Leaderboard'));a.type='button';a.style.cssText='font:700 13px var(--px);padding:7px 12px;border:2px solid var(--gold);background:#0c0c10;color:var(--gold);margin-bottom:8px';a.onclick=lbShow;msg.append(a);}
+    catch(e){msg.textContent=L('순위 등록에 실패했어요 (쓰기 권한이 없을 수 있어요)','Could not submit (you may not have write access)');}};
+  if(SAVE.nick){b.append(msg);return send();}
+  const f=el('div','lbn'),inp=el('input'),ok=el('button','',L('순위 등록','Submit'));inp.maxLength=8;inp.placeholder=L('닉네임 (8자)','Nickname (8)');inp.autocomplete='off';ok.type='button';
+  ok.onclick=()=>{const n=nickOk(inp.value);if(!n){inp.focus();return;}SAVE.nick=n;save();f.remove();send();};inp.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')ok.onclick();});f.append(inp,ok);b.append(f,msg);}
+LB.init().then(ok=>{if(ok)$('cLb').hidden=false;});
+$('cLb').addEventListener('click',e=>{e.stopPropagation();lbShow();});
 
 /* 메인 루프 */
 let last=performance.now();
