@@ -22,12 +22,13 @@ if(HEADURL){obj.updateMatrixWorld(true);let sk;obj.traverse(o=>{if(o.isSkinnedMe
   const sc=(bb.max.y-bb.min.y)/(hb.max.y-hb.min.y)*(+HQ.get('hs')||.93),head=new THREE.Mesh(g2,hmat),piv=new THREE.Group();
   head.position.set(-(hb.min.x+hb.max.x)/2,-hb.min.y,-(hb.min.z+hb.max.z)/2);piv.add(head);piv.scale.setScalar(sc);piv.rotation.y=Math.PI/2;   /* 새 머리 얼굴 +z → 선수 얼굴 +x */
   piv.position.set((bb.min.x+bb.max.x)/2+(+HQ.get('hx')||0),bb.min.y+(+HQ.get('hy')||0),(bb.min.z+bb.max.z)/2);obj.add(piv);obj.updateMatrixWorld(true);B.Head.attach(piv);window.HEADINFO={old:[bb.min.toArray(),bb.max.toArray()],sc};
-  /* 얼굴 자리 지도: 머리 앞면에 정사각형 얼굴 칸을 정해, 화면의 각 점이 그 칸의 어디(u=빨강, v=초록)인지 따로 찍어 둠 → 게임이 각자 그린 얼굴을 자세마다 맞춰 입힘 */
-  const HW=hb.max.x-hb.min.x,HH=hb.max.y-hb.min.y,fs=HH*(+HQ.get('fs')||.62),fcx=(hb.min.x+hb.max.x)/2,fcy=hb.min.y+HH*(+HQ.get('fy')||.40);
+  /* 그림 자리 지도: 머리 앞면 전체를 덮는 정사각형 '그림 칸'을 정해, 화면의 각 점이 그 칸의 어디(u=빨강, v=초록)인지 따로 찍어 둠 → 게임이 각자 그린 얼굴·머리카락을 자세마다 맞춰 입힘.
+     파랑 = 표시: 앞면(그림이 보이는 쪽) +0.4, 머리카락 자리(이마 위에서 뒤통수 아래까지 비스듬한 모자 모양, 귀 제외) +0.2 → 뒷머리는 고른 색으로 칠함 */
+  const HW=hb.max.x-hb.min.x,HH=hb.max.y-hb.min.y,HD=hb.max.z-hb.min.z,fs=Math.max(HW,HH)*1.04,fcx=(hb.min.x+hb.max.x)/2,fcy=(hb.min.y+hb.max.y)/2;
   window.FACEPASS={head,mat:hmat,sk,skMat:sk.material,hide:new THREE.MeshBasicMaterial({colorWrite:false}),   /* 몸은 색 없이 깊이만 → 팔이 얼굴을 가리는 자리는 얼굴 칸에서 빠짐 */
     
-    uv:new THREE.ShaderMaterial({uniforms:{c:{value:new THREE.Vector2(fcx,fcy)},s:{value:fs}},vertexShader:'varying vec3 p;varying vec3 n;void main(){p=position;n=normal;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
-      fragmentShader:'uniform vec2 c;uniform float s;varying vec3 p;varying vec3 n;void main(){vec2 u=(p.xy-c)/s+.5;float ok=step(0.,u.x)*step(u.x,1.)*step(0.,u.y)*step(u.y,1.)*step(.15,normalize(n).z);gl_FragColor=vec4(u*ok,0.,ok);}'})};}
+    uv:new THREE.ShaderMaterial({uniforms:{c:{value:new THREE.Vector2(fcx,fcy)},s:{value:fs},hp:{value:new THREE.Vector4(hb.max.z-HD*.14,hb.min.y+HH*.80,(HH*.80-HH*.22)/(HD*.86),HW/2*.8)}},vertexShader:'varying vec3 p;varying vec3 n;void main(){p=position;n=normal;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+      fragmentShader:'uniform vec2 c;uniform float s;uniform vec4 hp;varying vec3 p;varying vec3 n;void main(){vec2 u=clamp((p.xy-c)/s+.5,0.,1.);float fr=step(.12,normalize(n).z),hr=step(hp.y+(p.z-hp.x)*hp.z,p.y)*step(abs(p.x-c.x),hp.w);gl_FragColor=vec4(u,fr*.4+hr*.2,1.);}'}),sq:[fcx,fcy,fs]};}
 const rest={};for(const k in B)rest[k]=B[k].quaternion.clone();
 obj.updateMatrixWorld(true);const restW={};for(const k in B){restW[k]=new THREE.Quaternion();B[k].getWorldQuaternion(restW[k]);}
 /* 발을 기본 자세의 세계 방향으로 되돌림 → 무릎·엉덩이를 굽혀도 발바닥이 바닥에 평평 */
@@ -121,7 +122,11 @@ window.bake=job=>{const [x0,x1,y0,y1]=job.box,Wd=Math.round((x1-x0)*job.ppu),Ht=
     root.position.set(-(f[0].x+f[1].x)/2,-Math.min(...c),0);}   /* 버피: 발 x=0, 가장 낮은 곳이 바닥 */
   else if(res.feet){const a=wp('LeftFoot'),b=wp('RightFoot');root.position.set(0,-Math.min(a.y,b.y)+.074,0);}   /* 발목 관절 높이(0.074)만큼 띄워 발바닥이 0에 */
   else if(res.anchor){const a=wp(res.anchor[0]),h=wp(res.anchor[1]);root.position.set(-a.x,-h.y,0);}else root.position.set(0,.49+(res.bounce||0),0);   /* 발바닥 = 0 */
-  root.updateMatrixWorld(true);let cam;if(job.persp){const D=job.persp,cy=(y0+y1)/2;cam=new THREE.PerspectiveCamera(2*Math.atan((y1-y0)/2/D)*180/Math.PI,(x1-x0)/(y1-y0),.1,50);cam.position.set((x0+x1)/2,cy+.15,D);cam.lookAt((x0+x1)/2,cy,0);}else{cam=new THREE.OrthographicCamera(x0,x1,y1,y0,-10,10);cam.position.z=5;}r.setSize(Wd,Ht,false);r.render(sc,cam);
+  root.updateMatrixWorld(true);let [gx0,gx1,gy0,gy1]=[x0,x1,y0,y1],GW=Wd,GH=Ht;
+  if(job.guide&&window.FACEPASS){const P=window.FACEPASS,a=P.head.localToWorld(new THREE.Vector3(P.sq[0]-P.sq[2]/2,P.sq[1]-P.sq[2]/2,0)),b2=P.head.localToWorld(new THREE.Vector3(P.sq[0]+P.sq[2]/2,P.sq[1]+P.sq[2]/2,0));
+    gx0=Math.min(a.x,b2.x);gx1=Math.max(a.x,b2.x);gy0=a.y;gy1=b2.y;GW=GH=job.guide;P.sk.visible=false;}
+  let cam;if(job.guide){cam=new THREE.OrthographicCamera(gx0,gx1,gy1,gy0,-10,10);cam.position.z=5;r.setSize(GW,GH,false);r.render(sc,cam);if(window.FACEPASS)window.FACEPASS.sk.visible=true;return {w:GW,h:GH,c:cv.toDataURL('image/png'),m:null,f:null,pts:{hand:[0,0],hips:[0,0]}};}
+  if(job.persp){const D=job.persp,cy=(y0+y1)/2;cam=new THREE.PerspectiveCamera(2*Math.atan((y1-y0)/2/D)*180/Math.PI,(x1-x0)/(y1-y0),.1,50);cam.position.set((x0+x1)/2,cy+.15,D);cam.lookAt((x0+x1)/2,cy,0);}else{cam=new THREE.OrthographicCamera(x0,x1,y1,y0,-10,10);cam.position.z=5;}r.setSize(Wd,Ht,false);r.render(sc,cam);
   blank.width=Wd;blank.height=Ht;const p=n=>{const v=wp(n);return [+v.x.toFixed(4),+v.y.toFixed(4)];};
   const cURL=cv.toDataURL('image/png');let fURL=null;
   if(window.FACEPASS){const P=window.FACEPASS,tm=r.toneMapping,cs=r.outputColorSpace;P.head.material=P.uv;P.sk.material=P.hide;r.toneMapping=THREE.NoToneMapping;r.outputColorSpace=THREE.LinearSRGBColorSpace;r.render(sc,cam);fURL=cv.toDataURL('image/png');
