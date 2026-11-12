@@ -4,9 +4,10 @@ const ROOT=path.resolve(__dirname,'../..'),PAGE=process.env.PAGE||'prerender.htm
 const srv=http.createServer((q,s)=>{let u=decodeURIComponent(q.url.split('?')[0]),f=u.startsWith('/three/')?path.join(THREE,u.slice(7)):path.join(ROOT,u);
   fs.readFile(f,(e,d)=>{if(e){s.writeHead(404);return s.end();}s.writeHead(200,{'content-type':f.endsWith('.js')||f.endsWith('.mjs')?'application/javascript':f.endsWith('.html')?'text/html':'application/octet-stream'});s.end(d);});}).listen(8790);
 const TAU=Math.PI*2;
-const JOBS=process.env.ONLY==='skib'?{skib:[...Array(11)].map((_,i)=>({pose:'skib',o:{k:i/10},yaw:Math.PI/2+(+process.env.YAW||0),box:[-.6,.6,-.02,1.32],ppu:300}))}:process.env.ONLY==='runf'?{runf:[...Array(12)].map((_,i)=>({pose:'runf',o:{ph:i/12*TAU},yaw:-Math.PI/2,box:[-.5,.5,-.04,1.12],ppu:300,persp:2.2}))}:process.env.PAGE==='prerender2.html'?{
+const JOBS=process.env.ONLY==='push'?{push:[...Array(12)].map((_,i)=>({pose:'push',o:{ph:i/12*TAU},yaw:0,box:[-.5,.7,-.02,1.0],ppu:300}))}:process.env.ONLY==='skib'?{skib:[...Array(11)].map((_,i)=>({pose:'skib',o:{k:i/10},yaw:Math.PI/2+(+process.env.YAW||0),box:[-.6,.6,-.02,1.32],ppu:300}))}:process.env.ONLY==='runf'?{runf:[...Array(12)].map((_,i)=>({pose:'runf',o:{ph:i/12*TAU},yaw:-Math.PI/2,box:[-.5,.5,-.04,1.12],ppu:300,persp:2.2}))}:process.env.PAGE==='prerender2.html'?{
   skib:[...Array(11)].map((_,i)=>({pose:'skib',o:{k:i/10},yaw:Math.PI/2-.6,box:[-.62,.62,-.02,1.32],ppu:300})),   /* 스키: 오른쪽 사선 뒷모습 */
   runf:[...Array(12)].map((_,i)=>({pose:'runf',o:{ph:i/12*TAU},yaw:-Math.PI/2,box:[-.5,.5,-.04,1.12],ppu:300,persp:2.2})),
+  push:[...Array(12)].map((_,i)=>({pose:'push',o:{ph:i/12*TAU},yaw:0,box:[-.5,.7,-.02,1.0],ppu:300})),   /* 슬레드 푸시: 옆모습 */
   run:[...Array(12)].map((_,i)=>({pose:'run',o:{ph:i/12*TAU},yaw:0,box:[-.44,.44,-.02,1.07],ppu:300})),
   row:[...Array(11)].map((_,i)=>({pose:'row',o:{k:i/10},yaw:0,box:[-.72,.44,-.38,.86],ppu:300})),
   turn:[...Array(12)].map((_,i)=>({pose:'idle',yaw:-Math.PI/2+i*TAU/12,box:[-.34,.34,-.02,1.02],ppu:420})),
