@@ -5,6 +5,23 @@
    자세는 세계 기준 회전으로 넣음: S=몸 옆축(앞뒤로 굽히기), F=앞축(옆으로 벌리기). 얼굴은 +x */
 import * as THREE from 'three';import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 const g=await new GLTFLoader().loadAsync('assets/hero_rig.glb');const obj=g.scene;const B={};obj.traverse(o=>{if(o.isBone)B[o.name]=o;});
+/* 머리 갈아끼우기 (?head=머리.glb&cut=목 자르는 높이 비율): 원래 머리(Head 뼈에 붙은 면)를 지우고, 새 머리를 같은 자리·크기로 Head 뼈에 붙임. 리깅은 그대로 */
+const HQ=new URLSearchParams(location.search),HEADURL=HQ.get('head');
+if(HEADURL){obj.updateMatrixWorld(true);let sk;obj.traverse(o=>{if(o.isSkinnedMesh)sk=o;});const geo=sk.geometry,ji=geo.attributes.skinIndex,jw=geo.attributes.skinWeight,pos=geo.attributes.position,names=sk.skeleton.bones.map(b=>b.name);
+  const HEADB=new Set(['Head','HeadEnd','HeadFront']),isHead=i=>{let w=0;for(let k=0;k<4;k++)if(HEADB.has(names[ji.getComponent(i,k)]))w+=jw.getComponent(i,k);return w>.5;};
+  const hv=new Uint8Array(pos.count),bb=new THREE.Box3(),v=new THREE.Vector3();for(let i=0;i<pos.count;i++)if(isHead(i)){hv[i]=1;v.fromBufferAttribute(pos,i);sk.applyBoneTransform(i,v);v.applyMatrix4(sk.matrixWorld);bb.expandByPoint(v);}
+  const idx=geo.index.array,keep=[];for(let t=0;t<idx.length;t+=3)if(!(hv[idx[t]]&&hv[idx[t+1]]&&hv[idx[t+2]]))keep.push(idx[t],idx[t+1],idx[t+2]);geo.setIndex(keep);
+  const hg=await new GLTFLoader().loadAsync(HEADURL);let hm;hg.scene.traverse(o=>{if(o.isMesh)hm=o;});hm.updateMatrixWorld(true);const g2=hm.geometry.clone().applyMatrix4(hm.matrixWorld),p2=g2.attributes.position;g2.computeBoundingBox();
+  const b0=g2.boundingBox,cutY=b0.min.y+(b0.max.y-b0.min.y)*(+HQ.get('cut')||.33),i2=g2.index.array,k2=[];
+  for(let t=0;t<i2.length;t+=3){const y=(p2.getY(i2[t])+p2.getY(i2[t+1])+p2.getY(i2[t+2]))/3;if(y>cutY)k2.push(i2[t],i2[t+1],i2[t+2]);}g2.setIndex(k2);
+  const hb=new THREE.Box3();for(const i of k2){v.fromBufferAttribute(p2,i);hb.expandByPoint(v);}
+  /* 새 머리 색: 생성 모델의 얼룩진(조명이 구워진) 텍스처 대신 몸과 같은 피부색 한 가지로 칠하고, 아주 어두운 픽셀(점 눈)만 검게 남김 */
+  const im=hm.material.map.image,tc=document.createElement('canvas');tc.width=im.width;tc.height=im.height;const tx=tc.getContext('2d');tx.drawImage(im,0,0);const td=tx.getImageData(0,0,tc.width,tc.height),D=td.data,SK=[236,200,166];
+  for(let i=0;i<D.length;i+=4){const l=D[i]*.3+D[i+1]*.59+D[i+2]*.11,e=l<(+HQ.get('eye')||38);D[i]=e?18:SK[0];D[i+1]=e?16:SK[1];D[i+2]=e?16:SK[2];}tx.putImageData(td,0,0);
+  const ht=new THREE.CanvasTexture(tc);ht.flipY=hm.material.map.flipY;ht.colorSpace=THREE.SRGBColorSpace;const hmat=new THREE.MeshStandardMaterial({map:ht,roughness:.85,metalness:0});
+  const sc=(bb.max.y-bb.min.y)/(hb.max.y-hb.min.y)*(+HQ.get('hs')||.93),head=new THREE.Mesh(g2,hmat),piv=new THREE.Group();
+  head.position.set(-(hb.min.x+hb.max.x)/2,-hb.min.y,-(hb.min.z+hb.max.z)/2);piv.add(head);piv.scale.setScalar(sc);piv.rotation.y=Math.PI/2;   /* 새 머리 얼굴 +z → 선수 얼굴 +x */
+  piv.position.set((bb.min.x+bb.max.x)/2+(+HQ.get('hx')||0),bb.min.y+(+HQ.get('hy')||0),(bb.min.z+bb.max.z)/2);obj.add(piv);obj.updateMatrixWorld(true);B.Head.attach(piv);window.HEADINFO={old:[bb.min.toArray(),bb.max.toArray()],sc};}
 const rest={};for(const k in B)rest[k]=B[k].quaternion.clone();
 obj.updateMatrixWorld(true);const restW={};for(const k in B){restW[k]=new THREE.Quaternion();B[k].getWorldQuaternion(restW[k]);}
 /* 발을 기본 자세의 세계 방향으로 되돌림 → 무릎·엉덩이를 굽혀도 발바닥이 바닥에 평평 */
