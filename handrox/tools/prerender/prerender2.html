@@ -56,6 +56,18 @@ const POSE={
    W('LeftUpLeg',S,.42*s);W('LeftLeg',S,-(.15+.7*Math.max(0,-c)));W('RightUpLeg',S,-.42*s);W('RightLeg',S,-(.15+.7*Math.max(0,c)));
    for(const [sd,z] of [['Left',-.2],['Right',.2]]){const d=V(.03,-1,z);aim(sd+'Arm',sd+'ForeArm',d);aim(sd+'ForeArm',sd+'Hand',d);}
    return {bounce:Math.abs(c)*.015};},
+ /* 샌드백 런지: k=0 서서 샌드백을 어깨에(손은 어깨 옆), k=1 깊은 런지(앞 허벅지 수평, 뒷무릎 바닥 가까이). lead = 앞에 나가는 다리 */
+ lunge({k,lead}){const e=k*k*(3-2*k),V=(x,y,z)=>new THREE.Vector3(x,y,z),f=lead||'Left',b=f==='Left'?'Right':'Left';
+   W('Spine',S,-.06-.06*e);W('Head',S,.08);
+   W(f+'UpLeg',S,1.5*e);W(f+'Leg',S,-1.6*e);flatFoot(f+'Foot');W(b+'UpLeg',S,-.85*e);W(b+'Leg',S,-.75*e);flatFoot(b+'Foot');W(b+'Foot',S,-1.0*e);
+   for(const [sd,z] of [['Left',-.3],['Right',.3]]){aim(sd+'Arm',sd+'ForeArm',V(.6,-.35,z));aim(sd+'ForeArm',sd+'Hand',V(-.75,.7,-z*.3));}
+   return {feet:1};},
+ /* 월볼: k=0 깊이 앉아 공을 턱 앞에, .5 일어서서 공을 턱 앞에, 1 팔을 위·앞으로 쭉 뻗어 던짐 */
+ wall({k}){const sm=x=>x*x*(3-2*x),q=sm(Math.max(0,1-2*k)),a=sm(Math.max(0,2*k-1)),V=(x,y,z)=>new THREE.Vector3(x,y,z),lr=(u,v)=>u+(v-u)*a;
+   W('Spine',S,-.38*q+.06*a);W('Head',S,.3*q+.22*a+.05);
+   for(const sd of ['Left','Right']){W(sd+'UpLeg',S,1.45*q);W(sd+'Leg',S,-1.9*q);}flatFoot('LeftFoot');flatFoot('RightFoot');
+   for(const [sd,z] of [['Left',-.22],['Right',.22]]){aim(sd+'Arm',sd+'ForeArm',V(lr(.55,.85),lr(-.7,.7),z));aim(sd+'ForeArm',sd+'Hand',V(lr(.4,.8),lr(.9,.8),-z*.4*(1-a)+z*a*.3));}
+   return {feet:1};},
  runf({ph}){const s=Math.sin(ph),c=Math.cos(ph),up=x=>Math.max(0,x);
    W('Spine',S,-.28);W('Head',S,.16);   /* S축 +는 상체가 뒤로 젖혀짐 → 앞으로 숙이려면 −. 머리는 다시 들어 카메라를 봄 */W('Hips',F,.06*s);W('Spine',F,-.08*s);
    W('LeftUpLeg',S,.15+1.25*up(s)-.35*up(-s));W('LeftLeg',S,-(.25+1.7*up(s)+.5*up(-s)));
