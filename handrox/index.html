@@ -71,20 +71,19 @@
   .ov .g{font-size:26px;font-weight:700;color:var(--gold);-webkit-text-stroke:1.5px #111;text-shadow:3px 3px 0 var(--red)}
   .ov .s{font:14px/1.5 var(--font);color:#fff}
   .ov .k{font-size:15px;color:var(--gold);border:2px solid var(--gold);padding:4px 10px;margin-top:2px}
-  .cover{position:absolute;inset:0;z-index:20;background:#0c0c10d8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;cursor:pointer}
+  /* 첫 화면 (시안 ① + 로고 F): 앱 전체를 덮는 검정 화면. 로고 · 한 줄 소개 · 언어 · 시작 · 캐릭터 만들기 */
+  .cover{position:absolute;inset:0;z-index:40;background:#08080b;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;cursor:pointer}
   .cover[hidden]{display:none}
-  .cover .logo{width:78%;max-width:320px;display:flex;flex-direction:column;align-items:center}
-  .cover .logo .lw{width:100%;height:auto;display:block;filter:drop-shadow(0 2px 0 #000)}
-  /* 로고 시안 D: 흰 HANDROX + 노란 밑줄 + 노란 글씨 */
-  .cover .logo .lw{border-bottom:5px solid var(--gold);padding-bottom:4%}
-  .cover .logo .lt{width:88%;height:auto;display:block;margin-top:4%;filter:brightness(0) invert(77%) sepia(91%) saturate(1500%) hue-rotate(5deg) drop-shadow(0 2px 0 #000)}
-  .cover .tag{font-size:16px;color:#fff;text-shadow:2px 2px 0 #000}
-  .cover .city{font-size:26px;font-weight:700;letter-spacing:10px;margin:-6px -10px 0 0;color:#fff;line-height:1;transform:skewX(-9deg)}
-  .cover{gap:5px}
-  [hidden]{display:none!important}
-  .cover .sub{font-size:10px;color:#111;background:var(--gold);padding:2px 8px;letter-spacing:1px}
-  .cover .ins{font-size:17px;letter-spacing:2px;animation:blink 1s steps(1) infinite;margin-top:2px}
-  .cover .note{display:none}
+  .cover .ctop{position:absolute;top:12px;right:14px;display:flex;gap:16px}
+  .cover .ctop button{font:14px var(--px);color:#8d8da0;padding:2px 4px}
+  .cover .logo{width:74%;max-width:300px;display:flex;flex-direction:column;align-items:center}
+  .cover .logo .lw{width:100%;height:auto;display:block}
+  .cover .logo .lb{width:104%;margin-top:6%;padding:2.2% 0;background:var(--gold);display:flex;justify-content:center;clip-path:polygon(4% 0,100% 0,96% 100%,0 100%)}
+  .cover .logo .lb img{width:84%;height:auto;display:block;filter:brightness(0)}
+  .cover .tag{font-size:17px;color:#fff;margin-top:-4px}
+  .cover .gap{height:10px}
+  .cover .city,.cover .note{display:none}
+  .cover .ins{font-size:18px;letter-spacing:3px;animation:blink 1.2s steps(1) infinite}
   /* 첫 페이지 시안 1: 박스 없이, 고른 언어만 노란 글씨 + 노란 밑줄 */
   .lsel{display:flex;gap:22px;align-items:center;margin:2px 0}
   .lsel button{font:15px var(--px);color:#8d8da0;padding:2px 2px 4px;border-bottom:3px solid transparent}
@@ -114,7 +113,7 @@
   .fp.want{border-color:var(--gold)}.fp.want b{color:var(--gold)}
 
   /* 결과 · 도움말 */
-  .help{position:absolute;inset:0;z-index:30;background:#0c0c10f2;display:flex;align-items:center;justify-content:center;padding:16px}
+  .help{position:absolute;inset:0;z-index:60;background:#0c0c10f2;display:flex;align-items:center;justify-content:center;padding:16px}
   .help[hidden]{display:none}
   .help>div{border:3px solid #fff;padding:14px 16px;background:var(--panel);max-width:360px;width:100%;font:13px/1.6 var(--font);color:var(--ink)}
   .help h3{font:700 15px var(--px);color:var(--gold);margin-bottom:6px}
@@ -124,7 +123,7 @@
   .res{text-align:center}
   #fePrev{display:block;width:192px;height:192px;margin:4px auto 8px;border:3px solid var(--gold);background:#000;image-rendering:pixelated;touch-action:none;cursor:grab}
   #feZoom{width:192px;margin-bottom:6px;accent-color:var(--gold);touch-action:pan-x}
-  .cover #fsel button{font:14px var(--px);color:#e4e4ee;padding:2px 2px 4px;border-bottom:2px solid #8d8da0}
+  .cover #fsel button{font:13px var(--px);color:#8d8da0;padding:2px}
   .cust{padding:10px 12px!important}
   #cuPrev3{display:none;width:144px;height:168px;margin:0 auto 6px;background:#050506;border:2px solid var(--gold);touch-action:none;cursor:grab}
   #cuPrev3{display:block!important}#cuPrev{display:none!important}
@@ -171,20 +170,11 @@
     <canvas id="cv" width="640" height="340"></canvas>
     <canvas id="cv3" width="960" height="510"></canvas>
     <button class="tb" id="rst" type="button" hidden>↺</button>
-    <button class="tb" id="lng" type="button">KO</button>
+    <button class="tb" id="lng" type="button" hidden>KO</button>
     <button class="tb" id="hlp" type="button">?</button>
     <button class="tb" id="snd" type="button">♪ ON</button>
     <div class="banner" id="banner"></div>
     <div class="ov" id="ov" hidden></div>
-    <div class="cover" id="cover">
-      <div class="logo" role="img" aria-label="HANDROX — The Ultimate Finger Race"><img class="lw" src="logo_word.png" alt="" width="998" height="123"><img class="lt" src="logo_tag.png" alt="" width="997" height="47"></div>
-      <div class="city" id="city" hidden>PHONE</div>
-      <div class="tag" id="cTag"></div>
-      <div class="lsel" id="lsel"><button type="button" data-l="ko">한국어</button><button type="button" data-l="en">English</button></div>
-      <div class="lsel" id="fsel"><button type="button" id="charBtn"></button></div>
-      <div class="ins" id="cIns">선수 준비 중…</div>
-      <div class="note" id="cNote"></div>
-    </div>
   </section>
 
   <section class="pad" id="pad">
@@ -193,6 +183,17 @@
     <div class="fp" id="pR"><i class="hd"></i><b>R</b><small id="pRs"></small></div>
   </section>
 
+  <div class="cover" id="cover">
+      <div class="ctop"><button type="button" id="cHlp">?</button><button type="button" id="cSnd">♪</button></div>
+      <div class="logo" role="img" aria-label="HANDROX — The Ultimate Finger Race"><img class="lw" src="logo_word.png" alt="" width="998" height="123"><div class="lb"><img src="logo_tag.png" alt="" width="997" height="47"></div></div>
+      <div class="city" id="city" hidden>PHONE</div>
+      <div class="tag" id="cTag"></div>
+      <div class="gap"></div>
+      <div class="lsel" id="lsel"><button type="button" data-l="ko">한국어</button><button type="button" data-l="en">English</button></div>
+      <div class="ins" id="cIns">선수 준비 중…</div>
+      <div class="lsel" id="fsel"><button type="button" id="charBtn"></button></div>
+      <div class="note" id="cNote"></div>
+  </div>
   <div class="help" id="help" hidden><div id="helpBody"></div></div>
   <div class="help" id="custPanel" hidden><div class="res cust"><h3 id="cuT"></h3><canvas id="cuPrev" width="384" height="256"></canvas><canvas id="cuPrev3" width="192" height="224" aria-label="3D 캐릭터, 좌우로 끌어서 돌리기"></canvas>
     <div id="cuRows"></div>
@@ -636,6 +637,8 @@ addEventListener('blur',()=>{['L','R'].forEach(s=>{while(held[s])release(s);});k
 /* ═════════ 시작 · 버튼 ═════════ */
 function start(){if(started||!H3.ok)return;started=true;ac();$('cover').hidden=true;newRace();}
 $('cover').addEventListener('click',start);
+$('cHlp').addEventListener('click',e=>{e.stopPropagation();$('help').hidden=false;});
+$('cSnd').addEventListener('click',e=>{e.stopPropagation();$('snd').click();$('cSnd').textContent=sound?'♪':'♪̸';});
 $('snd').addEventListener('click',()=>{sound=!sound;$('snd').textContent=sound?'♪ ON':'♪ OFF';});
 $('hlp').addEventListener('click',()=>{$('help').hidden=false;});
 $('rst').addEventListener('click',()=>{const b=$('rst');if(b.dataset.ok){delete b.dataset.ok;b.textContent='↺';overlay(null);newRace();}else{b.dataset.ok=1;b.textContent=L('↺ 처음부터?','↺ Restart?');setTimeout(()=>{delete b.dataset.ok;b.textContent='↺';},2000);}});
@@ -649,7 +652,7 @@ function setLang(l){lang=l;try{localStorage.setItem('handrox.lang',l);}catch(e){
   $('cTag').textContent=L('손가락으로 뛰는 하이록스','The fitness race for fingers');$('cNote').textContent=L('기록은 이 브라우저에 저장돼요','Your best time is saved in this browser');
   $('pLs').textContent=L('왼 손가락','LEFT FINGER');$('pRs').textContent=L('오른 손가락','RIGHT FINGER');
   ST[0].hint=L('잡고 ↓ 당겨 ⟳ 돌리기','GRAB ↓ PULL ⟳ CIRCLE');ST[4].hint=L('잡고 ← 당기기 · 돌아오기 →','GRAB ← PULL · RETURN →');ST[3].hint=L('꾹 ▸ 떼기','HOLD ▸ RELEASE');ST[5].hint=L('L + R 꾹','HOLD L + R');ST[2].hint=L('L↓ ▸ R↓ 끝까지','L↓ ▸ R↓ ALL THE WAY');ST[6].hint=L('불 켜진 쪽 ♪','LIT SIDE ♪');
-  $('charBtn').textContent=L('🧍 캐릭터 만들기','🧍 Make your character');$('cuT').textContent=L('🧍 내 캐릭터','🧍 Your character');$('cuOk').textContent=L('완료','Done');if(!$('custPanel').hidden)renderCust();
+  $('charBtn').textContent=L('캐릭터 만들기 ›','Make your character ›');$('cuT').textContent=L('🧍 내 캐릭터','🧍 Your character');$('cuOk').textContent=L('완료','Done');if(!$('custPanel').hidden)renderCust();
   faceBtnText();$('feT').textContent=L('📷 얼굴 맞추기','📷 Frame your face');$('feN').textContent=L('드래그로 위치, 슬라이더로 확대. 사진은 이 기기에만 저장돼요.','Drag to move, slide to zoom. The photo stays on this device.');$('feNo').textContent=L('취소','Cancel');$('feOk').textContent=L('이 얼굴로','Use this');
   $('helpBody').innerHTML=helpHTML();document.querySelectorAll('#lsel button').forEach(b=>b.classList.toggle('on',b.dataset.l===l));$('lng').textContent=l==='ko'?'EN':'KO';paintInfo();}
 $('lsel').addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('button');if(b){SFX.tick();setLang(b.dataset.l);}});
