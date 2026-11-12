@@ -411,7 +411,7 @@ const ERG={LEN:62,PER:62,
   init(s){s.pos={L:0,R:0};s.arm={L:1,R:1};s.ls={L:-9,R:-9};s.acc=0;s.v=0;s.k=0;s.kf=0;s.sr=0;s.lst=-9;s.snd=-9;s.vd=0;s.pp=0;s.pt=0;},
   grab(s,side){this.judge(s);s.pos[side]=0;s.arm[side]=1;},
   /* 스트로크 판정(로잉만): 한 번 당길 때 끝까지(95%) 당기면 PERFECT, 75% 이상 GOOD. 손가락을 되돌리거나 새로 잡을 때 판정 */
-  judge(s){if(!s.grading||!s.inStroke)return;s.inStroke=0;const g=s.peak>=.95?2:s.peak>=.75?1:0;grade(g,s.gx||110,s.gy||40);s.streak=g===2?(s.streak||0)+1:0;
+  judge(s){if(!s.grading||!s.inStroke)return;s.inStroke=0;const g=s.peak>=.95?2:s.peak>=.75?1:0;grade(g,s.gx||110,s.gy||40);s.lg=g;s.streak=g===2?(s.streak||0)+1:0;
     if(s.streak>=3)fx(s.streak+' COMBO','#ffd400',s.gx||110,(s.gy||40)+14,9);},
   stroke(s,side){const d=s.t-s.ls[side];s.ls[side]=s.t;if(d>.12&&d<2)s.sr=1/d;s.lst=s.t;
     if(s.t-s.pt>.2){if(s.pt>0||s.p>0)s.vd=(s.p-s.pp)/(s.t-s.pt);s.pp=s.p;s.pt=s.t;} /* 모니터 페이스는 스트로크마다 갱신 */
@@ -426,6 +426,20 @@ const ERG={LEN:62,PER:62,
     if(s.kf>0){s.kf=Math.max(0,s.kf-dt*3.5);s.k=Math.max(s.k,s.kf);}}};
 /* 에르그 모니터: 남은 거리 · /500m 페이스 · 분당 스트로크 · 와트 (경기 시계 기준) */
 /* 작은 에르그 모니터: 남은 거리와 /500m 페이스만. 큰 모니터는 화면을 너무 가려 선수 동작에 집중이 안 됐음 */
+/* 큰 에르그 모니터(정면 그림). 칸: 시간·s/m / 페이스 / 남은 거리 / 판정 / 진행 막대 */
+const PM5=new Image();PM5.src='art/pm5.webp';
+function monitorBig(x,y,w,s,need){const h=w*431/360,ink='#1e2a1c',R=G.seg.rate,pace=s.vd>25?clamp(500/s.vd*R,65,599):0,
+  mmss=v=>`${Math.floor(v/60)}:${String(Math.floor(v%60)).padStart(2,'0')}`,X=f=>x+w*f,Y=f=>y+h*f,u=w/100;
+  if(PM5.complete&&PM5.naturalWidth)c.drawImage(PM5,x,y,w,h);else{rr(x,y,w,h,4,'#22222a');rr(X(.08),Y(.14),w*.63,h*.57,1,'#b9c6a2');}
+  const lt=(t,px,py,sz,al,op)=>{c.globalAlpha=op||1;c.font=`${sz*u}px Galmuri9, Galmuri11, monospace`;c.textAlign=al;c.textBaseline='middle';c.fillStyle=ink;c.fillText(t,px,py);c.globalAlpha=1;c.textBaseline='alphabetic';};
+  const a=.09,b=.475,e=.70,m=(p,q)=>Y((p+q)/2);
+  lt(L('시간','TIME'),X(a),m(.138,.238),4.2,'left',.7);lt(mmss(s.rt||0),X(b),m(.138,.238),7.5,'right');
+  lt('s/m',X(.50),m(.138,.238),4.2,'left',.7);lt(String(s.sr?Math.round(clamp(s.sr*18,14,48)):0),X(e),m(.138,.238),7.5,'right');
+  lt('/500m',X(a),m(.238,.420),4.2,'left',.7);lt(pace?mmss(pace)+'.'+Math.floor(pace*10%10):'-:--',X(e),m(.238,.420)+u,13.5,'right');
+  lt(L('남은 거리','LEFT'),X(a),m(.420,.509),4.2,'left',.7);lt(Math.max(0,Math.ceil(need-s.p))+'m',X(e),m(.420,.509),8,'right');
+  lt(L('판정','GRADE'),X(a),m(.509,.600),4.2,'left',.7);lt(s.lg==null?'-':(['MISS','GOOD','PERFECT'][s.lg]+((s.streak||0)>=2?' ×'+s.streak:'')),X(e),m(.509,.600),7,'right');
+  const bx=X(a),by=m(.600,.705)-2.2*u,bw=w*.30,bh=4.4*u,pr=clamp(s.p/need,0,1);c.strokeStyle=ink;c.lineWidth=.8;c.strokeRect(bx,by,bw,bh);c.fillStyle=ink;c.fillRect(bx,by,bw*pr,bh);
+  lt(Math.floor(s.p)+'/'+need+'m',X(e),m(.600,.705),5.6,'right');}
 function monitorMini(x,y,s,need){const w=78,h=34,ink='#17210f',R=G.seg.rate,pace=s.vd>25?clamp(500/s.vd*R,65,599):0,
   mmss=v=>`${Math.floor(v/60)}:${String(Math.floor(v%60)).padStart(2,'0')}`;
   rr(x-3,y-3,w+6,h+6,4,'#22222a');rr(x,y,w,h,2,'#b9c6a2',null);
@@ -446,18 +460,18 @@ function monitor(x,y,s,need){const w=116,h=76,ink='#17210f',mmss=v=>`${Math.floo
 const ST=[
  {id:'ski',rate:67,erg:1,need:1000,unit:'m',nm:['스키에르그','SKIERG'],hint:'',
   how:['두 손잡이(L·R)를 잡고 아래 끝까지 당기면 PERFECT! 다시 위로 돌아와요','Grab both handles (L·R), pull all the way down for PERFECT, then back up'],
-  init(s){ERG.init(s);s.grading=1;s.gx=96;s.gy=34;},
+  init(s){ERG.init(s);s.grading=1;s.gx=48;s.gy=40;},
   down(s,side){ERG.grab(s,side);},
   move(s,side,dx,dy){ERG.pull(s,side,dy);},
   swipe(s,side,dir,key){if(key&&dir==='down')ERG.key(s,124);},
   update(s,dt){ERG.tick(s,dt);},
   want:()=>'LR',
   /* 비스듬한 뒷모습: 정면 스키에르그 앞에서 선수가 등을 보이고 당김. 줄은 위 도르래(그림 좌표 438·818, 165)에서 손까지, 손잡이는 맨 앞에 */
-  draw(s){sceneK('ski',1);const z=.78,u=HEIGHT3*z,FY=156,MC=104,cx=MC+10,ms=1.34*u*1.05/1060,mx=MC-627*ms,my=FY-1180*ms;
+  draw(s){sceneK('ski',1);const z=1,u=HEIGHT3*z,FY=156,MC=104,cx=MC+10,ms=1.34*u*1.05/1060,mx=MC-627*ms,my=FY-1180*ms;
     H3.img('ski_machine',mx,my,1254*ms,1254*ms);const P=[[mx+438*ms,my+165*ms],[mx+818*ms,my+165*ms]];
     const h=H3.show('skib',cx,FY,{k:s.k,z,peek:1});H3.line(P[0][0],P[0][1],h.hand[0],h.hand[1],1.3,'#cdcdd4');H3.line(P[1][0],P[1][1],h.handR[0],h.handR[1],1.3,'#cdcdd4');
     H3.show('skib',cx,FY,{k:s.k,z});for(const q of [h.hand,h.handR])H3.rect(q[0]-2.6,q[1]-6,5.2,8,'#ffc800','#26262e');
-    monitorMini(234,-OFF+28,s,this.need);}},
+    monitorBig(228,-OFF+30,86,s,this.need);}},
  {id:'push',rate:36,need:50,unit:'m',pxu:8,nm:['슬레드 푸시','SLED PUSH'],hint:'L + R',
   how:['L·R 동시에 탭! 두 손가락으로 힘껏 밀어요','Tap L and R together to shove the sled'],
   init(s){s.tp={L:-9,R:-9};s.ph=0;s.tph=0;s.k=0;},
@@ -503,7 +517,7 @@ const ST=[
     const gx=262,gy=24,gh=100,Y=v=>gy+gh*(1-v/1.12);c.fillStyle='#111';c.fillRect(gx-3,gy-3,30,gh+6);c.fillStyle='#3a1418';c.fillRect(gx,gy,24,gh);
     c.fillStyle='#16a34a';c.fillRect(gx,Y(1),24,Y(.5)-Y(1));c.fillStyle='#ffd400';c.fillRect(gx,Y(.9),24,Y(.72)-Y(.9));
     if(s.st==='chg'){c.fillStyle='#fff';c.fillRect(gx-6,Y(Math.min(1.12,s.c))-1.5,36,3);}
-    txt(L('노랑=10m','YELLOW=10m'),gx+12,gy+gh+16,8,'#ffd400');}},
+  }},
  {id:'row',rate:71,erg:1,need:1000,unit:'m',nm:['로잉','ROWING'],hint:'',
   how:['손잡이를 잡은 채 왼쪽 끝까지 길게 당기면 PERFECT! 오른쪽으로 돌아와요','Pull all the way left for PERFECT, then glide back right'],
   init(s){ERG.init(s);s.kd=null;s.grading=1;s.gx=96;s.gy=34;},
@@ -514,12 +528,12 @@ const ST=[
   want:()=>'LR',
   draw(s){sceneK('zone',1);if(Math.abs(s.k-(s.kp||0))>.01){s.drv=s.k>(s.kp||0);s.kp=s.k;}
     /* 로잉머신 그림(원본 1672×941 기준 좌표). 발판 (790,585)이 FX에, 다리 (860)가 바닥에 오게. 선수·기계를 1.3배로 키워 가운데에 */
-    const Z=1.3,ms=.0966*Z,FX=160-46*ms,mx=FX-790*ms,my=FL+4-860*ms,Q=(x,y)=>[mx+x*ms,my+y*ms],railTop=Q(0,606)[1],seatY=railTop-158*.75*ms;
+    const Z=1,ms=.0966*Z,FX=160-46*ms,mx=FX-790*ms,my=FL+4-860*ms,Q=(x,y)=>[mx+x*ms,my+y*ms],railTop=Q(0,606)[1],seatY=railTop-158*.75*ms;
     H3.img('row_machine',mx,my,1672*ms,941*ms);
     const h=H3.show('row',FX,seatY,{k:s.k,peek:1,z:Z}),sw=417*ms,sh=158*ms,sx=clamp(h.hips[0],Q(150,0)[0]+sw/2,Q(640,0)[0]-sw*.2);
     H3.img('row_seat',sx-sw/2,railTop-sh,sw,sh);const ch=Q(1145,445);H3.line(ch[0],ch[1],h.hand[0],h.hand[1],1.3,'#c8c8d0');
     H3.show('row',FX,seatY,{k:s.k,z:Z});H3.rect(h.hand[0]-6,h.hand[1]-2.5,12,5,'#ffd400','#26262e');
-    monitorMini(234,-OFF+28,s,this.need);}},
+    monitorBig(228,-OFF+30,86,s,this.need);}},
  {id:'carry',rate:26,need:100,unit:'m',pxu:2,nm:['파머스 캐리','FARMERS CARRY'],hint:L('L + R 꾹','HOLD L + R'),
   how:['둘 다 꾹 잡고 걸어요. 악력이 바닥나기 전에 잠깐 떼요!','Hold both to carry. Let go briefly before your grip runs out!'],
   init(s){s.grip=1;s.v=0;s.lock=0;s.ph=0;},
@@ -553,7 +567,6 @@ const ST=[
     c.fillStyle='#16a34a';c.fillRect(gx,Y(.5),24,Y(1)-Y(.5));c.fillStyle='#ffd400';c.fillRect(gx,Y(.72),24,Y(.92)-Y(.72));
     c.fillStyle='#e5391f';c.fillRect(gx,Y(1.08),24,Y(1.12)-Y(1.08));
     if(s.st==='down'||s.st==='stum'){c.fillStyle='#fff';c.fillRect(gx-6,Y(Math.min(1.12,s.c))-1.5,36,3);}
-    txt(L('노랑=10m','YELLOW=10m'),gx+12,gy+gh+14,8,'#ffd400');
     ['L','R'].forEach((sd,i)=>{const on=s.side===sd;rr(206+i*0,30+i*30,26,22,4,on?'#ffd400':'#1c1c24',on?'#111':'#33333d');txt(sd,219,46+i*30,13,on?'#111':'#55556a');});
     txt(L('꾹 → 떼기','HOLD → RELEASE'),219,98,8,'#fff');}},
  {id:'wall',rate:40,need:100,unit:['개','reps'],nm:['월볼','WALL BALLS'],hint:'L + R',
