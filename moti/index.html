@@ -289,7 +289,6 @@
     <canvas class="tfront" id="tfront" width="30" height="22"></canvas>
     <div class="night" id="night"></div>
     <div class="hud" id="hud"></div>
-    <button class="tb" id="lbb" type="button">🏆</button>
     <button class="tb" id="lng" type="button">KO</button>
     <button class="tb" id="hlp" type="button">?</button>
     <button class="tb" id="snd" type="button">♪ ON</button>
@@ -668,7 +667,7 @@ async function doLift(k){await walkTo(SPOT.gym-4);setF(F.squat);say(pick(['간�
   closeMG();
   const before=S[k],isPR=r.kg>before;log('lift',{k,grade:r.grade,kg:r.kg,pr:Math.max(before,r.kg),lv:S.lv[k]});
   if(r.kg>0){await yoss();SFX.thud();SFX.clang();shake();}
-  if(isPR){S[k]=r.kg;save();lbSend();paint(k);SFX.win();banner('NEW PR!',1100);
+  if(isPR){S[k]=r.kg;save();paint(k);SFX.win();banner('NEW PR!',1100);
     await playAct('mv_yoss',[[1,180],[2,260],[3,320],[4,420],[5,480],[6,420],[7,300]],f=>{if(f===4){say('요쓰!!',1000);SFX.thud();}});actEnd('mv_yoss');setF(F.smile);
     say(r.grade==='PERFECT'&&RUON()&&Math.random()<.6?'Охуенно!':pick(['가볍네','이게 사는 맛이지','근육아 고마워']),1200);
     msg('LIFT',`🏋️ ${name} 신기록!`,`${r.kg}kg 성공 (${r.grade})\n${before?`이전 기록 ${before}kg → `:''}PR ${r.kg}kg · 합계 ${total()}kg`);
@@ -929,7 +928,6 @@ async function openLB(){const ko=lang==='ko';$('lbp').hidden=false;$('lbT').text
   $('lbName').value=myName();$('lbName').placeholder=ko?'내 이름 (12자)':'Your name (12 chars)';$('lbSave').textContent=ko?'저장':'Save';
   $('lbNote').textContent=LB_ON?(ko?'신기록을 세우면 자동으로 올라가요 · 바깥을 눌러 닫기':'Your score is posted on every new PR · tap outside to close'):(ko?'리더보드는 ynschoi.github.io/moti 에서만 돼요':'The leaderboard works on ynschoi.github.io/moti only');
   $('lbList').innerHTML=`<li><span></span><span>${ko?'불러오는 중…':'Loading…'}</span></li>`;lbRender(await lbLoad());}
-$('lbb').addEventListener('click',()=>{SFX.tick();openLB();});
 $('lbp').addEventListener('click',e=>{if(e.target.id==='lbp')$('lbp').hidden=true;});
 $('lbSave').addEventListener('click',async()=>{const n=$('lbName').value.trim().slice(0,12);lss('moti_name',n||null);SFX.potion();
   $('lbList').innerHTML=`<li><span></span><span>…</span></li>`;lbRender(await lbSend()||await lbLoad());});
