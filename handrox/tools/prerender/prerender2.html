@@ -1,0 +1,35 @@
+<!doctype html><meta charset="utf-8"><body style="margin:0;background:#000">
+<script type="importmap">{"imports":{"three":"/three/build/three.module.js","three/addons/":"/three/examples/jsm/"}}</script>
+<script type="module">
+/* 새 선수(assets/hero_rig.glb, Tripo+Higgsfield 리깅 24관절)를 자세별로 찍음. render.cjs가 window.bake(job)를 부름.
+   자세는 세계 기준 회전으로 넣음: S=몸 옆축(앞뒤로 굽히기), F=앞축(옆으로 벌리기). 얼굴은 +x */
+import * as THREE from 'three';import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+const g=await new GLTFLoader().loadAsync('assets/hero_rig.glb');const obj=g.scene;const B={};obj.traverse(o=>{if(o.isBone)B[o.name]=o;});
+const rest={};for(const k in B)rest[k]=B[k].quaternion.clone();
+const F=new THREE.Vector3(1,0,0),S=new THREE.Vector3(0,0,1);
+const W=(n,ax,a)=>{const b=B[n];b.parent.updateWorldMatrix(true,false);const pq=new THREE.Quaternion();b.parent.getWorldQuaternion(pq);const wq=new THREE.Quaternion();b.getWorldQuaternion(wq);
+  b.quaternion.copy(pq.invert().multiply(new THREE.Quaternion().setFromAxisAngle(ax,a).multiply(wq)));b.updateMatrixWorld(true);};
+const armDown=a=>{W('LeftArm',F,-a);W('RightArm',F,a);};
+const POSE={
+ idle(){armDown(.15);return {};},
+ run({ph}){const s=Math.sin(ph),c=Math.cos(ph);W('Spine',S,-.12);
+   W('LeftUpLeg',S,.8*s);W('LeftLeg',S,-(.3+1.0*Math.max(0,-c)));W('RightUpLeg',S,-.8*s);W('RightLeg',S,-(.3+1.0*Math.max(0,c)));
+   armDown(.55);W('LeftArm',S,-.9*s);W('LeftForeArm',S,1.3);W('RightArm',S,.9*s);W('RightForeArm',S,1.3);return {bounce:Math.abs(c)*.03};},
+ row({k}){const L=Math.min(1,k/.55),Bk=Math.max(0,Math.min(1,(k-.25)/.5)),A=Math.max(0,Math.min(1,(k-.55)/.45)),lr=(a,b,t)=>a+(b-a)*t;
+   const th=lr(1.9,1.45,L),kn=lr(2.3,.15,L);W('LeftUpLeg',S,th);W('RightUpLeg',S,th);W('LeftLeg',S,-kn);W('RightLeg',S,-kn);
+   W('Spine',S,lr(-.5,.45,Bk));armDown(.15);W('LeftArm',S,lr(1.5,.1,A));W('RightArm',S,lr(1.5,.1,A));W('LeftForeArm',S,lr(0,1.6,A));W('RightForeArm',S,lr(0,1.6,A));
+   return {anchor:['LeftToeBase','Hips']};}};   /* 로잉 원점: x=발끝, y=엉덩이 (발은 발판에, 엉덩이는 의자 높이에) */
+const sc=new THREE.Scene();const root=new THREE.Group();root.add(obj);sc.add(root);
+const cv=document.createElement('canvas');const r=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true,preserveDrawingBuffer:true});r.outputColorSpace=THREE.SRGBColorSpace;r.toneMapping=THREE.ACESFilmicToneMapping;r.setClearColor(0,0);
+sc.environment=new THREE.PMREMGenerator(r).fromScene(new RoomEnvironment(),.04).texture;const d=new THREE.DirectionalLight(0xffffff,1.1);d.position.set(1,2,3);sc.add(d);
+const blank=document.createElement('canvas');
+const wp=n=>{const v=new THREE.Vector3();B[n].getWorldPosition(v);return v;};
+window.bake=job=>{const [x0,x1,y0,y1]=job.box,Wd=Math.round((x1-x0)*job.ppu),Ht=Math.round((y1-y0)*job.ppu);
+  for(const k in B)B[k].quaternion.copy(rest[k]);root.position.set(0,0,0);root.rotation.set(0,job.yaw||0,0);root.updateMatrixWorld(true);
+  const res=POSE[job.pose](job.o||{});root.updateMatrixWorld(true);
+  if(res.anchor){const a=wp(res.anchor[0]),h=wp(res.anchor[1]);root.position.set(-a.x,-h.y,0);}else root.position.set(0,.49+(res.bounce||0),0);   /* 발바닥 = 0 */
+  root.updateMatrixWorld(true);const cam=new THREE.OrthographicCamera(x0,x1,y1,y0,-10,10);cam.position.z=5;r.setSize(Wd,Ht,false);r.render(sc,cam);
+  blank.width=Wd;blank.height=Ht;const p=n=>{const v=wp(n);return [+v.x.toFixed(4),+v.y.toFixed(4)];};
+  return {w:Wd,h:Ht,c:cv.toDataURL('image/png'),m:blank.toDataURL('image/png'),pts:{hand:p('LeftHand'),hips:p('Hips'),head:p('Head')}};};
+window.READY=true;
+</script>

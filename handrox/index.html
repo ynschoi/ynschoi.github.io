@@ -57,7 +57,7 @@
 
   /* ═══ 가운데: 경기장 ═══ */
   .game{position:relative;overflow:hidden;background:#111;border-top:3px solid #fff;border-bottom:3px solid #fff}
-  #cv,#cv3{position:absolute;inset:0;width:100%;height:100%;display:block}
+  #cvbg,#cv,#cv3{position:absolute;inset:0;width:100%;height:100%;display:block}
   #cv3{pointer-events:none;z-index:1}
   /* 위쪽 작은 버튼: 박스 없이 글씨만, 누르면 노란 밑줄 (표지 언어 탭과 같은 말투) */
   .tb{position:absolute;top:8px;z-index:9;font:12px var(--px);color:#c8c8d4;padding:3px 2px 2px;border-bottom:2px solid transparent;text-shadow:0 1px 0 #000}
@@ -72,7 +72,7 @@
   .ov .s{font:14px/1.5 var(--font);color:#fff}
   .ov .k{font-size:15px;color:var(--gold);border:2px solid var(--gold);padding:4px 10px;margin-top:2px}
   /* 첫 화면 (시안 ① + 로고 F): 앱 전체를 덮는 검정 화면. 로고 · 한 줄 소개 · 언어 · 시작 · 캐릭터 만들기 */
-  .cover{position:absolute;inset:0;z-index:40;background:#08080b;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;cursor:pointer}
+  .cover{position:absolute;inset:0;z-index:40;background:linear-gradient(rgba(8,8,11,.55),rgba(8,8,11,.8)),url(art/bg_cover.jpg) center/cover #08080b;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;cursor:pointer}
   .cover[hidden]{display:none}
   .cover .ctop{position:absolute;top:12px;right:14px;display:flex;gap:16px}
   .cover .ctop button{font:14px var(--px);color:#8d8da0;padding:2px 4px}
@@ -167,6 +167,7 @@
   </section>
 
   <section class="game" id="game">
+    <canvas id="cvbg" width="960" height="510"></canvas>
     <canvas id="cv" width="640" height="340"></canvas>
     <canvas id="cv3" width="960" height="510"></canvas>
     <button class="tb" id="rst" type="button" hidden>↺</button>
@@ -207,7 +208,7 @@
 </div>
 <script>
 'use strict';
-window.H3=window.H3||{ok:false,why:'loading',show(){return false;},frame(){},icon(){}};   /* 3D 모듈(hero3d.js)이 뜨기 전 자리표시 */
+window.H3=window.H3||{ok:false,why:'loading',show(){return false;},frame(){},icon(){},bg(){},img(){},line(){},rect(){}};   /* 3D 모듈(hero3d.js)이 뜨기 전 자리표시 */
 const $=id=>document.getElementById(id),clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const SHARE_URL='https://ynschoi.github.io/handrox/';
 /* 경기 시계: 구간마다 배속(rate)이 달라요. 무난하게 잘했을 때 실제 하이록스 스플릿이 나오도록 맞춘 값.
@@ -288,17 +289,8 @@ const BGW=640,BG=(()=>{const t=document.createElement('canvas');t.width=BGW;t.he
       const v=Math.pow(1-Math.abs(al)/len,1.4)*Math.pow(1-Math.abs(pe)/th,1.6)*br;if(rnd()>v*1.5)continue;const g=Math.round(70+185*v);x.fillStyle=`rgb(${g},${g},${g})`;
       for(const dx of [0,-BGW,BGW])x.fillRect(Math.round(cx+gx)+dx,Math.round(cy+gy),1,1);}}
   return t;})();
-function scene(off=0){c.imageSmoothingEnabled=false;
-  R(0,0,W,H,'#050506');const o1=Math.floor(off*.2)%BGW;c.drawImage(BG,-o1,0);c.drawImage(BG,BGW-o1,0);
-  const o6=Math.floor(off*.7),P=132;                                                         // 전광판
-  for(let x=-(o6%P)-P,n=Math.floor(o6/P)-1;x<W;x+=P,n++){R(x+6,100,100,26,'#e9e9ee');R(x+7,101,98,24,'#08080a');R(x+7,101,98,3,'#3c3c42');
-    for(let i=0;i<98;i+=2)R(x+7+i,102,1,1,'#9a9aa2');
-    const t=((n%2)+2)%2?'PHONE':'HANDROX';c.font='bold 10px Galmuri11, monospace';c.textAlign='center';c.fillStyle='#f2f2f5';[...t].forEach((ch,i)=>c.fillText(ch,x+56+(i-(t.length-1)/2)*11,119));}
-  R(0,FL-16,W,H-FL+16,'#09090b');R(0,FL-16,W,1,'#d9d9de');                                   // 바닥
-  for(const y of [FL-9,FL+3,FL+15])R(0,y,W,1,'#232328');
-  const o=Math.floor(off);for(let x=-(o%30);x<W;x+=30)R(x,FL-15,1,H-FL+15,'#1b1b20');
-  for(let x=-(o6%P)-P;x<W;x+=P)for(const ex of [6,105])for(let i=0;i<10;i++)R(x+ex,FL-14+i*3,1,2,`rgba(255,255,255,${.5-i*.05})`);  // 전광판 반사
-}
+function scene(off=0){c.setTransform(2,0,0,2,0,0);c.clearRect(0,0,W,H);   /* 배경 그림은 hero_spr.js가 아래 캔버스(cvbg)에 그림 */
+  H3.bg(!G||!G.seg||G.seg.id==='run'?'run':'zone',off);}
 
 /* ═════════ 캐릭터: 단순한 픽셀 선수. 피부·머리·옷·반다나·신발을 고를 수 있음 ═════════ */
 const OPT={skin:['#f6ceaa','#e3b48c','#c68f63','#8d5a3b','#5c3a25'],
@@ -501,12 +493,12 @@ const ST=[
   update(s,dt){ERG.tick(s,dt);},
   want:()=>'LR',
   draw(s){scene(0);if(Math.abs(s.k-(s.kp||0))>.01){s.drv=s.k>(s.kp||0);s.kp=s.k;}
-    const FX=128,FY=FL-10,WX=190,WY=FL-26;
-    if(H3.ok){rr(20,FL-10,160,5,1,'#3a3a44');R(26,FL-5,4,5,'#26262e');R(132,FL-5,4,5,'#26262e');        /* 3D 선수용 로잉머신: 레일·발판·플라이휠 */
-      disc(WX,WY,22,'#26262e');ring(WX,WY,15,'#ffd400',2);const a=s.dp*.05;for(let i=0;i<3;i++)pline(WX,WY,WX+Math.cos(a+i*2.09)*13,WY+Math.sin(a+i*2.09)*13,2,'#ffd400');
-      disc(WX,WY,3,'#c8c8d0');R(WX-24,FL-8,46,8,'#26262e');R(FX+2,FL-10,WX-FX-20,5,'#3a3a44');rr(FX+2,FL-26,7,20,2,'#4a4a56');
-      const h=H3.show('row',FX+3,FY,{k:s.k,yaw:-.12,z:1.15});rr(h.hips[0]-11,h.hips[1]+3,22,5,2,'#1c1c22');R(h.hips[0]-2,h.hips[1]+8,4,FL-10-h.hips[1]-8,'#26262e');
-      pline(WX-14,WY-4,h.hand[0],h.hand[1],1,'#c8c8d0');}
+    /* 로잉머신 그림(원본 1672×941 기준 좌표). 발판 (790,585)이 FX에, 다리 (860)가 바닥에 오게 */
+    const ms=.0966,FX=120,mx=FX-790*ms,my=FL+4-860*ms,Q=(x,y)=>[mx+x*ms,my+y*ms],railTop=Q(0,606)[1],seatY=railTop-158*.75*ms;
+    H3.img('row_machine',mx,my,1672*ms,941*ms);
+    const h=H3.show('row',FX,seatY,{k:s.k,peek:1}),sw=417*ms,sh=158*ms,sx=clamp(h.hips[0],Q(150,0)[0]+sw/2,Q(640,0)[0]-sw*.2);
+    H3.img('row_seat',sx-sw/2,railTop-sh,sw,sh);const ch=Q(1145,445);H3.line(ch[0],ch[1],h.hand[0],h.hand[1],1,'#c8c8d0');
+    H3.show('row',FX,seatY,{k:s.k});H3.rect(h.hand[0]-5,h.hand[1]-2,10,4,'#ffd400','#26262e');
     monitor(200,22,s,this.need);}},
  {id:'carry',rate:13,need:200,unit:'m',pxu:2,nm:['파머스 캐리','FARMERS CARRY'],hint:L('L + R 꾹','HOLD L + R'),
   how:['둘 다 꾹 잡고 걸어요. 악력이 바닥나기 전에 잠깐 떼요!','Hold both to carry. Let go briefly before your grip runs out!'],
@@ -708,7 +700,7 @@ window.handroxColors=()=>{const D={skin:0,hair:1,top:0,shorts:0,band:0,shoes:0},
   return {skin:o('skin',OPT.skin[CHAR.skin]),hair:o('hair',OPT.hair[CHAR.hair]),top:CHAR.topS===2?OPT.skin[CHAR.skin]:o('top',OPT.top[CHAR.top]),
     shorts:o('shorts',OPT.shorts[CHAR.shorts]),band:o('band',OPT.band[CHAR.band]||'#f2f2f2'),shoes:o('shoes',OPT.shoes[CHAR.shoes])};};
 </script>
-<script>/*HERO_MAN*/window.HERO_MAN={"run":{"c":"run_c_9d6e9f75.webp","m":"run_m_991e561e.png","n":12,"w":312,"h":296,"box":[-0.6,0.6,-0.04,1.1],"ppu":260,"ref":[55.7,131.2,78.6,142.2,43.5,188.3,188.2],"pts":[{"hand":[0.0065,0.2884],"hips":[0.0171,0.265],"head":[0.0503,0.5016]},{"hand":[-0.0435,0.2563],"hips":[0.0171,0.2603],"head":[0.0503,0.4969]},{"hand":[-0.0839,0.2402],"hips":[0.0171,0.2475],"head":[0.0503,0.4841]},{"hand":[-0.0987,0.2251],"hips":[0.0171,0.23],"head":[0.0503,0.4666]},{"hand":[-0.0839,0.2402],"hips":[0.0171,0.2475],"head":[0.0503,0.4841]},{"hand":[-0.0435,0.2563],"hips":[0.0171,0.2603],"head":[0.0503,0.4969]},{"hand":[0.0065,0.2884],"hips":[0.0171,0.265],"head":[0.0503,0.5016]},{"hand":[0.0424,0.3328],"hips":[0.0171,0.2603],"head":[0.0503,0.4969]},{"hand":[0.0559,0.3648],"hips":[0.0171,0.2475],"head":[0.0503,0.4841]},{"hand":[0.0578,0.3646],"hips":[0.0171,0.23],"head":[0.0503,0.4666]},{"hand":[0.0559,0.3648],"hips":[0.0171,0.2475],"head":[0.0503,0.4841]},{"hand":[0.0424,0.3328],"hips":[0.0171,0.2603],"head":[0.0503,0.4969]}]},"row":{"c":"row_c_d1f4c4bb.webp","m":"row_m_d84e2ede.png","n":11,"w":286,"h":278,"box":[-0.7,0.4,-0.12,0.95],"ppu":260,"ref":[55.6,125.6,77.8,160.4,49.7,190.7,169.5],"pts":[{"hand":[0.1616,0.1726],"hips":[-0.067,0.0533],"head":[0.0618,0.25]},{"hand":[0.1504,0.1726],"hips":[-0.0782,0.0534],"head":[0.0506,0.25]},{"hand":[0.126,0.1705],"hips":[-0.1025,0.0513],"head":[0.0262,0.2479]},{"hand":[0.0991,0.1661],"hips":[-0.1263,0.0453],"head":[-0.0029,0.2459]},{"hand":[0.0596,0.167],"hips":[-0.1432,0.0384],"head":[-0.0593,0.2612]},{"hand":[0.0139,0.1656],"hips":[-0.1532,0.0335],"head":[-0.1358,0.2728]},{"hand":[-0.0283,0.1526],"hips":[-0.1602,0.0323],"head":[-0.2114,0.2661]},{"hand":[-0.064,0.1082],"hips":[-0.1647,0.0313],"head":[-0.2585,0.2495]},{"hand":[-0.1042,0.0703],"hips":[-0.1653,0.0311],"head":[-0.2652,0.2463]},{"hand":[-0.1504,0.0599],"hips":[-0.1653,0.0311],"head":[-0.2652,0.2463]},{"hand":[-0.1713,0.063],"hips":[-0.1653,0.0311],"head":[-0.2652,0.2463]}]},"turn":{"c":"turn_c_ce844cab.webp","m":"turn_m_c0a83e15.png","n":12,"w":386,"h":458,"box":[-0.46,0.46,-0.03,1.06],"ppu":420,"ref":[59.9,133.4,79.5,159.3,48.1,188.5,194.9],"pts":[{"hand":[-0.1551,0.1872],"hips":[0.01,0.23],"head":[0.01,0.47]},{"hand":[-0.0705,0.1872],"hips":[0.0173,0.23],"head":[0.0173,0.47]},{"hand":[0.033,0.1872],"hips":[0.02,0.23],"head":[0.02,0.47]},{"hand":[0.1277,0.1872],"hips":[0.0173,0.23],"head":[0.0173,0.47]},{"hand":[0.1881,0.1872],"hips":[0.01,0.23],"head":[0.01,0.47]},{"hand":[0.1982,0.1872],"hips":[0.0001,0.23],"head":[0.0001,0.47]},{"hand":[0.1551,0.1872],"hips":[-0.01,0.23],"head":[-0.01,0.47]},{"hand":[0.0705,0.1872],"hips":[-0.0173,0.23],"head":[-0.0173,0.47]},{"hand":[-0.033,0.1872],"hips":[-0.02,0.23],"head":[-0.02,0.47]},{"hand":[-0.1277,0.1872],"hips":[-0.0173,0.23],"head":[-0.0173,0.47]},{"hand":[-0.1881,0.1872],"hips":[-0.01,0.23],"head":[-0.01,0.47]},{"hand":[-0.1982,0.1872],"hips":[-0.0001,0.23],"head":[-0.0001,0.47]}]},"icon":{"c":"icon_c_6ce2e4ed.webp","m":"icon_m_74a352e9.png","n":1,"w":192,"h":192,"box":[-0.32,0.32,0.42,1.06],"ppu":300,"ref":[61.8,132.3,81.0,76.4,1.0,181.5,1.0],"pts":[{"hand":[-0.1819,0.1872],"hips":[0.0053,0.23],"head":[0.0053,0.47]}]}};/*END_HERO_MAN*/</script>
+<script>/*HERO_MAN*/window.HERO_MAN={"run":{"c":"run_c_176b7015.webp","m":"run_m_80916bb9.png","n":12,"w":264,"h":327,"box":[-0.44,0.44,-0.02,1.07],"ppu":300,"ref":[143.0,1.0,1.0,1.0,1.0,1.0,1.0],"pts":[{"hand":[0.0986,0.369],"hips":[0.0215,0.3311],"head":[0.0196,0.5475]},{"hand":[0.0431,0.3465],"hips":[0.0215,0.3271],"head":[0.0196,0.5435]},{"hand":[0.0001,0.3384],"hips":[0.0215,0.3161],"head":[0.0196,0.5325]},{"hand":[-0.015,0.328],"hips":[0.0215,0.3011],"head":[0.0196,0.5175]},{"hand":[0.0001,0.3384],"hips":[0.0215,0.3161],"head":[0.0196,0.5325]},{"hand":[0.0431,0.3465],"hips":[0.0215,0.3271],"head":[0.0196,0.5435]},{"hand":[0.0986,0.369],"hips":[0.0215,0.3311],"head":[0.0196,0.5475]},{"hand":[0.1405,0.4059],"hips":[0.0215,0.3271],"head":[0.0196,0.5435]},{"hand":[0.1577,0.4343],"hips":[0.0215,0.3161],"head":[0.0196,0.5325]},{"hand":[0.1605,0.4349],"hips":[0.0215,0.3011],"head":[0.0196,0.5175]},{"hand":[0.1577,0.4343],"hips":[0.0215,0.3161],"head":[0.0196,0.5325]},{"hand":[0.1405,0.4059],"hips":[0.0215,0.3271],"head":[0.0196,0.5435]}]},"row":{"c":"row_c_5bd66c04.webp","m":"row_m_8ebcd638.png","n":11,"w":348,"h":372,"box":[-0.72,0.44,-0.38,0.86],"ppu":300,"ref":[134.2,1.0,1.0,1.0,1.0,1.0,1.0],"pts":[{"hand":[0.0743,0.0716],"hips":[-0.0938,0],"head":[-0.033,0.2032]},{"hand":[0.0198,0.0716],"hips":[-0.1483,0],"head":[-0.0875,0.2032]},{"hand":[-0.0299,0.0716],"hips":[-0.198,0],"head":[-0.1372,0.2032]},{"hand":[-0.0736,0.0864],"hips":[-0.2385,0],"head":[-0.1928,0.2087]},{"hand":[-0.1118,0.1148],"hips":[-0.2661,0],"head":[-0.252,0.2153]},{"hand":[-0.1398,0.1407],"hips":[-0.2784,0],"head":[-0.2965,0.2159]},{"hand":[-0.1601,0.1533],"hips":[-0.2785,0],"head":[-0.3283,0.2103]},{"hand":[-0.1844,0.152],"hips":[-0.2785,0],"head":[-0.3584,0.1989]},{"hand":[-0.2023,0.1405],"hips":[-0.2785,0],"head":[-0.3725,0.1911]},{"hand":[-0.216,0.1243],"hips":[-0.2785,0],"head":[-0.3725,0.1911]},{"hand":[-0.2349,0.1126],"hips":[-0.2785,0],"head":[-0.3725,0.1911]}]},"turn":{"c":"turn_c_5aaba266.webp","m":"turn_m_5f5e1d59.png","n":12,"w":286,"h":437,"box":[-0.34,0.34,-0.02,1.02],"ppu":420,"ref":[143.1,1.0,1.0,1.0,1.0,1.0,1.0],"pts":[{"hand":[0.2066,0.3292],"hips":[-0.0026,0.3011],"head":[0.0016,0.5166]},{"hand":[0.1893,0.3207],"hips":[0.0085,0.3011],"head":[0.001,0.5166]},{"hand":[0.1213,0.3144],"hips":[0.0174,0.3011],"head":[0.0001,0.5166]},{"hand":[0.0208,0.312],"hips":[0.0215,0.3011],"head":[-0.0008,0.5166]},{"hand":[-0.0853,0.314],"hips":[0.0199,0.3011],"head":[-0.0015,0.5166]},{"hand":[-0.1685,0.32],"hips":[0.013,0.3011],"head":[-0.0018,0.5166]},{"hand":[-0.2066,0.3283],"hips":[0.0026,0.3011],"head":[-0.0016,0.5166]},{"hand":[-0.1893,0.3367],"hips":[-0.0085,0.3011],"head":[-0.001,0.5166]},{"hand":[-0.1213,0.343],"hips":[-0.0174,0.3011],"head":[-0.0001,0.5166]},{"hand":[-0.0208,0.3454],"hips":[-0.0215,0.3011],"head":[0.0008,0.5166]},{"hand":[0.0853,0.3434],"hips":[-0.0199,0.3011],"head":[0.0015,0.5166]},{"hand":[0.1685,0.3375],"hips":[-0.013,0.3011],"head":[0.0018,0.5166]}]},"icon":{"c":"icon_c_f4ce1e09.webp","m":"icon_m_e8b18b09.png","n":1,"w":198,"h":186,"box":[-0.33,0.33,0.42,1.04],"ppu":300,"ref":[150.9,1.0,1.0,1.0,1.0,1.0,1.0],"pts":[{"hand":[0.2066,0.3292],"hips":[-0.0026,0.3011],"head":[0.0016,0.5166]}]}};/*END_HERO_MAN*/</script>
 <script src="hero_spr.js"></script>
 </body>
 </html>
