@@ -8,7 +8,7 @@ import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 
-const H3={ok:false,why:'loading'};window.H3=H3;
+const H3=window.H3||{};Object.assign(H3,{ok:false,why:'loading'});window.H3=H3;window.H3MOD=true;
 const GW=320,GH=170,HEIGHT=70;          // 경기장 좌표계, 선수 키(경기장 px)
 
 /* ── 뼈대 ── 모델 좌표: 키 1(y -0.5~0.5), 앞 +x, 옆 z. z>0 쪽이 카메라에 가까운 팔·다리 */
@@ -80,7 +80,7 @@ function applyColors(cols){const key=JSON.stringify(cols);if(!texture||key===las
 
 /* ── 장면 ── 경기장 위 레이어(320×170 픽셀) + 캐릭터 만들기 미리보기 */
 /* px = 실제로 그리는 해상도 배율. 예전엔 경기장과 같은 320×170으로 그려 도트처럼 보였지만 너무 뭉개져서, 화면 해상도로 그림 */
-function makeView(canvas,w,h,ortho,px){const r=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'low-power'});r.setPixelRatio(1);r.setSize(Math.round(w*px),Math.round(h*px),false);r.outputColorSpace=THREE.SRGBColorSpace;
+function makeView(canvas,w,h,ortho,px){const r=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'low-power',preserveDrawingBuffer:!ortho});r.setPixelRatio(1);r.setSize(Math.round(w*px),Math.round(h*px),false);r.outputColorSpace=THREE.SRGBColorSpace;
   const sc=new THREE.Scene();sc.add(new THREE.HemisphereLight(0xffffff,0x40404c,2.4));const d=new THREE.DirectionalLight(0xffffff,1.6);d.position.set(-1,2,3);sc.add(d);
   const cam=ortho?new THREE.OrthographicCamera(0,w,0,-h,-500,500):new THREE.PerspectiveCamera(28,w/h,.1,20);if(!ortho){cam.position.set(0,0,3.2);}
   return {r,sc,cam,w,h};}
@@ -98,11 +98,19 @@ H3.frame=t=>{if(!H3.ok)return;applyColors(H3.colors());
   else if(!cleared){stage.r.clear();cleared=true;}
   const pc=document.getElementById('cuPrev3');if(prev&&pc&&pc.offsetParent){prevR.obj.rotation.y=prevYaw+prevSpin;POSES.idle(prevR,{t:t/1000});prev.r.render(prev.sc,prev.cam);}};
 H3.colors=()=>window.handroxColors?window.handroxColors():{};
+/* 왼쪽 위 얼굴 아이콘: 미리보기 렌더러로 머리만 정면에서 찍어 붙임 */
+H3.icon=()=>{const fc=document.getElementById('face');if(!H3.ok||!prev||!fc)return;applyColors(H3.colors());const cam=prev.cam,p0=cam.position.clone(),f0=cam.fov,y0=prevR.obj.rotation.y;
+  cam.position.set(0,.13,1.2);cam.fov=27;cam.updateProjectionMatrix();prevR.obj.rotation.y=-1.3;POSES.idle(prevR,{t:0});prev.r.render(prev.sc,cam);
+  const x=fc.getContext('2d'),src=prev.r.domElement,w=src.width,h=src.height,sz=Math.min(w,h);x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,fc.width,fc.height);x.imageSmoothingEnabled=true;
+  x.drawImage(src,(w-sz)/2,(h-sz)/2,sz,sz,0,0,fc.width,fc.height);cam.position.copy(p0);cam.fov=f0;cam.updateProjectionMatrix();prevR.obj.rotation.y=y0;};
 
 async function init(){const cv=document.getElementById('cv3');if(!cv)return;
-  try{const u=window.HERO_URL||'hero.glb';let g;          /* .txt = base64로 담은 GLB (아티팩트용). 텍스처는 hero_tex.png로 따로 */
-    if(u.endsWith('.txt')){const t=(await (await fetch(u)).text()).trim(),bin=Uint8Array.from(atob(t),c=>c.charCodeAt(0));g=await new GLTFLoader().parseAsync(bin.buffer,'');}
-    else g=await new GLTFLoader().loadAsync(u);let mesh=null;g.scene.traverse(o=>{if(o.isMesh&&!mesh)mesh=o;});if(!mesh)throw Error('no mesh');
+  try{const u=window.HERO_URL||'hero.glb';let g;
+    const res=await fetch(u);if(!res.ok)throw Error(u+' '+res.status);const tot=+res.headers.get('content-length')||0,rd=res.body&&res.body.getReader();let buf;
+    if(rd&&tot){const parts=[];let got=0;for(;;){const {done,value}=await rd.read();if(done)break;parts.push(value);got+=value.length;window.onH3Progress&&onH3Progress(Math.min(.95,got/tot));}
+      buf=new Uint8Array(got);let o=0;for(const p of parts){buf.set(p,o);o+=p.length;}}else buf=new Uint8Array(await res.arrayBuffer());          /* .txt = base64로 담은 GLB (아티팩트용). 텍스처는 hero_tex.png로 따로 */
+    const bin=u.endsWith('.txt')?Uint8Array.from(atob(new TextDecoder().decode(buf).trim()),c=>c.charCodeAt(0)):buf;
+    g=await new GLTFLoader().parseAsync(bin.buffer.slice(bin.byteOffset,bin.byteOffset+bin.byteLength),'');let mesh=null;g.scene.traverse(o=>{if(o.isMesh&&!mesh)mesh=o;});if(!mesh)throw Error('no mesh');
     const img=src=>new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=()=>rej(Error('image '+src));im.src=src;});
     const [texImg,mask]=await Promise.all([img('hero_tex.jpg'),img('hero_mask.png')]);
     const tex=prepColors({image:texImg,flipY:false},mask);mesh.material=new THREE.MeshLambertMaterial({map:tex});
@@ -112,6 +120,6 @@ async function init(){const cv=document.getElementById('cv3');if(!cv)return;
     if(pc){prev=makeView(pc,192,224,false,Math.max(1,DPR));prevR=rigged(src);prevR.obj.position.y=0;prevR.obj.scale.setScalar(.95);prev.sc.add(prevR.obj);
       let d=null;pc.addEventListener('pointerdown',e=>{d=e.clientX;try{pc.setPointerCapture(e.pointerId);}catch(_){}});pc.addEventListener('pointermove',e=>{if(d==null)return;prevSpin+=(e.clientX-d)*.02;d=e.clientX;});
       ['pointerup','pointercancel'].forEach(v=>pc.addEventListener(v,()=>{d=null;}));}
-    H3.ok=true;H3.why='ok';document.documentElement.classList.add('has3d');}
-  catch(e){H3.ok=false;H3.why=String(e&&e.message||e);console.warn('HANDROX 3D off:',H3.why);}}
+    H3.ok=true;H3.why='ok';document.documentElement.classList.add('has3d');applyColors(H3.colors());window.onH3Progress&&onH3Progress(1);window.onH3Ready&&onH3Ready();}
+  catch(e){H3.ok=false;H3.why=String(e&&e.message||e);window.onH3Fail&&onH3Fail(H3.why);}}
 init();
