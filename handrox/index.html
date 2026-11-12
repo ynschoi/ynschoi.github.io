@@ -83,10 +83,10 @@
   .cover .sub{font-size:10px;color:#111;background:var(--gold);padding:2px 8px;letter-spacing:1px}
   .cover .ins{font-size:17px;letter-spacing:2px;animation:blink 1s steps(1) infinite;margin-top:2px}
   .cover .note{display:none}
-  /* 첫 페이지 시안 2: 박스 없이, 점으로 구분하고 고른 것 앞에 ▶ */
-  .lsel{display:flex;gap:10px;align-items:center;margin:2px 0}.lsel i{font-style:normal;color:#55556a}
-  .lsel button{font:15px var(--px);color:#e4e4ee;padding:4px 2px}
-  .lsel button.on{color:var(--gold)}.lsel button.on::before{content:'▶ ';font-size:11px}
+  /* 첫 페이지 시안 1: 박스 없이, 고른 언어만 노란 글씨 + 노란 밑줄 */
+  .lsel{display:flex;gap:22px;align-items:center;margin:2px 0}
+  .lsel button{font:15px var(--px);color:#8d8da0;padding:2px 2px 4px;border-bottom:3px solid transparent}
+  .lsel button.on{color:var(--gold);border-bottom-color:var(--gold)}
 
   /* ═══ 아래: 손가락 패드 ═══ */
   .pad{background:linear-gradient(#22222c,#14141a);padding:10px 12px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px;touch-action:none;cursor:pointer}
@@ -178,7 +178,7 @@
       <div class="logo" role="img" aria-label="HANDROX — The Ultimate Finger Race"><img class="lw" src="logo_word.png" alt="" width="998" height="123"><img class="lt" src="logo_tag.png" alt="" width="997" height="47"></div>
       <div class="city" id="city" hidden>PHONE</div>
       <div class="tag" id="cTag"></div>
-      <div class="lsel" id="lsel"><button type="button" data-l="ko">한국어</button><i>·</i><button type="button" data-l="en">English</button></div>
+      <div class="lsel" id="lsel"><button type="button" data-l="ko">한국어</button><button type="button" data-l="en">English</button></div>
       <div class="lsel" id="fsel"><button type="button" id="charBtn"></button></div>
       <div class="ins" id="cIns">선수 준비 중…</div>
       <div class="note" id="cNote"></div>
