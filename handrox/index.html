@@ -490,8 +490,8 @@ const ST=[
   update(s,dt){s.ph+=(s.tph-s.ph)*Math.min(1,dt*14);s.k=Math.max(0,s.k-dt*5);},
   want:()=>'LR',
   /* 3D 선수(옆모습)가 앞으로 숙여 썰매 손잡이를 밀고, 썰매는 선수 앞(손 위치)에. 그림 576×500, 손잡이 x≈75 */
-  draw(s){scene(s.dp*this.pxu);const y=FL+4,x=108+s.k*3,h=H3.show('push',x,y,{ph:s.ph,peek:1}),sh=HEIGHT3*.75,sw=sh*576/500;
-    H3.shadow(x,y-1,40);H3.show('push',x,y,{ph:s.ph});H3.img('sled',h.hand[0]-75*sh/500,y-sh,sw,sh);}},
+  draw(s){scene(s.dp*this.pxu);const y=FL+4,x=108+s.k*3,h=H3.show('push',x,y,{ph:s.ph,peek:1}),sh=HEIGHT3*.83,sw=sh*576/500;
+    H3.shadow(x,y-1,40);H3.img('sled',h.hand[0]-75*sh/500,y-sh,sw,sh);H3.show('push',x,y,{ph:s.ph});}   /* 썰매를 먼저 그려 손이 손잡이 앞에 보이게 */},
  {id:'pull',rate:45,need:50,unit:'m',nm:['슬레드 풀','SLED PULL'],hint:'',
   how:['손가락을 위에서 아래로 끝까지 길게 끌어요. L·R 한 번씩 번갈아!','Drag all the way down, then switch: L, R, L, R'],
   FULL:70,          /* 이만큼(화면 px) 끝까지 끌어야 한 번에 2.5m. 짧게 끌면 그만큼만 */
