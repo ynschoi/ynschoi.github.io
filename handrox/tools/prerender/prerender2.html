@@ -101,6 +101,10 @@ const POSE={
    else if(n===3){W('Spine',S,.1);W('Head',S,.15);arm('Left',[.08,.72,-.72],[.08,.8,-.6]);arm('Right',[.08,.72,-.72],[.08,.8,-.6]);}
    else{W('Spine',S,.05);arm('Right',[.12,.7,-.72],[.08,1,-.25]);arm('Left',[.1,-.9,-.35],[.6,.3,-.2]);}
    return {feet:1};},
+ /* 시상대: 두 손으로 순위 깃발을 가슴 앞에 들고 섬 (손은 가슴 높이, 어깨너비) */
+ flag(){const V=(x,y,z)=>new THREE.Vector3(x,y,z);W('LeftUpLeg',F,.06);W('RightUpLeg',F,-.06);flatFoot('LeftFoot');flatFoot('RightFoot');
+   for(const [sd,m] of [['Left',1],['Right',-1]]){aim(sd+'Arm',sd+'ForeArm',V(.35,-.9,-.18*m));aim(sd+'ForeArm',sd+'Hand',V(.95,.35,.05*m));}
+   return {feet:1};},
  runf({ph}){const s=Math.sin(ph),c=Math.cos(ph),up=x=>Math.max(0,x);
    W('Spine',S,-.28);W('Head',S,.16);   /* S축 +는 상체가 뒤로 젖혀짐 → 앞으로 숙이려면 −. 머리는 다시 들어 카메라를 봄 */W('Hips',F,.06*s);W('Spine',F,-.08*s);
    W('LeftUpLeg',S,.15+1.25*up(s)-.35*up(-s));W('LeftLeg',S,-(.25+1.7*up(s)+.5*up(-s)));

@@ -13,8 +13,8 @@ function load(){const names=Object.keys(MAN).filter(n=>!n.startsWith('b_')),file
   const artP=Promise.all(arts.map(async k=>{IM[k]=await img(ART[k]);}));
   return Promise.all(names.map(async n=>{const m=MAN[n],[c,k]=await Promise.all([img(m.c),img(m.m)]);
     const W=c.width,H=c.height,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d',{willReadFrequently:true});
-    x.drawImage(c,0,0);const base=x.getImageData(0,0,W,H);x.clearRect(0,0,W,H);x.drawImage(k,0,0,W,H);const md=x.getImageData(0,0,W,H).data,cls=new Uint8Array(W*H);
-    for(let i=0;i<cls.length;i++)cls[i]=Math.round(md[i*4]/36);x.putImageData(base,0,0);sheets[n]={m,cv,x,base,cls,W,H};})).then(()=>artP);}
+    x.drawImage(c,0,0);const base=x.getImageData(0,0,W,H);x.clearRect(0,0,W,H);const pc=document.createElement('canvas');pc.width=W;pc.height=H;pc.getContext('2d').drawImage(c,0,0);x.drawImage(k,0,0,W,H);const md=x.getImageData(0,0,W,H).data,cls=new Uint8Array(W*H);
+    for(let i=0;i<cls.length;i++)cls[i]=Math.round(md[i*4]/36);x.putImageData(base,0,0);sheets[n]={m,cv,x,base,cls,W,H,plain:{m,cv:pc}};})).then(()=>artP);}
 /* 고른 색 입히기: 부위별로 원래 밝기 비율을 유지한 채 색만 바꿈. 처음 값(null)은 원본 그대로 */
 function recolor(){const cols=window.handroxColors?handroxColors():{},key=JSON.stringify(cols);if(key===colorKey)return;colorKey=key;
   const T=[null,...['skin','hair','top','shorts','band','shoes'].map(k=>cols[k]?hex(cols[k]):null)];
@@ -45,8 +45,8 @@ const frameOf=(n,pose,o)=>{const N=sheets[n].m.n;if(pose==='run'||pose==='runf'|
 H3.show=(pose,x,y,o={})=>{if(!H3.ok)return false;const n0=sheets[pose]?pose:'run',n=bald&&sheets['b_'+n0]?'b_'+n0:n0,s=sheets[n],f=frameOf(n,pose,o),u=HEIGHT*(o.z||1),pt=s.m.pts[f];
   const fx=o.fx?-1:1;if(!o.peek)queue.push({s,f,x,y,u,fx});const P=a=>[x+fx*a[0]*u,y-a[1]*u];return {hand:P(pt.hand),handR:pt.handR?P(pt.handR):P(pt.hand),hips:P(pt.hips),head:pt.head?P(pt.head):P(pt.hips)};};
 /* 다른 캔버스(기록 사진)에 선수 한 칸을 바로 그림. u = 모델 1단위가 몇 px인지 (선수 키 ≈ u) */
-H3.drawTo=(ctx,pose,o,cx,footY,u)=>{if(!H3.ok)return false;const n0=sheets[pose]?pose:'run',n=bald&&sheets['b_'+n0]?'b_'+n0:n0,s=sheets[n],f=frameOf(n,pose,o||{}),m=s.m,g=u/m.ppu;
-  ctx.drawImage(s.cv,f*m.w,0,m.w,m.h,cx+m.box[0]*u,footY-m.box[3]*u,m.w*g,m.h*g);return true;};
+H3.drawTo=(ctx,pose,o,cx,footY,u)=>{if(!H3.ok)return false;o=o||{};const n0=sheets[pose]?pose:'run',n=bald&&!o.plain&&sheets['b_'+n0]?'b_'+n0:n0,s=o.plain&&sheets[n0].plain||sheets[n],f=frameOf(n0,pose,o),m=s.m,g=u/m.ppu,pt=m.pts[f];   /* plain = 남의 선수(기본 모습) */
+  ctx.drawImage(s.cv,f*m.w,0,m.w,m.h,cx+m.box[0]*u,footY-m.box[3]*u,m.w*g,m.h*g);const P=a=>[cx+a[0]*u,footY-a[1]*u];return {hand:P(pt.hand),handR:P(pt.handR||pt.hand)};};
 H3.img2=k=>IM[k];
 /* 기구 그림·선·손잡이도 같은 대기열에 (경기장 좌표). 선수보다 먼저 부르면 뒤에, 나중에 부르면 앞에 그려짐 */
 H3.img=(k,x,y,w,h,fx)=>{if(H3.ok)queue.push({img:IM[k],x,y,w,h,fx});};
@@ -55,7 +55,7 @@ H3.rect=(x,y,w,h,col,ol)=>{if(H3.ok)queue.push({rect:[x,y,w,h],col,ol});};
 H3.ring=(x,y,r,col,w)=>{if(H3.ok)queue.push({ring:[x,y,r],col,w});};
 H3.shadow=(x,y,w)=>{if(H3.ok)queue.push({shadow:[x,y,w]});};
 /* 배경: run(달리기) / zone(운동 구역). off = 지나온 거리(경기장 px) — 반복해서 흘러감 */
-let bgReq=null;H3.bg=(kind,off,bob=0,dim=0)=>{bgReq={kind,off,bob,dim};};
+let bgReq=null;H3.bg=(kind,off,bob=0,dim=0,cover=0)=>{bgReq={kind,off,bob,dim,cover};};   /* cover: 경기장이 그림보다 높으면 키워서 꽉 채움(아래 맞춤) */
 let cv3=null,c3=null,sc=1;
 function fit(){if(!cv3)return;const w=cv3.offsetWidth||GW,dpr=Math.min(3,window.devicePixelRatio||1),W=Math.round(w*dpr),H=Math.round(W*(window.HV||GH)/GW);
   if(cv3.width!==W||cv3.height!==H){cv3.width=W;cv3.height=H;}sc=W/GW;OFFp=((window.HV||GH)-GH)*sc;}
@@ -71,7 +71,7 @@ H3.frame=()=>{if(!H3.ok)return;recolor();fit();c3.setTransform(1,0,0,1,0,0);c3.c
   if(cbg&&bgReq){const im=IM['bg_'+bgReq.kind],w=GW*sc,h=GH*sc,o=((bgReq.off*.7)%GW+GW)%GW*sc;cbg.setTransform(1,0,0,1,0,0);
     if(cvbg.width!==cv3.width||cvbg.height!==cv3.height){cvbg.width=cv3.width;cvbg.height=cv3.height;}cbg.imageSmoothingQuality='high';
     const ih=w*im.height/im.width,iy=OFFp+h-ih;   /* 그림 아래쪽(바닥)을 경기장 170 기준선에 맞추고 위쪽은 남는 만큼 보임 */
-    if(bgReq.kind==='runf')runfBg(im,w,ih,iy,bgReq.off,bgReq.bob);else{cbg.drawImage(im,-o,iy,w,ih);cbg.drawImage(im,w-o,iy,w,ih);}
+    if(bgReq.cover&&ih<cvbg.height){const k=cvbg.height/ih;cbg.drawImage(im,(w-w*k)/2,0,w*k,cvbg.height);}else if(bgReq.kind==='runf')runfBg(im,w,ih,iy,bgReq.off,bgReq.bob);else{cbg.drawImage(im,-o,iy,w,ih);cbg.drawImage(im,w-o,iy,w,ih);}
     if(bgReq.dim){const H2=cvbg.height,g=cbg.createRadialGradient(w/2,H2*.62,H2*.15,w/2,H2*.62,w*.62);   /* 기구 종목: 가장자리를 어둡게 해 선수에 시선이 가게 */
       g.addColorStop(0,'rgba(8,8,11,.15)');g.addColorStop(1,'rgba(8,8,11,.72)');cbg.fillStyle=g;cbg.fillRect(0,0,w,H2);}bgReq=null;}
   const pc=document.getElementById('cuPrev3');if(pc&&pc.offsetParent){const s=bald&&sheets.b_turn||sheets.turn,N=s.m.n,i=((Math.round(prevSpin/(Math.PI*2)*N)%N)+N)%N,x=pc.getContext('2d');
