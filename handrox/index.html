@@ -72,9 +72,9 @@
   .cover[hidden]{display:none}
   .cover .logo{width:78%;max-width:320px;display:flex;flex-direction:column;align-items:center}
   .cover .logo .lw{width:100%;height:auto;display:block;filter:drop-shadow(0 2px 0 #000)}
-  /* 시안 F: 로고보다 살짝 넓은 양끝 사선 노란 띠 + 검정 글씨 */
-  .cover .logo .lb{width:104%;margin-top:6%;padding:2.2% 0;background:var(--gold);display:flex;justify-content:center;clip-path:polygon(4% 0,100% 0,96% 100%,0 100%)}
-  .cover .logo .lb img{width:84%;height:auto;display:block;filter:brightness(0)}
+  /* 로고 시안 D: 흰 HANDROX + 노란 밑줄 + 노란 글씨 */
+  .cover .logo .lw{border-bottom:5px solid var(--gold);padding-bottom:4%}
+  .cover .logo .lt{width:88%;height:auto;display:block;margin-top:4%;filter:brightness(0) invert(77%) sepia(91%) saturate(1500%) hue-rotate(5deg) drop-shadow(0 2px 0 #000)}
   .cover .tag{font-size:15px;color:#fff;text-shadow:2px 2px 0 #000}
   .cover .city{font-size:26px;font-weight:700;letter-spacing:10px;margin:-6px -10px 0 0;color:#fff;line-height:1;transform:skewX(-9deg)}
   .cover{gap:5px}
@@ -173,7 +173,7 @@
     <div class="banner" id="banner"></div>
     <div class="ov" id="ov" hidden></div>
     <div class="cover" id="cover">
-      <div class="logo" role="img" aria-label="HANDROX — The Ultimate Finger Race"><img class="lw" src="logo_word.png" alt="" width="998" height="123"><div class="lb"><img src="logo_tag.png" alt="" width="997" height="47"></div></div>
+      <div class="logo" role="img" aria-label="HANDROX — The Ultimate Finger Race"><img class="lw" src="logo_word.png" alt="" width="998" height="123"><img class="lt" src="logo_tag.png" alt="" width="997" height="47"></div>
       <div class="city" id="city" hidden>PHONE</div>
       <div class="tag" id="cTag"></div>
       <div class="lsel" id="lsel"><button type="button" data-l="ko">한국어</button><button type="button" data-l="en">English</button></div>
