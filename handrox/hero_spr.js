@@ -8,7 +8,7 @@ const ART={bg_ski:'art/bg_ski.jpg',ski_machine:'art/ski_machine.webp',bg_runf:'a
 const H3=window.H3;Object.assign(H3,{ok:false,why:'loading'});
 const sheets={};let queue=[],colorKey='',prevSpin=0;
 const hex=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
-function load(){const names=Object.keys(MAN),files=names.flatMap(n=>[MAN[n].c,MAN[n].m]),arts=Object.keys(ART);let done=0;const total=files.length+arts.length;
+function load(){const names=Object.keys(MAN).filter(n=>!n.startsWith('b_')),files=names.flatMap(n=>[MAN[n].c,MAN[n].m]),arts=Object.keys(ART);let done=0;const total=files.length+arts.length;
   const img=f=>new Promise((res,rej)=>{const im=new Image();im.decoding='async';im.onload=()=>{done++;window.onH3Progress&&onH3Progress(done/total);res(im);};im.onerror=()=>rej(Error(f));im.src=f.startsWith('art/')?f:BASE+f;});
   const artP=Promise.all(arts.map(async k=>{IM[k]=await img(ART[k]);}));
   return Promise.all(names.map(async n=>{const m=MAN[n],[c,k]=await Promise.all([img(m.c),img(m.m)]);
@@ -18,15 +18,31 @@ function load(){const names=Object.keys(MAN),files=names.flatMap(n=>[MAN[n].c,MA
 /* 고른 색 입히기: 부위별로 원래 밝기 비율을 유지한 채 색만 바꿈. 처음 값(null)은 원본 그대로 */
 function recolor(){const cols=window.handroxColors?handroxColors():{},key=JSON.stringify(cols);if(key===colorKey)return;colorKey=key;
   const T=[null,...['skin','hair','top','shorts','band','shoes'].map(k=>cols[k]?hex(cols[k]):null)];
-  for(const s of Object.values(sheets)){const d=s.base.data,out=s.x.createImageData(s.W,s.H),o=out.data,ref=s.m.ref;
+  for(const s of Object.values(sheets)){if(s.bald)continue;const d=s.base.data,out=s.x.createImageData(s.W,s.H),o=out.data,ref=s.m.ref;
     for(let i=0,p=0;p<s.cls.length;p++,i+=4){const k=s.cls[p],t=T[k];o[i+3]=d[i+3];
       if(!t){o[i]=d[i];o[i+1]=d[i+1];o[i+2]=d[i+2];continue;}
       const f=Math.min(1.7,(d[i]*.3+d[i+1]*.59+d[i+2]*.11)/(ref[k]||1));o[i]=Math.min(255,t[0]*f);o[i+1]=Math.min(255,t[1]*f);o[i+2]=Math.min(255,t[2]*f);}
     s.x.putImageData(out,0,0);}
   H3.icon();}
+/* ── 머리통 선수: 각자 그린 그림(얼굴·머리카락)을 입힌 선수 ──
+   b_* 그림 묶음은 그림을 그린 사람만 받음. 그림 자리 지도(f, 절반 크기)의 빨강·초록 = 그림 칸 좌표, 파랑 = 앞면(≥90)·머리카락 자리(51 또는 153).
+   H3.setHead(그림 캔버스, 머리색) → 모든 자세에 한 번 입혀 두고 그 뒤로는 그림만 꺼내 씀. H3.setHead(null) → 기본 캐릭터로 */
+let bald=false,baldP=null;
+function loadBald(){return baldP||(baldP=Promise.all(Object.keys(MAN).filter(n=>n.startsWith('b_')).map(async n=>{const m=MAN[n],ld=f=>new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=()=>rej(Error(f));im.src=BASE+f;}),[c,f]=await Promise.all([ld(m.c),ld(m.f)]);
+    const W=c.width,H=c.height,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d',{willReadFrequently:true});x.drawImage(c,0,0);const base=x.getImageData(0,0,W,H);
+    const fc=document.createElement('canvas');fc.width=f.width;fc.height=f.height;const fx=fc.getContext('2d',{willReadFrequently:true});fx.drawImage(f,0,0);
+    sheets[n]={m,cv,x,base,W,H,bald:1,f:fx.getImageData(0,0,f.width,f.height)};})).catch(e=>{baldP=null;throw e;}));}
+H3.setHead=async(art,hair)=>{if(!art){bald=false;H3.icon();return 0;}await loadBald();const t0=performance.now(),AW=art.width,AH=art.height,A=art.getContext('2d',{willReadFrequently:true}).getImageData(0,0,AW,AH).data,hc=hair?hex(hair):null;
+  for(const s of Object.values(sheets)){if(!s.bald)continue;const out=new ImageData(new Uint8ClampedArray(s.base.data),s.W,s.H),o=out.data,F=s.f.data,fw=s.f.width,fh=s.f.height,W=s.W,H=s.H;
+    for(let fy=0;fy<fh;fy++)for(let fx=0;fx<fw;fx++){const q=(fy*fw+fx)*4;if(F[q+3]<128)continue;const b=F[q+2],front=b>=90,hr=hc&&((b>=38&&b<77)||b>=128);if(!front&&!hr)continue;
+      const ai=front?((Math.min(AH-1,(1-F[q+1]/255)*AH|0))*AW+Math.min(AW-1,F[q]/255*AW|0))*4:0,aa=front?A[ai+3]/255:0;if(!aa&&!hr)continue;
+      for(let dy=0;dy<2;dy++)for(let dx=0;dx<2;dx++){const X=fx*2+dx,Y=fy*2+dy;if(X>=W||Y>=H)continue;const i=(Y*W+X)*4;if(o[i+3]<8)continue;const sh=Math.min(1.12,(o[i]*.3+o[i+1]*.59+o[i+2]*.11)/205);
+        let r=o[i],g=o[i+1],bl=o[i+2];if(hr){r=hc[0]*sh;g=hc[1]*sh;bl=hc[2]*sh;}if(aa){r+=(A[ai]*sh-r)*aa;g+=(A[ai+1]*sh-g)*aa;bl+=(A[ai+2]*sh-bl)*aa;}o[i]=r;o[i+1]=g;o[i+2]=bl;}}
+    s.x.putImageData(out,0,0);}
+  bald=true;H3.icon();return performance.now()-t0;};
 const frameOf=(n,pose,o)=>{const N=sheets[n].m.n;if(pose==='run'||pose==='runf'||pose==='push'||pose==='carry')return ((Math.round((o.ph||0)/(Math.PI*2)*N)%N)+N)%N;return Math.round(Math.min(1,Math.max(0,o.k||0))*(N-1));return 0;};
 /* 자세 하나 = 그림 한 칸. 원점(x,y) = 발밑, 로잉은 발 관절 */
-H3.show=(pose,x,y,o={})=>{if(!H3.ok)return false;const n=sheets[pose]?pose:'run',s=sheets[n],f=frameOf(n,pose,o),u=HEIGHT*(o.z||1),pt=s.m.pts[f];
+H3.show=(pose,x,y,o={})=>{if(!H3.ok)return false;const n0=sheets[pose]?pose:'run',n=bald&&sheets['b_'+n0]?'b_'+n0:n0,s=sheets[n],f=frameOf(n,pose,o),u=HEIGHT*(o.z||1),pt=s.m.pts[f];
   const fx=o.fx?-1:1;if(!o.peek)queue.push({s,f,x,y,u,fx});const P=a=>[x+fx*a[0]*u,y-a[1]*u];return {hand:P(pt.hand),handR:pt.handR?P(pt.handR):P(pt.hand),hips:P(pt.hips),head:pt.head?P(pt.head):P(pt.hips)};};
 /* 기구 그림·선·손잡이도 같은 대기열에 (경기장 좌표). 선수보다 먼저 부르면 뒤에, 나중에 부르면 앞에 그려짐 */
 H3.img=(k,x,y,w,h,fx)=>{if(H3.ok)queue.push({img:IM[k],x,y,w,h,fx});};
@@ -54,9 +70,9 @@ H3.frame=()=>{if(!H3.ok)return;recolor();fit();c3.setTransform(1,0,0,1,0,0);c3.c
     if(bgReq.kind==='runf')runfBg(im,w,ih,iy,bgReq.off,bgReq.bob);else{cbg.drawImage(im,-o,iy,w,ih);cbg.drawImage(im,w-o,iy,w,ih);}
     if(bgReq.dim){const H2=cvbg.height,g=cbg.createRadialGradient(w/2,H2*.62,H2*.15,w/2,H2*.62,w*.62);   /* 기구 종목: 가장자리를 어둡게 해 선수에 시선이 가게 */
       g.addColorStop(0,'rgba(8,8,11,.15)');g.addColorStop(1,'rgba(8,8,11,.72)');cbg.fillStyle=g;cbg.fillRect(0,0,w,H2);}bgReq=null;}
-  const pc=document.getElementById('cuPrev3');if(pc&&pc.offsetParent){const s=sheets.turn,N=s.m.n,i=((Math.round(prevSpin/(Math.PI*2)*N)%N)+N)%N,x=pc.getContext('2d');
+  const pc=document.getElementById('cuPrev3');if(pc&&pc.offsetParent){const s=bald&&sheets.b_turn||sheets.turn,N=s.m.n,i=((Math.round(prevSpin/(Math.PI*2)*N)%N)+N)%N,x=pc.getContext('2d');
     x.clearRect(0,0,pc.width,pc.height);const k=Math.min(pc.width/s.m.w,pc.height/s.m.h);x.imageSmoothingQuality='high';x.drawImage(s.cv,i*s.m.w,0,s.m.w,s.m.h,(pc.width-s.m.w*k)/2,(pc.height-s.m.h*k)/2,s.m.w*k,s.m.h*k);}};
-H3.icon=()=>{const fc=document.getElementById('face'),s=sheets.icon;if(!fc||!s)return;const x=fc.getContext('2d');x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,fc.width,fc.height);x.imageSmoothingQuality='high';x.drawImage(s.cv,0,0,s.m.w,s.m.h,0,0,fc.width,fc.height);};
+H3.icon=()=>{const fc=document.getElementById('face'),s=bald&&sheets.b_icon||sheets.icon;if(!fc||!s)return;const x=fc.getContext('2d');x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,fc.width,fc.height);x.imageSmoothingQuality='high';x.drawImage(s.cv,0,0,s.m.w,s.m.h,0,0,fc.width,fc.height);};
 H3.colors=()=>window.handroxColors?handroxColors():{};
 let cvbg=null,cbg=null;
 /* 정면 트랙: 배경은 고정, 바닥 가로줄과 펜스 빛이 소실점 쪽으로 빨려 들어감 (선수가 카메라 쪽으로 달려오니 바닥은 멀어짐).
