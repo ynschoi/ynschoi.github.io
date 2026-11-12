@@ -674,11 +674,13 @@ window.onH3Fail=why=>{const el=$('cIns');if(!el)return;el.innerHTML=`${L('선수
   el.style.animation='none';$('h3retry').onclick=e=>{e.stopPropagation();location.reload();};console.warn('3D:',why);};
 setTimeout(()=>{if(H3.why==='loading'&&!window.H3MOD)onH3Fail('three.js did not load');},25000);
 /* 3D 선수 색 = 캐릭터 만들기에서 고른 색 (3D 모델은 모양을 못 바꾸고 색만 바뀜) */
-window.handroxColors=()=>({skin:OPT.skin[CHAR.skin],hair:OPT.hair[CHAR.hair],top:CHAR.topS===2?OPT.skin[CHAR.skin]:OPT.top[CHAR.top],
-  shorts:OPT.shorts[CHAR.shorts],band:OPT.band[CHAR.band]||'#f2f2f2',shoes:OPT.shoes[CHAR.shoes]});
+/* 처음 값(모델 원래 색)을 고른 칸은 null → 원본 텍스처를 그대로 씀 (다시 칠하면 명암·결이 뭉개져서) */
+window.handroxColors=()=>{const D={skin:0,hair:1,top:0,shorts:0,band:0,shoes:0},o=(k,v)=>CHAR[k]===D[k]?null:v;
+  return {skin:o('skin',OPT.skin[CHAR.skin]),hair:o('hair',OPT.hair[CHAR.hair]),top:CHAR.topS===2?OPT.skin[CHAR.skin]:o('top',OPT.top[CHAR.top]),
+    shorts:o('shorts',OPT.shorts[CHAR.shorts]),band:o('band',OPT.band[CHAR.band]||'#f2f2f2'),shoes:o('shoes',OPT.shoes[CHAR.shoes])};};
 </script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js">
-<script type="module" src="hero3d.js" onerror="onH3Fail('hero3d.js')"></script>
+<script type="module" src="hero3d.js?v=20261112b" onerror="onH3Fail('hero3d.js')"></script>
 </body>
 </html>

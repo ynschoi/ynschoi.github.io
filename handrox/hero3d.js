@@ -8,6 +8,8 @@ import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 
+/* 캐시 무효화: 이 파일을 hero3d.js?v=… 로 불렀으면 같은 꼬리표를 모델·텍스처에도 붙임 */
+const VQ=new URL(import.meta.url).search;
 const H3=window.H3||{};Object.assign(H3,{ok:false,why:'loading'});window.H3=H3;window.H3MOD=true;
 const GW=320,GH=170,HEIGHT=70;          // 경기장 좌표계, 선수 키(경기장 px)
 
@@ -105,14 +107,14 @@ H3.icon=()=>{const fc=document.getElementById('face');if(!H3.ok||!prev||!fc)retu
   x.drawImage(src,(w-sz)/2,(h-sz)/2,sz,sz,0,0,fc.width,fc.height);cam.position.copy(p0);cam.fov=f0;cam.updateProjectionMatrix();prevR.obj.rotation.y=y0;};
 
 async function init(){const cv=document.getElementById('cv3');if(!cv)return;
-  try{const u=window.HERO_URL||'hero.glb';let g;
+  try{const u=(window.HERO_URL||'hero.glb')+VQ;let g;
     const res=await fetch(u);if(!res.ok)throw Error(u+' '+res.status);const tot=+res.headers.get('content-length')||0,rd=res.body&&res.body.getReader();let buf;
     if(rd&&tot){const parts=[];let got=0;for(;;){const {done,value}=await rd.read();if(done)break;parts.push(value);got+=value.length;window.onH3Progress&&onH3Progress(Math.min(.95,got/tot));}
       buf=new Uint8Array(got);let o=0;for(const p of parts){buf.set(p,o);o+=p.length;}}else buf=new Uint8Array(await res.arrayBuffer());          /* .txt = base64로 담은 GLB (아티팩트용). 텍스처는 hero_tex.png로 따로 */
-    const bin=u.endsWith('.txt')?Uint8Array.from(atob(new TextDecoder().decode(buf).trim()),c=>c.charCodeAt(0)):buf;
+    const bin=u.split('?')[0].endsWith('.txt')?Uint8Array.from(atob(new TextDecoder().decode(buf).trim()),c=>c.charCodeAt(0)):buf;
     g=await new GLTFLoader().parseAsync(bin.buffer.slice(bin.byteOffset,bin.byteOffset+bin.byteLength),'');let mesh=null;g.scene.traverse(o=>{if(o.isMesh&&!mesh)mesh=o;});if(!mesh)throw Error('no mesh');
     const img=src=>new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=()=>rej(Error('image '+src));im.src=src;});
-    const [texImg,mask]=await Promise.all([img('hero_tex.jpg'),img('hero_mask.png')]);
+    const [texImg,mask]=await Promise.all([img('hero_tex.jpg'+VQ),img('hero_mask.png'+VQ)]);
     const tex=prepColors({image:texImg,flipY:false},mask);mesh.material=new THREE.MeshLambertMaterial({map:tex});
     let src;if(g.scene.getObjectByProperty('type','SkinnedMesh')){H3.why='rigged GLB: 외부 리그 이름 매핑은 아직 미검증';throw Error(H3.why);} else src=autoRig(mesh);
     const DPR=Math.min(3,window.devicePixelRatio||1);stage=makeView(cv,GW,GH,true,Math.max(2,DPR*1.5));stageR=rigged(src);stage.sc.add(stageR.obj);
