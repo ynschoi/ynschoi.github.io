@@ -637,8 +637,8 @@ const ST=[
   want:()=>'LR',
   /* 3D 선수 뒷모습(스키처럼 오른쪽 사선). 공은 손에서 위 과녁까지 갔다가(멀어지며 작아짐) 손으로 돌아옴. 손 둘레의 고리가 줄어들어 공 크기와 겹칠 때가 딱 맞는 순간 */
   draw(s){sceneK('ski',1);const x=132,y=164,tx=186,ty=-OFF+46,k=s.wk;
-    H3.rect(tx-4,ty,8,150-ty,'#3a3a46','#26262e');H3.rect(tx-15,ty-15,30,30,'#e5391f','#26262e');H3.rect(tx-10,ty-10,20,20,'#2a2a33','#2a2a33');H3.rect(tx-3,ty-3,6,6,'#ffd400','#ffd400');
-    const hd=q=>{const a=H3.show('wall',x,y,{k:q,peek:1});return a?[(a.hand[0]+a.handR[0])/2+12,(a.hand[1]+a.handR[1])/2-10]:[x,y-60];},ball=(bx,by,r)=>{H3.rect(bx-r,by-r,2*r,2*r,'#c0392b','#26262e');H3.rect(bx-r+1,by-r*.13,2*r-2,r*.26,'#ffd400','#ffd400');};
+    {const th=(146-ty)/(1-100/560),tw=th*159/560;H3.img('wall_target',tx-8/159*tw,ty-100/560*th,tw,th);}   /* 과녁 그림(옆모습, 원판이 선수 쪽을 봄): 원판 가운데(그림 8,100)를 tx,ty에, 기둥 밑은 바닥(146)에 */
+    const hd=q=>{const a=H3.show('wall',x,y,{k:q,peek:1});return a?[(a.hand[0]+a.handR[0])/2+12,(a.hand[1]+a.handR[1])/2-10]:[x,y-60];},ball=(bx,by,r)=>{H3.img('wallball',bx-r,by-r,2*r,2*r);H3.ring(bx,by,r+.3,'rgba(255,255,255,.55)',1);};   /* 어두운 공이 배경에 묻히지 않게 얇은 흰 테두리 */
     let [bx,by]=hd(k),r=10,air=0;
     if(s.fly&&s.ft<this.FB){const u=s.ft/this.FB,q=u<.5?u*2:(1-u)*2,e=1-(1-q)**2,[ax,ay]=hd(u<.5?1:.3);bx=ax+(tx-ax)*e;by=ay+(ty+4-ay)*e;r=10-4*e;air=1;}
     else if(s.fly){const [ax,ay]=hd(.3);bx=ax;by=Math.min(y-r,ay+(s.ft-this.FB)*260);air=1;}
