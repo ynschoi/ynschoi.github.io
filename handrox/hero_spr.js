@@ -4,7 +4,7 @@
    예전 이름(H3)과 같은 사용법: H3.show(자세,x,y,옵션) → 손·엉덩이 위치 반환, H3.frame()에서 실제로 그림 */
 (function(){
 const MAN=window.HERO_MAN,HEIGHT=115,GW=320,GH=170,BASE='spr/';   /* HEIGHT = 모델 1단위가 경기장 몇 px인지 (선수 키 ≈ 113px) */
-const ART={bg_ski:'art/bg_ski.jpg',ski_machine:'art/ski_machine.webp',bg_runf:'art/bg_runf.jpg',bg_run:'art/bg_run.jpg',bg_zone:'art/bg_zone.jpg',row_machine:'art/row_machine.webp',row_seat:'art/row_seat.webp',sled:'art/sled.webp',sled_pull:'art/sled_pull.webp',kb:'art/kb.webp',wallball:'art/wallball.webp',sandbag:'art/sandbag.webp',wall_target:'art/wall_target.webp',wall_target45:'art/wall_target45.webp'},IM={};
+const ART={bg_ski:'art/bg_ski.jpg',ski_machine:'art/ski_machine.webp',bg_runf:'art/bg_runf.webp',bg_run:'art/bg_run.jpg',bg_zone:'art/bg_zone.jpg',row_machine:'art/row_machine.webp',row_seat:'art/row_seat.webp',sled:'art/sled.webp',sled_pull:'art/sled_pull.webp',kb:'art/kb.webp',wallball:'art/wallball.webp',sandbag:'art/sandbag.webp',wall_target:'art/wall_target.webp',wall_target45:'art/wall_target45.webp'},IM={};
 const H3=window.H3;Object.assign(H3,{ok:false,why:'loading'});
 const sheets={};let queue=[],colorKey='',prevSpin=0;
 const hex=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
@@ -13,15 +13,15 @@ function build(n,m,c,k){sheets[n]={m,cv:c,c,k,W:c.width,H:c.height,plain:{m,cv:c
 function prep(s){if(s.base||!s.k)return;const W=s.W,H=s.H,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d',{willReadFrequently:true});
     x.drawImage(s.c,0,0);const base=x.getImageData(0,0,W,H);x.clearRect(0,0,W,H);x.drawImage(s.k,0,0,W,H);const md=x.getImageData(0,0,W,H).data,cls=new Uint8Array(W*H);
     for(let i=0;i<cls.length;i++)cls[i]=Math.round(md[i*4]/36);x.putImageData(base,0,0);Object.assign(s,{cv,x,base,cls});}
-function load(){const names=Object.keys(MAN).filter(n=>!n.startsWith('b_')&&!n.startsWith('g_')&&n!=='runfhd'),files=names.map(n=>MAN[n].c),arts=Object.keys(ART);let done=0;const total=files.length+arts.length;
+function load(){const names=Object.keys(MAN).filter(n=>!n.startsWith('b_')&&!n.startsWith('g_')&&n!=='runfhd'&&n!=='runfp'),files=names.map(n=>MAN[n].c),arts=Object.keys(ART);let done=0;const total=files.length+arts.length;
   const img=f=>new Promise((res,rej)=>{const im=new Image();im.decoding='async';im.onload=()=>{const ok=()=>{done++;window.onH3Progress&&onH3Progress(done/total);res(im);};im.decode?im.decode().then(ok,ok):ok();};im.onerror=()=>rej(Error(f));im.src=f.startsWith('art/')?f:BASE+f;});
   /* 첫 화면에 쓸 정면 달리기·배경을 먼저 받아 바로 보여 주고, 나머지는 그다음에 */
   const one=async n=>{const m=MAN[n],c=await img(m.c);build(n,m,c,null);};   /* 부위 지도(m)는 색을 바꿀 때만 받음 */
-  const first=Promise.all([one('runf'),(async()=>{IM.bg_runf=await img(ART.bg_runf);})()]).then(()=>{H3.coverOk=true;H3.tCover=performance.now();window.onH3Cover&&onH3Cover();});
-  return first.then(()=>Promise.all(names.filter(n=>n!=='runf').map(one))).then(()=>Promise.all(arts.filter(k=>k!=='bg_runf').map(async k=>{IM[k]=await img(ART[k]);})))
+  const first=Promise.all([one(MAN.runfp?'runfp':'runf'),(async()=>{IM.bg_runf=await img(ART.bg_runf);})()]).then(()=>{H3.coverOk=true;H3.tCover=performance.now();window.onH3Cover&&onH3Cover();});
+  return first.then(()=>MAN.runfp?one('runf'):0).then(()=>Promise.all(names.filter(n=>n!=='runf').map(one)))   /* 정면 달리기(첫 화면 움직임)를 먼저 다 받고 나머지 */.then(()=>Promise.all(arts.filter(k=>k!=='bg_runf').map(async k=>{IM[k]=await img(ART[k]);})))
     .then(()=>{if(MAN.runfhd)one('runfhd').then(()=>{colorKey='';}).catch(()=>{});});}   /* 첫 화면용 선명한 달리기(2배 해상도): 다 받은 뒤 마지막에 받아서 바꿔 끼움 */
 /* 첫 화면에 쓸 그림: 선명한 판이 있고 기본 선수일 때만 (머리통·여자 선수는 원래 판) */
-H3.coverPose=()=>sheets.runfhd&&!girl&&!bald?'runfhd':'runf';
+H3.coverPose=()=>girl||bald?'runf':sheets.runfhd?'runfhd':sheets.runf?'runf':'runfp';   /* 첫 화면: 멈춘 한 장(10KB) → 달리기 → 선명한 달리기 순으로 바꿔 끼움 */
 /* 두 번째 캐릭터(여자 선수, g_*): 고른 사람만 받음 */
 let girl=false,girlP=null;
 function loadGirl(){return girlP||(girlP=Promise.all(Object.keys(MAN).filter(n=>n.startsWith('g_')).map(async n=>{const m=MAN[n],ld=f=>new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=()=>rej(Error(f));im.src=BASE+f;}),[c,k]=await Promise.all([ld(m.c),ld(m.m)]);build(n,m,c,k);})).then(()=>{colorKey='';}).catch(e=>{girlP=null;throw e;}));}
