@@ -100,13 +100,23 @@ const POSE={
    for(const [sd,z] of [['Left',-.22],['Right',.22]]){aim(sd+'Arm',sd+'ForeArm',V(lr(.55,.85),lr(-.7,.7),z));aim(sd+'ForeArm',sd+'Hand',V(lr(.4,.8),lr(.9,.8),-z*.4*(1-a)+z*a*.3));}
    return {feet:1};},
  /* 피니시·사진 포즈 (정면). n: 0 양팔 벌려 환호, 1 양팔 알통, 2 한팔 알통(왼손 허리), 3 만세, 4 주먹 불끈(오른팔 위로) */
- fin({k}){const n=Math.round(k*4),V=(x,y,z)=>new THREE.Vector3(x,y,z),arm=(sd,u,f)=>{const m=sd==='Left'?1:-1;aim(sd+'Arm',sd+'ForeArm',V(u[0],u[1],u[2]*m));aim(sd+'ForeArm',sd+'Hand',V(f[0],f[1],f[2]*m));};
+ fin({k,n:nn}){const n=nn!=null?nn:Math.round(k*4),V=(x,y,z)=>new THREE.Vector3(x,y,z),arm=(sd,u,f)=>{const m=sd==='Left'?1:-1;aim(sd+'Arm',sd+'ForeArm',V(u[0],u[1],u[2]*m));aim(sd+'ForeArm',sd+'Hand',V(f[0],f[1],f[2]*m));};
    W('LeftUpLeg',F,.13);W('RightUpLeg',F,-.13);flatFoot('LeftFoot');flatFoot('RightFoot');
    if(n===0){W('Spine',S,.12);W('Head',S,.18);arm('Left',[.15,.45,-1],[.25,.55,-1]);arm('Right',[.15,.45,-1],[.25,.55,-1]);}
    else if(n===1){W('Spine',S,.06);arm('Left',[.1,.05,-1],[.12,1,-.12]);arm('Right',[.1,.05,-1],[.12,1,-.12]);}
    else if(n===2){W('Spine',F,.05);arm('Right',[.1,.05,-1],[.12,1,-.12]);arm('Left',[-.15,-.55,-.85],[.25,-.25,.95]);}
    else if(n===3){W('Spine',S,.1);W('Head',S,.15);arm('Left',[.08,.72,-.72],[.08,.8,-.6]);arm('Right',[.08,.72,-.72],[.08,.8,-.6]);}
-   else{W('Spine',S,.05);arm('Right',[.12,.7,-.72],[.08,1,-.25]);arm('Left',[.1,-.9,-.35],[.6,.3,-.2]);}
+   else if(n===4){W('Spine',S,.05);arm('Right',[.12,.7,-.72],[.08,1,-.25]);arm('Left',[.1,-.9,-.35],[.6,.3,-.2]);}
+   /* 후보 5~12 */
+   else if(n===5){arm('Left',[-.25,-.35,-.9],[-.35,-.55,.75]);arm('Right',[-.25,-.35,-.9],[-.35,-.55,.75]);W('Head',S,.08);}   /* 양손 허리 */
+   else if(n===6){W('Spine',F,-.06);arm('Right',[.05,.15,-1],[.1,1,-.15]);arm('Left',[.05,-.95,-.3],[.15,-.95,-.2]);}   /* 손 흔들기 */
+   else if(n===7){W('Spine',F,.14);arm('Left',[0,.05,-1],[0,0,-1]);arm('Right',[0,.05,-1],[0,0,-1]);}   /* 비행기 */
+   else if(n===8){W('Spine',S,.04);arm('Right',[.45,.55,-.7],[.5,.6,-.6]);arm('Left',[-.15,-.55,-.85],[.25,-.25,.95]);}   /* 카메라 가리키기 */
+   else if(n===9){W('LeftUpLeg',F,.4);W('RightUpLeg',F,-.4);W('Spine',S,.1);W('Head',S,.12);arm('Left',[.05,.6,-.8],[.05,.7,-.7]);arm('Right',[.05,.6,-.8],[.05,.7,-.7]);}   /* 별 점프(X자) */
+   else if(n===10){W('LeftUpLeg',S,1.25);W('LeftLeg',S,-1.5);W('Spine',S,.06);arm('Left',[.08,.72,-.72],[.08,.8,-.6]);arm('Right',[.08,.72,-.72],[.08,.8,-.6]);}   /* 무릎 들고 만세 */
+   else if(n===11){W('Spine',S,-.85);W('Head',S,-.2);arm('Left',[.3,-.9,-.2],[.3,-.9,-.1]);arm('Right',[.3,-.9,-.2],[.3,-.9,-.1]);}   /* 꾸벅 인사 */
+   else if(n===12){W('Spine',F,.1);arm('Right',[.35,.45,-.8],[.3,.9,-.2]);arm('Left',[.6,.1,.75],[.8,.1,.4]);}   /* 승리 주먹(오른팔 위, 왼팔 가슴 앞) */
+   else{W('LeftUpLeg',S,-.35);W('RightUpLeg',S,.3);W('Spine',S,.12);arm('Right',[.4,.75,-.5],[.4,.85,-.3]);arm('Left',[-.4,-.6,-.6],[-.3,-.5,-.5]);}   /* 13 달리는 자세로 한팔 위 */
    return {feet:1};},
  /* 시상대: 두 손으로 순위 깃발을 가슴 앞에 들고 섬 (손은 가슴 높이, 어깨너비) */
  flag(){const V=(x,y,z)=>new THREE.Vector3(x,y,z);W('LeftUpLeg',F,.06);W('RightUpLeg',F,-.06);flatFoot('LeftFoot');flatFoot('RightFoot');
