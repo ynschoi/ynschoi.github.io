@@ -958,7 +958,7 @@ async function personPhoto(r,rank){const big=document.createElement('canvas');bi
     const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=fn;document.body.append(a);a.click();a.remove();},'image/png');}
 /* 패드 자리: 포즈 5개 + 📸 버튼(3·2·1 뒤 찰칵) + 건너뛰기 */
 function phBar(){const B=$('phBar');B.textContent='';B.hidden=false;const chips=el('div','phk phc');POSES.forEach((p,i)=>{const b=el('button',i===PH.k?'on':'');b.type='button';b.setAttribute('aria-label',L(...p));{const cv=document.createElement('canvas');cv.width=cv.height=112;const x=cv.getContext('2d');x.imageSmoothingQuality='high';H3.drawTo(x,'fin',{k:(i+1)/POSES.length},56,112,100);b.append(cv);}   /* 글자 대신 실제 포즈 모습(위쪽 몸)을 동그랗게 */b.onclick=e=>{e.stopPropagation();PH.k=i;SFX.tick&&SFX.tick();[...chips.children].forEach((c,j)=>c.classList.toggle('on',j===i));};chips.append(b);});
-  const sh=el('button','shut','📸'),sk=el('button','skip',L('건너뛰기','Skip'));sh.type=sk.type='button';sh.onclick=e=>{e.stopPropagation();if(PH.cd)return;PH.cd=performance.now();B.hidden=true;if($('phName')){$('phName').blur();$('phName').hidden=true;}};sk.onclick=e=>{e.stopPropagation();B.hidden=true;photoClose();};
+  const sh=el('button','shut','📸'),sk=el('button','skip',L('건너뛰기','Skip'));sh.type=sk.type='button';sh.onclick=e=>{e.stopPropagation();if(PH.cd)return;B.hidden=true;setTimeout(photoSnap,30);   /* 3·2·1 없이 바로 찰칵 */if($('phName')){$('phName').blur();$('phName').hidden=true;}};sk.onclick=e=>{e.stopPropagation();B.hidden=true;photoClose();};
   /* 사진에 넣을 닉네임 (순위표 이름과 같음) */
   /* 닉네임: 무대 앞면의 이름을 눌러서 바로 고침 (무대 위에 투명한 입력 칸) */
   let nm=$('phName');if(!nm){nm=el('input','phname');nm.id='phName';nm.type='text';nm.maxLength=8;nm.setAttribute('aria-label',L('닉네임','Nickname'));$('game').append(nm);
