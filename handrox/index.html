@@ -1071,7 +1071,7 @@ setLang(lang);fitApp();requestAnimationFrame(loop);
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitApp);
 /* 3D 선수 로딩: 준비될 때까지 시작 버튼을 막고 진행률을 보여줌. 실패하면 2D로 넘어가지 않고 다시 시도 */
 const insT=t=>{const el=$('cIns');if(el)el.textContent=t;};
-window.onH3Progress=p=>insT(L(`선수 준비 중… ${Math.round(p*100)}%`,`Loading athlete… ${Math.round(p*100)}%`));
+window.onH3Progress=p=>H3.ok||insT(L(`선수 준비 중… ${Math.round(p*100)}%`,`Loading athlete… ${Math.round(p*100)}%`));
 window.onH3Ready=()=>{insT('TAP TO START');drawFaceIcon();if(WHO==='g')H3.setWho('g').catch(()=>{});};
 window.onH3Fail=why=>{const el=$('cIns');if(!el)return;el.innerHTML=`${L('선수를 불러오지 못했어요','Could not load the athlete')}<br><button type="button" id="h3retry" style="margin-top:6px;border:2px solid var(--gold);padding:4px 10px;font-size:12px">${L('다시 시도','Retry')}</button>`;
   el.style.animation='none';$('h3retry').onclick=e=>{e.stopPropagation();location.reload();};console.warn('3D:',why);};
