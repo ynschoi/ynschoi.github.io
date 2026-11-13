@@ -81,6 +81,7 @@ try{Promise.all([document.fonts.load('12px Galmuri9'),document.fonts.load('bold 
   .app .phbar .phk{flex-wrap:nowrap;gap:4px;border-bottom:3px solid var(--gold)}
   .app .phbar .phk button{padding:7px 7px;font:11px var(--px);white-space:nowrap;background:#2c2c36;color:#ddd;border:0;border-radius:4px 4px 0 0}
   .app .phbar .phk button.on{background:var(--gold);color:#111}
+  .app .phbar .phk.phc{border:0;gap:10px}.app .phbar .phk.phc button{width:56px;height:56px;padding:0;border-radius:50%;background:#1d1d24;border:2px solid #333;overflow:hidden}.app .phbar .phk.phc button.on{border:3px solid var(--gold);background:#1d1d24}.phk.phc canvas{width:100%;height:100%;display:block}
   .phbar .phr{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:330px;padding:0 6px}
   .phbar .phr .shut{width:70px;height:70px;border-radius:50%;border:5px solid #fff;background:#fff;box-shadow:inset 0 0 0 4px #000;font-size:0;flex:0 0 auto}
   .phbar .phr .shut:active{transform:scale(.93)}
@@ -956,7 +957,7 @@ async function personPhoto(r,rank){const big=document.createElement('canvas');bi
   big.toBlob(async b=>{const fn=`HANDROX_${(nickOk(r.name)||'player').replace(/[^\w가-힣]/g,'')}.png`;try{const d=window.claude&&claude.use?await claude.use('downloads'):null;if(d){await d.save({filename:fn,data:b});return;}}catch(e){if(e&&e.code==='declined')return;}
     const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=fn;document.body.append(a);a.click();a.remove();},'image/png');}
 /* 패드 자리: 포즈 5개 + 📸 버튼(3·2·1 뒤 찰칵) + 건너뛰기 */
-function phBar(){const B=$('phBar');B.textContent='';B.hidden=false;const chips=el('div','phk');POSES.forEach((p,i)=>{const b=el('button',i===PH.k?'on':'',L(...p));b.type='button';b.onclick=e=>{e.stopPropagation();PH.k=i;SFX.tick&&SFX.tick();[...chips.children].forEach((c,j)=>c.classList.toggle('on',j===i));};chips.append(b);});
+function phBar(){const B=$('phBar');B.textContent='';B.hidden=false;const chips=el('div','phk phc');POSES.forEach((p,i)=>{const b=el('button',i===PH.k?'on':'');b.type='button';b.setAttribute('aria-label',L(...p));{const cv=document.createElement('canvas');cv.width=cv.height=112;const x=cv.getContext('2d');x.imageSmoothingQuality='high';H3.drawTo(x,'fin',{k:(i+1)/POSES.length},56,112,100);b.append(cv);}   /* 글자 대신 실제 포즈 모습(위쪽 몸)을 동그랗게 */b.onclick=e=>{e.stopPropagation();PH.k=i;SFX.tick&&SFX.tick();[...chips.children].forEach((c,j)=>c.classList.toggle('on',j===i));};chips.append(b);});
   const sh=el('button','shut','📸'),sk=el('button','skip',L('건너뛰기','Skip'));sh.type=sk.type='button';sh.onclick=e=>{e.stopPropagation();if(PH.cd)return;PH.cd=performance.now();B.hidden=true;if($('phName')){$('phName').blur();$('phName').hidden=true;}};sk.onclick=e=>{e.stopPropagation();B.hidden=true;photoClose();};
   /* 사진에 넣을 닉네임 (순위표 이름과 같음) */
   /* 닉네임: 무대 앞면의 이름을 눌러서 바로 고침 (무대 위에 투명한 입력 칸) */
