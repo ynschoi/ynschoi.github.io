@@ -74,15 +74,18 @@ try{Promise.all([document.fonts.load('12px Galmuri9'),document.fonts.load('bold 
   .banner.on{opacity:1;transform:scale(1)}
   .ov{position:absolute;inset:0;z-index:12;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:#0c0c10d0;text-align:center;padding:0 16px;pointer-events:none}
   .ov[hidden]{display:none}
-  /* 결승·기록 사진: 아래 L·R 패드 대신 선수가 올라선 단상 앞면 (윗면 노란 테두리 = 선수 발밑) */
+  /* 결승·기록 사진(시안 ①+③): 아래는 폰 카메라처럼 검게, 포즈는 글자 탭, 큰 흰 셔터. 선수는 장면 안의 단상 위에 섬 */
   .app.fin .pad .fp,.app.fin .pad .hint{visibility:hidden}
-  .app.fin .pad{background:linear-gradient(180deg,#55556a 0,#44444f 16px,#ffe14d 16px,#ffd400 21px,#7a6200 21px,#4a3c00 24px,#34343f 24px,#25252e 45%,#18181e 100%);overflow:hidden}   /* 단상 윗면(회색) → 노란 모서리 → 앞면 */
-  .app.fin .pad::before{content:"HANDROX";position:absolute;left:0;right:0;top:34%;text-align:center;font:700 30px var(--px);letter-spacing:12px;color:#ffffff12;pointer-events:none}
-  .app.fin .pad::after{content:"";position:absolute;left:8%;right:8%;bottom:14%;height:3px;background:#ffd40055;box-shadow:0 -36px 0 #ffffff08;pointer-events:none}
-  .app.fin .phbar{background:transparent}
-  .app .phbar .phk{flex-wrap:nowrap;gap:4px}.app .phbar .phk button{padding:6px 6px;font-size:11px;white-space:nowrap}.app .phbar{gap:8px}
-  .phbar .phr{display:flex;align-items:center;gap:12px}.phbar .phr .shut{width:62px;height:62px;font-size:24px}
-  .phbar .phn{font:13px var(--px);color:#fff;background:#0c0c10;border:2px solid #44445a;padding:6px 10px;width:150px;text-align:center;outline:none;-webkit-user-select:text;user-select:text;touch-action:manipulation}.phbar .phn:focus{border-color:var(--gold)}
+  .app.fin .pad{background:#000}
+  .app.fin .phbar{background:#000;gap:14px;justify-content:center}
+  .app .phbar .phk{flex-wrap:nowrap;gap:4px;border-bottom:3px solid var(--gold)}
+  .app .phbar .phk button{padding:7px 7px;font:11px var(--px);white-space:nowrap;background:#2c2c36;color:#ddd;border:0;border-radius:4px 4px 0 0}
+  .app .phbar .phk button.on{background:var(--gold);color:#111}
+  .phbar .phr{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:330px;padding:0 6px}
+  .phbar .phr .shut{width:70px;height:70px;border-radius:50%;border:5px solid #fff;background:#fff;box-shadow:inset 0 0 0 4px #000;font-size:0;flex:0 0 auto}
+  .phbar .phr .shut:active{transform:scale(.93)}
+  .phbar .phr .skip{width:96px;text-align:right;font:11px var(--px);color:#9a9aa8}
+  .phbar .phn{font:12px var(--px);color:#fff;background:#000;border:1px solid #555;border-radius:16px;padding:7px 10px;width:96px;text-align:center;outline:none;-webkit-user-select:text;user-select:text;touch-action:manipulation}.phbar .phn:focus{border-color:var(--gold)}
   /* 종목 시작 화면(④ 패드 시연): 위엔 종목 이름+한 줄, 아래 진짜 패드 위에서 손가락이 동작을 보여 줌. 누르면 바로 시작 */
   .ov.demo{background:rgba(8,8,11,.45);justify-content:flex-start;padding-top:20px}
   .ov .tip{font:12px/1.4 var(--font);color:#fff;background:rgba(0,0,0,.6);padding:4px 9px;margin-top:4px}
@@ -501,7 +504,7 @@ const FIN={id:'fin',need:1,unit:'',nm:['결승','FINISH'],how:['완주! 축하�
     if(!run){const a=Math.min(1,(T-1.3)*3);c.globalAlpha=a;txt('FINISH!',160,-OFF+30,26,'#ffd400');txt(fmt(G.clock),160,-OFF+52,15,'#fff');c.globalAlpha=1;}
     },
   /* 기록판 앞: 옆에서 걸어 들어와(1.8초) 정면으로 돌아서고(0.5초) 고른 포즈를 잡음. 아래 패드 자리에 포즈 고르기 + 사진 버튼 */
-  wall(s,T){scene(0);photoWall(c,320,HV,-OFF,Math.max(0,(HV-213)*.42),null,nickOk(SAVE.nick));const walk=T<1.8,tn=Math.min(1,Math.max(0,(T-1.8)/.5)),x=walk?-30+190*(T/1.8):160,y=168,z=Math.min(1.5,.8*HV/213);   /* 기록판에 머리가 덜 겹치게 조금 작게 */
+  wall(s,T){scene(0);photoWall(c,320,HV,-OFF,Math.max(0,(HV-213)*.42),null,nickOk(SAVE.nick));stageDraw(c,320,141,153,172,1);const walk=T<1.8,tn=Math.min(1,Math.max(0,(T-1.8)/.5)),x=walk?-30+190*(T/1.8):160,y=148,z=Math.min(1.5,.8*HV/213);   /* 기록판에 머리가 덜 겹치게 조금 작게 */
     H3.shadow(x,y-1,34);if(walk)H3.show('carry',x,y,{ph:T*9,z});else if(tn<1)H3.show('turn',x,y,{k:(3-3*tn)/11,z});else H3.show('fin',x,y,{k:(PH.k+1)/POSES.length,z});
     if(!walk&&tn>=1&&!s.bar){s.bar=1;phBar();}
     if(PH.cd){const left=3-(performance.now()-PH.cd)/700;if(left>0){c.globalAlpha=.9;txt(String(Math.ceil(left)),40,120,44,'#ffd400');c.globalAlpha=1;}else{PH.cd=0;photoSnap();}}}};
@@ -937,8 +940,13 @@ function photoWall(x,W,Hh,top=0,dy=0,tm=null,nm=''){if(tm==null)tm=G.clock;const
   if(nm){x.textAlign='center';x.font=`bold ${18*u}px Galmuri11, monospace`;x.lineWidth=4*u;x.strokeStyle='#000';x.strokeText(nm,W/2,124*u);x.fillStyle='#ffd400';x.fillText(nm,W/2,124*u);}   /* 기록판 아래 닉네임 */
   x.restore();
   const fy=Hh-(Hh>300?60*u:12*u),fl=x.createRadialGradient(W/2,fy,10*u,W/2,fy,150*u);fl.addColorStop(0,'rgba(255,212,0,.16)');fl.addColorStop(1,'rgba(255,212,0,0)');x.fillStyle=fl;x.fillRect(0,0,W,Hh);x.restore();}
+/* 단상: 윗면(y0~y1, 선수가 서는 곳) → 노란 모서리 → 앞면(바닥 yb까지). u = 1 논리 px 크기 */
+function stageDraw(x,W,y0,y1,yb,u){const sx=W*.06,g=x.createLinearGradient(0,y0,0,y1);g.addColorStop(0,'#5a5a68');g.addColorStop(1,'#3e3e4a');x.fillStyle=g;x.beginPath();x.moveTo(sx+10*u,y0);x.lineTo(W-sx-10*u,y0);x.lineTo(W-sx,y1);x.lineTo(sx,y1);x.closePath();x.fill();
+  x.fillStyle='#ffd400';x.fillRect(sx,y1,W-2*sx,2.5*u);const f=x.createLinearGradient(0,y1,0,yb);f.addColorStop(0,'#2e2e38');f.addColorStop(1,'#16161c');x.fillStyle=f;x.fillRect(sx,y1+2.5*u,W-2*sx,yb-y1);
+  x.fillStyle='rgba(255,255,255,.07)';x.font=`bold ${11*u}px Galmuri11, monospace`;x.textAlign='center';x.fillText('H A N D R O X',W/2,y1+(yb-y1)*.62);
+  x.fillStyle='rgba(255,212,0,.35)';for(const t of [.22,.78]){x.beginPath();x.arc(W*t,y1+(yb-y1)*.55,2*u,0,7);x.fill();}}
 function photoDraw(cv,k){const x=cv.getContext('2d'),W=cv.width,Hh=cv.height,u=W/1080;x.setTransform(1,0,0,1,0,0);photoWall(x,W,Hh,0,0,null,nickOk(SAVE.nick));
-  x.fillStyle='rgba(0,0,0,.5)';x.beginPath();x.ellipse(W/2,1245*u,250*u,30*u,0,0,7);x.fill();x.imageSmoothingQuality='high';H3.drawTo(x,'fin',{k:(k+1)/POSES.length},W/2,1250*u,720*u);
+  stageDraw(x,W,1125*u,1215*u,1350*u,W/320);x.fillStyle='rgba(0,0,0,.45)';x.beginPath();x.ellipse(W/2,1172*u,230*u,26*u,0,0,7);x.fill();x.imageSmoothingQuality='high';H3.drawTo(x,'fin',{k:(k+1)/POSES.length},W/2,1176*u,720*u);   /* 단상 위에 선 선수 */
 }
 /* 순위표의 한 사람을 기록 사진 카드로 저장 (그 사람 머리 그림·기록·닉네임) */
 async function personPhoto(r,rank){const big=document.createElement('canvas');big.width=1080;big.height=1350;const x=big.getContext('2d');photoWall(x,1080,1350,0,0,r.t||0);const o=await whoOpt(r,'fin');x.fillStyle='rgba(0,0,0,.5)';x.beginPath();x.ellipse(540,1245,250,30,0,0,7);x.fill();x.imageSmoothingQuality='high';H3.drawTo(x,'fin',{k:0,...o},540,1250,720);
@@ -949,9 +957,9 @@ async function personPhoto(r,rank){const big=document.createElement('canvas');bi
 function phBar(){const B=$('phBar');B.textContent='';B.hidden=false;const chips=el('div','phk');POSES.forEach((p,i)=>{const b=el('button',i===PH.k?'on':'',L(...p));b.type='button';b.onclick=e=>{e.stopPropagation();PH.k=i;SFX.tick&&SFX.tick();[...chips.children].forEach((c,j)=>c.classList.toggle('on',j===i));};chips.append(b);});
   const sh=el('button','shut','📸'),sk=el('button','skip',L('건너뛰기','Skip'));sh.type=sk.type='button';sh.onclick=e=>{e.stopPropagation();if(PH.cd)return;PH.cd=performance.now();B.hidden=true;};sk.onclick=e=>{e.stopPropagation();B.hidden=true;photoClose();};
   /* 사진에 넣을 닉네임 (순위표 이름과 같음) */
-  const nm=el('input','phn');nm.type='text';nm.maxLength=8;nm.placeholder=L('닉네임 (사진에 들어가요)','Nickname for the photo');nm.value=SAVE.nick||'';
+  const nm=el('input','phn');nm.type='text';nm.maxLength=8;nm.placeholder=L('✏️ 닉네임','✏️ Name');nm.value=SAVE.nick||'';
   nm.oninput=()=>{SAVE.nick=nickOk(nm.value);save();};nm.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')nm.blur();});nm.addEventListener('pointerdown',e=>e.stopPropagation());
-  const row=el('div','phr');row.append(nm,sh);B.append(chips,row,sk);}   /* 포즈 한 줄 → [닉네임][📸] → 건너뛰기 */
+  const row=el('div','phr');row.append(nm,sh,sk);B.append(chips,row);}   /* 포즈 글자 탭 → [닉네임][셔터][건너뛰기] */   /* 포즈 한 줄 → [닉네임][📸] → 건너뛰기 */
 function photoClose(){$('photoPanel').hidden=true;$('phBar').hidden=true;if(PH.url)URL.revokeObjectURL(PH.url);PH.url=null;G&&G.showRes&&G.showRes();}
 function photoSnap(){SFX.tick&&SFX.tick();const fl=el('div','phflash');$('game').append(fl);setTimeout(()=>fl.remove(),450);
   const big=document.createElement('canvas');big.width=1080;big.height=1350;photoDraw(big,PH.k);
