@@ -45,12 +45,12 @@ let MASK=null;{let sk;obj.traverse(o=>{if(o.isSkinnedMesh&&!sk)sk=o;});if(sk&&sk
     const kf=i=>[P.getX(i),P.getY(i),P.getZ(i)].map(v=>Math.round(v*1e5)).join(',');for(let i=0;i<P.count;i++){const k=kf(i);if(!key.has(k))key.set(k,key.size);grp[i]=key.get(k);}
     const G=key.size,pos=new Float64Array(G*3);for(let i=0;i<P.count;i++){pos[grp[i]*3]=P.getX(i);pos[grp[i]*3+1]=P.getY(i);pos[grp[i]*3+2]=P.getZ(i);}
     const w=new Float32Array(G);for(let k=0;k<G;k++){const d=Math.hypot((pos[k*3]-bb.min.x)/S.x-C.x,0)/R.x,e=((pos[k*3+1]-bb.min.y)/S.y-C.y)/R.y,f=((pos[k*3+2]-bb.min.z)/S.z-C.z)/R.z,r=Math.hypot(d,e,f);w[k]=r<1?Math.min(1,(1-r)*3):0;
-      if(FACE){const X=(pos[k*3]-bb.min.x)/S.x,Y=(pos[k*3+1]-bb.min.y)/S.y,Z=Math.abs((pos[k*3+2]-bb.min.z)/S.z-.5),ss=(a,b,v)=>{const t=Math.min(1,Math.max(0,(v-a)/(b-a)));return t*t*(3-2*t);};w[k]=ss(.76,.82,X)*ss(.515,.55,Y)*(1-ss(.762,.776,Y))*(1-ss(.31,.36,Z));}}
+      if(FACE){const X=(pos[k*3]-bb.min.x)/S.x,Y=(pos[k*3+1]-bb.min.y)/S.y,Z=Math.abs((pos[k*3+2]-bb.min.z)/S.z-.5),ss=(a,b,v)=>{const t=Math.min(1,Math.max(0,(v-a)/(b-a)));return t*t*(3-2*t);};w[k]=ss(.62,.7,X)*ss(.49,.52,Y)*(1-ss(.79,.8,Y))*(1-ss(.42,.47,Z));}}
     const nb=Array.from({length:G},()=>new Set()),I=g.index.array;for(let t=0;t<I.length;t+=3){const a=grp[I[t]],b=grp[I[t+1]],c=grp[I[t+2]];if(w[a]||w[b]||w[c]){nb[a].add(b).add(c);nb[b].add(a).add(c);nb[c].add(a).add(b);}}
     for(let it=0;it<(FACE?0:25);it++){const np=pos.slice();for(let k=0;k<G;k++){if(!w[k]||!nb[k].size)continue;let x=0,y=0,z=0;for(const j of nb[k]){x+=pos[j*3];y+=pos[j*3+1];z+=pos[j*3+2];}const n=nb[k].size;
       np[k*3]+=(x/n-pos[k*3])*.5*w[k];np[k*3+1]+=(y/n-pos[k*3+1])*.5*w[k];np[k*3+2]+=(z/n-pos[k*3+2])*.5*w[k];}pos.set(np);}
     if(FACE){/* 빈 얼굴: 얼굴 앞면을 매끈한 곡면(앞으로 나온 정도 = 위치의 4차 다항식)에 맞춰 눌러 폄. 튀는 점(눈·코·입)은 빼고 두 번 맞춤 */
-      const nx=k=>(pos[k*3]-bb.min.x)/S.x,ny=k=>(pos[k*3+1]-bb.min.y)/S.y,nz=k=>(pos[k*3+2]-bb.min.z)/S.z,ids=[];for(let k=0;k<G;k++)if(w[k]>0&&nx(k)>.74)ids.push(k);
+      const nx=k=>(pos[k*3]-bb.min.x)/S.x,ny=k=>(pos[k*3+1]-bb.min.y)/S.y,nz=k=>(pos[k*3+2]-bb.min.z)/S.z,ids=[];for(let k=0;k<G;k++)if(w[k]>0&&nx(k)>.74&&Math.abs(nz(k)-.5)<.36&&ny(k)>.515&&ny(k)<.776)ids.push(k);
       const B=k=>{const y=(ny(k)-.66)/.12,z=(nz(k)-.5)/.3;return [1,y,z,y*y,z*z,y*z,y*y*y,z*z*y,y*y*y*y,z*z*z*z,y*y*z*z,z*z*y*y*y];},NB=12;
       const fit=sel=>{const A=Array.from({length:NB},()=>new Float64Array(NB+1));for(const k of sel){const b=B(k),x=nx(k);for(let i=0;i<NB;i++){for(let j=0;j<NB;j++)A[i][j]+=b[i]*b[j];A[i][NB]+=b[i]*x;}}
         for(let i=0;i<NB;i++){let pv=i;for(let r2=i+1;r2<NB;r2++)if(Math.abs(A[r2][i])>Math.abs(A[pv][i]))pv=r2;[A[i],A[pv]]=[A[pv],A[i]];for(let r2=0;r2<NB;r2++){if(r2===i)continue;const f=A[r2][i]/A[i][i];for(let j=i;j<=NB;j++)A[r2][j]-=f*A[i][j];}}
@@ -60,17 +60,30 @@ let MASK=null;{let sk;obj.traverse(o=>{if(o.isSkinnedMesh&&!sk)sk=o;});if(sk&&sk
       /* 눈·눈썹·코·입 자리(텍스처가 살색이 아닌 꼭짓점 + 둘레 몇 겹)만 고침: 둘레 피부는 그대로 두고, 그 안쪽은 둘레 값이 자연스럽게 이어지게 채움(높이·색 모두) */
       const uvA=g.attributes.uv,im=sk.material.map.image,tc=document.createElement('canvas');tc.width=1024;tc.height=1024;const tx=tc.getContext('2d',{willReadFrequently:true});tx.drawImage(im,0,0,1024,1024);const TD=tx.getImageData(0,0,1024,1024).data;
       const first=new Int32Array(G).fill(-1);for(let i2=0;i2<P.count;i2++)if(first[grp[i2]]<0)first[grp[i2]]=i2;
-      const col=new Float32Array(G*3),skin=new Uint8Array(G),inF=new Uint8Array(G),ban=new Uint8Array(G);
+      const col=new Float32Array(G*3),skin=new Uint8Array(G),inF=new Uint8Array(G),ban=new Uint8Array(G);const XC=+(HQ.get('xc')||.8),ZB=+(HQ.get('zb')||.36),ZC=+(HQ.get('zc')||.33);
       for(const k of ids){const v=first[k],x=Math.min(1023,Math.max(0,Math.floor(uvA.getX(v)*1024))),y=Math.min(1023,Math.max(0,Math.floor(uvA.getY(v)*1024))),o=(y*1024+x)*4,r=TD[o]/255,gg=TD[o+1]/255,b=TD[o+2]/255;col[k*3]=r;col[k*3+1]=gg;col[k*3+2]=b;
         const neu=Math.min(r,gg,b)>.72&&Math.max(r,gg,b)-Math.min(r,gg,b)<.16;skin[k]=(r>.84&&gg>r*.66&&gg<r*.9&&b>gg*.6&&b<gg*.86)?1:0;
-        const Y=ny(k),Z=Math.abs(nz(k)-.5);ban[k]=(Y>.7745||Y<.53||nx(k)<.7||Z>.36||(neu&&Y>.742))?1:0;if(!skin[k]&&!ban[k]&&nx(k)>.8&&Z<.33)inF[k]=1;}
+        const Y=ny(k),Z=Math.abs(nz(k)-.5);ban[k]=(Y>.7745||Y<.53||nx(k)<XC-.06||Z>ZB||(neu&&Y>.742))?1:0;if(!skin[k]&&!ban[k]&&nx(k)>XC&&Z<ZC)inF[k]=1;}
       /* 눈·코·입 한가운데(core)에서 바깥으로 RN겹까지 퍼지며 0→1로 부드럽게 섞음: 가운데는 맞춘 곡면·피부색, 바깥은 원래 그대로 */
+      {const isId=new Uint8Array(G);for(const k of ids)isId[k]=1;for(let k=0;k<G;k++)if(!isId[k])ban[k]=1;}
       const RN=+(HQ.get('rn')||18),dist=new Int16Array(G).fill(-1);let fr=ids.filter(k=>inF[k]);for(const k of fr)dist[k]=0;
       for(let d=1;d<=RN;d++){const nf=[];for(const k of fr)for(const j of nb[k])if(dist[j]<0&&!ban[j]&&w[j]>0){dist[j]=d;nf.push(j);}fr=nf;}
-      const sm=t=>t*t*(3-2*t),s2=(a,b,v)=>sm(Math.min(1,Math.max(0,(v-a)/(b-a)))),T=k=>dist[k]<0?0:sm(Math.min(1,Math.max(0,(RN-dist[k])/(RN*.6))))*s2(.79,.84,ev(c,k))*s2(.535,.575,ny(k))*(1-s2(.766,.7735,ny(k)))*(1-s2(.26,.345,Math.abs(nz(k)-.5)));   /* 가장자리(띠 아래·턱·옆)로 갈수록 0 */
+      const sm=t=>t*t*(3-2*t),s2=(a,b,v)=>sm(Math.min(1,Math.max(0,(v-a)/(b-a)))),sq=(a,b,v)=>sm(Math.min(1,Math.max(0,(v-a)/(b-a)))),ZF=+(HQ.get('zf')||.07),Tg=k=>(1-sq(ZB-ZF-.012,ZB-.012,Math.abs(nz(k)-.5)))*sq(.532,.56,ny(k)),T=k=>dist[k]<0?0:sm(Math.min(1,Math.max(0,(RN-dist[k])/(+(HQ.get('rr')||8)))))*Tg(k);   /* 가장자리(띠 아래·턱·옆)로 갈수록 0 */
       const sk3=[0,0,0];let sn=0;for(const k of ids)if(skin[k]&&dist[k]<0){sk3[0]+=col[k*3];sk3[1]+=col[k*3+1];sk3[2]+=col[k*3+2];sn++;}for(let q=0;q<3;q++)sk3[q]/=Math.max(1,sn);
-      const F=ids.filter(k=>dist[k]>=0);for(const k of F){const t=T(k);pos[k*3]+=((ev(c,k)*S.x+bb.min.x)-pos[k*3])*t;}
-      const fcol=new Float32Array(P.count*3),fwt=new Float32Array(P.count);for(let i2=0;i2<P.count;i2++){const k=grp[i2];if(dist[k]>=0){const t=T(k);fwt[i2]=t;fcol[i2*3]=sk3[0]*t;fcol[i2*3+1]=sk3[1]*t;fcol[i2*3+2]=sk3[2]*t;}}
+      const F=ids.filter(k=>dist[k]>=0);
+      /* 높이: 채울 자리(F) 안쪽은 '맞춘 곡면과의 차이'가 둘레 값에서 매끈하게 이어지도록 풂(막 채우기, SOR). 둘레 피부·머리띠는 그대로라 턱이 안 생김 */
+      {const res=new Float64Array(G);for(let k=0;k<G;k++)if(w[k]>0||nb[k].size)res[k]=nx(k)-ev(c,k);const nbA=F.map(k=>[...nb[k]]),om=1.92,nwA=F.map((k,q)=>nbA[q].map(j=>1/(Math.hypot(ny(j)-ny(k),nz(j)-nz(k))+2e-4)));for(const k of F)res[k]*=0;
+        for(let it=0;it<(+(HQ.get('sor')||900));it++){for(let q=0;q<F.length;q++){const k=F[q],a=nbA[q];if(!a.length)continue;const ww=nwA[q];let v=0,sw=0;for(let e=0;e<a.length;e++){v+=res[a[e]]*ww[e];sw+=ww[e];}res[k]+=om*(v/sw-res[k]);}}
+        /* 얼굴 면과 이어지지 않고 떠 있는 조각(눈알·눈썹 껍데기)은 둘레 값이 없어 면 위에 겹쳐 보임 → 면 뒤로 숨김 */
+        const comp=new Int32Array(G).fill(-1);let nc=0;const info=[];for(const k0 of F){if(comp[k0]>=0)continue;const st=[k0];comp[k0]=nc;let n=0,open=0;while(st.length){const k=st.pop();n++;for(const j of nb[k]){if(dist[j]<0){open++;continue;}if(comp[j]<0){comp[j]=nc;st.push(j);}}}info.push([n,open]);nc++;}
+        window.FACECOMP=info;const BK=+(HQ.get('bk')||.06);
+        for(const k of F){const tg=info[comp[k]][1]?Tg(k):1,nw=(ev(c,k)+(info[comp[k]][1]?res[k]:-BK))*S.x+bb.min.x;pos[k*3]+=(nw-pos[k*3])*tg;}}
+      /* 색도 높이처럼 둘레 피부색에서 이어 채움 → 채운 자리와 옆 피부 사이에 색 경계가 안 생김 */
+      const fc=new Float32Array(G*3);for(const k of F){fc[k*3]=sk3[0];fc[k*3+1]=sk3[1];fc[k*3+2]=sk3[2];}
+      {const A=F.map(k=>[...nb[k]].filter(j=>dist[j]>=0||skin[j])),Wt=F.map((k,q)=>A[q].map(j=>1/(Math.hypot(ny(j)-ny(k),nz(j)-nz(k))+2e-4)));
+        for(let it=0;it<700;it++)for(let q=0;q<F.length;q++){const k=F[q],a=A[q],ww=Wt[q];if(!a.length)continue;let r=0,g2=0,b=0,sw=0;for(let e=0;e<a.length;e++){const j=a[e],sC=dist[j]>=0?fc:col,w2=ww[e];r+=sC[j*3]*w2;g2+=sC[j*3+1]*w2;b+=sC[j*3+2]*w2;sw+=w2;}
+          fc[k*3]+=1.9*(r/sw-fc[k*3]);fc[k*3+1]+=1.9*(g2/sw-fc[k*3+1]);fc[k*3+2]+=1.9*(b/sw-fc[k*3+2]);}}
+      const fcol=new Float32Array(P.count*3),fwt=new Float32Array(P.count);for(let i2=0;i2<P.count;i2++){const k=grp[i2];if(dist[k]>=0){const t=T(k);fwt[i2]=t;fcol[i2*3]=fc[k*3]*t;fcol[i2*3+1]=fc[k*3+1]*t;fcol[i2*3+2]=fc[k*3+2]*t;}}
       g.setAttribute('fcol',new THREE.BufferAttribute(fcol,3));g.setAttribute('fwt',new THREE.BufferAttribute(fwt,1));for(let k=0;k<G;k++)if(dist[k]<0)w[k]=0;
       {const om0=sk.material,rm=om0.roughnessMap||om0.aoMap;if(rm&&rm.image){const oc=document.createElement('canvas');oc.width=oc.height=512;const ox=oc.getContext('2d',{willReadFrequently:true});ox.drawImage(rm.image,0,0,512,512);const OD=ox.getImageData(0,0,512,512).data;let a0=0,r0=0,m0=0,n0=0;
         for(const k of ids){if(!skin[k]||dist[k]>=0)continue;const v=first[k],x=Math.min(511,Math.max(0,Math.floor(uvA.getX(v)*512))),y=Math.min(511,Math.max(0,Math.floor(uvA.getY(v)*512))),o=(y*512+x)*4;a0+=OD[o];r0+=OD[o+1];m0+=OD[o+2];n0++;}
@@ -78,7 +91,10 @@ let MASK=null;{let sk;obj.traverse(o=>{if(o.isSkinnedMesh&&!sk)sk=o;});if(sk&&sk
     for(let i=0;i<P.count;i++)if(w[grp[i]])P.setXYZ(i,pos[grp[i]*3],pos[grp[i]*3+1],pos[grp[i]*3+2]);P.needsUpdate=true;
     /* 다듬은 자리 법선 다시 계산 (주변 면 법선 평균) */
     const fn=new Float64Array(G*3),v0=new THREE.Vector3(),v1=new THREE.Vector3(),v2=new THREE.Vector3();for(let t=0;t<I.length;t+=3){const a=grp[I[t]],b=grp[I[t+1]],c=grp[I[t+2]];if(!(w[a]||w[b]||w[c]))continue;
-      v0.set(pos[a*3],pos[a*3+1],pos[a*3+2]);v1.set(pos[b*3],pos[b*3+1],pos[b*3+2]).sub(v0);v2.set(pos[c*3],pos[c*3+1],pos[c*3+2]).sub(v0);v1.cross(v2);for(const k of [a,b,c]){fn[k*3]+=v1.x;fn[k*3+1]+=v1.y;fn[k*3+2]+=v1.z;}}
+      v0.set(pos[a*3],pos[a*3+1],pos[a*3+2]);v1.set(pos[b*3],pos[b*3+1],pos[b*3+2]).sub(v0);v2.set(pos[c*3],pos[c*3+1],pos[c*3+2]).sub(v0);v1.cross(v2);if(FACE&&w[a]&&w[b]&&w[c]&&v1.x<.45*v1.length())continue;for(const k of [a,b,c]){fn[k*3]+=v1.x;fn[k*3+1]+=v1.y;fn[k*3+2]+=v1.z;}}
+    if(FACE){/* 채운 자리 법선을 이웃끼리 여러 번 평균 → 얇은 삼각형 때문에 남는 실금 같은 음영 줄 없앰 */
+      const Fk=[];for(let k=0;k<G;k++)if(w[k]){const L=Math.hypot(fn[k*3],fn[k*3+1],fn[k*3+2])||1;fn[k*3]/=L;fn[k*3+1]/=L;fn[k*3+2]/=L;Fk.push(k);}
+      const A=Fk.map(k=>[...nb[k]].filter(j=>w[j]));for(let it=0;it<(+(HQ.get('ns')||4));it++){const nn=fn.slice();for(let q=0;q<Fk.length;q++){const k=Fk[q],a=A[q];if(a.length<3)continue;let x=fn[k*3],y=fn[k*3+1],z=fn[k*3+2];for(const j of a){x+=fn[j*3];y+=fn[j*3+1];z+=fn[j*3+2];}const L=Math.hypot(x,y,z)||1;nn[k*3]=x/L;nn[k*3+1]=y/L;nn[k*3+2]=z/L;}fn.set(nn);}}
     for(let i=0;i<P.count;i++){const k=grp[i];if(!w[k])continue;const L=Math.hypot(fn[k*3],fn[k*3+1],fn[k*3+2])||1;N.setXYZ(i,fn[k*3]/L,fn[k*3+1]/L,fn[k*3+2]/L);}N.needsUpdate=true;}
   /* 꼭짓점마다 '상의 정도'(tp): 텍스처 색으로 상의인지 보고 이웃끼리 4번 평균 → 상의 안쪽의 이음매 얼룩(피부색 줄 등)도 상의로 칠하게 */
   {const g=sk.geometry,uv=g.attributes.uv,im=sk.material.map.image,tc=document.createElement('canvas');tc.width=im.width;tc.height=im.height;const tx=tc.getContext('2d',{willReadFrequently:true});tx.drawImage(im,0,0);
