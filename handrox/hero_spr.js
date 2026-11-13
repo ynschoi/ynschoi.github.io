@@ -13,12 +13,15 @@ function build(n,m,c,k){sheets[n]={m,cv:c,c,k,W:c.width,H:c.height,plain:{m,cv:c
 function prep(s){if(s.base||!s.k)return;const W=s.W,H=s.H,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d',{willReadFrequently:true});
     x.drawImage(s.c,0,0);const base=x.getImageData(0,0,W,H);x.clearRect(0,0,W,H);x.drawImage(s.k,0,0,W,H);const md=x.getImageData(0,0,W,H).data,cls=new Uint8Array(W*H);
     for(let i=0;i<cls.length;i++)cls[i]=Math.round(md[i*4]/36);x.putImageData(base,0,0);Object.assign(s,{cv,x,base,cls});}
-function load(){const names=Object.keys(MAN).filter(n=>!n.startsWith('b_')&&!n.startsWith('g_')),files=names.map(n=>MAN[n].c),arts=Object.keys(ART);let done=0;const total=files.length+arts.length;
+function load(){const names=Object.keys(MAN).filter(n=>!n.startsWith('b_')&&!n.startsWith('g_')&&n!=='runfhd'),files=names.map(n=>MAN[n].c),arts=Object.keys(ART);let done=0;const total=files.length+arts.length;
   const img=f=>new Promise((res,rej)=>{const im=new Image();im.decoding='async';im.onload=()=>{const ok=()=>{done++;window.onH3Progress&&onH3Progress(done/total);res(im);};im.decode?im.decode().then(ok,ok):ok();};im.onerror=()=>rej(Error(f));im.src=f.startsWith('art/')?f:BASE+f;});
   /* 첫 화면에 쓸 정면 달리기·배경을 먼저 받아 바로 보여 주고, 나머지는 그다음에 */
   const one=async n=>{const m=MAN[n],c=await img(m.c);build(n,m,c,null);};   /* 부위 지도(m)는 색을 바꿀 때만 받음 */
   const first=Promise.all([one('runf'),(async()=>{IM.bg_runf=await img(ART.bg_runf);})()]).then(()=>{H3.coverOk=true;H3.tCover=performance.now();window.onH3Cover&&onH3Cover();});
-  return first.then(()=>Promise.all(names.filter(n=>n!=='runf').map(one))).then(()=>Promise.all(arts.filter(k=>k!=='bg_runf').map(async k=>{IM[k]=await img(ART[k]);})));}
+  return first.then(()=>Promise.all(names.filter(n=>n!=='runf').map(one))).then(()=>Promise.all(arts.filter(k=>k!=='bg_runf').map(async k=>{IM[k]=await img(ART[k]);})))
+    .then(()=>{if(MAN.runfhd)one('runfhd').then(()=>{colorKey='';}).catch(()=>{});});}   /* 첫 화면용 선명한 달리기(2배 해상도): 다 받은 뒤 마지막에 받아서 바꿔 끼움 */
+/* 첫 화면에 쓸 그림: 선명한 판이 있고 기본 선수일 때만 (머리통·여자 선수는 원래 판) */
+H3.coverPose=()=>sheets.runfhd&&!girl&&!bald?'runfhd':'runf';
 /* 두 번째 캐릭터(여자 선수, g_*): 고른 사람만 받음 */
 let girl=false,girlP=null;
 function loadGirl(){return girlP||(girlP=Promise.all(Object.keys(MAN).filter(n=>n.startsWith('g_')).map(async n=>{const m=MAN[n],ld=f=>new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=()=>rej(Error(f));im.src=BASE+f;}),[c,k]=await Promise.all([ld(m.c),ld(m.m)]);build(n,m,c,k);})).then(()=>{colorKey='';}).catch(e=>{girlP=null;throw e;}));}
@@ -59,7 +62,7 @@ H3.headView=async(ctx,f,art)=>{await loadBald();const s=sheets.b_hturn;if(!s)ret
     s.one[key]={m,W:m.w,H:m.h,x,base:x.getImageData(0,0,m.w,m.h),f:fx.getImageData(0,0,fw,s.f.height),cv:c};}
   const v=s.one[key];paintSheet(v,A,AW,AH);ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);ctx.imageSmoothingQuality='high';ctx.drawImage(v.cv,0,0,ctx.canvas.width,ctx.canvas.height);return v;};
 H3.headUV=(v,px,py)=>{if(!v)return null;const F=v.f.data,fw=v.f.width,fh=v.f.height,x=Math.floor(px*fw),y=Math.floor(py*fh);if(x<0||y<0||x>=fw||y>=fh)return null;const q=(y*fw+x)*4;return F[q+3]<128?null:[F[q]/255,F[q+1]/255];};
-const frameOf=(n,pose,o)=>{const N=sheets[n].m.n;if(pose==='run'||pose==='runf'||pose==='push'||pose==='carry')return ((Math.round((o.ph||0)/(Math.PI*2)*N)%N)+N)%N;return Math.round(Math.min(1,Math.max(0,o.k||0))*(N-1));return 0;};
+const frameOf=(n,pose,o)=>{const N=sheets[n].m.n;if(pose==='run'||pose==='runf'||pose==='runfhd'||pose==='push'||pose==='carry')return ((Math.round((o.ph||0)/(Math.PI*2)*N)%N)+N)%N;return Math.round(Math.min(1,Math.max(0,o.k||0))*(N-1));return 0;};
 /* 자세 하나 = 그림 한 칸. 원점(x,y) = 발밑, 로잉은 발 관절 */
 H3.show=(pose,x,y,o={})=>{if(!H3.ok)return false;const n0=sheets[pose]?pose:'run',n=pick(n0),s=sheets[n],f=frameOf(n,pose,o),u=HEIGHT*(o.z||1),pt=s.m.pts[f];
   const fx=o.fx?-1:1;if(!o.peek)queue.push({s,f,x,y,u,fx});const P=a=>[x+fx*a[0]*u,y-a[1]*u];return {hand:P(pt.hand),handR:pt.handR?P(pt.handR):P(pt.hand),hips:P(pt.hips),head:pt.head?P(pt.head):P(pt.hips)};};
