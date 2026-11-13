@@ -205,6 +205,8 @@ try{Promise.all([document.fonts.load('12px Galmuri9'),document.fonts.load('bold 
   .dwc img,.dwc canvas{position:absolute;inset:0;width:100%;height:100%;user-select:none;-webkit-user-select:none}.dwc canvas{touch-action:none;cursor:crosshair}
   .dwr{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:6px 0}.dwr button{width:30px;height:30px;border:2px solid #555;background:#0c0c10;color:#fff;font:700 12px var(--px);padding:0}
   .dwr button.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}.dwr button.w{width:auto;padding:0 8px}
+  .res.al{width:100%;max-width:350px;background:none;border:0;box-shadow:none;padding:0}.alh{display:flex;justify-content:space-between;align-items:baseline;margin:0 30px 8px}.alh h3{font:700 18px var(--px);color:var(--gold);margin:0}.alh span{font:11px var(--px);color:var(--dim)}.ale{font:13px/1.6 var(--px);color:var(--dim);padding:60px 10px}
+  .alg{display:grid;grid-template-columns:repeat(3,1fr);gap:9px 10px;margin:0 auto 10px;max-width:min(270px,calc((100vh - 330px)*.55))}.alc{background:#fafafa;padding:4px 4px 3px;box-shadow:0 3px 6px #000;display:flex;flex-direction:column;align-items:center}.alc img{width:100%;aspect-ratio:4/5;display:block;object-fit:cover}.alc span{font:8px var(--px);color:#666;margin-top:2px}.alc b{font:400 9px var(--px);color:#222}.alp{font:12px var(--px);color:var(--dim);align-self:center}.res.al .row button:disabled{opacity:.3}
   .res.ph{width:100%;max-width:330px;background:none;border:0;box-shadow:none}.pola{background:#fafafa;padding:10px 10px 0;transform:rotate(-2deg);box-shadow:0 14px 30px #000;margin:4px auto 18px;max-width:290px;animation:polaIn .5s ease-out}.pola .phcv{border:0;margin:0;max-width:none}.pcap{font:16px var(--px);color:#333;text-align:center;padding:12px 0 14px;letter-spacing:1px}@keyframes polaIn{from{transform:translateY(-30px) rotate(4deg);opacity:0}}.res.ph .prow button{flex:1}.res.ph .pnx{display:block;margin:10px auto 0;font:13px var(--px);color:var(--gold)}.res.ph h3{font:700 16px var(--px);color:var(--gold);margin:0 0 8px}.phcv{width:100%;max-width:300px;aspect-ratio:4/5;display:block;margin:0 auto 6px;border:2px solid #fff;background:#000}
   .phk{gap:4px}.phk button{height:28px;font-size:11px}.phflash{position:absolute;inset:0;background:#fff;animation:phf .45s ease-out forwards;pointer-events:none}@keyframes phf{from{opacity:1}to{opacity:0}}
   .res.lb{width:100%;max-width:340px}
@@ -273,7 +275,7 @@ try{Promise.all([document.fonts.load('12px Galmuri9'),document.fonts.load('bold 
       <div class="lsel" id="lsel"><button type="button" data-l="ko">한국어</button><button type="button" data-l="en">English</button></div>
       <div class="ins" id="cIns">선수 준비 중…</div>
       <div class="cbest" id="cBest"></div>
-      <nav class="ctab" id="ctab"><button type="button" class="on" id="tHome"><b>🏠</b><small></small></button><button type="button" id="cLb" hidden><b>🏆</b><small></small></button><button type="button" id="charBtn"><b>🧍</b><small></small></button><button type="button" id="tFr" hidden><b>👥</b><small></small></button></nav>
+      <nav class="ctab" id="ctab"><button type="button" class="on" id="tHome"><b>🏠</b><small></small></button><button type="button" id="cLb" hidden><b>🏆</b><small></small></button><button type="button" id="tAl"><b>📸</b><small></small></button><button type="button" id="charBtn"><b>🧍</b><small></small></button><button type="button" id="tFr" hidden><b>👥</b><small></small></button></nav>
       <div class="city" id="city" hidden>PHONE</div><div class="note" id="cNote"></div>
   </div>
   <div class="help" id="help" hidden><div id="helpBody"></div></div>
@@ -293,6 +295,7 @@ try{Promise.all([document.fonts.load('12px Galmuri9'),document.fonts.load('bold 
     <div class="row" style="margin-top:8px"><button type="button" id="dwNo"></button><button type="button" class="y" id="dwOk"></button></div></div></div>
   <div class="help" id="photoPanel" hidden><div class="res ph" id="phBody"></div></div>
   <div class="help" id="result" hidden><div class="res" id="resBody"></div></div>
+  <div class="help" id="alPanel" hidden><div class="res al" id="alBody"></div></div>
   <div class="help" id="lbPanel" hidden><div class="res lb" id="lbBody"></div></div>
 </div>
 <script>
@@ -927,6 +930,18 @@ async function inviteCheck(){let c=null;try{c=(new URLSearchParams(location.sear
     const ok=el('button','y',L('친구 하기','Be friends')),no=el('button','',L('나중에','Later')),row=el('div','row');ok.type=no.type='button';row.append(no,ok);B.append(row);$('lbPanel').hidden=false;
     no.onclick=()=>{$('lbPanel').hidden=true;};ok.onclick=async()=>{ok.disabled=true;try{LBV.fr=await within(LB.addFriend(r.id));$('lbPanel').hidden=true;banner(L('친구가 됐어요!','Friends now!'),1200);}catch(e){ok.disabled=false;ok.textContent=L('실패','Failed');}};}catch(e){}}
 $('cLb').addEventListener('click',e=>{e.stopPropagation();lbShow();});
+/* 기록 앨범(시안 ① 폴라로이드 3×4): 이 기기에 모아 둔 기록 사진을 한 화면에 12장씩. 누르면 크게 */
+let ALP=0;function alShow(pg){const A=(()=>{try{return JSON.parse(localStorage.getItem(AKEY)||'[]');}catch(e){return [];}})(),B=$('alBody');B.textContent='';$('alPanel').hidden=false;
+  const N=Math.max(1,Math.ceil(A.length/12));ALP=Math.min(N-1,Math.max(0,pg||0));const best=A.length?Math.min(...A.map(a=>a.t)):0,hd=el('div','alh');hd.append(el('h3','',L('📸 내 기록','📸 My album')),el('span','',A.length?L(`${A.length}장 · 최고 ${fmt(best)}`,`${A.length} photos · best ${fmt(best)}`):''));B.append(hd);
+  if(!A.length)B.append(el('div','ale',L('아직 사진이 없어요. 완주하고 기록 사진을 찍어 보세요!','No photos yet. Finish a race and take one!')));
+  else{const g=el('div','alg');A.slice(ALP*12,ALP*12+12).forEach((a,i)=>{const d=new Date(a.d),c=el('button','alc');c.type='button';c.style.transform=`rotate(${((a.d>>3)%7-3)*.9}deg)`;const im=el('img');im.src=a.img;im.alt='';
+      c.append(im,el('span','',`${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`),el('b','',fmt(a.t)));c.onclick=()=>alBig(a);g.append(c);});B.append(g);}
+  const row=el('div','row');if(N>1){const pv=el('button','','‹'),nx=el('button','','›');pv.type=nx.type='button';pv.disabled=ALP===0;nx.disabled=ALP===N-1;pv.onclick=()=>alShow(ALP-1);nx.onclick=()=>alShow(ALP+1);row.append(pv,el('span','alp',`${ALP+1} / ${N}`),nx);}
+  const x=el('button','y',L('닫기','Close'));x.type='button';x.onclick=()=>{$('alPanel').hidden=true;};row.append(x);B.append(row);}
+function alBig(a){const B=$('alBody');B.textContent='';const d=new Date(a.d),pol=el('div','pola'),im=el('img','phcv');im.src=a.img;im.alt='';pol.append(im,el('div','pcap',`${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}  ·  ${fmt(a.t)}`));
+  const row=el('div','row'),bk=el('button','y',L('‹ 앨범','‹ Album')),del=el('button','',L('지우기','Delete'));bk.type=del.type='button';bk.onclick=()=>alShow(ALP);
+  del.onclick=()=>{if(del.dataset.ok){try{const A=JSON.parse(localStorage.getItem(AKEY)||'[]').filter(z=>z.d!==a.d);localStorage.setItem(AKEY,JSON.stringify(A));}catch(e){}alShow(ALP);}else{del.dataset.ok=1;del.textContent=L('정말 지울까요?','Really delete?');}};row.append(bk,del);B.append(pol,row);}
+$('tAl').addEventListener('click',e=>{e.stopPropagation();alShow(0);});
 $('tFr').addEventListener('click',e=>{e.stopPropagation();lbFriend();$('lbPanel').hidden=false;});$('tHome').addEventListener('click',e=>e.stopPropagation());
 function coverBest(){const b=$('cBest');if(!b)return;b.textContent='';if(SAVE.pb){b.append('BEST ',el('b','',fmt(SAVE.pb)),L(` · 완주 ${SAVE.races||0}회`,` · ${SAVE.races||0} finishes`));}}
 /* 첫 화면: 정면 트랙 위로 내 선수가 화면 가득 뛰어옴 */
@@ -1044,7 +1059,7 @@ function setLang(l){lang=l;try{localStorage.setItem('handrox.lang',l);}catch(e){
   $('cTag').textContent=L('손가락으로 뛰는 하이록스','The fitness race for fingers');$('cNote').textContent=L('기록은 이 브라우저에 저장돼요','Your best time is saved in this browser');
   $('pLs').textContent=L('왼 손가락','LEFT FINGER');$('pRs').textContent=L('오른 손가락','RIGHT FINGER');
   ST[0].hint=L('잡고 ↓ 당겨 ⟳ 돌리기','GRAB ↓ PULL ⟳ CIRCLE');ST[4].hint=L('잡고 ← 당기기 · 돌아오기 →','GRAB ← PULL · RETURN →');ST[3].hint=L('꾹 ▸ 떼기','HOLD ▸ RELEASE');ST[5].hint=L('L + R 꾹','HOLD L + R');ST[2].hint=L('L↓ ▸ R↓ 끝까지','L↓ ▸ R↓ ALL THE WAY');ST[6].hint=L('L 꾹·떼기 ▸ R 꾹·떼기','HOLD L ▸ HOLD R');
-  [['tHome','홈','Home'],['cLb','순위','Ranks'],['charBtn','캐릭터','Character'],['tFr','친구','Friends']].forEach(([id,k,e])=>{$(id).querySelector('small').textContent=L(k,e);});coverBest();$('cuT').textContent=L('🧍 내 캐릭터','🧍 Your character');$('cuOk').textContent=L('완료','Done');if(!$('custPanel').hidden)renderCust();
+  [['tHome','홈','Home'],['cLb','순위','Ranks'],['tAl','기록','Album'],['charBtn','캐릭터','Character'],['tFr','친구','Friends']].forEach(([id,k,e])=>{$(id).querySelector('small').textContent=L(k,e);});coverBest();$('cuT').textContent=L('🧍 내 캐릭터','🧍 Your character');$('cuOk').textContent=L('완료','Done');if(!$('custPanel').hidden)renderCust();
   faceBtnText();drawBtnText();$('feT').textContent=L('📷 얼굴 맞추기','📷 Frame your face');$('feN').textContent=L('드래그로 위치, 슬라이더로 확대. 사진은 이 기기에만 저장돼요.','Drag to move, slide to zoom. The photo stays on this device.');$('feNo').textContent=L('취소','Cancel');$('feOk').textContent=L('이 얼굴로','Use this');
   $('helpBody').innerHTML=helpHTML();document.querySelectorAll('#lsel button').forEach(b=>b.classList.toggle('on',b.dataset.l===l));$('lng').textContent=l==='ko'?'EN':'KO';paintInfo();}
 $('lsel').addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('button');if(b){SFX.tick();setLang(b.dataset.l);}});
