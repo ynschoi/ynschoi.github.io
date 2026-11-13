@@ -72,7 +72,7 @@ H3.setHead=async(art)=>{if(!art){bald=false;H3.icon();return 0;}await loadBald()
   LA=[A,AW,AH];for(const s of Object.values(sheets))if(s.bald)paintSheet(s,A,AW,AH);bald=true;colorKey='';H3.icon();return performance.now()-t0;};
 /* 그리기 화면용 머리 돌려 보기: b_hturn 한 칸(앞 기준 16방향 + 위에서 8방향)에 그림을 입혀 ctx에 그리고, 화면 점 → 그림 좌표 찾기 */
 H3.headView=async(ctx,f,art)=>{await loadBald();const s=sheets.b_hturn;if(!s)return false;const m=s.m,AW=art.width,AH=art.height,A=art.getContext('2d',{willReadFrequently:true}).getImageData(0,0,AW,AH).data;
-  if(!s.one){s.one={};}const key=f;if(!s.one[key]){const c=document.createElement('canvas');c.width=m.w;c.height=m.h;const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(s.cv,f*m.w,0,m.w,m.h,0,0,m.w,m.h);
+  if(!s.one){s.one={};}const key=f;if(!s.one[key]){const c=document.createElement('canvas');c.width=m.w;c.height=m.h;const x=c.getContext('2d',{willReadFrequently:true});x.putImageData(s.base,-f*m.w,0);   /* 그림을 입히기 전 바탕(빈 머리)에서 시작 — 저장된 그림이 바탕에 남아 '모두 지움'이 안 되던 것 수정 */
     const fc=document.createElement('canvas'),fw=s.f.width/m.n;fc.width=fw;fc.height=s.f.height;const fx=fc.getContext('2d',{willReadFrequently:true});fx.putImageData(s.f,-f*fw,0);
     s.one[key]={m,W:m.w,H:m.h,x,base:x.getImageData(0,0,m.w,m.h),f:fx.getImageData(0,0,fw,s.f.height),cv:c};}
   const v=s.one[key];paintSheet(v,A,AW,AH);ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);ctx.imageSmoothingQuality='high';ctx.drawImage(v.cv,0,0,ctx.canvas.width,ctx.canvas.height);return v;};

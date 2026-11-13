@@ -1114,7 +1114,9 @@ $('drawBtn').addEventListener('click',async()=>{DW.tex=newTex();if(DW.saved)DW.t
   try{await dwRender();dwUI();}catch(e){$('dwN').textContent=L('머리를 불러오지 못했어요','Could not load the head');}});
 $('drawPanel').addEventListener('click',e=>e.stopPropagation());
 $('dwNo').addEventListener('click',()=>{$('drawPanel').hidden=true;});
-$('dwOk').addEventListener('click',async()=>{const t=newTex();t.getContext('2d').drawImage(DW.tex,0,0);DW.saved=t;try{localStorage.setItem(HKEY,JSON.stringify({img:t.toDataURL('image/png')}));}catch(e){}
+$('dwOk').addEventListener('click',async()=>{const t=newTex();t.getContext('2d').drawImage(DW.tex,0,0);{const d=t.getContext('2d').getImageData(0,0,t.width,t.height).data;let any=0;for(let i=3;i<d.length;i+=4)if(d[i]){any=1;break;}
+    if(!any){DW.saved=null;try{localStorage.removeItem(HKEY);}catch(e){}$('dwOk').textContent=L('입히는 중…','Applying…');await headApply();$('drawPanel').hidden=true;drawBtnText();if(SAVE.nick)LB.syncBs();return;}}   /* 다 지우고 저장 = 그림 없음 → 원래 캐릭터로 */
+  DW.saved=t;try{localStorage.setItem(HKEY,JSON.stringify({img:t.toDataURL('image/png')}));}catch(e){}
   $('dwOk').textContent=L('입히는 중…','Applying…');await headApply();$('drawPanel').hidden=true;drawBtnText();if(SAVE.nick)LB.syncBs();});
 $('drawDel').addEventListener('click',()=>{DW.saved=null;try{localStorage.removeItem(HKEY);}catch(e){}headApply();drawBtnText();});
 try{localStorage.removeItem('handrox.head');const v=JSON.parse(localStorage.getItem(HKEY)||'null');if(v&&v.img){const im=new Image();im.onload=()=>{const t=newTex();t.getContext('2d').drawImage(im,0,0,512,256);DW.saved=t;drawBtnText();headApply();};im.src=v.img;}}catch(e){}
