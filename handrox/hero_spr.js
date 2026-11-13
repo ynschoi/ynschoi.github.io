@@ -4,7 +4,7 @@
    예전 이름(H3)과 같은 사용법: H3.show(자세,x,y,옵션) → 손·엉덩이 위치 반환, H3.frame()에서 실제로 그림 */
 (function(){
 const MAN=window.HERO_MAN,HEIGHT=115,GW=320,GH=170,BASE='spr/';   /* HEIGHT = 모델 1단위가 경기장 몇 px인지 (선수 키 ≈ 113px) */
-const ART={bg_ski:'art/bg_ski.jpg',ski_machine:'art/ski_machine.webp',bg_runf:'art/bg_runf.webp',bg_run:'art/bg_run.jpg',bg_zone:'art/bg_zone.jpg',row_machine:'art/row_machine.webp',row_seat:'art/row_seat.webp',sled:'art/sled.webp',sled_pull:'art/sled_pull.webp',kb:'art/kb.webp',wallball:'art/wallball.webp',sandbag:'art/sandbag.webp',wall_target:'art/wall_target.webp',wall_target45:'art/wall_target45.webp'},IM={};
+const ART={bg_ski:'art/bg_ski.jpg',ski_machine:'art/ski_machine.webp',bg_runf:'art/bg_runf.webp',bg_run:'art/bg_run.jpg',bg_zone:'art/bg_zone.jpg',row_machine:'art/row_machine.webp',row_seat:'art/row_seat.webp',sled:'art/sled.webp',sled_pull:'art/sled_pull.webp',kb:'art/kb.webp',wallball:'art/wallball.webp',sandbag:'art/sandbag.webp',wall_target:'art/wall_target.webp',wall_target45:'art/wall_target45.webp',wall_rig:'art/wall_rig.webp'},IM={};
 const H3=window.H3;Object.assign(H3,{ok:false,why:'loading'});
 const sheets={};let queue=[],colorKey='',prevSpin=0;
 const hex=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
