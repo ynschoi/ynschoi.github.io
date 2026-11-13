@@ -8,11 +8,13 @@ const ART={bg_ski:'art/bg_ski.jpg',ski_machine:'art/ski_machine.webp',bg_runf:'a
 const H3=window.H3;Object.assign(H3,{ok:false,why:'loading'});
 const sheets={};let queue=[],colorKey='',prevSpin=0;
 const hex=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
-function build(n,m,c,k){const W=c.width,H=c.height,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d',{willReadFrequently:true});
-    x.drawImage(c,0,0);const base=x.getImageData(0,0,W,H);x.clearRect(0,0,W,H);const pc=document.createElement('canvas');pc.width=W;pc.height=H;pc.getContext('2d').drawImage(c,0,0);x.drawImage(k,0,0,W,H);const md=x.getImageData(0,0,W,H).data,cls=new Uint8Array(W*H);
-    for(let i=0;i<cls.length;i++)cls[i]=Math.round(md[i*4]/36);x.putImageData(base,0,0);sheets[n]={m,cv,x,base,cls,W,H,plain:{m,cv:pc}};}
+/* 그림 묶음: 처음엔 받은 그림을 그대로 씀(첫 화면 빨리). 색을 바꿀 때만 픽셀 작업(prep)을 함 */
+function build(n,m,c,k){sheets[n]={m,cv:c,c,k,W:c.width,H:c.height,plain:{m,cv:c}};}
+function prep(s){if(s.base||!s.k)return;const W=s.W,H=s.H,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d',{willReadFrequently:true});
+    x.drawImage(s.c,0,0);const base=x.getImageData(0,0,W,H);x.clearRect(0,0,W,H);x.drawImage(s.k,0,0,W,H);const md=x.getImageData(0,0,W,H).data,cls=new Uint8Array(W*H);
+    for(let i=0;i<cls.length;i++)cls[i]=Math.round(md[i*4]/36);x.putImageData(base,0,0);Object.assign(s,{cv,x,base,cls});}
 function load(){const names=Object.keys(MAN).filter(n=>!n.startsWith('b_')&&!n.startsWith('g_')),files=names.flatMap(n=>[MAN[n].c,MAN[n].m]),arts=Object.keys(ART);let done=0;const total=files.length+arts.length;
-  const img=f=>new Promise((res,rej)=>{const im=new Image();im.decoding='async';im.onload=()=>{done++;window.onH3Progress&&onH3Progress(done/total);res(im);};im.onerror=()=>rej(Error(f));im.src=f.startsWith('art/')?f:BASE+f;});
+  const img=f=>new Promise((res,rej)=>{const im=new Image();im.decoding='async';im.onload=()=>{const ok=()=>{done++;window.onH3Progress&&onH3Progress(done/total);res(im);};im.decode?im.decode().then(ok,ok):ok();};im.onerror=()=>rej(Error(f));im.src=f.startsWith('art/')?f:BASE+f;});
   /* 첫 화면에 쓸 정면 달리기·배경을 먼저 받아 바로 보여 주고, 나머지는 그다음에 */
   const one=async n=>{const m=MAN[n],[c,k]=await Promise.all([img(m.c),img(m.m)]);build(n,m,c,k);};
   const first=Promise.all([one('runf'),(async()=>{IM.bg_runf=await img(ART.bg_runf);})()]).then(()=>{H3.coverOk=true;H3.tCover=performance.now();window.onH3Cover&&onH3Cover();});
@@ -25,8 +27,8 @@ H3.setWho=async w=>{if(w==='g'){await loadGirl();girl=true;}else girl=false;H3.i
 const pick=n0=>girl&&sheets['g_'+n0]?'g_'+n0:bald&&sheets['b_'+n0]?'b_'+n0:n0;
 /* 고른 색 입히기: 부위별로 원래 밝기 비율을 유지한 채 색만 바꿈. 처음 값(null)은 원본 그대로 */
 function recolor(){const cols=window.handroxColors?handroxColors():{},key=JSON.stringify(cols);if(key===colorKey)return;colorKey=key;
-  const T=[null,...['skin','hair','top','shorts','band','shoes'].map(k=>cols[k]?hex(cols[k]):null)];
-  for(const s of Object.values(sheets)){if(s.bald)continue;const d=s.base.data,out=s.x.createImageData(s.W,s.H),o=out.data,ref=s.m.ref;
+  const T=[null,...['skin','hair','top','shorts','band','shoes'].map(k=>cols[k]?hex(cols[k]):null)],any=T.some(Boolean);
+  for(const s of Object.values(sheets)){if(s.bald)continue;if(!s.base){if(!any)continue;prep(s);}const d=s.base.data,out=s.x.createImageData(s.W,s.H),o=out.data,ref=s.m.ref;
     for(let i=0,p=0;p<s.cls.length;p++,i+=4){const k=s.cls[p],t=T[k];o[i+3]=d[i+3];
       if(!t){o[i]=d[i];o[i+1]=d[i+1];o[i+2]=d[i+2];continue;}
       const f=Math.min(1.7,(d[i]*.3+d[i+1]*.59+d[i+2]*.11)/(ref[k]||1));o[i]=Math.min(255,t[0]*f);o[i+1]=Math.min(255,t[1]*f);o[i+2]=Math.min(255,t[2]*f);}
