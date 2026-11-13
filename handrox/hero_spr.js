@@ -13,13 +13,19 @@ function build(n,m,c,k){sheets[n]={m,cv:c,c,k,W:c.width,H:c.height,plain:{m,cv:c
 function prep(s){if(s.base||!s.k)return;const W=s.W,H=s.H,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d',{willReadFrequently:true});
     x.drawImage(s.c,0,0);const base=x.getImageData(0,0,W,H);x.clearRect(0,0,W,H);x.drawImage(s.k,0,0,W,H);const md=x.getImageData(0,0,W,H).data,cls=new Uint8Array(W*H);
     for(let i=0;i<cls.length;i++)cls[i]=Math.round(md[i*4]/36);x.putImageData(base,0,0);Object.assign(s,{cv,x,base,cls});}
-function load(){const names=Object.keys(MAN).filter(n=>!n.startsWith('b_')&&!n.startsWith('g_')&&n!=='runfhd'&&n!=='runfp'),files=names.map(n=>MAN[n].c),arts=Object.keys(ART);let done=0;const total=files.length+arts.length;
-  const img=f=>new Promise((res,rej)=>{const im=new Image();im.decoding='async';im.onload=()=>{const ok=()=>{done++;window.onH3Progress&&onH3Progress(done/total);res(im);};im.decode?im.decode().then(ok,ok):ok();};im.onerror=()=>rej(Error(f));im.src=f.startsWith('art/')?f:BASE+f;});
+function load(){const names=Object.keys(MAN).filter(n=>!n.startsWith('b_')&&!n.startsWith('g_')&&n!=='runfhd'&&n!=='runfp'),files=names.map(n=>MAN[n].c),arts=Object.keys(ART);let done=0;const total=(MAN.runfp?3:2)+['runf','run','icon'].filter(n=>MAN[n]).length+1;   /* 진행률 = 시작에 필요한 그림 기준 */
+  const img=f=>new Promise((res,rej)=>{const im=new Image();im.decoding='async';im.onload=()=>{const ok=()=>{done++;window.onH3Progress&&onH3Progress(Math.min(1,done/total));res(im);};im.decode?im.decode().then(ok,ok):ok();};im.onerror=()=>rej(Error(f));im.src=f.startsWith('art/')?f:BASE+f;});
   /* 첫 화면에 쓸 정면 달리기·배경을 먼저 받아 바로 보여 주고, 나머지는 그다음에 */
   const one=async n=>{const m=MAN[n],c=await img(m.c);build(n,m,c,null);};   /* 부위 지도(m)는 색을 바꿀 때만 받음 */
   const first=Promise.all([one(MAN.runfp?'runfp':'runf'),(async()=>{IM.bg_runf=await img(ART.bg_runf);})()]).then(()=>{H3.coverOk=true;H3.tCover=performance.now();window.onH3Cover&&onH3Cover();});
-  return first.then(()=>MAN.runfp?one('runf'):0).then(()=>Promise.all(names.filter(n=>n!=='runf').map(one)))   /* 정면 달리기(첫 화면 움직임)를 먼저 다 받고 나머지 */.then(()=>Promise.all(arts.filter(k=>k!=='bg_runf').map(async k=>{IM[k]=await img(ART[k]);})))
-    .then(()=>{if(MAN.runfhd)one('runfhd').then(()=>{colorKey='';}).catch(()=>{});});}   /* 첫 화면용 선명한 달리기(2배 해상도): 다 받은 뒤 마지막에 받아서 바꿔 끼움 */
+  /* 시작에 필요한 것(첫 달리기)만 받으면 바로 시작 가능. 나머지 종목 그림은 카운트다운·달리기 1 동안 경기 순서대로 뒤에서 받음 */
+  const art=async k=>{if(!IM[k])IM[k]=await img(ART[k]);},need=['runf','run','icon'].filter(n=>MAN[n]);
+  const ready=first.then(()=>Promise.all([...need.map(one),art('bg_run')]));
+  const ORDER=['skib','bg_ski','ski_machine','pm5','push','sled','bg_zone','pull','sled_pull','bbj','bbjj','row','row_machine','row_seat','carry','kb','lunge','lunge2','sandbag','wall','wallball','wall_rig','turn','fin','flag'];
+  H3.rest=ready.then(async()=>{const left=new Set([...names.filter(n=>!need.includes(n)),...arts.filter(k=>!IM[k]).map(k=>'@'+k)]),get=k=>k.startsWith('@')?art(k.slice(1)):one(k);
+    for(const k of ORDER){const key=MAN[k]?k:'@'+k;if(left.has(key)){left.delete(key);await get(key).catch(()=>{});}}
+    await Promise.all([...left].map(k=>get(k).catch(()=>{})));colorKey='';if(MAN.runfhd)await one('runfhd').then(()=>{colorKey='';}).catch(()=>{});});
+  return ready;}   /* 첫 화면용 선명한 달리기(2배 해상도): 다 받은 뒤 마지막에 받아서 바꿔 끼움 */
 /* 첫 화면에 쓸 그림: 선명한 판이 있고 기본 선수일 때만 (머리통·여자 선수는 원래 판) */
 H3.coverPose=()=>girl||bald?'runf':sheets.runfhd?'runfhd':sheets.runf?'runf':'runfp';   /* 첫 화면: 멈춘 한 장(10KB) → 달리기 → 선명한 달리기 순으로 바꿔 끼움 */
 /* 두 번째 캐릭터(여자 선수, g_*): 고른 사람만 받음 */
@@ -76,7 +82,7 @@ H3.drawTo=(ctx,pose,o,cx,footY,u)=>{if(!H3.ok&&!(H3.coverOk&&sheets[pose]))retur
   ctx.drawImage(s.cv,f*m.w,0,m.w,m.h,cx+m.box[0]*u,footY-m.box[3]*u,m.w*g,m.h*g);const P=a=>[cx+a[0]*u,footY-a[1]*u];return {hand:P(pt.hand),handR:P(pt.handR||pt.hand)};};
 H3.img2=k=>IM[k];
 /* 기구 그림·선·손잡이도 같은 대기열에 (경기장 좌표). 선수보다 먼저 부르면 뒤에, 나중에 부르면 앞에 그려짐 */
-H3.img=(k,x,y,w,h,fx)=>{if(H3.ok)queue.push({img:IM[k],x,y,w,h,fx});};
+H3.img=(k,x,y,w,h,fx)=>{if(H3.ok&&IM[k])queue.push({img:IM[k],x,y,w,h,fx});};   /* 아직 안 받은 그림은 건너뜀 */
 H3.line=(x1,y1,x2,y2,w,col)=>{if(H3.ok)queue.push({line:[x1,y1,x2,y2],w,col});};
 H3.rect=(x,y,w,h,col,ol)=>{if(H3.ok)queue.push({rect:[x,y,w,h],col,ol});};
 H3.ring=(x,y,r,col,w)=>{if(H3.ok)queue.push({ring:[x,y,r],col,w});};
