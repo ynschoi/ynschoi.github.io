@@ -40,13 +40,25 @@ if(HEADURL){obj.updateMatrixWorld(true);let sk;obj.traverse(o=>{if(o.isSkinnedMe
    1 피부 · 2 머리카락 · 3 상의 · 4 하의 · 5 밴드(머리 위 흰색) · 6 신발(발 쪽 흰색) · 0 그 밖(눈·입 등 원래 색 유지) */
 let MASK=null;{let sk;obj.traverse(o=>{if(o.isSkinnedMesh&&!sk)sk=o;});if(sk&&sk.material.map){sk.geometry.computeBoundingBox();const bb=sk.geometry.boundingBox;
   /* 로고가 모양으로도 튀어나와 있어서, 로고 자리 꼭짓점을 주변 평균으로 여러 번 다듬어 평평하게 (같은 자리의 겹친 꼭짓점은 위치로 묶음) */
-  if(!HQ.get('model')){const g=sk.geometry,P=g.attributes.position,N=g.attributes.normal,S=bb.max.clone().sub(bb.min),C=new THREE.Vector3(.69,.408,.41),R=new THREE.Vector3(.11,.05,.1),inZ=[],key=new Map(),grp=new Int32Array(P.count);
+  /* face=1 (새 모델): 얼굴 앞면의 눈·눈썹·코·입 돌기를 같은 방법으로 평평하게 → 빈 얼굴(눈코입 끼우기·그리기용) */
+  const FACE=!!HQ.get('face');if(!HQ.get('model')||FACE){const g=sk.geometry,P=g.attributes.position,N=g.attributes.normal,S=bb.max.clone().sub(bb.min),C=FACE?new THREE.Vector3(.96,.66,.5):new THREE.Vector3(.69,.408,.41),R=FACE?new THREE.Vector3(.15,.125,.3):new THREE.Vector3(.11,.05,.1),inZ=[],key=new Map(),grp=new Int32Array(P.count);
     const kf=i=>[P.getX(i),P.getY(i),P.getZ(i)].map(v=>Math.round(v*1e5)).join(',');for(let i=0;i<P.count;i++){const k=kf(i);if(!key.has(k))key.set(k,key.size);grp[i]=key.get(k);}
     const G=key.size,pos=new Float64Array(G*3);for(let i=0;i<P.count;i++){pos[grp[i]*3]=P.getX(i);pos[grp[i]*3+1]=P.getY(i);pos[grp[i]*3+2]=P.getZ(i);}
-    const w=new Float32Array(G);for(let k=0;k<G;k++){const d=Math.hypot((pos[k*3]-bb.min.x)/S.x-C.x,0)/R.x,e=((pos[k*3+1]-bb.min.y)/S.y-C.y)/R.y,f=((pos[k*3+2]-bb.min.z)/S.z-C.z)/R.z,r=Math.hypot(d,e,f);w[k]=r<1?Math.min(1,(1-r)*3):0;}
+    const w=new Float32Array(G);for(let k=0;k<G;k++){const d=Math.hypot((pos[k*3]-bb.min.x)/S.x-C.x,0)/R.x,e=((pos[k*3+1]-bb.min.y)/S.y-C.y)/R.y,f=((pos[k*3+2]-bb.min.z)/S.z-C.z)/R.z,r=Math.hypot(d,e,f);w[k]=r<1?Math.min(1,(1-r)*3):0;
+      if(FACE){const X=(pos[k*3]-bb.min.x)/S.x,Y=(pos[k*3+1]-bb.min.y)/S.y,Z=Math.abs((pos[k*3+2]-bb.min.z)/S.z-.5),ss=(a,b,v)=>{const t=Math.min(1,Math.max(0,(v-a)/(b-a)));return t*t*(3-2*t);};w[k]=ss(.76,.82,X)*ss(.515,.55,Y)*(1-ss(.762,.776,Y))*(1-ss(.31,.36,Z));}}
     const nb=Array.from({length:G},()=>new Set()),I=g.index.array;for(let t=0;t<I.length;t+=3){const a=grp[I[t]],b=grp[I[t+1]],c=grp[I[t+2]];if(w[a]||w[b]||w[c]){nb[a].add(b).add(c);nb[b].add(a).add(c);nb[c].add(a).add(b);}}
-    for(let it=0;it<25;it++){const np=pos.slice();for(let k=0;k<G;k++){if(!w[k]||!nb[k].size)continue;let x=0,y=0,z=0;for(const j of nb[k]){x+=pos[j*3];y+=pos[j*3+1];z+=pos[j*3+2];}const n=nb[k].size;
+    for(let it=0;it<(FACE?0:25);it++){const np=pos.slice();for(let k=0;k<G;k++){if(!w[k]||!nb[k].size)continue;let x=0,y=0,z=0;for(const j of nb[k]){x+=pos[j*3];y+=pos[j*3+1];z+=pos[j*3+2];}const n=nb[k].size;
       np[k*3]+=(x/n-pos[k*3])*.5*w[k];np[k*3+1]+=(y/n-pos[k*3+1])*.5*w[k];np[k*3+2]+=(z/n-pos[k*3+2])*.5*w[k];}pos.set(np);}
+    if(FACE){/* 빈 얼굴: 얼굴 앞면을 매끈한 곡면(앞으로 나온 정도 = 위치의 4차 다항식)에 맞춰 눌러 폄. 튀는 점(눈·코·입)은 빼고 두 번 맞춤 */
+      const nx=k=>(pos[k*3]-bb.min.x)/S.x,ny=k=>(pos[k*3+1]-bb.min.y)/S.y,nz=k=>(pos[k*3+2]-bb.min.z)/S.z,ids=[];for(let k=0;k<G;k++)if(w[k]>0&&nx(k)>.74)ids.push(k);
+      const B=k=>{const y=(ny(k)-.66)/.12,z=(nz(k)-.5)/.3;return [1,y,z,y*y,z*z,y*z,y*y*y,z*z*y,y*y*y*y,z*z*z*z,y*y*z*z,z*z*y*y*y];},NB=12;
+      const fit=sel=>{const A=Array.from({length:NB},()=>new Float64Array(NB+1));for(const k of sel){const b=B(k),x=nx(k);for(let i=0;i<NB;i++){for(let j=0;j<NB;j++)A[i][j]+=b[i]*b[j];A[i][NB]+=b[i]*x;}}
+        for(let i=0;i<NB;i++){let pv=i;for(let r2=i+1;r2<NB;r2++)if(Math.abs(A[r2][i])>Math.abs(A[pv][i]))pv=r2;[A[i],A[pv]]=[A[pv],A[i]];for(let r2=0;r2<NB;r2++){if(r2===i)continue;const f=A[r2][i]/A[i][i];for(let j=i;j<=NB;j++)A[r2][j]-=f*A[i][j];}}
+        return A.map((r2,i)=>r2[NB]/r2[i]);};
+      const ev=(c,k)=>{const b=B(k);let v=0;for(let i=0;i<NB;i++)v+=c[i]*b[i];return v;};let c=fit(ids);
+      for(let pass=0;pass<3;pass++){const res=ids.map(k=>Math.abs(nx(k)-ev(c,k))).sort((a,b)=>a-b),th=res[Math.floor(res.length*.6)];c=fit(ids.filter(k=>Math.abs(nx(k)-ev(c,k))<=th));}
+      for(const k of ids){const ww=w[k];pos[k*3]+=((ev(c,k)*S.x+bb.min.x)-pos[k*3])*ww;}
+      for(let it=0;it<6;it++){const np=pos.slice();for(const k of ids){if(!nb[k].size)continue;let x=0,y=0,z=0;for(const j of nb[k]){x+=pos[j*3];y+=pos[j*3+1];z+=pos[j*3+2];}const n=nb[k].size;np[k*3]+=(x/n-pos[k*3])*.5*w[k];np[k*3+1]+=(y/n-pos[k*3+1])*.5*w[k];np[k*3+2]+=(z/n-pos[k*3+2])*.5*w[k];}pos.set(np);}}
     for(let i=0;i<P.count;i++)if(w[grp[i]])P.setXYZ(i,pos[grp[i]*3],pos[grp[i]*3+1],pos[grp[i]*3+2]);P.needsUpdate=true;
     /* 다듬은 자리 법선 다시 계산 (주변 면 법선 평균) */
     const fn=new Float64Array(G*3),v0=new THREE.Vector3(),v1=new THREE.Vector3(),v2=new THREE.Vector3();for(let t=0;t<I.length;t+=3){const a=grp[I[t]],b=grp[I[t+1]],c=grp[I[t+2]];if(!(w[a]||w[b]||w[c]))continue;
@@ -75,10 +87,12 @@ let MASK=null;{let sk;obj.traverse(o=>{if(o.isSkinnedMesh&&!sk)sk=o;});if(sk&&sk
       if(WT>.5&&k==2.&&((lp.x>.69&&lp.y<.768)||lp.y<.52))k=0.;   /* 새 모델: 얼굴 앞(눈썹·띠 아래 테두리)과 몸통 쪽은 머리가 아님 */   /* 바지 밑단까지 하의, 신발 밑창만 신발 */
       float dz=abs(lp.z-.5);if(WT<.5&&(vt>.22||(dz>.1&&dz<.2&&lp.y>.3&&lp.y<.54))&&hy>.28&&hy<.62&&(k==0.||k==1.)&&mx>.35)k=3.;   /* 옆구리(팔 안쪽까지)는 위치로도 상의 */   /* 상의 한가운데의 얼룩은 상의 (어두운 목·팔 테두리는 그대로) */
 `;
+  const FMU={value:0};
   const m=new THREE.MeshBasicMaterial({map:sk.material.map});m.onBeforeCompile=sh=>{sh.uniforms.Y=({value:new THREE.Vector2(bb.min.y,bb.max.y-bb.min.y)});
     sh.uniforms.B0={value:bb.min};sh.uniforms.BS={value:bb.max.clone().sub(bb.min)};sh.vertexShader='uniform vec2 Y;uniform vec3 B0;uniform vec3 BS;attribute float tp;varying float hy;varying vec3 lp;varying float vt;\n'+sh.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nhy=(position.y-Y.x)/Y.y;lp=(position-B0)/BS;vt=tp;');
-    sh.fragmentShader='varying float hy;varying vec3 lp;varying float vt;\n'+sh.fragmentShader.replace('#include <map_fragment>',``+CLS+`      vec2 su=k==3.?vec2(atan(lp.z-.5,lp.x-.5)/6.2831853+.5,clamp((lp.y-.28)/.3,0.,1.)):vec2(0.);   /* 상의 자리 지도(옷 그리기용): G=몸통 둘레 각도(앞 .5), B=높이(아래 0→위 1) */
-      diffuseColor=vec4(k*36./255.,su,1.);`+(HQ.get('uvdbg')==='q'?'diffuseColor=vec4(pow(texture2D(map,vMapUv).rgb,vec3(1./2.2)),1.);':HQ.get('uvdbg')==='p'?'diffuseColor=vec4(lp,1.);':HQ.get('uvdbg')?`{float t=${HQ.get('uvdbg')==='v'?'vMapUv.y':'vMapUv.x'}*255.;diffuseColor=vec4(floor(t)/255.,fract(t),0.,1.);}`:''));};
+    sh.uniforms.FMAP=FMU;sh.fragmentShader='uniform float FMAP;varying float hy;varying vec3 lp;varying float vt;\n'+sh.fragmentShader.replace('#include <map_fragment>',``+CLS+`      float FZ=${FACE?'(lp.x>.8&&lp.y>.545&&lp.y<.772&&abs(lp.z-.5)<.3)?1.:0.':'0.'};if(FZ>.5)k=1.;   /* 빈 얼굴: 얼굴 앞면은 전부 피부 */
+      vec2 su=k==3.?vec2(atan(lp.z-.5,lp.x-.5)/6.2831853+.5,clamp((lp.y-.28)/.3,0.,1.)):vec2(0.);   /* 상의 자리 지도(옷 그리기용): G=몸통 둘레 각도(앞 .5), B=높이(아래 0→위 1) */
+      diffuseColor=vec4(k*36./255.,su,1.);if(FMAP>.5)diffuseColor=vec4(clamp((.8-lp.z)/.6,0.,1.),clamp((.775-lp.y)/.23,0.,1.),FZ,1.);   /* 얼굴 그림 자리 지도: R=가로, G=세로(위 0), B=얼굴 칸 여부 */`+(HQ.get('uvdbg')==='q'?'diffuseColor=vec4(pow(texture2D(map,vMapUv).rgb,vec3(1./2.2)),1.);':HQ.get('uvdbg')==='p'?'diffuseColor=vec4(lp,1.);':HQ.get('uvdbg')?`{float t=${HQ.get('uvdbg')==='v'?'vMapUv.y':'vMapUv.x'}*255.;diffuseColor=vec4(floor(t)/255.,fract(t),0.,1.);}`:''));};
   /* 상의 가슴 로고 지우기: 로고 자리(차렷 자세 기준 위치)를 상의 노란색으로 칠하고 울퉁불퉁한 결도 평평하게 */
   const TOPH=HQ.get('top'),TOPC=TOPH?[0,2,4].map(i=>(parseInt(TOPH.slice(i,i+2),16)/255).toFixed(3)).join(','):'',TOPREF=HQ.get('topref')||'.62';   /* top=f5d75a: 상의를 이 색으로 구워 넣음(흰 상의 모델의 기본 노랑) */
   const om=sk.material,CLEAN=HQ.get('clean');if(CLEAN){om.metalnessMap=null;om.roughnessMap=null;om.metalness=0;om.roughness=+(HQ.get('rough')||.55);}
@@ -87,9 +101,9 @@ let MASK=null;{let sk;obj.traverse(o=>{if(o.isSkinnedMesh&&!sk)sk=o;});if(sk&&sk
     /* clean=1: 부위별로 얼룩 없는 한 가지 색 + 매끈한 면(텍스처의 얼룩·이음매·울퉁불퉁한 결을 없앰). 눈·입·테두리(부위 0)만 원래 텍스처 */
     const PAL='vec3 PAL[7];PAL[0]=vec3(0.);PAL[1]=vec3(.96,.82,.67);PAL[2]=vec3(.55,.30,.14);PAL[3]=vec3(.97,.85,.36);PAL[4]=vec3(.23,.23,.25);PAL[5]=vec3(.95,.95,.95);PAL[6]=vec3(.93,.93,.94);';
     sh.fragmentShader='varying vec3 lp;varying float hy;varying float vt;\n'+sh.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\nfloat LG='+(HQ.get('model')?'0.':'1.')+'*(1.-smoothstep(.8,1.,length((lp-vec3(.69,.408,.41))/vec3(.08,.036,.075))));diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.94,.67,.077),LG);'
-      +(CLEAN?'float KK=0.;{'+CLS+' KK=k;}'+PAL+'if(KK>1.5){diffuseColor.rgb=pow(PAL[int(KK+.5)],vec3(2.2));}   /* 피부(1)는 볼 터치가 있어 원래 색 유지, 면만 매끈하게 */':'')+(TOPC?'{'+CLS+' if(k==3.){float l=dot(diffuseColor.rgb,vec3(.3,.59,.11))/'+TOPREF+';diffuseColor.rgb=pow(vec3('+TOPC+'),vec3(2.2))*min(l,1.25);}}':''))
-      .replace('#include <normal_fragment_maps>','#include <normal_fragment_maps>\nnormal=normalize(mix(normal,nonPerturbedNormal,LG));'+(CLEAN?'if(KK>.5)normal=nonPerturbedNormal;':''));};om.needsUpdate=true;
-  MASK={sk,mat:m,orig:om};}}
+      +(CLEAN?'float KK=0.;{'+CLS+' KK=k;}'+PAL+'if(KK>1.5){diffuseColor.rgb=pow(PAL[int(KK+.5)],vec3(2.2));}   /* 피부(1)는 볼 터치가 있어 원래 색 유지, 면만 매끈하게 */':'')+(FACE?'float FZc=smoothstep(.79,.82,lp.x)*smoothstep(.535,.55,lp.y)*(1.-smoothstep(.765,.775,lp.y))*(1.-smoothstep(.29,.31,abs(lp.z-.5)));diffuseColor.rgb=mix(diffuseColor.rgb,pow(vec3(.99,.765,.56),vec3(2.2)),FZc);':'float FZc=0.;')+(TOPC?'{'+CLS+' if(k==3.){float l=dot(diffuseColor.rgb,vec3(.3,.59,.11))/'+TOPREF+';diffuseColor.rgb=pow(vec3('+TOPC+'),vec3(2.2))*min(l,1.25);}}':''))
+      .replace('#include <normal_fragment_maps>','#include <normal_fragment_maps>\nnormal=normalize(mix(normal,nonPerturbedNormal,LG));'+(CLEAN?'if(KK>.5)normal=nonPerturbedNormal;':'')+(FACE?'if(FZc>.01)normal=normalize(mix(normal,nonPerturbedNormal,FZc));':''));};om.needsUpdate=true;
+  MASK={sk,mat:m,orig:om,FMU,face:FACE};}}
 const rest={};for(const k in B)rest[k]=B[k].quaternion.clone();
 obj.updateMatrixWorld(true);const restW={};for(const k in B){restW[k]=new THREE.Quaternion();B[k].getWorldQuaternion(restW[k]);}
 /* 발을 기본 자세의 세계 방향으로 되돌림 → 무릎·엉덩이를 굽혀도 발바닥이 바닥에 평평 */
@@ -227,6 +241,7 @@ window.bake=job=>{const [x0,x1,y0,y1]=job.box,Wd=Math.round((x1-x0)*job.ppu),Ht=
   const cURL=cv.toDataURL('image/png');let fURL=null;
   if(window.FACEPASS){const P=window.FACEPASS,tm=r.toneMapping,cs=r.outputColorSpace;P.head.material=P.uv;P.sk.material=P.hide;r.toneMapping=THREE.NoToneMapping;r.outputColorSpace=THREE.LinearSRGBColorSpace;r.render(sc,cam);fURL=cv.toDataURL('image/png');
     P.head.material=P.mat;P.sk.material=P.skMat;r.toneMapping=tm;r.outputColorSpace=cs;}
+  if(!window.FACEPASS&&MASK&&MASK.face){const tm=r.toneMapping,cs=r.outputColorSpace;MASK.sk.material=MASK.mat;MASK.FMU.value=1;r.toneMapping=THREE.NoToneMapping;r.outputColorSpace=THREE.LinearSRGBColorSpace;r.render(sc,cam);fURL=cv.toDataURL('image/png');MASK.FMU.value=0;MASK.sk.material=MASK.orig;r.toneMapping=tm;r.outputColorSpace=cs;}
   let mURL=blank.toDataURL('image/png');if(MASK){const tm=r.toneMapping,cs=r.outputColorSpace,hid=[];MASK.sk.material=MASK.mat;r.toneMapping=THREE.NoToneMapping;r.outputColorSpace=THREE.LinearSRGBColorSpace;
     if(window.FACEPASS){window.FACEPASS.head.material=window.FACEPASS.skinMask||(window.FACEPASS.skinMask=new THREE.MeshBasicMaterial({color:new THREE.Color(36/255,0,0)}));}
     r.render(sc,cam);mURL=cv.toDataURL('image/png');MASK.sk.material=MASK.orig;if(window.FACEPASS)window.FACEPASS.head.material=window.FACEPASS.mat;r.toneMapping=tm;r.outputColorSpace=cs;}

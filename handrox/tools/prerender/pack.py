@@ -32,7 +32,8 @@ for name,m in meta.items():
     if os.path.exists(f'{src}/{name}_0_f.png'):              # 그림 자리 지도(머리통 선수): 절반 크기로 줄여 한 띠로
         Fh,Fw=H//2,W//2;F=np.zeros((Fh,Fw*n,4),np.uint8)
         for i in range(n):F[:,i*Fw:(i+1)*Fw]=np.array(Image.open(f'{src}/{name}_{i}_f.png').convert('RGBA').resize((Fw,Fh),Image.NEAREST))
-        F[F[...,3]<128]=0;F[...,3]=np.where(F[...,3]>=128,255,0);tmpf=f'{dst}/_f.png';Image.fromarray(F,'RGBA').save(tmpf,optimize=True);todo.append((tmpf,'f','png'))
+        F[F[...,2]<64]=0;F[F[...,3]<128]=0   # 파랑이 0이면 그림 칸이 아님(빈 얼굴 지도)
+        F[...,3]=np.where(F[...,3]>=128,255,0);tmpf=f'{dst}/_f.png';Image.fromarray(F,'RGBA').save(tmpf,optimize=True);todo.append((tmpf,'f','png'))
     out={}
     for tmp,key,ext in todo:
         h=hashlib.sha1(open(tmp,'rb').read()).hexdigest()[:8];fn=f'{name}_{key}_{h}.{ext}';os.rename(tmp,f'{dst}/{fn}');out[key]=fn
