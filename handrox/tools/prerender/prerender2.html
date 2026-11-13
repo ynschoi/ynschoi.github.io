@@ -66,6 +66,7 @@ let MASK=null;{let sk;obj.traverse(o=>{if(o.isSkinnedMesh&&!sk)sk=o;});if(sk&&sk
       else if(q.r>.78&&q.g>.55&&q.b>.4&&q.r-q.b>.1&&q.r-q.b<.5)k=1.;
       else if(q.r>.3&&q.r<.8&&q.r>q.g*1.3&&q.b<.4)k=(hy>.55&&!(lp.x>.74&&lp.y<.807))?2.:0.;   /* 얼굴 앞쪽 띠 아래(눈·눈썹·입)는 머리카락이 아님 */
       else if(mx<.38&&mx-mn<.12)k=(hy>.09&&hy<.55)?4.:(hy<=.09?6.:0.);
+      if(WT>.5&&k==0.&&q.r>.6&&q.g>q.r*.6&&q.g<q.r*.86&&q.b>q.g*.58&&q.b<q.g*.82)k=1.;   /* 새 모델: 조금 진한 살색(다리·목·손 그늘)도 피부 */
       if(WT>.5&&k==0.&&hy>.74&&q.r>.45&&q.r<.88&&q.g<.62&&q.r>q.g*1.25&&q.b<q.g)k=2.;   /* 새 모델: 띠 위쪽의 밝은 주황 머리카락도 머리 (피부색은 제외) */
       if(WT>.5&&k==2.&&((lp.x>.69&&lp.y<.768)||lp.y<.52))k=0.;   /* 새 모델: 얼굴 앞(눈썹·띠 아래 테두리)과 몸통 쪽은 머리가 아님 */   /* 바지 밑단까지 하의, 신발 밑창만 신발 */
       float dz=abs(lp.z-.5);if(WT<.5&&(vt>.22||(dz>.1&&dz<.2&&lp.y>.3&&lp.y<.54))&&hy>.28&&hy<.62&&(k==0.||k==1.)&&mx>.35)k=3.;   /* 옆구리(팔 안쪽까지)는 위치로도 상의 */   /* 상의 한가운데의 얼룩은 상의 (어두운 목·팔 테두리는 그대로) */
@@ -73,7 +74,7 @@ let MASK=null;{let sk;obj.traverse(o=>{if(o.isSkinnedMesh&&!sk)sk=o;});if(sk&&sk
   const m=new THREE.MeshBasicMaterial({map:sk.material.map});m.onBeforeCompile=sh=>{sh.uniforms.Y=({value:new THREE.Vector2(bb.min.y,bb.max.y-bb.min.y)});
     sh.uniforms.B0={value:bb.min};sh.uniforms.BS={value:bb.max.clone().sub(bb.min)};sh.vertexShader='uniform vec2 Y;uniform vec3 B0;uniform vec3 BS;attribute float tp;varying float hy;varying vec3 lp;varying float vt;\n'+sh.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nhy=(position.y-Y.x)/Y.y;lp=(position-B0)/BS;vt=tp;');
     sh.fragmentShader='varying float hy;varying vec3 lp;varying float vt;\n'+sh.fragmentShader.replace('#include <map_fragment>',``+CLS+`      vec2 su=k==3.?vec2(atan(lp.z-.5,lp.x-.5)/6.2831853+.5,clamp((lp.y-.28)/.3,0.,1.)):vec2(0.);   /* 상의 자리 지도(옷 그리기용): G=몸통 둘레 각도(앞 .5), B=높이(아래 0→위 1) */
-      diffuseColor=vec4(k*36./255.,su,1.);`+(HQ.get('uvdbg')==='p'?'diffuseColor=vec4(lp,1.);':HQ.get('uvdbg')?`{float t=${HQ.get('uvdbg')==='v'?'vMapUv.y':'vMapUv.x'}*255.;diffuseColor=vec4(floor(t)/255.,fract(t),0.,1.);}`:''));};
+      diffuseColor=vec4(k*36./255.,su,1.);`+(HQ.get('uvdbg')==='q'?'diffuseColor=vec4(pow(texture2D(map,vMapUv).rgb,vec3(1./2.2)),1.);':HQ.get('uvdbg')==='p'?'diffuseColor=vec4(lp,1.);':HQ.get('uvdbg')?`{float t=${HQ.get('uvdbg')==='v'?'vMapUv.y':'vMapUv.x'}*255.;diffuseColor=vec4(floor(t)/255.,fract(t),0.,1.);}`:''));};
   /* 상의 가슴 로고 지우기: 로고 자리(차렷 자세 기준 위치)를 상의 노란색으로 칠하고 울퉁불퉁한 결도 평평하게 */
   const TOPH=HQ.get('top'),TOPC=TOPH?[0,2,4].map(i=>(parseInt(TOPH.slice(i,i+2),16)/255).toFixed(3)).join(','):'',TOPREF=HQ.get('topref')||'.62';   /* top=f5d75a: 상의를 이 색으로 구워 넣음(흰 상의 모델의 기본 노랑) */
   const om=sk.material,CLEAN=HQ.get('clean');if(CLEAN){om.metalnessMap=null;om.roughnessMap=null;om.metalness=0;om.roughness=+(HQ.get('rough')||.55);}
