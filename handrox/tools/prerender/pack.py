@@ -11,6 +11,14 @@ for name,m in meta.items():
     for i in range(n):
         c=np.array(Image.open(f'{src}/{name}_{i}_c.png').convert('RGBA'));mk=np.array(Image.open(f'{src}/{name}_{i}_m.png').convert('RGBA').resize((c.shape[1],c.shape[0]),Image.NEAREST))
         k=np.round(mk[...,0]/36).astype(np.uint8);k[mk[...,3]<128]=0
+        # 부위 경계의 흐려진(안티에일리어싱) 값 정리: 두 부위 사이 값이 엉뚱한 부위 번호가 되는 것(예: 피부1·상의3 사이 = 머리2)을 옆 부위로 바꿈
+        v=mk[...,0].astype(int);bad=np.abs(v-k.astype(int)*36)>5
+        for ax in (1,0):
+            a_=np.roll(k,1,ax).astype(int);b_=np.roll(k,-1,ax).astype(int);ki=k.astype(int)
+            mid=(a_!=ki)&(b_!=ki)&(np.minimum(a_,b_)<ki)&(ki<np.maximum(a_,b_));bad|=mid
+        for _ in range(2):
+            for dy,dx in ((0,1),(0,-1),(1,0),(-1,0)):
+                sh=np.roll(np.roll(k,dy,0),dx,1);shb=np.roll(np.roll(bad,dy,0),dx,1);f_=bad&~shb;k[f_]=sh[f_];bad&=~f_
         for _ in range(3):                                   # 가장자리(색은 있는데 부위가 비어 있는 픽셀)를 옆 부위로 채움
             z=(k==0)&(c[...,3]>0)&(mk[...,3]<250)   # 테두리만 (눈·입처럼 일부러 비워 둔 안쪽 칸은 그대로 둠)
             for dy,dx in ((1,0),(-1,0),(0,1),(0,-1)):
