@@ -12,7 +12,7 @@ for name,m in meta.items():
         c=np.array(Image.open(f'{src}/{name}_{i}_c.png').convert('RGBA'));mk=np.array(Image.open(f'{src}/{name}_{i}_m.png').convert('RGBA').resize((c.shape[1],c.shape[0]),Image.NEAREST))
         k=np.round(mk[...,0]/36).astype(np.uint8);k[mk[...,3]<128]=0
         for _ in range(3):                                   # 가장자리(색은 있는데 부위가 비어 있는 픽셀)를 옆 부위로 채움
-            z=(k==0)&(c[...,3]>0)
+            z=(k==0)&(c[...,3]>0)&(mk[...,3]<250)   # 테두리만 (눈·입처럼 일부러 비워 둔 안쪽 칸은 그대로 둠)
             for dy,dx in ((1,0),(-1,0),(0,1),(0,-1)):
                 sh=np.roll(np.roll(k,dy,0),dx,1);fill=z&(k==0)&(sh>0);k[fill]=sh[fill]
         C[:,i*W:(i+1)*W]=c;M[:,i*W:(i+1)*W]=k

@@ -13,10 +13,10 @@ function build(n,m,c,k){sheets[n]={m,cv:c,c,k,W:c.width,H:c.height,plain:{m,cv:c
 function prep(s){if(s.base||!s.k)return;const W=s.W,H=s.H,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d',{willReadFrequently:true});
     x.drawImage(s.c,0,0);const base=x.getImageData(0,0,W,H);x.clearRect(0,0,W,H);x.drawImage(s.k,0,0,W,H);const md=x.getImageData(0,0,W,H).data,cls=new Uint8Array(W*H);
     for(let i=0;i<cls.length;i++)cls[i]=Math.round(md[i*4]/36);x.putImageData(base,0,0);Object.assign(s,{cv,x,base,cls});}
-function load(){const names=Object.keys(MAN).filter(n=>!n.startsWith('b_')&&!n.startsWith('g_')),files=names.flatMap(n=>[MAN[n].c,MAN[n].m]),arts=Object.keys(ART);let done=0;const total=files.length+arts.length;
+function load(){const names=Object.keys(MAN).filter(n=>!n.startsWith('b_')&&!n.startsWith('g_')),files=names.map(n=>MAN[n].c),arts=Object.keys(ART);let done=0;const total=files.length+arts.length;
   const img=f=>new Promise((res,rej)=>{const im=new Image();im.decoding='async';im.onload=()=>{const ok=()=>{done++;window.onH3Progress&&onH3Progress(done/total);res(im);};im.decode?im.decode().then(ok,ok):ok();};im.onerror=()=>rej(Error(f));im.src=f.startsWith('art/')?f:BASE+f;});
   /* 첫 화면에 쓸 정면 달리기·배경을 먼저 받아 바로 보여 주고, 나머지는 그다음에 */
-  const one=async n=>{const m=MAN[n],[c,k]=await Promise.all([img(m.c),img(m.m)]);build(n,m,c,k);};
+  const one=async n=>{const m=MAN[n],c=await img(m.c);build(n,m,c,null);};   /* 부위 지도(m)는 색을 바꿀 때만 받음 */
   const first=Promise.all([one('runf'),(async()=>{IM.bg_runf=await img(ART.bg_runf);})()]).then(()=>{H3.coverOk=true;H3.tCover=performance.now();window.onH3Cover&&onH3Cover();});
   return first.then(()=>Promise.all(names.filter(n=>n!=='runf').map(one))).then(()=>Promise.all(arts.filter(k=>k!=='bg_runf').map(async k=>{IM[k]=await img(ART[k]);})));}
 /* 두 번째 캐릭터(여자 선수, g_*): 고른 사람만 받음 */
@@ -27,13 +27,15 @@ H3.setWho=async w=>{if(w==='g'){await loadGirl();girl=true;}else girl=false;H3.i
 const pick=n0=>girl&&sheets['g_'+n0]?'g_'+n0:bald&&sheets['b_'+n0]?'b_'+n0:n0;
 /* 고른 색 입히기: 부위별로 원래 밝기 비율을 유지한 채 색만 바꿈. 처음 값(null)은 원본 그대로 */
 function recolor(){const cols=window.handroxColors?handroxColors():{},key=JSON.stringify(cols);if(key===colorKey)return;colorKey=key;
-  const T=[null,...['skin','hair','top','shorts','band','shoes'].map(k=>cols[k]?hex(cols[k]):null)],any=T.some(Boolean);
-  for(const s of Object.values(sheets)){if(s.bald)continue;if(!s.base){if(!any)continue;prep(s);}const d=s.base.data,out=s.x.createImageData(s.W,s.H),o=out.data,ref=s.m.ref;
+  const T=[null,...['skin','hair','top','shorts','band','shoes'].map(k=>cols[k]?hex(cols[k]):null)],any=T.some(Boolean);let needK=0;
+  for(const s of Object.values(sheets)){if(s.bald)continue;if(!s.base){if(!any)continue;if(!s.k){needK=1;continue;}prep(s);}const d=s.base.data,out=s.x.createImageData(s.W,s.H),o=out.data,ref=s.m.ref;
     for(let i=0,p=0;p<s.cls.length;p++,i+=4){const k=s.cls[p],t=T[k];o[i+3]=d[i+3];
       if(!t){o[i]=d[i];o[i+1]=d[i+1];o[i+2]=d[i+2];continue;}
       const f=Math.min(1.7,(d[i]*.3+d[i+1]*.59+d[i+2]*.11)/(ref[k]||1));o[i]=Math.min(255,t[0]*f);o[i+1]=Math.min(255,t[1]*f);o[i+2]=Math.min(255,t[2]*f);}
     s.x.putImageData(out,0,0);}
-  H3.icon();}
+  if(needK)loadMasks().then(()=>{colorKey='';});H3.icon();}
+/* 부위 지도들 받기 (색을 처음 바꿀 때 한 번) */
+let maskP=null;function loadMasks(){return maskP||(maskP=Promise.all(Object.entries(sheets).filter(([n,s])=>!s.k&&!s.bald&&MAN[n]&&MAN[n].m).map(([n,s])=>new Promise(res=>{const im=new Image();im.onload=()=>{s.k=im;res();};im.onerror=()=>res();im.src=BASE+MAN[n].m;}))).then(()=>{maskP=null;}));}
 /* ── 머리통 선수: 각자 그린 그림(얼굴·머리카락)을 입힌 선수 ──
    b_* 그림 묶음은 그림을 그린 사람만 받음. 그림 자리 지도(f, 절반 크기)의 빨강·초록 = 그림 칸 좌표, 파랑 = 앞면(≥90)·머리카락 자리(51 또는 153).
    H3.setHead(그림 캔버스, 머리색) → 모든 자세에 한 번 입혀 두고 그 뒤로는 그림만 꺼내 씀. H3.setHead(null) → 기본 캐릭터로 */
