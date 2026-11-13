@@ -74,6 +74,12 @@ try{Promise.all([document.fonts.load('12px Galmuri9'),document.fonts.load('bold 
   .banner.on{opacity:1;transform:scale(1)}
   .ov{position:absolute;inset:0;z-index:12;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:#0c0c10d0;text-align:center;padding:0 16px;pointer-events:none}
   .ov[hidden]{display:none}
+  /* 결승·기록 사진: 아래 L·R 패드 대신 선수가 올라선 단상 앞면 (윗면 노란 테두리 = 선수 발밑) */
+  .app.fin .pad .fp,.app.fin .pad .hint{visibility:hidden}
+  .app.fin .pad{background:linear-gradient(180deg,#55556a 0,#44444f 16px,#ffe14d 16px,#ffd400 21px,#7a6200 21px,#4a3c00 24px,#34343f 24px,#25252e 45%,#18181e 100%);overflow:hidden}   /* 단상 윗면(회색) → 노란 모서리 → 앞면 */
+  .app.fin .pad::before{content:"HANDROX";position:absolute;left:0;right:0;top:34%;text-align:center;font:700 30px var(--px);letter-spacing:12px;color:#ffffff12;pointer-events:none}
+  .app.fin .pad::after{content:"";position:absolute;left:8%;right:8%;bottom:14%;height:3px;background:#ffd40055;box-shadow:0 -36px 0 #ffffff08;pointer-events:none}
+  .app.fin .phbar{background:transparent}
   /* 종목 시작 화면(④ 패드 시연): 위엔 종목 이름+한 줄, 아래 진짜 패드 위에서 손가락이 동작을 보여 줌. 누르면 바로 시작 */
   .ov.demo{background:rgba(8,8,11,.45);justify-content:flex-start;padding-top:20px}
   .ov .tip{font:12px/1.4 var(--font);color:#fff;background:rgba(0,0,0,.6);padding:4px 9px;margin-top:4px}
@@ -1023,6 +1029,10 @@ function fitApp(){const app=$('app'),vh=(window.visualViewport&&visualViewport.h
   HV=clamp(320*($('game').clientHeight||gh-6)/gw,150,fin?416:213.3);OFF=HV-170;window.HV=HV;
   const cvh=Math.round(2*HV);if(cv.height!==cvh)cv.height=cvh;
   const sc=Math.min(1,avail/app.scrollHeight);app.style.transform=sc<1?`scale(${sc})`:'';appScale=sc;document.body.style.height=avail+'px';}
+/* 아이폰 확대 막기: 두 번 탭·두 손가락 확대가 페이지를 키우면 순위표 같은 창이 옆으로 밀려 보임 (user-scalable=no를 무시하는 경우가 있어서 코드로도 막음) */
+for(const ev of ['gesturestart','gesturechange','gestureend'])document.addEventListener(ev,e=>e.preventDefault(),{passive:false});
+{let lt=0;document.addEventListener('touchend',e=>{const t=Date.now();if(t-lt<320&&!e.target.closest('input,textarea'))e.preventDefault();lt=t;},{passive:false});}
+document.addEventListener('dblclick',e=>e.preventDefault(),{passive:false});
 setTimeout(fitApp,300);if(window.visualViewport)visualViewport.addEventListener('resize',fitApp);addEventListener('resize',fitApp);
 
 /* 얼굴 아이콘 */
