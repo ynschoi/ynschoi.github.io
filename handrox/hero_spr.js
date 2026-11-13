@@ -40,7 +40,7 @@ function recolor(){const cols=window.handroxColors?handroxColors():{},key=JSON.s
   for(const s of Object.values(sheets)){if(s.bald)continue;if(!s.base){if(!any)continue;if(!s.k){needK=1;continue;}prep(s);}const d=s.base.data,out=s.x.createImageData(s.W,s.H),o=out.data,ref=s.m.ref;
     for(let i=0,p=0;p<s.cls.length;p++,i+=4){const k=s.cls[p],t=T[k];o[i+3]=d[i+3];
       if(!t){o[i]=d[i];o[i+1]=d[i+1];o[i+2]=d[i+2];continue;}
-      const f=Math.min(1.7,(d[i]*.3+d[i+1]*.59+d[i+2]*.11)/(ref[k]||1));o[i]=Math.min(255,t[0]*f);o[i+1]=Math.min(255,t[1]*f);o[i+2]=Math.min(255,t[2]*f);}
+      const f=Math.min(k===1?1.22:1.7,(d[i]*.3+d[i+1]*.59+d[i+2]*.11)/(ref[k]||1));   /* 피부는 가장자리 반짝임이 밝은 선으로 남지 않게 덜 밝힘 */o[i]=Math.min(255,t[0]*f);o[i+1]=Math.min(255,t[1]*f);o[i+2]=Math.min(255,t[2]*f);}
     s.x.putImageData(out,0,0);}
   baldTint(T,any);if(needK)loadMasks().then(()=>{colorKey='';});H3.icon();}
 /* 머리통(그린 얼굴) 선수에도 고른 색(피부·상의·신발…) 입히기: 원본(orig)에 색을 입혀 바탕(base)을 만들고 그 위에 그린 그림을 다시 칠함 */
@@ -49,7 +49,7 @@ function baldTint(T,any){let need=0;for(const [n,s] of Object.entries(sheets)){i
     if(any&&!s.cls){if(!s.kim){need=1;continue;}const cv=document.createElement('canvas');cv.width=s.W;cv.height=s.H;const x=cv.getContext('2d',{willReadFrequently:true});x.drawImage(s.kim,0,0,s.W,s.H);const md=x.getImageData(0,0,s.W,s.H).data;s.cls=new Uint8Array(s.W*s.H);for(let i=0;i<s.cls.length;i++)s.cls[i]=Math.round(md[i*4]/36);}
     if(!any)s.base=s.orig;else{const d=s.orig.data,out=new ImageData(s.W,s.H),o=out.data,ref=s.m.ref;
       for(let i=0,p=0;p<s.cls.length;p++,i+=4){const k=s.cls[p],t=T[k];o[i+3]=d[i+3];if(!t){o[i]=d[i];o[i+1]=d[i+1];o[i+2]=d[i+2];continue;}
-        const f=Math.min(1.7,(d[i]*.3+d[i+1]*.59+d[i+2]*.11)/(ref[k]||1));o[i]=Math.min(255,t[0]*f);o[i+1]=Math.min(255,t[1]*f);o[i+2]=Math.min(255,t[2]*f);}s.base=out;}
+        const f=Math.min(k===1?1.22:1.7,(d[i]*.3+d[i+1]*.59+d[i+2]*.11)/(ref[k]||1));   /* 피부는 가장자리 반짝임이 밝은 선으로 남지 않게 덜 밝힘 */o[i]=Math.min(255,t[0]*f);o[i+1]=Math.min(255,t[1]*f);o[i+2]=Math.min(255,t[2]*f);}s.base=out;}
     if(LA)paintSheet(s,LA[0],LA[1],LA[2]);else s.x.putImageData(s.base,0,0);if(s.one)s.one={};}
   if(need&&!bmP)bmP=Promise.all(Object.entries(sheets).filter(([n,s])=>s.bald&&!s.kim&&MAN[n]&&MAN[n].m).map(([n,s])=>new Promise(res=>{const im=new Image();im.onload=()=>{s.kim=im;res();};im.onerror=()=>res();im.src=BASE+MAN[n].m;}))).then(()=>{bmP=null;colorKey='';});}
 /* 부위 지도들 받기 (색을 처음 바꿀 때 한 번) */
