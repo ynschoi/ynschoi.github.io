@@ -929,7 +929,7 @@ function coverBest(){const b=$('cBest');if(!b)return;b.textContent='';if(SAVE.pb
 function drawCover(t){const cv=$('cvCov');if(!cv||$('cover').hidden)return;const w=cv.clientWidth,h=cv.clientHeight,d=Math.min(3,devicePixelRatio||1);if(!w||!h)return;
   if(cv.width!==Math.round(w*d)){cv.width=Math.round(w*d);cv.height=Math.round(h*d);}const x=cv.getContext('2d');x.setTransform(d,0,0,d,0,0);x.clearRect(0,0,w,h);
   const im=H3.img2&&H3.img2('bg_runf');if(im){const k=Math.max(w/im.width,h/im.height),iw=im.width*k,ih=im.height*k;x.drawImage(im,(w-iw)/2,(h-ih)*.3,iw,ih);}
-  if(H3.ok||H3.coverOk){const foot=h*.64,u=Math.min(w*.8,(foot-h*.27)/1.05),bob=Math.abs(Math.cos(t/1000*7))*u*.012;x.fillStyle='rgba(0,0,0,.45)';x.beginPath();x.ellipse(w/2,foot-u*.01,u*.22,u*.035,0,0,7);x.fill();x.imageSmoothingQuality='high';H3.drawTo(x,H3.coverPose?H3.coverPose():'runf',{ph:-t/1000*7},w/2,foot+bob,u);   /* 로고 아래 ~ 한/EN 위 사이에 */}}
+  if(H3.ok||H3.coverOk){const foot=h*.64,u=Math.min(w*.62,(foot-h*.27)/1.05*.78),   /* 선수를 조금 작게(덜 늘려서 더 선명하게) */bob=Math.abs(Math.cos(t/1000*7))*u*.012;x.fillStyle='rgba(0,0,0,.45)';x.beginPath();x.ellipse(w/2,foot-u*.01,u*.22,u*.035,0,0,7);x.fill();x.imageSmoothingQuality='high';H3.drawTo(x,H3.coverPose?H3.coverPose():'runf',{ph:-t/1000*7},w/2,foot+bob,u);   /* 로고 아래 ~ 한/EN 위 사이에 */}}
 
 /* ═════════ 기록 사진 ═════════ 기록판 앞에서 포즈를 골라 찍음. 4:5 사진 한 장(1080×1350)으로 만들어 저장·공유 */
 const POSES=[['짜잔','Ta-da'],['양손 허리','Hands on hips'],['파이팅','Fighting'],['한팔 번쩍','One arm up'],['점프','Jump']];   /* 그림 묶음 fin: 0 환호(결승 연기 장면용) + 이 5개 */let PH={k:0,url:null,blob:null,cd:0};
