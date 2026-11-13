@@ -74,6 +74,21 @@ try{Promise.all([document.fonts.load('12px Galmuri9'),document.fonts.load('bold 
   .banner.on{opacity:1;transform:scale(1)}
   .ov{position:absolute;inset:0;z-index:12;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:#0c0c10d0;text-align:center;padding:0 16px;pointer-events:none}
   .ov[hidden]{display:none}
+  /* 종목 시작 화면(④ 패드 시연): 위엔 종목 이름+한 줄, 아래 진짜 패드 위에서 손가락이 동작을 보여 줌. 누르면 바로 시작 */
+  .ov.demo{background:rgba(8,8,11,.45);justify-content:flex-start;padding-top:20px}
+  .ov .tip{font:12px/1.4 var(--font);color:#fff;background:rgba(0,0,0,.6);padding:4px 9px;margin-top:4px}
+  .ov .tip b{color:var(--gold);font-weight:400}
+  .ov .dn{position:absolute;left:0;right:0;bottom:8px;font-size:12px;color:var(--gold);animation:dnB 1s ease-in-out infinite}
+  @keyframes dnB{50%{transform:translateY(3px)}}
+  .fg{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;border:3px solid var(--gold);box-shadow:0 0 0 6px #ffd40044,0 0 0 12px #ffd40022;pointer-events:none;z-index:3}
+  .fg::after{content:"👆";position:absolute;left:16px;top:14px;font-size:30px}
+  .fg.tap{animation:fgTap .32s ease-in-out infinite}@keyframes fgTap{50%{transform:scale(.78)}}
+  .fg.hold{animation:fgHold 1.4s ease-out infinite}@keyframes fgHold{0%{transform:scale(1.25);opacity:.2}30%,100%{transform:scale(.9);opacity:1}}
+  .fg.down{animation:fgDown 1.1s ease-in-out infinite}@keyframes fgDown{0%{transform:translateY(-38px);opacity:0}15%,80%{opacity:1}100%{transform:translateY(38px);opacity:0}}
+  .fg.up{animation:fgUp .9s ease-out infinite}@keyframes fgUp{0%{transform:translateY(38px);opacity:0}15%,75%{opacity:1}100%{transform:translateY(-42px);opacity:0}}
+  .fg.left{animation:fgLeft 1.1s ease-in-out infinite}@keyframes fgLeft{0%{transform:translateX(30px);opacity:0}15%,80%{opacity:1}100%{transform:translateX(-36px);opacity:0}}
+  .fg.alt{animation-duration:2.2s;animation-name:fgAlt}.fg.alt.r{animation-delay:-1.1s}@keyframes fgAlt{0%,48%{opacity:1;transform:scale(.9)}52%,100%{opacity:0;transform:scale(1.2)}}
+  .fg.down.alt{animation-name:fgDownAlt}@keyframes fgDownAlt{0%{transform:translateY(-38px);opacity:0}8%,40%{opacity:1}48%{transform:translateY(38px);opacity:0}100%{opacity:0}}
   .ov .t{font-size:12px;color:var(--dim)}
   .ov .g{font-size:26px;font-weight:700;color:var(--gold);-webkit-text-stroke:1.5px #111;text-shadow:3px 3px 0 var(--red)}
   .ov .s{font:14px/1.5 var(--font);color:#fff}
@@ -630,7 +645,7 @@ const ST=[
     H3.shadow(x,y-1,40);
     if(on){const h=H3.show('carry',x,y,{ph:s.ph,peek:1});H3.img('kb',h.handR[0]-kw/2+sx,h.handR[1]-kh*.12,kw,kh);H3.show('carry',x+sx,y,{ph:s.ph});H3.img('kb',h.hand[0]-kw/2+sx,h.hand[1]-kh*.12,kw,kh);}
     else{H3.img('kb',x-22-kw/2,y-kh,kw,kh);H3.show('carry',x+sx,y,{ph:0});H3.img('kb',x+20-kw/2,y-kh+1,kw,kh);}
-    gauge(x-20,18,40,5,s.grip,s.grip<.3?((s.t*8|0)%2?'#e5391f':'#ffd400'):'#35c46a');txt('GRIP',x,14,8,'#fff');}},
+    if(G.state==='play'){gauge(x-20,18,40,5,s.grip,s.grip<.3?((s.t*8|0)%2?'#e5391f':'#ffd400'):'#35c46a');txt('GRIP',x,14,8,'#fff');}   /* 시작 화면 동안엔 숨김 */}},
  /* 런지: 버피처럼 '꾹 눌렀다 노란 칸에서 떼기'. 불 켜진 쪽(L/R)을 누르면 무릎이 내려가고, 무릎이 노란 칸에 왔을 때 떼면 10m.
     한 번 하면 반대쪽으로 불이 넘어감. 너무 오래 누르면 무릎이 바닥에 쿵 → 잠깐 멈춤 */
  {id:'lunge',rate:36,need:100,unit:'m',pxu:4,nm:['샌드백 런지','SANDBAG LUNGES'],hint:'',
@@ -719,8 +734,19 @@ async function newRace(){FX.length=0;$('app').classList.remove('fin');fitApp();G
 async function nextSeg(){const me=G;G.splits.push(G.s.rt);if(G.i%2===1){const k=(G.i-1)/2+1,v=G.s.rt;if(!Array.isArray(SAVE.bs)||SAVE.bs.length!==9)SAVE.bs=Array(9).fill(0);if(!SAVE.bs[k]||v<SAVE.bs[k]){SAVE.bs[k]=v;save();LB.syncBs();}}SFX.done();G.i++;if(G.i>=16)return finish();{const k='s'+G.i;USE.hit(d=>{d.seg=d.seg||{};d.seg[k]=(d.seg[k]||0)+1;});}
   const seg=G.seg=SEG(G.i),s=G.s={p:0,dp:0,t:0,rt:0};seg.init(s);paintInfo();
   if(seg.id==='run'){G.state='play';banner(`RUN ${G.i/2+1}/8`);return;}
-  G.state='intro';overlay(`<div class="t">STATION ${(G.i+1)/2}/8</div><div class="g">${L(...seg.nm)}</div><div class="s">${L(...seg.how)}</div><div class="k">${seg.hint}</div>`);
-  await sleep(SAVE.races?1000:1700);if(G!==me)return;overlay(null);G.state='play';SFX.go();banner('GO!',450);}
+  G.state='intro';const D=DEMO[seg.id]||DEMO.carry;overlay(`<div class="t">STATION ${(G.i+1)/2}/8</div><div class="g">${L(...seg.nm)}</div><div class="tip">${L(...D.tip)}</div><div class="dn">▼ ${L(...D.dn)} ▼</div>`);$('ov').classList.add('demo');
+  document.querySelectorAll('.fg').forEach(f=>f.remove());const FG=[['pL','l'],['pR','r']].map(([id,side])=>{const f=el('i','fg '+D.mv+' '+side);$(id).append(f);return f;});
+  await new Promise(res=>{let done=0;const go=()=>{if(done)return;done=1;pad.removeEventListener('pointerdown',go,true);removeEventListener('keydown',go,true);res();};pad.addEventListener('pointerdown',go,true);addEventListener('keydown',go,true);setTimeout(go,SAVE.races?4500:9000);});   /* 패드를 누르면 바로 시작 (안 누르면 잠시 뒤 자동) */
+  FG.forEach(f=>f.remove());if(G!==me)return;$('ov').classList.remove('demo');overlay(null);G.state='play';SFX.go();banner('GO!',450);}
+/* 종목 시작 화면의 손가락 시연: mv = 움직임(down 아래로 당기기, tap 연타, hold 꾹, left 왼쪽으로 당기기, up 위로 쓸기, alt 번갈아), tip = 한 줄 설명, dn = 아래 패드 안내 */
+const DEMO={ski:{mv:'down',tip:['두 손가락으로 <b>끝까지</b> 당기면 PERFECT','Pull <b>all the way</b> down for PERFECT'],dn:['두 칸을 같이 아래로 쭉','Both pads, drag down']},
+  push:{mv:'tap',tip:['L·R <b>동시에</b> 연타!','Tap L and R <b>together</b>!'],dn:['두 칸을 같이 탭','Tap both pads']},
+  pull:{mv:'down alt',tip:['한 칸씩 <b>번갈아</b> 길게 당겨요','Long pulls, <b>alternating</b>'],dn:['L → R 번갈아 아래로','L → R, drag down']},
+  bbj:{mv:'hold',tip:['꾹 눌러 엎드리고, <b>노란 칸</b>에서 떼면 점프','Hold to drop, release on <b>yellow</b> to jump'],dn:['두 칸을 같이 꾹','Hold both pads']},
+  row:{mv:'left',tip:['왼쪽 <b>끝까지</b> 당기면 PERFECT','Pull <b>all the way</b> left for PERFECT'],dn:['두 칸을 같이 왼쪽으로 쭉','Both pads, drag left']},
+  carry:{mv:'hold',tip:['악력이 바닥나기 전에 <b>잠깐 떼요</b>','<b>Let go briefly</b> before your grip runs out'],dn:['두 칸을 같이 꾹','Hold both pads']},
+  lunge:{mv:'hold alt',tip:['불 켜진 쪽을 꾹, <b>노란 칸</b>에서 떼요','Hold the lit side, release on <b>yellow</b>'],dn:['한 칸씩 번갈아 꾹','Hold one side at a time']},
+  wall:{mv:'up',tip:['공이 <b>돌아오는 순간</b> 다시 쓸어올려요','Swipe again <b>as the ball returns</b>'],dn:['두 칸을 같이 위로 쓱','Swipe up on the pads']}};
 const RANKS=[[55*60,'ELITE 15','엘리트 15'],[65*60,'PRO','프로'],[80*60,'OPEN','오픈'],[100*60,'FINISHER','완주자'],[1e9,'ROXZONE TOURIST','록스존 관광객']];
 function finish(){USE.hit(d=>{d.fin=(d.fin||0)+1;d.best=Math.round(Math.min(G.clock,SAVE.pb||1e9)*10)/10;});G.state='done';const tot=G.clock,old=SAVE.pb,oldS=SAVE.splits,isPB=!old||tot<old;SFX.finish();$('rst').hidden=true;PH={k:0,url:null,blob:null,cd:0};$('app').classList.add('fin');fitApp();G.seg=FIN;G.s={p:1,dp:1,t:0,rt:0};FIN.init(G.s);
   SAVE.races=(SAVE.races||0)+1;{const run=G.splits.filter((_,i)=>i%2===0).reduce((a,b)=>a+b,0),cur=[run,...ST.map((_,n)=>G.splits[n*2+1])],ob=Array.isArray(SAVE.bs)&&SAVE.bs.length===9?SAVE.bs:null;SAVE.bs=cur.map((v,k)=>ob&&ob[k]>0?Math.min(ob[k],v):v);}if(isPB){SAVE.pb=tot;SAVE.splits=G.splits.slice();}save();paintInfo();
