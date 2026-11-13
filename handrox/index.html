@@ -103,7 +103,7 @@ try{Promise.all([document.fonts.load('12px Galmuri9'),document.fonts.load('bold 
   .lsel button.on{color:var(--gold);border-bottom-color:var(--gold)}
 
   /* ═══ 아래: 손가락 패드 ═══ */
-  .phbar[hidden]{display:none}.phbar{position:absolute;inset:0;z-index:5;background:linear-gradient(#22222c,#14141a);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:8px}.phbar .pht{font:12px var(--px);color:var(--gold)}
+  .phbar[hidden]{display:none}#cuWho[hidden]{display:none}.phbar{position:absolute;inset:0;z-index:5;background:linear-gradient(#22222c,#14141a);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:8px}.phbar .pht{font:12px var(--px);color:var(--gold)}
   .phbar .phk{display:flex;flex-wrap:wrap;gap:5px;justify-content:center}.phbar .phk button{font:12px var(--px);padding:7px 10px;border:2px solid #555;background:#0c0c10;color:#fff}.phbar .phk button.on{border-color:var(--gold);color:var(--gold)}
   .phbar .shut{width:74px;height:74px;border-radius:50%;border:5px solid #fff;background:var(--gold);font-size:28px;box-shadow:0 0 0 4px #000,0 4px 0 6px #000}.phbar .skip{font:11px var(--px);color:var(--dim)}
   .app.fin .info{display:none}.app.fin{grid-template-rows:var(--gh,252px) auto}
@@ -766,7 +766,7 @@ function headData(){if(!DW.saved||WHO==='g')return '';const t=document.createEle
 const HDC=new Map();function headTex(hd){if(typeof hd!=='string'||!/^data:image\/(webp|png);base64,[A-Za-z0-9+/=]+$/.test(hd))return Promise.resolve(null);if(HDC.has(hd))return HDC.get(hd);
   const p=new Promise(res=>{const im=new Image();im.onload=()=>{const t=document.createElement('canvas');t.width=512;t.height=256;t.getContext('2d').drawImage(im,0,0,512,256);res(t);};im.onerror=()=>res(null);im.src=hd;});HDC.set(hd,p);return p;}
 /* 한 사람 선수 그리기 옵션: 나 = 지금 모습, 남 = 그 사람이 올린 머리(없으면 기본 캐릭터) */
-async function whoOpt(r,pose){if(r.id===LB.uid)return {};if(r.who==='g'){const g=await H3.girlSheet(pose).catch(()=>null);if(g)return {sheet:g};}const t=await headTex(r.hd);if(t){const sh=await H3.texSheet(pose,t).catch(()=>null);if(sh)return {sheet:sh};}return {plain:1};}
+async function whoOpt(r,pose){if(r.id===LB.uid)return {};if(GIRL_ON&&r.who==='g'){const g=await H3.girlSheet(pose).catch(()=>null);if(g)return {sheet:g};}const t=await headTex(r.hd);if(t){const sh=await H3.texSheet(pose,t).catch(()=>null);if(sh)return {sheet:sh};}return {plain:1};}
 const nickOk=v=>String(v||'').replace(/\s+/g,' ').trim().slice(0,8),within=(pr,ms=10000)=>Promise.race([pr,new Promise((_,j)=>setTimeout(()=>j(Error('timeout')),ms))]);
 const el=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e;};
 /* ── 순위표 ── 모두/친구 + 종목 칩(ALL·RUN·SKI…). 1~3위는 시상대, 4~10위 목록, 내가 10등 밖이면 ⋮ 아래에 내 줄. 줄을 누르면 레이스 흐름 비교.
@@ -1040,8 +1040,8 @@ function drawFaceIcon(){H3.icon&&H3.icon();}   /* 얼굴 아이콘 = 구운 3D �
 const CROWS=[['skin','피부','Skin'],['hairS','머리 모양','Hair'],['hair','머리 색','Hair color'],['topS','상의','Top'],['top','상의 색','Top color'],['shorts','하의 색','Shorts'],['band','반다나','Bandana'],['capS','모자','Hat'],['cap','모자 색','Hat color'],['sun','선글라스','Sunglasses'],['shoes','신발','Shoes']];
 function renderCust(){$('cuRows').innerHTML=CROWS.map(([k,ko,en])=>`<div class="crow"><span>${L(ko,en)}</span>${OPT[k].map((v,i)=>Array.isArray(v)?`<button type="button" class="t${CHAR[k]===i?' on':''}" data-k="${k}" data-i="${i}">${L(...v)}</button>`:`<button type="button" class="${CHAR[k]===i?'on':''}${v?'':' no'}" data-k="${k}" data-i="${i}" style="background:${v||'transparent'}" aria-label="${L(ko,en)} ${i+1}"></button>`).join('')}</div>`).join('');}
 /* 선수 고르기: 남(기본) / 여. 여자 선수는 그림을 처음 고를 때 받음. 여자 선수를 고르면 내가 그린 머리는 안 보임(남자 선수 머리용) */
-const WKEY='handrox.who';let WHO='m';try{WHO=localStorage.getItem(WKEY)==='g'?'g':'m';}catch(e){}
-function renderWho(){const b=$('cuWho');b.textContent='';b.append(el('span','',L('선수','Athlete')));[['m','남','Boy'],['g','여','Girl']].forEach(([v,k,e])=>{const x=el('button','t'+(WHO===v?' on':''),L(k,e));x.type='button';x.onclick=async()=>{WHO=v;try{localStorage.setItem(WKEY,v);}catch(_){}renderWho();x.textContent='…';try{await H3.setWho(v);}catch(_){}renderWho();drawFaceIcon();if(SAVE.nick)LB.syncBs();};b.append(x);});}
+const WKEY='handrox.who',GIRL_ON=false;let WHO='m';try{WHO=GIRL_ON&&localStorage.getItem(WKEY)==='g'?'g':'m';}catch(e){}   /* 여자 선수는 일단 끔 (그림 묶음 g_*는 남겨 둠, GIRL_ON=true면 다시 켜짐) */
+function renderWho(){const b=$('cuWho');b.textContent='';b.hidden=!GIRL_ON;if(!GIRL_ON)return;b.append(el('span','',L('선수','Athlete')));[['m','남','Boy'],['g','여','Girl']].forEach(([v,k,e])=>{const x=el('button','t'+(WHO===v?' on':''),L(k,e));x.type='button';x.onclick=async()=>{WHO=v;try{localStorage.setItem(WKEY,v);}catch(_){}renderWho();x.textContent='…';try{await H3.setWho(v);}catch(_){}renderWho();drawFaceIcon();if(SAVE.nick)LB.syncBs();};b.append(x);});}
 function setChar(){charColors();try{localStorage.setItem(CKEY,JSON.stringify(CHAR));}catch(e){}renderCust();drawFaceIcon();}
 $('cuRows').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;CHAR[b.dataset.k]=+b.dataset.i;SFX.tick();setChar();});
 $('cuRnd').addEventListener('click',()=>{for(const k in CHAR)CHAR[k]=Math.floor(Math.random()*OPT[k].length);SFX.tick();setChar();});
