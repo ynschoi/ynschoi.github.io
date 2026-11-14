@@ -76,7 +76,7 @@ const paintSheet=(s,A,AW,AH)=>{const out=new ImageData(new Uint8ClampedArray(s.b
   s.x.putImageData(out,0,0);};
 /* 캐릭터 꾸미기 화면용 미리보기: 돌려 보기(turn)·아이콘에만 그림을 입힘(빠름). 저장할 때 setHead로 모든 자세에 입힘 */
 H3.previewHead=async(art)=>{if(!art){bald=false;H3.icon();return;}await loadBald();const AW=art.width,AH=art.height,A=art.getContext('2d',{willReadFrequently:true}).getImageData(0,0,AW,AH).data;
-  LA=[A,AW,AH];for(const n of ['b_turn','b_icon'])if(sheets[n])paintSheet(sheets[n],A,AW,AH);bald=true;H3.icon();};
+  LA=[A,AW,AH];for(const n of ['b_turn','b_icon'])if(sheets[n])paintSheet(sheets[n],A,AW,AH);bald=true;colorKey='';H3.icon();};   /* colorKey 비움 → 고른 색도 다시 입힘 */
 H3.setHead=async(art)=>{if(!art){bald=false;H3.icon();return 0;}await loadBald();const t0=performance.now(),AW=art.width,AH=art.height,A=art.getContext('2d',{willReadFrequently:true}).getImageData(0,0,AW,AH).data;
   LA=[A,AW,AH];for(const s of Object.values(sheets))if(s.bald)paintSheet(s,A,AW,AH);bald=true;colorKey='';H3.icon();return performance.now()-t0;};
 /* 그리기 화면용 머리 돌려 보기: b_hturn 한 칸(앞 기준 16방향 + 위에서 8방향)에 그림을 입혀 ctx에 그리고, 화면 점 → 그림 좌표 찾기 */
