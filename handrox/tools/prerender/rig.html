@@ -90,6 +90,16 @@ if(BLANK){const GS=.003,hm=parts[0],HP=hm.geometry.attributes.position,HN=hm.geo
     dx.putImageData(di,0,0);const ab=await new Promise(res=>dc.toBlob(b=>b.arrayBuffer().then(res),'image/png'));await fetch('/put?f=gdbg.png',{method:'POST',body:ab});log.push('res range '+lo.toFixed(4)+' '+hi.toFixed(4));}
   /* 머리 조각 쪽도 정리: 눈코입 둘레(FD칸)의 머리 꼭짓점은 채운 면 높이로 당기고(눈구멍 턱·틈 없앰), 그 자리 텍스처에 그려진 윤곽선·그늘은 채운 피부색으로 덮음. 둘레 바깥으로 갈수록 원래대로 */
   const Wl=new Float32Array(NC);for(let k=0;k<NC;k++)Wl[k]=lvl[k]===255?0:Math.min(1,(FD-lvl[k])/9);for(let it=0;it<5;it++){const t=Wl.slice();for(let a=1;a<NYg-1;a++)for(let b=1;b<NZg-1;b++){const k=a*NZg+b;Wl[k]=(t[k]*4+t[k-1]+t[k+1]+t[k-NZg]+t[k+NZg])/8;}}
+  /* 얼굴 앞면 전체를 둥글고 매끈하게: 채운 높이에서 타원체 바탕을 뺀 나머지(울퉁불퉁함)를 얼굴 전체에 걸쳐 크게 흐리게 한 뒤 다시 더함.
+     얼굴 윤곽(머리 실루엣 가장자리)에서 안쪽으로 ED칸에 걸쳐 0→1로 섞어, 가장자리·귀·머리띠 밑은 원래대로 이어짐 */
+  if(EB&&!Q.get('nosm')){const V=new Uint8Array(NC);for(let k=0;k<NC;k++)V[k]=(Cn[k]||fm[k])?1:0;const R=new Float64Array(NC);for(let k=0;k<NC;k++)R[k]=V[k]?H[k]-EB[k]:0;
+    const dE=new Int16Array(NC).fill(-1);let fr=[];for(let a=0;a<NYg;a++)for(let b=0;b<NZg;b++){const k=a*NZg+b;if(!V[k]){dE[k]=0;continue;}if(a===0||b===0||a===NYg-1||b===NZg-1||!V[k-1]||!V[k+1]||!V[k-NZg]||!V[k+NZg]){dE[k]=1;fr.push(k);}}
+    while(fr.length){const nf=[];for(const k of fr)for(const j of [k-1,k+1,k-NZg,k+NZg])if(j>=0&&j<NC&&dE[j]<0){dE[j]=dE[k]+1;nf.push(j);}fr=nf;}
+    const ED=+(Q.get('ed')||16),E0=+(Q.get('e0')||5),SM=+(Q.get('sm')||260),AMT=+(Q.get('amt')||1);
+    /* 가장자리 가까운 칸(E0칸 이내)은 고정, 안쪽만 흐림 → 가장자리에서 값이 끌려 내려오지 않음 */
+    for(let it=0;it<SM;it++){const t=R.slice();for(let a=1;a<NYg-1;a++)for(let b=1;b<NZg-1;b++){const k=a*NZg+b;if(dE[k]<=E0)continue;R[k]=(t[k]*2+t[k-1]+t[k+1]+t[k-NZg]+t[k+NZg])/6;}}
+    for(let k=0;k<NC;k++){if(!V[k])continue;const w=Math.min(1,Math.max(0,(dE[k]-E0)/ED)),ws=w*w*(3-2*w)*AMT;H[k]=EB[k]+R[k];Wl[k]=Math.max(Wl[k],ws);}
+    for(let it=0;it<3;it++){const t=Wl.slice();for(let a=1;a<NYg-1;a++)for(let b=1;b<NZg-1;b++){const k=a*NZg+b;Wl[k]=(t[k]*4+t[k-1]+t[k+1]+t[k-NZg]+t[k+NZg])/8;}}log.push('face smoothed');}
   {const I=hm.geometry.index.array,py=new Float32Array(HP.count),pz=new Float32Array(HP.count),px=new Float32Array(HP.count),pw=new Float32Array(HP.count);for(let i=0;i<HP.count;i++){v.fromBufferAttribute(HP,i).applyMatrix4(hm.matrixWorld);const q=toRef(v);px[i]=q[0];py[i]=q[1];pz[i]=q[2];pw[i]=q[0]-bil(H,q[1],q[2])>-.08?bil(Wl,q[1],q[2]):0;}
     let np=0;for(let t=0;t<I.length;t+=3){const a=I[t],b=I[t+1],c=I[t+2];if(pw[a]<=0&&pw[b]<=0&&pw[c]<=0)continue;const ax=HU.getX(a)*hs,ay=HU.getY(a)*hs,bx=HU.getX(b)*hs,by=HU.getY(b)*hs,cx2=HU.getX(c)*hs,cy2=HU.getY(c)*hs,den=(by-cy2)*(ax-cx2)+(cx2-bx)*(ay-cy2);if(Math.abs(den)<1e-9)continue;
       const x0=Math.max(0,Math.floor(Math.min(ax,bx,cx2)-1)),x1=Math.min(hs-1,Math.ceil(Math.max(ax,bx,cx2)+1)),y0=Math.max(0,Math.floor(Math.min(ay,by,cy2)-1)),y1=Math.min(hs-1,Math.ceil(Math.max(ay,by,cy2)+1));if((x1-x0)*(y1-y0)>400000)continue;
