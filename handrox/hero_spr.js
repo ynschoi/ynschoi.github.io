@@ -35,23 +35,32 @@ H3.setWho=async w=>{if(w==='g'){await loadGirl();girl=true;}else girl=false;H3.i
 /* 이 자세에 쓸 그림 묶음: 여자 선수 > 내가 그린 머리 > 기본 */
 const pick=n0=>girl&&sheets['g_'+n0]?'g_'+n0:bald&&sheets['b_'+n0]?'b_'+n0:n0;
 /* 고른 색 입히기: 부위별로 원래 밝기 비율을 유지한 채 색만 바꿈. 처음 값(null)은 원본 그대로 */
-function recolor(){const cols=window.handroxColors?handroxColors():{},key=JSON.stringify(cols);if(key===colorKey)return;colorKey=key;
-  const T=[null,...['skin','hair','top','shorts','band','shoes'].map(k=>cols[k]?hex(cols[k]):null)],any=T.some(Boolean);let needK=0;
-  for(const s of Object.values(sheets)){if(s.bald)continue;if(!s.base){if(!any)continue;if(!s.k){needK=1;continue;}prep(s);}const d=s.base.data,out=s.x.createImageData(s.W,s.H),o=out.data,ref=s.m.ref;
-    for(let i=0,p=0;p<s.cls.length;p++,i+=4){const k=s.cls[p],t=T[k];o[i+3]=d[i+3];
-      if(!t){o[i]=d[i];o[i+1]=d[i+1];o[i+2]=d[i+2];continue;}
-      const f=Math.min(k===1?1.22:1.7,(d[i]*.3+d[i+1]*.59+d[i+2]*.11)/(ref[k]||1));   /* 피부는 가장자리 반짝임이 밝은 선으로 남지 않게 덜 밝힘 */o[i]=Math.min(255,t[0]*f);o[i+1]=Math.min(255,t[1]*f);o[i+2]=Math.min(255,t[2]*f);}
-    s.x.putImageData(out,0,0);}
-  baldTint(T,any);if(needK)loadMasks().then(()=>{colorKey='';});H3.icon();}
+/* 고른 색 입히기: 그림 묶음마다 따로 기록(ck)해 두고, 한 프레임에 조금씩(시간 예산) 칠함 → 색을 눌러도 멈칫하지 않음.
+   H3.pri = 먼저 칠할 묶음(캐릭터 화면이 열려 있을 때 미리보기용) */
+let cgen=0;H3.pri=null;
+function recolor(){const cols=window.handroxColors?handroxColors():{};if(colorKey===''){cgen++;colorKey='x';}const key=JSON.stringify(cols)+'#'+cgen;
+  const T=[null,...['skin','hair','top','shorts','band','shoes'].map(k=>cols[k]?hex(cols[k]):null)],any=T.some(Boolean),pri=H3.pri||[],t0=performance.now();let needK=0,did=0;
+  const list=Object.entries(sheets).filter(([,s])=>s.ck!==key).sort((a,b)=>pri.includes(b[0])-pri.includes(a[0]));
+  for(const [n,s] of list){if(did&&performance.now()-t0>14)break;
+    if(s.bald){if(!tintOne(s,T,any))continue;}
+    else{if(!s.base){if(any){if(!s.k){needK=1;continue;}prep(s);}}
+      if(s.base){const d=s.base.data,out=s.x.createImageData(s.W,s.H),o=out.data,ref=s.m.ref;
+        for(let i=0,p=0;p<s.cls.length;p++,i+=4){const k=s.cls[p],t=T[k];o[i+3]=d[i+3];
+          if(!t){o[i]=d[i];o[i+1]=d[i+1];o[i+2]=d[i+2];continue;}
+          const f=Math.min(k===1?1.22:1.7,(d[i]*.3+d[i+1]*.59+d[i+2]*.11)/(ref[k]||1));   /* 피부는 가장자리 반짝임이 밝은 선으로 남지 않게 덜 밝힘 */o[i]=Math.min(255,t[0]*f);o[i+1]=Math.min(255,t[1]*f);o[i+2]=Math.min(255,t[2]*f);}
+        s.x.putImageData(out,0,0);}}
+    s.ck=key;did++;}
+  if(needK)loadMasks().then(()=>{colorKey='';});if(did)H3.icon();}
 /* 머리통(그린 얼굴) 선수에도 고른 색(피부·상의·신발…) 입히기: 원본(orig)에 색을 입혀 바탕(base)을 만들고 그 위에 그린 그림을 다시 칠함 */
 let LA=null,bmP=null;
-function baldTint(T,any){let need=0;for(const [n,s] of Object.entries(sheets)){if(!s.bald)continue;
-    if(any&&!s.cls){if(!s.kim){need=1;continue;}const cv=document.createElement('canvas');cv.width=s.W;cv.height=s.H;const x=cv.getContext('2d',{willReadFrequently:true});x.drawImage(s.kim,0,0,s.W,s.H);const md=x.getImageData(0,0,s.W,s.H).data;s.cls=new Uint8Array(s.W*s.H);for(let i=0;i<s.cls.length;i++)s.cls[i]=Math.round(md[i*4]/36);}
-    if(!any)s.base=s.orig;else{const d=s.orig.data,out=new ImageData(s.W,s.H),o=out.data,ref=s.m.ref;
-      for(let i=0,p=0;p<s.cls.length;p++,i+=4){const k=s.cls[p],t=T[k];o[i+3]=d[i+3];if(!t){o[i]=d[i];o[i+1]=d[i+1];o[i+2]=d[i+2];continue;}
-        const f=Math.min(k===1?1.22:1.7,(d[i]*.3+d[i+1]*.59+d[i+2]*.11)/(ref[k]||1));   /* 피부는 가장자리 반짝임이 밝은 선으로 남지 않게 덜 밝힘 */o[i]=Math.min(255,t[0]*f);o[i+1]=Math.min(255,t[1]*f);o[i+2]=Math.min(255,t[2]*f);}s.base=out;}
-    if(LA)paintSheet(s,LA[0],LA[1],LA[2]);else s.x.putImageData(s.base,0,0);if(s.one)s.one={};}
-  if(need&&!bmP)bmP=Promise.all(Object.entries(sheets).filter(([n,s])=>s.bald&&!s.kim&&MAN[n]&&MAN[n].m).map(([n,s])=>new Promise(res=>{const im=new Image();im.onload=()=>{s.kim=im;res();};im.onerror=()=>res();im.src=BASE+MAN[n].m;}))).then(()=>{bmP=null;colorKey='';});}
+/* 머리통 선수 한 묶음: 원본(orig)에 색을 입혀 바탕(base)을 만들고 그 위에 그린 그림을 다시 칠함. 부위 지도가 아직 없으면 받기 시작하고 false */
+function tintOne(s,T,any){
+  if(any&&!s.cls){if(!s.kim){if(!bmP)bmP=Promise.all(Object.entries(sheets).filter(([n,q])=>q.bald&&!q.kim&&MAN[n]&&MAN[n].m).map(([n,q])=>new Promise(res=>{const im=new Image();im.onload=()=>{q.kim=im;res();};im.onerror=()=>res();im.src=BASE+MAN[n].m;}))).then(()=>{bmP=null;colorKey='';});return false;}
+    const cv=document.createElement('canvas');cv.width=s.W;cv.height=s.H;const x=cv.getContext('2d',{willReadFrequently:true});x.drawImage(s.kim,0,0,s.W,s.H);const md=x.getImageData(0,0,s.W,s.H).data;s.cls=new Uint8Array(s.W*s.H);for(let i=0;i<s.cls.length;i++)s.cls[i]=Math.round(md[i*4]/36);}
+  if(!any)s.base=s.orig;else{const d=s.orig.data,out=new ImageData(s.W,s.H),o=out.data,ref=s.m.ref;
+    for(let i=0,p=0;p<s.cls.length;p++,i+=4){const k=s.cls[p],t=T[k];o[i+3]=d[i+3];if(!t){o[i]=d[i];o[i+1]=d[i+1];o[i+2]=d[i+2];continue;}
+      const f=Math.min(k===1?1.22:1.7,(d[i]*.3+d[i+1]*.59+d[i+2]*.11)/(ref[k]||1));o[i]=Math.min(255,t[0]*f);o[i+1]=Math.min(255,t[1]*f);o[i+2]=Math.min(255,t[2]*f);}s.base=out;}
+  if(LA)paintSheet(s,LA[0],LA[1],LA[2]);else s.x.putImageData(s.base,0,0);if(s.one)s.one={};return true;}
 /* 부위 지도들 받기 (색을 처음 바꿀 때 한 번) */
 let maskP=null;function loadMasks(){return maskP||(maskP=Promise.all(Object.entries(sheets).filter(([n,s])=>!s.k&&!s.bald&&MAN[n]&&MAN[n].m).map(([n,s])=>new Promise(res=>{const im=new Image();im.onload=()=>{s.k=im;res();};im.onerror=()=>res();im.src=BASE+MAN[n].m;}))).then(()=>{maskP=null;}));}
 /* ── 머리통 선수: 각자 그린 그림(얼굴·머리카락)을 입힌 선수 ──
@@ -80,7 +89,7 @@ H3.previewHead=async(art)=>{if(!art){bald=false;H3.icon();return;}await loadBald
 H3.setHead=async(art)=>{if(!art){bald=false;H3.icon();return 0;}await loadBald();const t0=performance.now(),AW=art.width,AH=art.height,A=art.getContext('2d',{willReadFrequently:true}).getImageData(0,0,AW,AH).data;
   LA=[A,AW,AH];for(const s of Object.values(sheets))if(s.bald)paintSheet(s,A,AW,AH);bald=true;colorKey='';H3.icon();return performance.now()-t0;};
 /* 그리기 화면용 머리 돌려 보기: b_hturn 한 칸(앞 기준 16방향 + 위에서 8방향)에 그림을 입혀 ctx에 그리고, 화면 점 → 그림 좌표 찾기 */
-H3.headView=async(ctx,f,art)=>{await loadBald();const s=sheets.b_hturn;if(!s)return false;if(!s.tv){s.tv=1;colorKey='';recolor();}   /* 처음 볼 때 고른 색(피부 등)을 빈 얼굴에도 입힘 */const m=s.m,AW=art.width,AH=art.height,A=art.getContext('2d',{willReadFrequently:true}).getImageData(0,0,AW,AH).data;
+H3.headView=async(ctx,f,art)=>{await loadBald();const s=sheets.b_hturn;if(!s)return false;if(s.ck==null||!s.tv){s.tv=1;const p0=H3.pri;H3.pri=['b_hturn'];recolor();H3.pri=p0;}   /* 처음 볼 때 고른 색(피부 등)을 빈 얼굴에도 입힘 */const m=s.m,AW=art.width,AH=art.height,A=art.getContext('2d',{willReadFrequently:true}).getImageData(0,0,AW,AH).data;
   if(!s.one){s.one={};}const key=f;if(!s.one[key]){const c=document.createElement('canvas');c.width=m.w;c.height=m.h;const x=c.getContext('2d',{willReadFrequently:true});x.putImageData(s.base,-f*m.w,0);   /* 그림을 입히기 전 바탕(빈 머리)에서 시작 — 저장된 그림이 바탕에 남아 '모두 지움'이 안 되던 것 수정 */
     const fc=document.createElement('canvas'),fw=s.f.width/m.n;fc.width=fw;fc.height=s.f.height;const fx=fc.getContext('2d',{willReadFrequently:true});fx.putImageData(s.f,-f*fw,0);
     s.one[key]={m,W:m.w,H:m.h,x,base:x.getImageData(0,0,m.w,m.h),f:fx.getImageData(0,0,fw,s.f.height),cv:c};}
