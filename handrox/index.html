@@ -509,8 +509,7 @@ const FX=[];
 function fx(t,col='#ffd400',x=120,y=70,size=13){FX.push({t,col,x,y,size,a:0});}
 function drawFX(dt){for(let i=FX.length-1;i>=0;i--){const f=FX[i];f.a+=dt;if(f.a>.7){FX.splice(i,1);continue;}const al=1-Math.max(0,f.a-.4)/.3;if(H3.ok&&H3.text)H3.text(f.t,f.x,f.y-f.a*30,f.size,f.col,al);else{c.globalAlpha=al;txt(f.t,f.x,f.y-f.a*30,f.size,f.col);c.globalAlpha=1;}}}   /* 3D 그림 층 위에 그려서 기구 뒤로 안 숨게 */
 const grade=(g,x,y)=>{const s=G&&G.s;if(s)s.combo=g===2?(s.combo||0)+1:0;
-  if(g===2){fx('PERFECT','#ffd400',x,y);SFX.perfect();}else if(g===1){fx('GOOD','#35c46a',x,y);SFX.good();}else{fx(L('아쉽','WEAK'),'#aaa',x,y,11);SFX.thud();}
-  if(s&&s.combo>=2)fx(s.combo+' COMBO','#ffd400',x,y+14,9);};   /* 모든 종목 공통: PERFECT가 이어지면 콤보, 다른 판정이 나오면 끊김 */
+  if(g===2){fx('PERFECT','#ffd400',x,y);SFX.perfect();}else if(g===1){fx('GOOD','#35c46a',x,y);SFX.good();}else{fx(L('아쉽','WEAK'),'#aaa',x,y,11);SFX.thud();}};   /* 콤보 표시는 뺌 */
 const comboBreak=()=>{if(G&&G.s)G.s.combo=0;};
 
 /* ═════════ 입력 상태 ═════════ */
@@ -589,7 +588,7 @@ function monitorBig(x,y,w,s,need){const h=w*1.12,ink='#1e2a1c',R=G.seg.rate,pace
   lt('s/m',X(.65),m(0,.18),5,'left',.7);lt(String(s.spm||0),X(e),m(0,.18),9,'right');
   lt('/500m',X(a),Y(.24),5,'left',.7);lt(pace?mmss(pace)+'.'+Math.floor(pace*10%10):'-:--',X(e),m(.18,.5)+2*u,20,'right');
   lt(L('남은 거리','LEFT'),X(a),m(.5,.66),5,'left',.7);lt(Math.max(0,Math.ceil(need-s.p))+'m',X(e),m(.5,.66),10,'right');
-  lt(L('판정','GRADE'),X(a),m(.66,.82),5,'left',.7);lt(s.lg==null?'-':(['MISS','GOOD','PERFECT'][s.lg]+((s.streak||0)>=2?' ×'+s.streak:'')),X(e),m(.66,.82),8.5,'right');
+  lt(L('판정','GRADE'),X(a),m(.66,.82),5,'left',.7);lt(s.lg==null?'-':['MISS','GOOD','PERFECT'][s.lg],X(e),m(.66,.82),8.5,'right');
   const bx=X(a),by=m(.82,1)-2.6*u,bw=lw*.42,bh=5.2*u,pr=clamp(s.p/need,0,1);c.strokeStyle=ink;c.lineWidth=.8;c.strokeRect(bx,by,bw,bh);c.fillRect(bx,by,bw*pr,bh);
   lt(Math.floor(s.p)+'/'+need+'m',X(e),m(.82,1),7,'right');}
 function monitorMini(x,y,s,need){const w=78,h=34,ink='#17210f',R=G.seg.rate,pace=s.vd>25?clamp(500/s.vd*R,65,599):0,
