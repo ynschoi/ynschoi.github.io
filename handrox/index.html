@@ -530,11 +530,9 @@ const add=(s,n)=>{s.p=Math.min(G.seg.need,s.p+n);};
 const RUN={id:'run',rate:94,need:1000,unit:'m',pxu:.8,nm:['달리기','RUN'],hint:'L ▸ R ▸ L ▸ R',
   how:['L·R 번갈아 탭! 두 손가락으로 달려요','Alternate L·R taps. Run on two fingers!'],
   init(s){s.last=null;s.ph=0;s.tph=0;s.stum=0;},
-  down(s,side){if(s.last===side){s.stum=.2;SFX.bad();fx(L('번갈아!','ALTERNATE!'),'#ff8a7a',120,66,11);s.n=0;s.t0=null;comboBreak();return;}
+  down(s,side){if(s.last===side){s.stum=.2;SFX.bad();fx(L('번갈아!','ALTERNATE!'),'#ff8a7a',120,66,11);return;}
     s.last=side;if(s.t-(s.lt??-9)<.1)return;   /* 초당 10걸음 상한: 너무 빠른 탭은 걸음으로 안 치지만 '어느 쪽을 쳤는지'는 기억(안 그러면 다음 탭이 '같은 쪽'으로 잘못 걸림) */
-    s.lt=s.t;add(s,50);s.tph+=Math.PI;SFX.step(side);
-    /* 판정: 번갈아 10걸음마다, 그 10걸음의 빠르기로 (초당 5걸음 이상 PERFECT, 3.3걸음 이상 GOOD) */
-    if(s.t0==null){s.t0=s.t;s.n=0;}if(++s.n>=10){const sp=10/Math.max(.01,s.t-s.t0);grade(sp>=5?2:sp>=3.3?1:0,120,58);s.t0=s.t;s.n=0;}},
+    s.lt=s.t;add(s,50);s.tph+=Math.PI;SFX.step(side);},   /* 달리기는 PERFECT·GOOD 판정 없음 */
   update(s,dt){s.ph+=(s.tph-s.ph)*Math.min(1,dt*20);s.stum=Math.max(0,s.stum-dt);},
   want:s=>s.last?other(s.last):'LR',
   /* 정면: 선수가 트랙 가운데서 카메라 쪽으로 달려옴. 그림자는 뜨면 작아지고, 걸음마다 화면이 살짝 흔들림 */
