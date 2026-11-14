@@ -808,7 +808,9 @@ async function nextSeg(){const me=G;G.splits.push(G.s.rt);if(G.i%2===1){const k=
   if(seg.id==='run'){G.state='play';banner(`RUN ${G.i/2+1}/8`);return;}
   G.state='intro';const D=DEMO[seg.id]||DEMO.carry;overlay(`<div class="t">STATION ${(G.i+1)/2}/8</div><div class="g">${L(...seg.nm)}</div><div class="tip">${L(...D.tip)}</div><div class="dn">▼ ${L(...D.dn)} ▼</div>`);$('ov').classList.add('demo');
   document.querySelectorAll('.fg').forEach(f=>f.remove());const FG=[['pL','l'],['pR','r']].map(([id,side])=>{const f=el('i','fg '+D.mv+' '+side);$(id).append(f);return f;});
-  await new Promise(res=>{let done=0;const go=()=>{if(done)return;done=1;pad.removeEventListener('pointerdown',go,true);removeEventListener('keydown',go,true);res();};pad.addEventListener('pointerdown',go,true);addEventListener('keydown',go,true);setTimeout(go,SAVE.races?4500:9000);});   /* 패드를 누르면 바로 시작 (안 누르면 잠시 뒤 자동) */
+  /* 달리기에서 연타하던 손가락이 소개 화면을 바로 넘기지 않게: 처음 1.5초는 눌러도 안 넘어가고(그동안 '탭해서 시작' 숨김), 그 뒤 누르면 시작. 안 누르면 잠시 뒤 자동 */
+  await new Promise(res=>{let done=0,ok=0;const dn=document.querySelector('#ov .dn');if(dn)dn.style.visibility='hidden';const go=e=>{if(done||(e&&!ok))return;done=1;pad.removeEventListener('pointerdown',go,true);removeEventListener('keydown',go,true);res();};
+    pad.addEventListener('pointerdown',go,true);addEventListener('keydown',go,true);setTimeout(()=>{ok=1;if(dn)dn.style.visibility='';},1500);setTimeout(go,SAVE.races?6000:10000);});
   FG.forEach(f=>f.remove());if(G!==me)return;$('ov').classList.remove('demo');overlay(null);G.state='play';SFX.go();banner('GO!',450);}
 /* 종목 시작 화면의 손가락 시연: mv = 움직임(down 아래로 당기기, tap 연타, hold 꾹, left 왼쪽으로 당기기, up 위로 쓸기, alt 번갈아), tip = 한 줄 설명, dn = 아래 패드 안내 */
 const DEMO={ski:{mv:'down',tip:['두 손가락으로 <b>끝까지</b> 당기면 PERFECT','Pull <b>all the way</b> down for PERFECT'],dn:['두 칸을 같이 아래로 쭉','Both pads, drag down']},
