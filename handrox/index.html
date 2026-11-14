@@ -424,7 +424,7 @@ const HEIGHT3=115;
 function sceneF(off,bob){c.setTransform(2,0,0,2,0,2*OFF);c.clearRect(-2,-OFF-2,W+4,HV+4);H3.bg('runf',off,bob);}
 
 /* ═════════ 캐릭터: 단순한 픽셀 선수. 피부·머리·옷·반다나·신발을 고를 수 있음 ═════════ */
-const OPT={skin:['#f6ceaa','#e3b48c','#c68f63','#8d5a3b','#5c3a25','#f6ceaa'],   /* 0 = 선수 원래 피부(그을린 색), 5 = 밝은 피부 */
+const OPT={skin:['#f6ceaa','#e3b48c','#c68f63','#8d5a3b','#5c3a25','#f6ceaa','#7ed957','#5fb4ff','#b38cff','#ff8fc8','#b8bcc8','#ffd84a'],   /* 6~11: 외계인 초록·아바타 파랑·보라·분홍·로봇 회색·금색 */   /* 0 = 선수 원래 피부(그을린 색), 5 = 밝은 피부 */
   hairS:[['민머리','Bald'],['짧은','Short'],['중간','Medium'],['긴(묶음)','Long']],
   hair:['#2a2018','#6b4423','#c9a24a','#b5451f','#d8d8de','#3b6fd9','#e25aa6','#b700cc','#f600af','#ff7a00','#01dc03','#42c3d0','#12b8ff','#513aee'],
   topS:[['티셔츠','Tee'],['민소매','Tank'],['맨몸','None']],
@@ -508,7 +508,10 @@ function sled(x,w=0){rr(x,FL-7,44,7,2,'#ffd400');c.fillStyle='#555';c.fillRect(x
 const FX=[];
 function fx(t,col='#ffd400',x=120,y=70,size=13){FX.push({t,col,x,y,size,a:0});}
 function drawFX(dt){for(let i=FX.length-1;i>=0;i--){const f=FX[i];f.a+=dt;if(f.a>.7){FX.splice(i,1);continue;}const al=1-Math.max(0,f.a-.4)/.3;if(H3.ok&&H3.text)H3.text(f.t,f.x,f.y-f.a*30,f.size,f.col,al);else{c.globalAlpha=al;txt(f.t,f.x,f.y-f.a*30,f.size,f.col);c.globalAlpha=1;}}}   /* 3D 그림 층 위에 그려서 기구 뒤로 안 숨게 */
-const grade=(g,x,y)=>{if(g===2){fx('PERFECT','#ffd400',x,y);SFX.perfect();}else if(g===1){fx('GOOD','#35c46a',x,y);SFX.good();}else{fx(L('아쉽','WEAK'),'#aaa',x,y,11);SFX.thud();}};
+const grade=(g,x,y)=>{const s=G&&G.s;if(s)s.combo=g===2?(s.combo||0)+1:0;
+  if(g===2){fx('PERFECT','#ffd400',x,y);SFX.perfect();}else if(g===1){fx('GOOD','#35c46a',x,y);SFX.good();}else{fx(L('아쉽','WEAK'),'#aaa',x,y,11);SFX.thud();}
+  if(s&&s.combo>=2)fx(s.combo+' COMBO','#ffd400',x,y+14,9);};   /* 모든 종목 공통: PERFECT가 이어지면 콤보, 다른 판정이 나오면 끊김 */
+const comboBreak=()=>{if(G&&G.s)G.s.combo=0;};
 
 /* ═════════ 입력 상태 ═════════ */
 const held={L:0,R:0};
@@ -521,7 +524,11 @@ const add=(s,n)=>{s.p=Math.min(G.seg.need,s.p+n);};
 const RUN={id:'run',rate:94,need:1000,unit:'m',pxu:.8,nm:['달리기','RUN'],hint:'L ▸ R ▸ L ▸ R',
   how:['L·R 번갈아 탭! 두 손가락으로 달려요','Alternate L·R taps. Run on two fingers!'],
   init(s){s.last=null;s.ph=0;s.tph=0;s.stum=0;},
-  down(s,side){if(s.last===side){s.stum=.2;SFX.bad();fx(L('번갈아!','ALTERNATE!'),'#ff8a7a',120,66,11);return;}if(s.t-(s.lt??-9)<.1)return;s.lt=s.t;s.last=side;add(s,50);   /* 초당 10걸음 상한 */s.tph+=Math.PI;SFX.step(side);},
+  down(s,side){if(s.last===side){s.stum=.2;SFX.bad();fx(L('번갈아!','ALTERNATE!'),'#ff8a7a',120,66,11);s.n=0;s.t0=null;comboBreak();return;}
+    s.last=side;if(s.t-(s.lt??-9)<.1)return;   /* 초당 10걸음 상한: 너무 빠른 탭은 걸음으로 안 치지만 '어느 쪽을 쳤는지'는 기억(안 그러면 다음 탭이 '같은 쪽'으로 잘못 걸림) */
+    s.lt=s.t;add(s,50);s.tph+=Math.PI;SFX.step(side);
+    /* 판정: 번갈아 10걸음마다, 그 10걸음의 빠르기로 (초당 5걸음 이상 PERFECT, 3.3걸음 이상 GOOD) */
+    if(s.t0==null){s.t0=s.t;s.n=0;}if(++s.n>=10){const sp=10/Math.max(.01,s.t-s.t0);grade(sp>=5?2:sp>=3.3?1:0,120,58);s.t0=s.t;s.n=0;}},
   update(s,dt){s.ph+=(s.tph-s.ph)*Math.min(1,dt*20);s.stum=Math.max(0,s.stum-dt);},
   want:s=>s.last?other(s.last):'LR',
   /* 정면: 선수가 트랙 가운데서 카메라 쪽으로 달려옴. 그림자는 뜨면 작아지고, 걸음마다 화면이 살짝 흔들림 */
@@ -554,7 +561,7 @@ const ERG={LEN:62,PER:62,
   grab(s,side){this.judge(s);s.pos[side]=0;s.arm[side]=1;},
   /* 스트로크 판정(로잉만): 한 번 당길 때 끝까지(95%) 당기면 PERFECT, 75% 이상 GOOD. 손가락을 되돌리거나 새로 잡을 때 판정 */
   judge(s){if(!s.grading||!s.inStroke)return;s.inStroke=0;const g=s.peak>=.95?2:s.peak>=.75?1:0;grade(g,s.gx||110,s.gy||40);s.lg=g;s.streak=g===2?(s.streak||0)+1:0;
-    if(s.streak>=3)fx(s.streak+' COMBO','#ffd400',s.gx||110,(s.gy||40)+14,9);},
+    },
   stroke(s,side){const d=s.t-s.ls[side];s.ls[side]=s.t;if(d>.12&&d<2)s.sr=1/d;if(s.t-s.lst>.25)(s.sts=s.sts||[]).push(s.t);s.lst=s.t;
     if(s.t-s.pt>.2){if(s.pt>0||s.p>0)s.vd=(s.p-s.pp)/(s.t-s.pt);s.pp=s.p;s.pt=s.t;} /* 모니터 페이스는 스트로크마다 갱신 */
     if(s.t-s.snd>.1){s.snd=s.t;SFX.pull();}},
@@ -619,8 +626,10 @@ const ST=[
     monitorBig(210,-OFF+28,104,s,this.need);}},
  {id:'push',rate:36,need:50,unit:'m',pxu:8,nm:['슬레드 푸시','SLED PUSH'],hint:'L + R',
   how:['L·R 동시에 탭! 두 손가락으로 힘껏 밀어요','Tap L and R together to shove the sled'],
-  init(s){s.tp={L:-9,R:-9};s.ph=0;s.tph=0;s.k=0;},
-  down(s,side){s.tp[side]=s.t;if(s.t-s.tp[other(side)]<.13){if(s.t-(s.lt??-9)<.1)return;s.lt=s.t;s.tp.L=s.tp.R=-9;add(s,2.5);   /* 초당 10번 상한 */s.tph+=Math.PI;s.k=1;SFX.shove();}},
+  init(s){s.tp={L:-9,R:-9};s.ph=0;s.tph=0;s.k=0;s.sd=0;s.sn=0;},
+  down(s,side){s.tp[side]=s.t;const d=s.t-s.tp[other(side)];if(d<.13){if(s.t-(s.lt??-9)<.1)return;s.lt=s.t;s.tp.L=s.tp.R=-9;add(s,2.5);   /* 초당 10번 상한 */s.tph+=Math.PI;s.k=1;SFX.shove();
+    /* 판정: 8번 밀 때마다, L·R을 얼마나 동시에 눌렀는지(평균 차이 .045초 이하 PERFECT, .08초 이하 GOOD) */
+    s.sd=(s.sd||0)+d;if(++s.sn>=8){const a=s.sd/s.sn;grade(a<=.045?2:a<=.08?1:0,150,58);s.sd=0;s.sn=0;}}},
   update(s,dt){s.ph+=(s.tph-s.ph)*Math.min(1,dt*14);s.k=Math.max(0,s.k-dt*5);},
   want:()=>'LR',
   /* 3D 선수(옆모습)가 앞으로 숙여 썰매 손잡이를 밀고, 썰매는 선수 앞(손 위치)에. 그림 576×500, 손잡이 x≈75 */
@@ -656,7 +665,7 @@ const ST=[
   down(s){if(s.st==='idle'&&both()){s.st='chg';s.c=0;}},
   up(s){if(s.st!=='chg')return;const v=s.c,y0=s.z0,y1=s.z0+s.zw;let g=0,d=3;if(v>=y0&&v<=y1){g=2;d=10;}else if(v>=y0-.18&&v<=y1+.12){g=1;d=6;}
     s.st='jump';s.jt=0;s.jd=d;s.from=s.p;grade(g,120,56);SFX.jump();},
-  update(s,dt){if(s.st==='chg'){s.c+=dt/.7;s.ct+=dt;if(s.ct>.07){s.ct=0;SFX.charge(s.c);}if(s.c>1.12){s.st='stum';s.w=.55;SFX.bad();fx(L('너무 오래!','TOO LONG!'),'#ff8a7a',120,60,11);}}
+  update(s,dt){if(s.st==='chg'){s.c+=dt/.7;s.ct+=dt;if(s.ct>.07){s.ct=0;SFX.charge(s.c);}if(s.c>1.12){s.st='stum';s.w=.55;SFX.bad();fx(L('너무 오래!','TOO LONG!'),'#ff8a7a',120,60,11);comboBreak();}}
     else if(s.st==='jump'){s.jt+=dt/.3;s.p=Math.min(this.need,s.from+s.jd*Math.min(1,s.jt));if(s.jt>=1){s.st='idle';SFX.thud();this.zone(s);if(both()){s.st='chg';s.c=0;}}}
     else if(s.st==='stum'){s.w-=dt;if(s.w<=0){s.st='idle';this.zone(s);}}},
   want:()=>'LR',
@@ -686,10 +695,12 @@ const ST=[
     monitorBig(210,-OFF+28,104,s,this.need);}},
  {id:'carry',rate:26,need:100,unit:'m',pxu:2,nm:['파머스 캐리','FARMERS CARRY'],hint:L('L + R 꾹','HOLD L + R'),
   how:['둘 다 꾹 잡고 걸어요. 악력이 바닥나기 전에 잠깐 떼요!','Hold both to carry. Let go briefly before your grip runs out!'],
-  init(s){s.grip=1;s.v=0;s.lock=0;s.ph=0;},
-  update(s,dt){if(s.lock>0){s.lock-=dt;s.v=0;if(s.lock<=0)s.grip=1;return;}
-    if(both()){s.v=Math.min(34,Math.max(14,s.v)+dt*13.5);s.grip-=dt/1.35;add(s,s.v*dt);s.ph+=s.v*dt*.32;
-      if(s.grip<=0){s.grip=0;s.lock=1.3;SFX.drop();fx(L('놓쳤다!','DROPPED!'),'#ff8a7a',120,56);}}
+  init(s){s.grip=1;s.v=0;s.lock=0;s.ph=0;s.hold=0;},
+  update(s,dt){if(s.lock>0){s.lock-=dt;s.v=0;s.hold=0;if(s.lock<=0)s.grip=1;return;}
+    /* 판정: 들고 걷다가 손을 뗄 때 남은 악력 — 30% 이하 PERFECT(끝까지 잘 버팀), 55% 이하 GOOD, 그보다 일찍 떼면 아쉽. 놓치면 콤보 끊김 */
+    const on=both();if(s.hold&&!on&&s.hold>.35)grade(s.grip<=.3?2:s.grip<=.55?1:0,120,50);s.hold=on?s.hold+dt:0;
+    if(on){s.v=Math.min(34,Math.max(14,s.v)+dt*13.5);s.grip-=dt/1.35;add(s,s.v*dt);s.ph+=s.v*dt*.32;
+      if(s.grip<=0){s.grip=0;s.lock=1.3;SFX.drop();fx(L('놓쳤다!','DROPPED!'),'#ff8a7a',120,56);comboBreak();}}
     else{s.v=0;s.grip=Math.min(1,s.grip+dt/.45);}},
   want:()=>'LR',
   /* 3D 선수가 케틀벨 두 개를 몸 옆에 들고 걸음. 쉬거나 놓치면 케틀벨은 바닥에. 손잡이 윗부분(그림 위 15%)이 손 위치 */
@@ -706,9 +717,9 @@ const ST=[
   /* 미리 눌러 둔 쪽(hd=2: 아직 안 쓴 누름)은 차례가 오면 바로 시작 — 앞 손을 떼기 전에 다음 손을 눌러도 먹힘 */
   go(s){if(s.st==='rise'){s.p=Math.min(this.need,s.from+s.jd);s.st='idle';s.k=0;}if(s.st==='idle'&&s.hd[s.side]===2){s.hd[s.side]=1;s.st='down';s.c=0;s.leg=s.side;}},
   down(s,side){s.hd[side]=2;if(side===s.side){if(s.st==='rise'||s.st==='idle')this.go(s);return;}
-    if(s.st==='idle'){s.hd[side]=1;SFX.bad();fx(L('반대쪽!','OTHER SIDE!'),'#ff8a7a',120,52,11);}},
+    if(s.st==='idle'){s.hd[side]=1;SFX.bad();fx(L('반대쪽!','OTHER SIDE!'),'#ff8a7a',120,52,11);comboBreak();}},
   up(s,side){s.hd[side]=0;if(s.st!=='down'||side!==s.side)return;const v=s.c;let g=0,d=3;if(v>=.66&&v<=.92){g=2;s.cb=(s.cb||0)+1;d=10+Math.min(4,s.cb-1);}else{s.cb=0;if(v>=.45&&v<=1){g=1;d=6;}}
-    grade(g,120,52);if(s.cb>=2)fx(s.cb+' COMBO','#ffd400',120,66,9);s.st='rise';s.rz=0;s.from=s.p;s.jd=d;s.last=v;s.side=other(side);s.tph+=Math.PI;SFX.step(side);if(s.hd[s.side]===2)this.go(s);},
+    grade(g,120,52);s.st='rise';s.rz=0;s.from=s.p;s.jd=d;s.last=v;s.side=other(side);s.tph+=Math.PI;SFX.step(side);if(s.hd[s.side]===2)this.go(s);},
   update(s,dt){s.ph+=(s.tph-s.ph)*Math.min(1,dt*10);if(s.st==='idle'&&s.hd[s.side]===2)this.go(s);
     if(s.st==='down'){s.c+=dt/Math.max(.5,.8-(s.cb||0)*.04);s.k=Math.min(1,s.c);s.ct+=dt;if(s.ct>.07){s.ct=0;SFX.charge(s.c);}if(s.c>1.12){s.st='stum';s.w=.45;SFX.thud();fx(L('무릎 쿵!','KNEE DOWN!'),'#ff8a7a',120,52,11);}}
     else if(s.st==='rise'){s.rz+=dt/.18;s.p=Math.min(this.need,s.from+s.jd*Math.min(1,s.rz));s.k=s.last*(1-Math.min(1,s.rz));if(s.rz>=1){s.st='idle';s.k=0;}}
@@ -732,10 +743,10 @@ const ST=[
   init(s){s.fly=0;s.ft=0;s.pen=0;s.wait=0;s.k=0;s.ls=-9;s.wk=.5;},
   thr(s,n,g){add(s,n);s.fly=1;s.ft=0;s.pen=0;s.k=1;SFX.ball();if(g!=null)grade(g,150,60);},
   swipe(s,side,dir){if(dir!=='up'||s.t-s.ls<.22)return;s.ls=s.t;if(s.wait>0)return;if(!s.fly)return this.thr(s,6,null);const t=s.ft,d=Math.abs(t-this.HIT);
-    if(t<.62){s.pen=1;SFX.bad();fx(L('너무 빨라!','TOO EARLY!'),'#ff8a7a',150,60,10);return;}
+    if(t<.62){s.pen=1;SFX.bad();fx(L('너무 빨라!','TOO EARLY!'),'#ff8a7a',150,60,10);comboBreak();return;}
     if(s.pen)return this.thr(s,3,0);this.thr(s,d<=.1?10:6,d<=.1?2:1);},
   update(s,dt){const tg=s.wait>0?.5:!s.fly?.5:s.ft<.2?1:1-.7*Math.min(1,(s.ft-.2)/.5);s.wk+=(tg-s.wk)*Math.min(1,dt*16);   /* 자세: 0 앉음 · .5 섬 · 1 팔 뻗어 던짐 */
-    s.k=Math.max(0,s.k-dt*4);if(s.wait>0){s.wait-=dt;return;}if(s.fly){s.ft+=dt;if(s.ft>this.LATE){s.fly=0;s.wait=.55;SFX.drop();fx(L('떨어뜨림!','DROPPED!'),'#ff8a7a',150,60);}}},
+    s.k=Math.max(0,s.k-dt*4);if(s.wait>0){s.wait-=dt;return;}if(s.fly){s.ft+=dt;if(s.ft>this.LATE){s.fly=0;s.wait=.55;SFX.drop();fx(L('떨어뜨림!','DROPPED!'),'#ff8a7a',150,60);comboBreak();}}},
   want:()=>'LR',
   /* 3D 선수 뒷모습(스키처럼 오른쪽 사선). 공은 손에서 위 과녁까지 갔다가(멀어지며 작아짐) 손으로 돌아옴. 손 둘레의 고리가 줄어들어 공 크기와 겹칠 때가 딱 맞는 순간 */
   draw(s){sceneK('ski',1);const x=132,y=164,tx=186,ty=-OFF+74,k=s.wk;   /* 과녁 위 가로대까지 보이게 조금 내림 */
@@ -1196,7 +1207,7 @@ function drawFaceIcon(){H3.icon&&H3.icon();}   /* 얼굴 아이콘 = 구운 3D �
 const WKEY='handrox.who',GIRL_ON=false;let WHO='m';try{WHO=GIRL_ON&&localStorage.getItem(WKEY)==='g'?'g':'m';}catch(e){}   /* 여자 선수는 일단 끔 (그림 묶음 g_*는 남겨 둠, GIRL_ON=true면 다시 켜짐) */
 function renderWho(){const b=$('cuWho');b.textContent='';b.hidden=!GIRL_ON;if(!GIRL_ON)return;b.append(el('span','',L('선수','Athlete')));[['m','남','Boy'],['g','여','Girl']].forEach(([v,k,e])=>{const x=el('button','t'+(WHO===v?' on':''),L(k,e));x.type='button';x.onclick=async()=>{WHO=v;try{localStorage.setItem(WKEY,v);}catch(_){}renderWho();x.textContent='…';try{await H3.setWho(v);}catch(_){}renderWho();drawFaceIcon();if(SAVE.nick)LB.syncBs();};b.append(x);});}
 const CROWS=[['hair','머리 색','Hair'],['top','상의','Top'],['band','머리띠','Headband'],['shoes','신발','Shoes']];
-const CSHOW={skin:[5,1,0,2,3,4],band:[0,1,3,4,5,6,7,8,9,10,11,12,13],hair:null,top:null,shoes:null};   /* 보여 줄 순서(밴드 2번 노랑은 기본과 같아 뺌) */
+const CSHOW={skin:[5,1,0,2,3,4,6,7,8,9,10,11],band:[0,1,3,4,5,6,7,8,9,10,11,12,13],hair:null,top:null,shoes:null};   /* 보여 줄 순서(밴드 2번 노랑은 기본과 같아 뺌) */
 const CDISP={skin:{0:'#c8956b'},band:{0:'#ffd400'}};   /* 0번(=선수 원래 색)의 동그라미 색 */
 if(CHAR.band===2)CHAR.band=0;
 const CU={p:{e:0,b:0,n:0,m:0},tex:null,sv:null,dirty:0,tm:0,busy:0};
