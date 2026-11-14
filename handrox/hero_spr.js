@@ -27,7 +27,7 @@ function load(){const names=Object.keys(MAN).filter(n=>!n.startsWith('b_')&&!n.s
     await Promise.all([...left].map(k=>get(k).catch(()=>{})));colorKey='';if(MAN.runfhd)await one('runfhd').then(()=>{colorKey='';}).catch(()=>{});});
   return ready;}   /* 첫 화면용 선명한 달리기(2배 해상도): 다 받은 뒤 마지막에 받아서 바꿔 끼움 */
 /* 첫 화면에 쓸 그림: 선명한 판이 있고 기본 선수일 때만 (머리통·여자 선수는 원래 판) */
-H3.coverPose=()=>girl||bald?'runf':sheets.runfhd?'runfhd':sheets.runf?'runf':'runfp';   /* 첫 화면: 멈춘 한 장(10KB) → 달리기 → 선명한 달리기 순으로 바꿔 끼움 */
+H3.coverPose=()=>girl?'runf':bald?(sheets.b_runfhd?'runfhd':'runf'):sheets.runfhd?'runfhd':sheets.runf?'runf':'runfp';   /* 첫 화면: 멈춘 한 장(10KB) → 달리기 → 선명한 달리기 순으로 바꿔 끼움 */
 /* 두 번째 캐릭터(여자 선수, g_*): 고른 사람만 받음 */
 let girl=false,girlP=null;
 function loadGirl(){return girlP||(girlP=Promise.all(Object.keys(MAN).filter(n=>n.startsWith('g_')).map(async n=>{const m=MAN[n],ld=f=>new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=()=>rej(Error(f));im.src=BASE+f;}),[c,k]=await Promise.all([ld(m.c),ld(m.m)]);build(n,m,c,k);})).then(()=>{colorKey='';}).catch(e=>{girlP=null;throw e;}));}
@@ -63,10 +63,16 @@ function loadBald(){return baldP||(baldP=Promise.all(Object.keys(MAN).filter(n=>
     const fc=document.createElement('canvas');fc.width=f.width;fc.height=f.height;const fx=fc.getContext('2d',{willReadFrequently:true});fx.drawImage(f,0,0);
     sheets[n]={m,cv,x,base,orig:base,W,H,bald:1,f:fx.getImageData(0,0,f.width,f.height)};})).catch(e=>{baldP=null;throw e;}));}
 /* 그림 = 머리 둘레 전체를 펼친 512×256 그림(가로 = 둘레, 가운데 = 얼굴 앞, 양끝 = 뒤통수 / 세로 = 정수리→턱). 지도(f) 빨강·초록이 그 좌표 */
+/* 선수 그림의 픽셀마다: 자리 지도(f, 절반 크기)의 좌표를 이웃 넷 사이에서 부드럽게 이어 읽고, 얼굴 그림도 이웃 넷을 섞어 읽음 → 계단(도트) 없이 매끈하게 */
 const paintSheet=(s,A,AW,AH)=>{const out=new ImageData(new Uint8ClampedArray(s.base.data),s.W,s.H),o=out.data,F=s.f.data,fw=s.f.width,fh=s.f.height,W=s.W,H=s.H,sc=W/fw;
-  for(let fy=0;fy<fh;fy++)for(let fx=0;fx<fw;fx++){const q=(fy*fw+fx)*4;if(F[q+3]<128)continue;const ai=((Math.min(AH-1,F[q+1]/255*AH|0))*AW+Math.min(AW-1,F[q]/255*AW|0))*4,aa=A[ai+3]/255;if(!aa)continue;
-    for(let dy=0;dy<sc;dy++)for(let dx=0;dx<sc;dx++){const X=fx*sc+dx,Y=fy*sc+dy;if(X>=W||Y>=H)continue;const i=(Y*W+X)*4;if(o[i+3]<8)continue;const sh=Math.min(1.12,(o[i]*.3+o[i+1]*.59+o[i+2]*.11)/205);
-      o[i]+=(A[ai]*sh-o[i])*aa;o[i+1]+=(A[ai+1]*sh-o[i+1])*aa;o[i+2]+=(A[ai+2]*sh-o[i+2])*aa;}}
+  for(let Y=0;Y<H;Y++){const gy=(Y+.5)/sc-.5,y0=Math.max(0,Math.floor(gy)),y1=Math.min(fh-1,y0+1),ty=Math.min(1,Math.max(0,gy-y0)),ny=Math.min(fh-1,Math.round(gy));
+    for(let X=0;X<W;X++){const gx=(X+.5)/sc-.5,nx=Math.min(fw-1,Math.round(gx));if(F[(ny*fw+nx)*4+3]<128)continue;const i=(Y*W+X)*4;if(o[i+3]<8)continue;
+      const x0=Math.max(0,Math.floor(gx)),x1=Math.min(fw-1,x0+1),tx=Math.min(1,Math.max(0,gx-x0));let u=0,v=0,ws=0;
+      for(let c=0;c<4;c++){const q=((c&2?y1:y0)*fw+(c&1?x1:x0))*4;if(F[q+3]<128)continue;const w=(c&1?tx:1-tx)*(c&2?ty:1-ty)+1e-4;u+=F[q]*w;v+=F[q+1]*w;ws+=w;}
+      const au=u/ws/255*AW-.5,av=v/ws/255*AH-.5,a0=Math.max(0,Math.min(AW-1,Math.floor(au))),b0=Math.max(0,Math.min(AH-1,Math.floor(av))),a1=Math.min(AW-1,a0+1),b1=Math.min(AH-1,b0+1),fu=Math.min(1,Math.max(0,au-a0)),fv=Math.min(1,Math.max(0,av-b0));
+      let r=0,g=0,b=0,al=0;for(let c=0;c<4;c++){const k=((c&2?b1:b0)*AW+(c&1?a1:a0))*4,w=(c&1?fu:1-fu)*(c&2?fv:1-fv)*A[k+3];r+=A[k]*w;g+=A[k+1]*w;b+=A[k+2]*w;al+=w;}
+      if(al<1)continue;const aa=al/255,sh=Math.min(1.12,(o[i]*.3+o[i+1]*.59+o[i+2]*.11)/205);r/=al;g/=al;b/=al;
+      o[i]+=(r*sh-o[i])*aa;o[i+1]+=(g*sh-o[i+1])*aa;o[i+2]+=(b*sh-o[i+2])*aa;}}
   s.x.putImageData(out,0,0);};
 H3.setHead=async(art)=>{if(!art){bald=false;H3.icon();return 0;}await loadBald();const t0=performance.now(),AW=art.width,AH=art.height,A=art.getContext('2d',{willReadFrequently:true}).getImageData(0,0,AW,AH).data;
   LA=[A,AW,AH];for(const s of Object.values(sheets))if(s.bald)paintSheet(s,A,AW,AH);bald=true;colorKey='';H3.icon();return performance.now()-t0;};
