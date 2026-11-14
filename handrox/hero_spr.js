@@ -74,6 +74,9 @@ const paintSheet=(s,A,AW,AH)=>{const out=new ImageData(new Uint8ClampedArray(s.b
       if(al<1)continue;const aa=al/255,sh=Math.min(1.12,(o[i]*.3+o[i+1]*.59+o[i+2]*.11)/205);r/=al;g/=al;b/=al;
       o[i]+=(r*sh-o[i])*aa;o[i+1]+=(g*sh-o[i+1])*aa;o[i+2]+=(b*sh-o[i+2])*aa;}}
   s.x.putImageData(out,0,0);};
+/* 캐릭터 꾸미기 화면용 미리보기: 돌려 보기(turn)·아이콘에만 그림을 입힘(빠름). 저장할 때 setHead로 모든 자세에 입힘 */
+H3.previewHead=async(art)=>{if(!art){bald=false;H3.icon();return;}await loadBald();const AW=art.width,AH=art.height,A=art.getContext('2d',{willReadFrequently:true}).getImageData(0,0,AW,AH).data;
+  LA=[A,AW,AH];for(const n of ['b_turn','b_icon'])if(sheets[n])paintSheet(sheets[n],A,AW,AH);bald=true;H3.icon();};
 H3.setHead=async(art)=>{if(!art){bald=false;H3.icon();return 0;}await loadBald();const t0=performance.now(),AW=art.width,AH=art.height,A=art.getContext('2d',{willReadFrequently:true}).getImageData(0,0,AW,AH).data;
   LA=[A,AW,AH];for(const s of Object.values(sheets))if(s.bald)paintSheet(s,A,AW,AH);bald=true;colorKey='';H3.icon();return performance.now()-t0;};
 /* 그리기 화면용 머리 돌려 보기: b_hturn 한 칸(앞 기준 16방향 + 위에서 8방향)에 그림을 입혀 ctx에 그리고, 화면 점 → 그림 좌표 찾기 */
@@ -137,7 +140,7 @@ function runfBg(im,w,ih,iy,off,bob){const k=sc,vx=GW/2,vy=635/1024*GW*im.height/
     for(const sg of [-1,1]){cbg.beginPath();cbg.ellipse(vx+sg*x,y,(6*u+2)/3,(2*u+1)/3,0,0,7);cbg.fill();}}
   cbg.restore();}
 function start(){cv3=document.getElementById('cv3');c3=cv3.getContext('2d');cvbg=document.getElementById('cvbg');cbg=cvbg&&cvbg.getContext('2d');const pc=document.getElementById('cuPrev3');
-  if(pc){pc.width=pc.offsetWidth*3||432;pc.height=pc.offsetHeight*3||504;let d=null;pc.addEventListener('pointerdown',e=>{d=e.clientX;try{pc.setPointerCapture(e.pointerId);}catch(_){}});
+  if(pc){if(pc.offsetWidth){pc.width=pc.offsetWidth*3;pc.height=pc.offsetHeight*3;}   /* 숨겨진 채 시작하면 HTML에 적힌 크기 그대로 */let d=null;pc.addEventListener('pointerdown',e=>{d=e.clientX;try{pc.setPointerCapture(e.pointerId);}catch(_){}});
     pc.addEventListener('pointermove',e=>{if(d==null)return;prevSpin-=(e.clientX-d)*.025;d=e.clientX;});['pointerup','pointercancel'].forEach(v=>pc.addEventListener(v,()=>{d=null;}));}
   load().then(()=>{H3.ok=true;H3.why='ok';document.documentElement.classList.add('has3d');recolor();H3.icon();window.onH3Ready&&onH3Ready();})
     .catch(e=>{H3.why=String(e&&e.message||e);window.onH3Fail&&onH3Fail(H3.why);});}
