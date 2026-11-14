@@ -1253,8 +1253,8 @@ $('cuOrig').addEventListener('click',()=>{CU.p={e:0,b:0,n:0,m:0};CU.tex=newTex()
 $('cuSave').addEventListener('click',async()=>{const b=$('cuSave');b.textContent=L('저장 중…','Saving…');await cuCommit();b.textContent=L('저장됨 ✓','Saved ✓');b.classList.add('ok');SFX.tick();setTimeout(()=>{b.textContent=L('저장','Save');b.classList.remove('ok');},1400);});
 $('cuOk').addEventListener('click',async()=>{$('cuOk').textContent=L('저장 중…','Saving…');await cuCommit();$('custPanel').hidden=true;renderCust();});
 /* 직접 그리기: 얼굴 그리기 화면을 그림 도구만 보이게 열어 씀. 취소하면 그리기 전 그림으로 */
-$('cuDraw').addEventListener('click',async()=>{if(!cuCustom())CU.p={e:1,b:1,n:1,m:1};DW.tex=CU.tex;DW.p=CU.p;DW.undo=[];CU.texBk=newTex();CU.texBk.getContext('2d').drawImage(CU.tex,0,0);
-  dwUI();$('dwRot').hidden=true;$('dwT').textContent=L('✏️ 직접 그리기','✏️ Draw on your face');$('dwOk').textContent=L('완료','Done');$('drawPanel').hidden=false;$('dwN').textContent=L('얼굴 위에 손가락으로 그려요','Draw right on the face');try{await dwRender();}catch(e){}});
+$('cuDraw').addEventListener('click',async()=>{   /* 원래 얼굴이면 민얼굴(눈코입 없음)에서 시작. 피부는 고른 색 그대로 */DW.tex=CU.tex;DW.p=CU.p;DW.undo=[];CU.texBk=newTex();CU.texBk.getContext('2d').drawImage(CU.tex,0,0);
+  dwUI();$('dwRot').hidden=true;$('dwT').textContent=L('✏️ 직접 그리기','✏️ Draw on your face');$('dwOk').textContent=L('완료','Done');$('drawPanel').hidden=false;$('dwN').textContent=L('얼굴 위에 손가락으로 그려요','Draw right on the face');try{await dwRender();}catch(e){}setTimeout(()=>{if(!$('drawPanel').hidden)dwRender();},1200);setTimeout(()=>{if(!$('drawPanel').hidden)dwRender();},3000);});   /* 고른 피부색이 빈 얼굴 그림에 입혀지면 다시 그림 */
 $('charBtn').addEventListener('click',()=>{cuSnap();cuLoad();renderCust();renderWho();drawFaceIcon();$('custPanel').hidden=false;requestAnimationFrame(cuFit);cuFace(1);});
 drawFaceIcon();
 /* 얼굴 고르기: 드래그로 위치, 슬라이더로 확대 */
