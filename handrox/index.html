@@ -182,31 +182,29 @@ try{Promise.all([document.fonts.load('12px Galmuri9'),document.fonts.load('bold 
   .cust{padding:10px 12px!important}
   #cuPrev3{display:none;width:144px;height:168px;margin:0 auto 6px;background:#050506;border:2px solid var(--gold);touch-action:none;cursor:grab}
   #cuPrev3{display:block!important}#cuPrev{display:none!important}
-  /* 캐릭터 꾸미기(한 화면): 위 = 얼굴 확대 + 눈코입, 아래 = 전신 + 색 */
+  /* 캐릭터 꾸미기(한 화면): 위 = 전신 + 색(피부·머리·상의·머리띠·신발), 아래 = 얼굴 + 눈코입. 모든 크기는 --s배 → 어떤 화면에서도 스크롤 없이 꼭 맞게(JS가 --s 계산) */
   #custPanel{padding:0;align-items:stretch}
-  .res.c2{width:100%;max-width:420px;margin:0 auto;display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top,0px) + 10px) 10px calc(env(safe-area-inset-bottom,0px) + 10px);overflow-y:auto;text-align:left}
-  .c2top{display:flex;gap:10px;padding-bottom:10px;border-bottom:1px solid #2a2a33}
-  .c2l{flex:0 0 152px}.c2r{flex:1;min-width:0}
-  .c2face{position:relative;width:152px;aspect-ratio:300/280;border-radius:12px;overflow:hidden;background:radial-gradient(#4a4a58,#22222b)}
-  .c2face canvas{position:absolute;inset:0;width:100%;height:100%}
-  .c2b2{display:flex;gap:5px;margin:7px 0 2px}.c2b2 button{flex:1;font:10.5px var(--px);padding:7px 0;border:1.5px solid var(--gold);background:#0c0c10;color:var(--gold);border-radius:6px}
-  .c2b2 button+button{flex:0 0 52px;color:#ccc;border-color:#555;text-align:center}
-  .c2lb{font:10.5px var(--px);color:var(--dim);margin:7px 0 4px}
-  .c2sw{display:grid;grid-template-columns:repeat(5,max-content);gap:5px}
-  .c2sw button.pk{display:flex;align-items:center;justify-content:center;font:700 13px/1 sans-serif;color:#fff;text-shadow:0 1px 2px #000}
-  .c2sw button{width:24px;height:24px;border-radius:50%;border:0;padding:0;box-shadow:inset 0 -3px 0 #0003;flex:none}
-  .c2sw button.on{outline:2.5px solid var(--gold);outline-offset:2px}
-  .c2pt{display:flex;gap:4px;flex-wrap:nowrap}
-  .c2pt button{flex:1 1 0;max-width:34px;height:26px;border-radius:7px;border:1.5px solid #0000;background:#efc9a4;padding:0;display:flex;align-items:center;justify-content:center;font:11px var(--px);color:#9a7458;overflow:hidden}
-  .c2pt button.on{border-color:var(--gold);box-shadow:0 0 0 2px #ffd40066}
-  .c2pt canvas{width:100%;height:100%}
-  .c2bot{display:flex;gap:8px;padding-top:6px;flex:1 0 auto}
-  .c2cols .c2lb{margin:4px 0 3px}.c2cols .c2lb:first-child{margin-top:0}
-  #cuPrev3{flex:0 0 152px;width:152px!important;height:auto!important;aspect-ratio:480/780;max-height:330px;margin:0!important;border:0!important;border-radius:12px;background:radial-gradient(ellipse at 50% 70%,#34343f,#121217)!important;align-self:flex-start}
-  .c2cols{flex:1;min-width:0}.c2cols .c2sw{gap:5px 7px}.c2cols .c2sw button{width:24px;height:24px}
-  .c2act{display:flex;gap:7px;margin-top:8px;flex:none}
-  .c2act button{flex:1;text-align:center;font:700 13px var(--px);padding:12px 0;border:2px solid var(--gold);background:#0c0c10;color:#fff;border-radius:6px}
-  .c2act button:first-child{flex:0 0 52px;font-size:17px}.c2act button.y{background:var(--gold);color:#111;flex:1.3}
+  .res.c2{--s:1;width:100%;max-width:440px;margin:0 auto;display:flex;flex-direction:column;justify-content:center;gap:calc(var(--s)*9px);padding:calc(env(safe-area-inset-top,0px) + var(--s)*8px) calc(var(--s)*12px) calc(env(safe-area-inset-bottom,0px) + var(--s)*8px);overflow:hidden;text-align:left}
+  .c2body,.c2face{display:flex;gap:calc(var(--s)*10px);align-items:flex-start}
+  .c2face{border-top:1px solid #2a2a33;padding-top:calc(var(--s)*9px)}
+  #cuPrev3{flex:none;width:calc(var(--s)*128px)!important;height:calc(var(--s)*226px)!important;margin:0!important;border:0!important;border-radius:calc(var(--s)*12px);background:radial-gradient(ellipse at 50% 70%,#34343f,#121217)!important}
+  .c2cols{flex:1;min-width:0;display:flex;flex-direction:column;gap:calc(var(--s)*6px)}
+  .c2lb{font:calc(var(--s)*10.5px) var(--px);color:var(--dim);margin-bottom:calc(var(--s)*3px)}
+  .c2sw{display:flex;gap:calc(var(--s)*7px)}
+  .c2sw button{width:calc(var(--s)*27px);height:calc(var(--s)*27px);border-radius:50%;border:0;padding:0;box-shadow:inset 0 -3px 0 #0003;flex:none}
+  .c2sw button.on{outline:calc(var(--s)*2.5px) solid var(--gold);outline-offset:calc(var(--s)*2px)}
+  .c2sw button.pk{display:flex;align-items:center;justify-content:center;font:700 calc(var(--s)*13px)/1 sans-serif;color:#fff;text-shadow:0 1px 2px #000}
+  .c2fc{flex:none;position:relative;width:calc(var(--s)*128px);aspect-ratio:300/280;border-radius:calc(var(--s)*12px);overflow:hidden;background:radial-gradient(#4a4a58,#22222b)}
+  .c2fc canvas{position:absolute;inset:0;width:100%;height:100%}
+  .c2fr{flex:1;min-width:0;display:flex;flex-direction:column;gap:calc(var(--s)*5px)}
+  .c2pr{display:flex;align-items:center;gap:calc(var(--s)*4px)}.c2pr>span{flex:0 0 calc(var(--s)*28px);font:calc(var(--s)*10.5px) var(--px);color:var(--dim)}
+  .c2pr button{flex:1 1 0;max-width:calc(var(--s)*36px);height:calc(var(--s)*24px);border-radius:calc(var(--s)*7px);border:1.5px solid #0000;background:#efc9a4;padding:0;overflow:hidden}
+  .c2pr button.on{border-color:var(--gold);box-shadow:0 0 0 2px #ffd40066}.c2pr canvas{width:100%;height:100%;display:block}
+  .c2b2{display:flex;gap:calc(var(--s)*6px);margin-top:calc(var(--s)*2px)}.c2b2 button{flex:1;text-align:center;font:calc(var(--s)*11px) var(--px);padding:calc(var(--s)*7px) 0;border:1.5px solid var(--gold);background:#0c0c10;color:var(--gold);border-radius:6px}
+  .c2b2 button+button{flex:0 0 calc(var(--s)*56px);color:#ccc;border-color:#555}
+  .c2act{display:flex;gap:calc(var(--s)*7px);flex:none}
+  .c2act button{flex:1;text-align:center;font:700 calc(var(--s)*13px) var(--px);padding:calc(var(--s)*11px) 0;border:2px solid var(--gold);background:#0c0c10;color:#fff;border-radius:6px}
+  .c2act button:first-child{flex:0 0 calc(var(--s)*50px);font-size:calc(var(--s)*17px)}.c2act button.y{background:var(--gold);color:#111;flex:1.3}
   .c2act button.ok{border-color:var(--green);color:var(--green)}
   #cuPrev{display:block;width:192px;height:128px;margin:0 auto 6px;background:#050506;border:2px solid var(--gold);image-rendering:pixelated}
   .crow{display:flex;align-items:center;gap:4px;margin:4px 0;flex-wrap:wrap}
@@ -308,14 +306,12 @@ try{Promise.all([document.fonts.load('12px Galmuri9'),document.fonts.load('bold 
   </div>
   <div class="help" id="help" hidden><div id="helpBody"></div></div>
   <div class="help" id="custPanel" hidden><div class="res c2"><h3 id="cuT" hidden></h3><canvas id="cuPrev" width="384" height="256" hidden></canvas>
-    <div class="c2top"><div class="c2l"><div class="c2face"><canvas id="cuFace" width="300" height="280"></canvas></div>
-        <div class="c2b2"><button type="button" id="cuDraw"></button><button type="button" id="cuOrig"></button></div>
-        <div class="c2lb" id="cuSkL"></div><div class="c2sw" id="cuSkin"></div></div>
-      <div class="c2r" id="cuParts"></div></div>
-    <div class="c2bot"><canvas id="cuPrev3" width="480" height="780" aria-label="3D 캐릭터, 좌우로 끌어서 돌리기"></canvas><div class="c2cols" id="cuRows"></div></div>
+    <div class="c2body"><canvas id="cuPrev3" width="384" height="678" aria-label="3D 캐릭터, 좌우로 끌어서 돌리기"></canvas><div class="c2cols" id="cuRows"></div></div>
+    <div class="c2face"><div class="c2fc"><canvas id="cuFace" width="300" height="280"></canvas></div>
+      <div class="c2fr"><div id="cuParts" style="display:contents"></div><div class="c2b2"><button type="button" id="cuDraw"></button><button type="button" id="cuOrig"></button></div></div></div>
     <input type="color" id="cuPick" aria-label="palette" style="position:absolute;left:0;bottom:0;width:1px;height:1px;opacity:0;border:0;padding:0">
     <div class="c2act"><button type="button" id="cuRnd">🎲</button><button type="button" id="cuReset"></button><button type="button" id="cuSave"></button><button type="button" class="y" id="cuOk"></button></div>
-    <div class="crow" id="cuWho" hidden></div>
+    <div class="crow" id="cuWho" hidden></div><div hidden id="cuSkL"></div><div hidden id="cuSkin"></div>
     <div hidden><button type="button" id="faceBtn"></button><button type="button" id="feDel"></button><button type="button" id="drawBtn"></button><button type="button" id="drawDel"></button></div></div></div>
   <input type="file" id="faceFile" accept="image/*" hidden>
   <div class="help" id="facePanel" hidden><div class="res"><h3 id="feT"></h3><canvas id="fePrev" width="192" height="192"></canvas>
@@ -1210,8 +1206,8 @@ function drawFaceIcon(){H3.icon&&H3.icon();}   /* 얼굴 아이콘 = 구운 3D �
 /* 선수 고르기: 남(기본) / 여. 여자 선수는 그림을 처음 고를 때 받음. 여자 선수를 고르면 내가 그린 머리는 안 보임(남자 선수 머리용) */
 const WKEY='handrox.who',GIRL_ON=false;let WHO='m';try{WHO=GIRL_ON&&localStorage.getItem(WKEY)==='g'?'g':'m';}catch(e){}   /* 여자 선수는 일단 끔 (그림 묶음 g_*는 남겨 둠, GIRL_ON=true면 다시 켜짐) */
 function renderWho(){const b=$('cuWho');b.textContent='';b.hidden=!GIRL_ON;if(!GIRL_ON)return;b.append(el('span','',L('선수','Athlete')));[['m','남','Boy'],['g','여','Girl']].forEach(([v,k,e])=>{const x=el('button','t'+(WHO===v?' on':''),L(k,e));x.type='button';x.onclick=async()=>{WHO=v;try{localStorage.setItem(WKEY,v);}catch(_){}renderWho();x.textContent='…';try{await H3.setWho(v);}catch(_){}renderWho();drawFaceIcon();if(SAVE.nick)LB.syncBs();};b.append(x);});}
-const CROWS=[['hair','머리 색','Hair'],['top','상의','Top'],['band','머리띠','Headband'],['shoes','신발','Shoes']];
-const CSHOW={skin:[5,1,0,3,4,6,7,8,9],hair:[1,0,2,3,4,5,7,8,10],top:[0,1,2,3,4,5,6,8,13],band:[0,1,3,4,6,7,9,10,11],shoes:[0,1,2,3,4,5,6,7,8]};   /* 부위마다 9색(5 + 4) + 팔레트 */
+const CROWS=[['skin','피부','Skin'],['hair','머리','Hair'],['top','상의','Top'],['band','머리띠','Headband'],['shoes','신발','Shoes']];
+const CSHOW={skin:[5,0,3,6,7],hair:[1,0,2,5,8],top:[0,1,2,5,6],band:[0,3,1,6,9],shoes:[0,4,1,2,5]};   /* 부위마다 5색 + 팔레트 */
 const CDISP={skin:{0:'#c8956b'},band:{0:'#ffd400'}};   /* 0번(=선수 원래 색)의 동그라미 색 */
 if(CHAR.band===2)CHAR.band=0;
 const CU={p:{e:0,b:0,n:0,m:0},tex:null,sv:null,dirty:0,tm:0,busy:0};
@@ -1221,13 +1217,12 @@ function cuLoad(){Object.assign(CHAR,CU.sv.c);for(const k in CI)OPT[k][CI[k]]=CU
 const swHtml=(k,sel,list)=>list.map(i=>`<button type="button" class="${sel===i?'on':''}" data-k="${k}" data-i="${i}" style="background:${(CDISP[k]||{})[i]||OPT[k][i]}" aria-label="${k} ${i}"></button>`).join('')
   +`<button type="button" class="pk${sel===CI[k]?' on':''}" data-pk="${k}" style="background:${sel===CI[k]?OPT[k][CI[k]]:'conic-gradient(#f33,#fd0,#3e5,#2df,#36f,#e3e,#f33)'}" aria-label="palette">＋</button>`;
 function renderCust(){
-  $('cuSkL').textContent=L('피부','Skin');$('cuSkin').innerHTML=swHtml('skin',CHAR.skin,CSHOW.skin);
   $('cuRows').innerHTML=CROWS.map(([k,ko,en])=>`<div class="c2lb">${L(ko,en)}</div><div class="c2sw">${swHtml(k,CHAR[k],CSHOW[k])}</div>`).join('');
-  const pb=$('cuParts');pb.textContent='';PARTL.forEach(([k,ko,en])=>{pb.append(el('div','c2lb',L(ko,en)));const row=el('div','c2pt');
+  const pb=$('cuParts');pb.textContent='';PARTL.forEach(([k,ko,en])=>{const row=el('div','c2pr');row.append(el('span','',L(ko,en)));
     for(let n=1;n<PARTN[k];n++){const b=el('button',CU.p[k]===n?'on':'');b.type='button';b.setAttribute('aria-label',L(ko,en)+' '+n);
       if(n===0)b.textContent='✕';else{const c=document.createElement('canvas');c.width=64;c.height=44;const x=c.getContext('2d'),o={e:0,b:0,n:0,m:0};o[k]=n;const cy=108+({e:86,b:51,n:112,m:144}[k]-108)*1.3,sc=({e:.34,b:.34,n:.5,m:.38}[k])/FTK;x.translate(32,22);x.scale(sc,sc);x.translate(-128*FTK,-cy*FTK);faceParts(x,o);b.append(c);}
       b.onclick=()=>{if(!cuCustom())CU.p={e:1,b:1,n:1,m:1};CU.p[k]=n;SFX.tick();renderCust();cuFace(1);};row.append(b);}pb.append(row);});
-  $('cuDraw').textContent=L('✏️ 직접 그리기','✏️ Draw');$('cuOrig').textContent=L('원래','Reset');$('cuOrig').title=L('원래 얼굴','Original face');
+  $('cuDraw').textContent=L('✏️ 직접 그리기','✏️ Draw');$('cuOrig').textContent=L('원래','Reset');requestAnimationFrame(cuFit);$('cuOrig').title=L('원래 얼굴','Original face');
   $('cuReset').textContent=L('초기화','Undo');$('cuSave').textContent=L('저장','Save');$('cuOk').textContent=L('완료','Done');}
 /* 얼굴 미리보기: 고친 얼굴이면 빈 얼굴 머리에 입혀 보이고, 아니면 원래 선수 머리를 그대로 */
 async function cuFaceDraw(){const cv=$('cuFace'),x=cv.getContext('2d');if(!H3.ok)return;
@@ -1237,6 +1232,10 @@ async function cuFaceDraw(){const cv=$('cuFace'),x=cv.getContext('2d');if(!H3.ok
 async function cuFace(face){CU.dirty=performance.now()+4000;if(face){CU.fv=(CU.fv||0)+1;const v=CU.fv;await sleep(30);if(v!==CU.fv)return;try{await H3.previewHead(cuCustom()?faceComp(CU.p,CU.tex):null);}catch(e){}}cuFaceDraw();}
 setInterval(()=>{if($('custPanel').hidden||CU.busy||performance.now()>CU.dirty)return;CU.busy=1;cuFaceDraw().finally(()=>{CU.busy=0;});},250);
 function setChar(){charColors();renderCust();drawFaceIcon();cuFace(0);}
+/* 화면 크기에 맞춰 --s(배율) 계산: 1배일 때 내용 높이를 재고, 남는 높이·폭에 맞게 줄이거나(작은 폰) 조금 키움 */
+function cuFit(){const pn=$('custPanel'),r=pn.firstElementChild;if(pn.hidden||!r)return;r.style.setProperty('--s',1);const H=pn.clientHeight,W=pn.clientWidth;r.style.alignSelf='flex-start';const h=r.offsetHeight;r.style.alignSelf='';
+  const s=Math.max(.55,Math.min(1.3,(H-4)/h,(Math.min(W,440))/370));r.style.setProperty('--s',s.toFixed(3));const pc=$('cuPrev3');if(pc.offsetWidth){pc.width=Math.round(pc.offsetWidth*3);pc.height=Math.round(pc.offsetHeight*3);}}
+addEventListener('resize',()=>requestAnimationFrame(cuFit));
 async function cuCommit(){try{localStorage.setItem(CKEY,charJSON());}catch(e){}
   if(!cuCustom())faceClear();else{const t=newTex();t.getContext('2d').drawImage(CU.tex,0,0);DW.sp={...CU.p};DW.simg=t;DW.saved=faceComp(DW.sp,t);try{localStorage.setItem(HKEY,JSON.stringify({p:DW.sp,img:t.toDataURL('image/png')}));}catch(e){}}
   cuSnap();await headApply();drawBtnText();if(SAVE.nick)LB.syncBs();}
@@ -1256,7 +1255,7 @@ $('cuOk').addEventListener('click',async()=>{$('cuOk').textContent=L('저장 중
 /* 직접 그리기: 얼굴 그리기 화면을 그림 도구만 보이게 열어 씀. 취소하면 그리기 전 그림으로 */
 $('cuDraw').addEventListener('click',async()=>{if(!cuCustom())CU.p={e:1,b:1,n:1,m:1};DW.tex=CU.tex;DW.p=CU.p;DW.undo=[];CU.texBk=newTex();CU.texBk.getContext('2d').drawImage(CU.tex,0,0);
   dwUI();$('dwRot').hidden=true;$('dwT').textContent=L('✏️ 직접 그리기','✏️ Draw on your face');$('dwOk').textContent=L('완료','Done');$('drawPanel').hidden=false;$('dwN').textContent=L('얼굴 위에 손가락으로 그려요','Draw right on the face');try{await dwRender();}catch(e){}});
-$('charBtn').addEventListener('click',()=>{cuSnap();cuLoad();renderCust();renderWho();drawFaceIcon();$('custPanel').hidden=false;const pc=$('cuPrev3');requestAnimationFrame(()=>{if(pc.offsetWidth){pc.width=pc.offsetWidth*3;pc.height=Math.round(pc.offsetWidth*3*780/480);}});cuFace(1);});
+$('charBtn').addEventListener('click',()=>{cuSnap();cuLoad();renderCust();renderWho();drawFaceIcon();$('custPanel').hidden=false;requestAnimationFrame(cuFit);cuFace(1);});
 drawFaceIcon();
 /* 얼굴 고르기: 드래그로 위치, 슬라이더로 확대 */
 const FE={img:null,z:1.6,cx:0,cy:0,out:null};
