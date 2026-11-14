@@ -91,7 +91,11 @@ try{Promise.all([document.fonts.load('12px Galmuri9'),document.fonts.load('bold 
   .phbar .phsp{width:96px}
   .phbar .phn{font:12px var(--px);color:#fff;background:#000;border:1px solid #555;border-radius:16px;padding:7px 10px;width:96px;text-align:center;outline:none;-webkit-user-select:text;user-select:text;touch-action:manipulation}.phbar .phn:focus{border-color:var(--gold)}
   /* 종목 시작 화면(④ 패드 시연): 위엔 종목 이름+한 줄, 아래 진짜 패드 위에서 손가락이 동작을 보여 줌. 누르면 바로 시작 */
-  .ov.demo{background:rgba(8,8,11,.45);justify-content:flex-start;padding-top:20px}
+  .ov.demo{background:linear-gradient(rgba(8,8,11,.78) 0%,rgba(8,8,11,.55) 42%,rgba(8,8,11,.25) 70%,rgba(8,8,11,.45));justify-content:flex-start;padding-top:14px;gap:2px}
+  /* 시안 ④: 노란 STATION · 큰 흰 글씨 종목 이름(검은 테두리) · 한 줄 설명 */
+  .ov.demo .t{font-size:12px;color:var(--gold);letter-spacing:1px}
+  .ov.demo .g{font-size:30px;color:#fff;-webkit-text-stroke:0;text-shadow:-2px 0 #111,2px 0 #111,0 -2px #111,0 2px #111,-2px -2px #111,2px 2px #111,-2px 2px #111,2px -2px #111,0 4px 0 #000;letter-spacing:1px;line-height:1.15;margin:2px 0 4px}
+  .ov.demo .tip{font-size:12.5px;background:rgba(0,0,0,.72);padding:5px 11px;border-radius:2px}
   .ov .tip{font:12px/1.4 var(--font);color:#fff;background:rgba(0,0,0,.6);padding:4px 9px;margin-top:4px}
   .ov .tip b{color:var(--gold);font-weight:400}
   .ov .dn{position:absolute;left:0;right:0;bottom:8px;font-size:12px;color:var(--gold);animation:dnB 1s ease-in-out infinite}
