@@ -63,6 +63,9 @@ if(BLANK){const GS=.003,hm=parts[0],HP=hm.geometry.attributes.position,HN=hm.geo
   const NBs=+(Q.get('nb')||15),Bs=(a,b)=>{const y=(a/(NYg-1))*2-1,z=(b/(NZg-1))*2-1;return [1,y,z,y*y,y*z,z*z,y*y*y,y*y*z,y*z*z,z*z*z,y*y*y*y,y*y*y*z,y*y*z*z,y*z*z*z,z*z*z*z];};
   /* 채울 자리의 틈 메우기(닫기): 눈썹 사이·눈과 코 사이처럼 좁게 남은 '원래 면'은 실제로 파여 있어 그대로 두면 꺼져 보임 → 채울 자리를 CL칸 넓혔다 다시 줄여 틈을 없앰.
      그다음 가장자리에서 안쪽으로 잰 거리로 섞는 정도를 정함(가장자리 0 → 안쪽 1) */
+  /* 미간 위(머리띠 바로 아래 가운데)의 주름 자국도 채울 자리에 넣음: 높이·색 모두 둘레에서 이어 채움 */
+  const TC=(a,b)=>a>=NYg*(+(Q.get('ty')||.74))&&Math.abs(b-NZg/2)<=(+(Q.get('tw')||7));
+  for(let a=0;a<NYg;a++)for(let b=0;b<NZg;b++){const k=a*NZg+b;if(TC(a,b)&&Cn[k]){fm[k]=1;}}
   {const CL=+(Q.get('cl')||5);let m=fm.slice();const step=(src,val)=>{const t=src.slice();for(let a=1;a<NYg-1;a++)for(let b=1;b<NZg-1;b++){const k=a*NZg+b;if(src[k]!==val&&(src[k-1]===val||src[k+1]===val||src[k-NZg]===val||src[k+NZg]===val))t[k]=val;}return t;};
     for(let it=0;it<CL;it++)m=step(m,1);for(let it=0;it<CL;it++)m=step(m,0);
     /* 가로줄·세로줄마다 채울 자리의 양 끝 사이를 모두 채움(눈썹 사이 위쪽 쐐기 같은 오목한 틈 제거) */
@@ -97,8 +100,8 @@ if(BLANK){const GS=.003,hm=parts[0],HP=hm.geometry.attributes.position,HN=hm.geo
     while(fr.length){const nf=[];for(const k of fr)for(const j of [k-1,k+1,k-NZg,k+NZg])if(j>=0&&j<NC&&dE[j]<0){dE[j]=dE[k]+1;nf.push(j);}fr=nf;}
     const ED=+(Q.get('ed')||7),E0=+(Q.get('e0')||2),SM=+(Q.get('sm')||260),AMT=+(Q.get('amt')||1);
     /* 가장자리 가까운 칸(E0칸 이내)은 고정, 안쪽만 흐림 → 가장자리에서 값이 끌려 내려오지 않음 */
-    for(let it=0;it<SM;it++){const t=R.slice();for(let a=1;a<NYg-1;a++)for(let b=1;b<NZg-1;b++){const k=a*NZg+b;if(dE[k]<=E0)continue;R[k]=(t[k]*2+t[k-1]+t[k+1]+t[k-NZg]+t[k+NZg])/6;}}
-    for(let k=0;k<NC;k++){if(!V[k])continue;const w=Math.min(1,Math.max(0,(dE[k]-E0)/ED)),ws=w*w*(3-2*w)*AMT;H[k]=EB[k]+R[k];Wl[k]=Math.max(Wl[k],ws);}
+    for(let it=0;it<SM;it++){const t=R.slice();for(let a=1;a<NYg-1;a++)for(let b=1;b<NZg-1;b++){const k=a*NZg+b;if(dE[k]<=E0&&!(TC(a,b)&&V[k]))continue;R[k]=(t[k]*2+t[k-1]+t[k+1]+t[k-NZg]+t[k+NZg])/6;}}
+    for(let k=0;k<NC;k++){if(!V[k])continue;const a2=Math.floor(k/NZg),b2=k%NZg,w=TC(a2,b2)?1:Math.min(1,Math.max(0,(dE[k]-E0)/ED)),ws=w*w*(3-2*w)*AMT;   /* 머리띠 밑 가운데는 가장자리까지 다 폄(머리띠가 가려 줌) */H[k]=EB[k]+R[k];Wl[k]=Math.max(Wl[k],ws);}
     for(let it=0;it<3;it++){const t=Wl.slice();for(let a=1;a<NYg-1;a++)for(let b=1;b<NZg-1;b++){const k=a*NZg+b;Wl[k]=(t[k]*4+t[k-1]+t[k+1]+t[k-NZg]+t[k+NZg])/8;}}{let sd=0,n=0,mx=-1,mn=1,rows=[];for(let k=0;k<NC;k++)if(Cn[k]&&Wl[k]>.6){const d=H[k]-H0[k];sd+=d;n++;mx=Math.max(mx,d);mn=Math.min(mn,d);}const b0=Math.round(NZg/2);for(let a=0;a<NYg;a+=6){const k=a*NZg+b0;rows.push((Y0+a*GS).toFixed(2)+':'+(V[k]?(H0[k]).toFixed(3)+'>'+H[k].toFixed(3)+'/eb'+EB[k].toFixed(3)+'/w'+Wl[k].toFixed(1)+(Cn[k]?'k':'f'):'-'));}log.push('smooth shift mean '+(sd/n).toFixed(4)+' min '+mn.toFixed(4)+' max '+mx.toFixed(4)+' n '+n+'\ncentre column '+rows.join('  '));}
 log.push('face smoothed');}
   {const I=hm.geometry.index.array,py=new Float32Array(HP.count),pz=new Float32Array(HP.count),px=new Float32Array(HP.count),pw=new Float32Array(HP.count);for(let i=0;i<HP.count;i++){v.fromBufferAttribute(HP,i).applyMatrix4(hm.matrixWorld);const q=toRef(v);px[i]=q[0];py[i]=q[1];pz[i]=q[2];pw[i]=q[0]-bil(H,q[1],q[2])>-.08?bil(Wl,q[1],q[2]):0;}
