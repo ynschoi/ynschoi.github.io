@@ -479,7 +479,7 @@ function sled(x,w=0){rr(x,FL-7,44,7,2,'#ffd400');c.fillStyle='#555';c.fillRect(x
 /* 떠오르는 글자 */
 const FX=[];
 function fx(t,col='#ffd400',x=120,y=70,size=13){FX.push({t,col,x,y,size,a:0});}
-function drawFX(dt){for(let i=FX.length-1;i>=0;i--){const f=FX[i];f.a+=dt;if(f.a>.7){FX.splice(i,1);continue;}c.globalAlpha=1-Math.max(0,f.a-.4)/.3;txt(f.t,f.x,f.y-f.a*30,f.size,f.col);c.globalAlpha=1;}}
+function drawFX(dt){for(let i=FX.length-1;i>=0;i--){const f=FX[i];f.a+=dt;if(f.a>.7){FX.splice(i,1);continue;}const al=1-Math.max(0,f.a-.4)/.3;if(H3.ok&&H3.text)H3.text(f.t,f.x,f.y-f.a*30,f.size,f.col,al);else{c.globalAlpha=al;txt(f.t,f.x,f.y-f.a*30,f.size,f.col);c.globalAlpha=1;}}}   /* 3D 그림 층 위에 그려서 기구 뒤로 안 숨게 */
 const grade=(g,x,y)=>{if(g===2){fx('PERFECT','#ffd400',x,y);SFX.perfect();}else if(g===1){fx('GOOD','#35c46a',x,y);SFX.good();}else{fx(L('아쉽','WEAK'),'#aaa',x,y,11);SFX.thud();}};
 
 /* ═════════ 입력 상태 ═════════ */

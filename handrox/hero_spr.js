@@ -95,6 +95,7 @@ H3.img=(k,x,y,w,h,fx)=>{if(H3.ok&&IM[k])queue.push({img:IM[k],x,y,w,h,fx});};   
 H3.line=(x1,y1,x2,y2,w,col)=>{if(H3.ok)queue.push({line:[x1,y1,x2,y2],w,col});};
 H3.rect=(x,y,w,h,col,ol)=>{if(H3.ok)queue.push({rect:[x,y,w,h],col,ol});};
 H3.ring=(x,y,r,col,w)=>{if(H3.ok)queue.push({ring:[x,y,r],col,w});};
+H3.text=(t,x,y,size,col,al)=>{if(H3.ok)queue.push({text:t,x,y,size,col,al});};   /* 판정 글자(PERFECT 등): 기구·선수 그림보다 위에 보이게 같은 대기열에 */
 H3.shadow=(x,y,w)=>{if(H3.ok)queue.push({shadow:[x,y,w]});};
 /* 배경: run(달리기) / zone(운동 구역). off = 지나온 거리(경기장 px) — 반복해서 흘러감 */
 let bgReq=null;H3.bg=(kind,off,bob=0,dim=0,cover=0)=>{bgReq={kind,off,bob,dim,cover};};   /* cover: 경기장이 그림보다 높으면 키워서 꽉 채움(아래 맞춤) */
@@ -105,6 +106,7 @@ let OFFp=0;
 H3.frame=()=>{if(!H3.ok)return;recolor();fit();c3.setTransform(1,0,0,1,0,0);c3.clearRect(0,0,cv3.width,cv3.height);c3.setTransform(sc,0,0,sc,0,OFFp);c3.imageSmoothingEnabled=true;c3.imageSmoothingQuality='high';
   for(const q of queue){
     if(q.img){if(q.fx){c3.save();c3.translate(q.x+q.w,q.y);c3.scale(-1,1);c3.drawImage(q.img,0,0,q.w,q.h);c3.restore();}else c3.drawImage(q.img,q.x,q.y,q.w,q.h);continue;}
+    if(q.text!=null){c3.save();c3.globalAlpha=q.al==null?1:q.al;c3.font=`bold ${q.size}px Galmuri11, monospace`;c3.textAlign='center';c3.lineWidth=3;c3.lineJoin='round';c3.strokeStyle='#111';c3.strokeText(q.text,q.x,q.y);c3.fillStyle=q.col;c3.fillText(q.text,q.x,q.y);c3.restore();continue;}
     if(q.ring){c3.strokeStyle=q.col;c3.lineWidth=q.w;c3.beginPath();c3.arc(q.ring[0],q.ring[1],q.ring[2],0,7);c3.stroke();continue;}
     if(q.shadow){const [x,y,w]=q.shadow;c3.save();c3.filter='blur(1.5px)';c3.fillStyle='rgba(0,0,0,.42)';c3.beginPath();c3.ellipse(x,y,w/2,3.2,0,0,7);c3.fill();c3.restore();continue;}
     if(q.line){c3.strokeStyle=q.col;c3.lineWidth=q.w;c3.lineCap='round';c3.beginPath();c3.moveTo(q.line[0],q.line[1]);c3.lineTo(q.line[2],q.line[3]);c3.stroke();continue;}
