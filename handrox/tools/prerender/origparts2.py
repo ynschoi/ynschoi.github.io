@@ -31,18 +31,19 @@ def part(c):
     if cy<255 and 200<=cx<=310:return 'n'
     if cy>=245:return 'm'
     return None
-out=np.zeros((H,W,4),np.uint8);boxes={}
+ORD=['b','e','n','m'];out=np.zeros((H*4,W,4),np.uint8);boxes={}   # 부위마다 따로 한 층(위에서부터 눈썹·눈·코·입) → 상자가 겹쳐도 다른 부위가 섞이지 않음
 for c in big:
     k=part(c)
     if not k:continue
     m=lab==c[0]
     mi=np.asarray(Image.fromarray((m*255).astype(np.uint8)).filter(ImageFilter.MaxFilter(5)))>0   # 가장자리 부드러운 테두리까지
     sel=mi&(al>.15)
-    out[sel,:3]=a[sel,:3];out[sel,3]=(np.clip(al[sel]*1.25,0,1)*255).astype(np.uint8)
+    L=out[ORD.index(k)*H:(ORD.index(k)+1)*H];L[sel,:3]=a[sel,:3];L[sel,3]=(np.clip(al[sel]*1.25,0,1)*255).astype(np.uint8)
     ys,xs=np.nonzero(sel);bx=boxes.setdefault(k,[9999,9999,0,0]);bx[0]=min(bx[0],xs.min()-2);bx[1]=min(bx[1],ys.min()-2);bx[2]=max(bx[2],xs.max()+3);bx[3]=max(bx[3],ys.max()+3)
 Image.fromarray(out,'RGBA').save('/home/user/ynschoi.github.io/handrox/art/face_orig.webp',lossless=True,quality=100,method=6)
 print(json.dumps({k:[int(v) for v in b] for k,b in boxes.items()}))
-bg=Image.new('RGBA',(W,H),(240,200,160,255));bg.alpha_composite(Image.fromarray(out,'RGBA'))
+bg=Image.new('RGBA',(W,H),(240,200,160,255))
+for i in range(4):bg.alpha_composite(Image.fromarray(out[i*H:(i+1)*H],'RGBA'))
 d=bg.convert('RGB');from PIL import ImageDraw;dr=ImageDraw.Draw(d)
 for k,b in boxes.items():dr.rectangle(b,outline=(255,0,0));dr.text((b[0],b[1]-10),k,fill=(255,0,0))
 d.resize((1024,720)).save(S+'/fo2.png')
