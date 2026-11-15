@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
 <title>HANDROX · 손가락으로 뛰는 하이록스</title>
 <meta name="description" content="The fitness race for fingers. 8 runs, 8 workouts, two fingers. 손가락 두 개로 완주하는 하이록스 게임.">
 <link rel="canonical" href="https://ynschoi.github.io/handrox/">
@@ -181,6 +181,10 @@ try{Promise.all([document.fonts.load('12px Galmuri9'),document.fonts.load('bold 
   .help small{display:block;margin-top:10px;font:10px var(--px);color:var(--dim);text-align:center}
   .help .rs{display:inline-block;margin-top:8px;font:10px var(--px);color:#ff9a9a;border:1px solid #ff9a9a;padding:3px 7px}
   .res{text-align:center}
+  .shr{position:absolute;inset:0;z-index:5;background:#0c0c10f5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px}
+  .shr img{max-width:100%;max-height:calc(100% - 110px);border:2px solid #333;box-shadow:0 6px 20px #000}
+  .shr .row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.shr .row button{font:700 13px var(--px);padding:9px 12px;border:2px solid var(--gold);background:#0c0c10;color:#fff}.shr .row button.y{background:var(--gold);color:#111}
+  .shr .shx{position:absolute;right:10px;top:10px;width:36px;height:36px;border:2px solid #555;background:#0c0c10;color:#fff;font-size:16px}
   #fePrev{display:block;width:192px;height:192px;margin:4px auto 8px;border:3px solid var(--gold);background:#000;image-rendering:pixelated;touch-action:none;cursor:grab}
   #feZoom{width:192px;margin-bottom:6px;accent-color:var(--gold);touch-action:pan-x}
   .cust{padding:10px 12px!important}
@@ -270,7 +274,7 @@ try{Promise.all([document.fonts.load('12px Galmuri9'),document.fonts.load('bold 
   .sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:0 0 10px}.sgrid div{border:1px solid #2a2a36;padding:4px 2px;font:11px var(--px)}.sgrid i{display:block;font-style:normal;color:var(--dim);font-size:9px}.sgrid b{font-weight:400;font-variant-numeric:tabular-nums}
   .lbl div{cursor:pointer}.lbl div.gap{display:block;text-align:center;color:var(--dim);padding:0;cursor:default}.res.lb th{font:11px var(--px);color:var(--dim);text-align:right;padding:3px 4px}.res.lb td:nth-child(4){text-align:right;color:var(--dim);font-variant-numeric:tabular-nums}.res.lb td.up{color:var(--green)}.res.lb td:nth-child(3){color:#fff;width:auto}
   .lbl div.me{background:#ffd40022;color:var(--gold)}.lbl i{font-style:normal;color:var(--dim)}
-  .lbn{display:flex;gap:6px;justify-content:center;margin:6px 0 10px}.lbn input{font:14px var(--px);width:130px;padding:8px;background:#0c0c10;color:#fff;border:2px solid #555;text-align:center}
+  .lbn{display:flex;gap:6px;justify-content:center;margin:6px 0 10px}.lbn input{font:16px var(--px);width:130px;padding:7px 8px;background:#0c0c10;color:#fff;border:2px solid #555;text-align:center}
   .lbn button{font:700 13px var(--px);padding:8px 12px;border:2px solid var(--gold);background:var(--gold);color:#111}.lbm{font:12px var(--px);color:var(--dim);min-height:16px;margin:4px 0}
   .res .row button:active{transform:translateY(2px);box-shadow:0 1px 0 #000}
   @media (prefers-reduced-motion:reduce){.cover .ins,.chip.on em,.chip.rn i{animation:none}}
@@ -846,7 +850,28 @@ function finish(){USE.hit(d=>{d.fin=(d.fin||0)+1;d.best=Math.round(Math.min(G.cl
     <table>${rows}</table><div id="lbRes"></div><div class="row"><button type="button" id="share">${L('기록 공유','Share')}</button><button type="button" class="y" id="again">${L('다시 뛰기','Race again')}</button></div>`;
     $('result').hidden=false;lbResult();
     $('again').onclick=()=>newRace();
-    $('share').onclick=async()=>{const text=`HANDROX ${VENUE} 🖐 ${fmt(tot)} (${rk[1]})`;try{if(navigator.share){await navigator.share({text,url:SHARE_URL});return;}await navigator.clipboard.writeText(text+' '+SHARE_URL);$('share').textContent=L('복사됨!','Copied!');}catch(e){}};};}
+    $('share').onclick=()=>shareCard(tot,rk,runT);};}
+/* 기록 공유: 기록 카드 그림(1080×1350)을 만들어 보여 주고 [저장]·[공유]·[링크 복사] */
+async function shareCard(tot,rk,runT){const W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');
+  try{await document.fonts.load('40px Galmuri11');}catch(e){}
+  x.fillStyle='#111116';x.fillRect(0,0,W,H);x.save();x.globalAlpha=.9;x.fillStyle='#ffd400';x.beginPath();x.moveTo(0,0);x.lineTo(W,0);x.lineTo(W,250);x.lineTo(0,340);x.fill();x.restore();
+  const T=(t,X,Y,sz,col,al='center',st)=>{x.font=`bold ${sz}px Galmuri11, monospace`;x.textAlign=al;if(st){x.lineWidth=st;x.lineJoin='round';x.strokeStyle='#111';x.strokeText(t,X,Y);}x.fillStyle=col;x.fillText(t,X,Y);};
+  T('HANDROX',60,130,96,'#111','left');T(L('손가락으로 뛰는 하이록스','THE ULTIMATE FINGER RACE'),64,190,34,'#111','left');
+  {const c2=document.createElement('canvas');c2.width=420;c2.height=520;const q=c2.getContext('2d');q.imageSmoothingQuality='high';H3.drawTo(q,'fin',{k:.2},210,515,470);x.drawImage(c2,W-420,30);}
+  x.fillStyle='#111';x.fillRect(60,370,250,64);T(L(rk[2],rk[1]),185,416,36,'#ffd400');
+  T(fmt(tot),60,600,150,'#ffd400','left',10);T(nickOk(SAVE.nick)||'',64,660,40,'#fff','left');
+  const rows=[[L('달리기 8km','Run 8km'),runT],...ST.map((st,n)=>[L(...st.nm),G.splits[n*2+1]])];
+  rows.forEach(([n,v],i)=>{const y=740+i*60;x.fillStyle=i%2?'#1b1b22':'#16161c';x.fillRect(60,y-44,W-120,58);T(n,90,y,36,'#ddd','left');T(fmtS(v),W-90,y,36,'#fff','right');});
+  T(`${new Date().toISOString().slice(0,10).replace(/-/g,'.')}  ·  ynschoi.github.io/handrox`,W/2,H-40,28,'#777');
+  cv.toBlob(b=>{const url=URL.createObjectURL(b),fn=`HANDROX_${fmt(tot).replace(/:/g,'-')}.png`,file=new File([b],fn,{type:'image/png'});
+    const ov=el('div','shr');ov.innerHTML=`<img alt="">`;ov.firstChild.src=url;const r=el('div','row'),msg=el('div','pbn');
+    const sv=el('button','y',L('⬇️ 저장','⬇️ Save')),sh=el('button','y',L('📤 공유','📤 Share')),cp=el('button','',L('🔗 링크 복사','🔗 Copy link')),cl=el('button','shx','✕');[sv,sh,cp,cl].forEach(b=>b.type='button');
+    if(!(navigator.canShare&&navigator.canShare({files:[file]})))sh.hidden=true;r.append(sv,sh,cp);ov.append(r,msg,cl);$('result').append(ov);
+    sv.onclick=async()=>{try{const d=window.claude&&claude.use?await claude.use('downloads'):null;if(d){await d.save({filename:fn,data:b});msg.textContent=L('저장했어요','Saved');return;}}catch(e){if(e&&e.code==='declined'){msg.textContent=L('저장을 취소했어요','Save cancelled');return;}}
+      const a=document.createElement('a');a.href=url;a.download=fn;document.body.append(a);a.click();a.remove();msg.textContent=L('저장했어요','Saved');};
+    sh.onclick=async()=>{try{await navigator.share({files:[file],text:`HANDROX ${fmt(tot)} ${SHARE_URL}`});}catch(e){}};
+    cp.onclick=async()=>{try{await navigator.clipboard.writeText(`HANDROX 🖐 ${fmt(tot)} (${rk[1]}) ${SHARE_URL}`);msg.textContent=L('링크를 복사했어요','Link copied');}catch(e){msg.textContent=SHARE_URL;}};
+    cl.onclick=()=>{ov.remove();URL.revokeObjectURL(url);};},'image/png');}
 
 /* ───── 리더보드 ─────
    기록 저장소: claude.ai 페이지의 공유 DB (scores/<사람 id> 한 줄 = 그 사람 최고 기록. 자기 줄만 쓸 수 있음).
