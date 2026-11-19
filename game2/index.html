@@ -960,7 +960,8 @@ if(window.ResizeObserver){let rh=0;new ResizeObserver(()=>{const h=game.clientHe
 window.visualViewport&&visualViewport.addEventListener('resize',layout);
 [300,1000,2500].forEach(t=>setTimeout(()=>{fitApp();layout();},t));
 $('pano').onload=layout;
-setLang('ko');idle();layout();setPow(0);
+function autoLang(){try{const ls=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'']).join(',').toLowerCase();if(/(^|,)ko/.test(ls))return 'ko';if((Intl.DateTimeFormat().resolvedOptions().timeZone||'')==='Asia/Seoul')return 'ko';}catch(e){}return 'en';}   /* 폰 언어가 한국어거나 한국 시간대면 한국어, 아니면 영어 */
+setLang(autoLang());[...$('lsel').children].forEach(x=>x.classList.toggle('on',x.dataset.l===lang));idle();layout();setPow(0);
 </script>
 </body>
 </html>
