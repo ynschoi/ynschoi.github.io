@@ -122,20 +122,13 @@ function updateLod() {
 const stage = $("stage");
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.outputEncoding = THREE.sRGBEncoding;
-// diorama look: filmic tone, soft shadows from a sun that follows her
-renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.25;
-renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 stage.appendChild(renderer.domElement);
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(40, 1, .05, 100); camera.position.set(0, .8, 3.7); scene.add(camera);
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true; controls.dampingFactor = .1; controls.enablePan = false; controls.minDistance = 1.7; controls.maxDistance = 6; controls.rotateSpeed = .5;
-const hemiL = new THREE.HemisphereLight(0xdfe8ff, 0x6a5a78, .62); scene.add(hemiL);
-const key = new THREE.DirectionalLight(0xffffff, .25); key.position.set(-2, 3, 4); camera.add(key);   // soft fill from the viewer
-const sun = new THREE.DirectionalLight(0xfff0d8, 1.05);                                               // warm key light with shadows
-sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0004; sun.shadow.normalBias = .0015;
-Object.assign(sun.shadow.camera, { left: -.42, right: .42, top: .42, bottom: -.42, near: .05, far: 3 });
-scene.add(sun); scene.add(sun.target);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x6a6aa0, .95));
+const key = new THREE.DirectionalLight(0xffffff, .85); key.position.set(-2, 3, 4); camera.add(key);
 const ramp = (() => { const t = new THREE.DataTexture(new Uint8Array([120, 255]), 2, 1, THREE.RedFormat); t.minFilter = t.magFilter = THREE.NearestFilter; t.needsUpdate = true; return t; })();
 
 const UP = new THREE.Vector3(0, 1, 0);
