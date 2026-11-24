@@ -600,6 +600,7 @@ function makeCleanDoll(outfitId) {
     }
     hips.add((() => { const m = cleanBox(TW + .8, 2, TD + .6, P, (f, i, j) => hike ? (leo(i, j) || O.shorts) : O.shorts, { pz: [17, 4], nz: [17, 4], px: [10, 4], nx: [10, 4] }); m.position.y = -.3 * P; return m; })());
     root.userData.rig = { hips, legs, chest, neck, arms, legLen: LEG * P, thighLen: 6 * P };
+    body.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
   };
   root.userData.setOutfit = build;
   root.userData.pose = (act, k, time) => {
@@ -835,7 +836,15 @@ function buildGlobalTerrain(L) {          // L: one level per 0.5° cell, read f
   geo.setAttribute("normal", new THREE.BufferAttribute(nor.subarray(0, q * 12), 3));
   geo.setAttribute("color", new THREE.BufferAttribute(col.subarray(0, q * 12), 3));
   geo.setIndex(new THREE.BufferAttribute(idx, 1));
-  terrain.clear(); terrain.add(new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ vertexColors: true })));
+  { // fake ambient occlusion: the lower edge of every wall is darker
+    for (let k = 0; k < q; k++) {
+      const o = k * 12; let rmax = 0; const rr = [];
+      for (let v = 0; v < 4; v++) { const x = pos[o + v * 3], y = pos[o + v * 3 + 1], z = pos[o + v * 3 + 2], r = Math.sqrt(x * x + y * y + z * z); rr.push(r); rmax = Math.max(rmax, r); }
+      for (let v = 0; v < 4; v++) if (rr[v] < rmax - 1e-5) { col[o + v * 3] *= .55; col[o + v * 3 + 1] *= .55; col[o + v * 3 + 2] *= .6; }
+    }
+  }
+  terrain.clear(); const tmesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ vertexColors: true })); tmesh.castShadow = tmesh.receiveShadow = true; terrain.add(tmesh);
+  plantTrees();
   for (const f of flags.values()) { const fn = f.root.position.clone().normalize(); f.root.position.copy(fn.multiplyScalar(1 + groundAt(fn))); }
   for (const id in traceOf) placeOnGround(traceOf[id].root, TRIPS.find(x => x.id === id));
   placeAnchor(anchor.position.clone().normalize(), true);
@@ -915,6 +924,82 @@ function setSky(id, instant) {
   if (instant || reduceMotion) { $(next).style.transition = "none"; $(skyFront).style.transition = "none"; }
   $(next).classList.add("on"); $(skyFront).classList.remove("on"); skyFront = next;
   if (instant) requestAnimationFrame(() => { $("skyA").style.transition = ""; $("skyB").style.transition = ""; });
+}
+
+
+/* ---------- scenery: little voxel trees around each place, by climate ---------- */
+const trees = new THREE.Group(); globeMesh.add(trees);
+const TREE_COL = { trunk: "#7a5236", trunkD: "#5e3e28", leaf: "#4f9a3c", leafL: "#6cb84a", leafD: "#3b7a2e", pine: "#2f6b4f", pineL: "#3f8460",
+  palm: "#5fae45", blossom: "#eaa6c6", blossomL: "#f4c2d8", lilac: "#b9a3e3", snow: "#f4f8ff", olive: "#8aa65a" };
+function treeKind(sky) { return { beach: "palm", jungle: "broad", dusk: "pine", cold: "snowpine", warm: "blossom", city: "lilac" }[sky] || "broad"; }
+function treeBlocks(kind, h) {        // [x, y, z, sx, sy, sz, color] in tree-local units (y up), h ≈ 1
+  const B = [];
+  if (kind === "palm") {
+    B.push([0, .32, 0, .07, .64, .07, "trunk"], [.03, .66, 0, .07, .1, .07, "trunkD"]);
+    for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) B.push([dx * .15, .7, dz * .15, dx ? .28 : .09, .05, dz ? .28 : .09, "palm"]);
+    B.push([0, .74, 0, .12, .08, .12, "leafL"]);
+  } else if (kind === "pine" || kind === "snowpine") {
+    B.push([0, .1, 0, .09, .2, .09, "trunk"]);
+    [[.26, .42], [.19, .62], [.12, .8]].forEach(([w, y], i) => { B.push([0, y, 0, w * 2, .2, w * 2, i % 2 ? "pineL" : "pine"]); if (kind === "snowpine") B.push([0, y + .11, 0, w * 1.6, .04, w * 1.6, "snow"]); });
+  } else {
+    const leaf = kind === "blossom" ? ["blossom", "blossomL"] : kind === "lilac" ? ["lilac", "blossomL"] : ["leaf", "leafL"];
+    B.push([0, .2, 0, .1, .4, .1, "trunk"], [0, .52, 0, .5, .32, .5, leaf[0]], [.05, .74, -.03, .32, .16, .32, leaf[1]]);
+  }
+  return B;
+}
+function plantTrees() {
+  trees.clear();
+  const list = [], M = new THREE.Matrix4(), Q = new THREE.Quaternion(), S = new THREE.Vector3(), Pv = new THREE.Vector3(), col = new THREE.Color();
+  TRIPS.forEach((t, ti) => {
+    const kind = treeKind(t.sky), c = ll2v(t.lat, t.lng).normalize();
+    for (let k = 0; k < 26; k++) {
+      const r = 1.3 + hash(ti * 31 + k, 7) * 3.4, a = hash(ti * 17 + k, 3) * Math.PI * 2;      // degrees away from the spot (her own spot stays clear)
+      const lat = t.lat + Math.cos(a) * r, lng = t.lng + Math.sin(a) * r / Math.max(.3, Math.cos(t.lat * Math.PI / 180));
+      const n = ll2v(lat, lng).normalize(), g = groundAt(n); if (!g) continue;              // land only
+      const hgt = .036 + hash(ti, k * 5) * .022, yaw = hash(k, ti * 3) * 6.28;   // a bit shorter than her
+      for (const b of treeBlocks(kind, hgt)) list.push([n, g, hgt, yaw, b]);
+    }
+  });
+  const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshLambertMaterial(), list.length);
+  const up = new THREE.Vector3(0, 1, 0);
+  list.forEach(([n, g, h, yaw, b], i) => {
+    Q.setFromUnitVectors(up, n).multiply(new THREE.Quaternion().setFromAxisAngle(up, yaw));
+    Pv.set(b[0] * h, b[1] * h, b[2] * h).applyQuaternion(Q).add(n.clone().multiplyScalar(1 + g));
+    S.set(b[3] * h, b[4] * h, b[5] * h); M.compose(Pv, Q, S); mesh.setMatrixAt(i, M);
+    mesh.setColorAt(i, col.set(TREE_COL[b[6]]).convertSRGBToLinear());
+  });
+  mesh.instanceMatrix.needsUpdate = true; if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+  mesh.castShadow = mesh.receiveShadow = true; mesh.frustumCulled = false; trees.add(mesh);
+}
+
+/* ---------- weather around her: snow in the cold, drifting petals elsewhere ---------- */
+const FX_N = 260, fxPos = new Float32Array(FX_N * 3), fxVel = new Float32Array(FX_N);
+for (let i = 0; i < FX_N; i++) { fxPos[i * 3] = (hash(i, 1) - .5) * .8; fxPos[i * 3 + 1] = hash(i, 2) * .5; fxPos[i * 3 + 2] = (hash(i, 3) - .5) * .8; fxVel[i] = .5 + hash(i, 4); }
+const fxGeo = new THREE.BufferGeometry(); fxGeo.setAttribute("position", new THREE.BufferAttribute(fxPos, 3));
+const fxMat = new THREE.PointsMaterial({ color: 0xffffff, size: .006, transparent: true, opacity: .9, depthWrite: false });
+const fx = new THREE.Points(fxGeo, fxMat); fx.frustumCulled = false; anchor.add(fx);
+function weatherFor(t) { return t.sky === "cold" ? "snow" : (t.sky === "warm" || t.sky === "city" || t.sky === "dusk") ? "petal" : (t.sky === "jungle" ? "firefly" : "none"); }
+function stepWeather(dt, time) {
+  const w = weatherFor(here); fx.visible = w !== "none" && !reduceMotion;
+  if (!fx.visible) return;
+  fxMat.color.set(w === "snow" ? 0xffffff : w === "petal" ? 0xffb7d0 : 0xfff3a0); fxMat.size = w === "snow" ? .006 : w === "petal" ? .007 : .004;
+  for (let i = 0; i < FX_N; i++) {
+    const v = fxVel[i];
+    if (w === "firefly") { fxPos[i * 3 + 1] = .03 + (Math.sin(time * .7 * v + i) * .5 + .5) * .18; fxPos[i * 3] += Math.sin(time + i) * .0004; }
+    else {
+      fxPos[i * 3 + 1] -= dt * (w === "snow" ? .05 : .035) * v;
+      fxPos[i * 3] += dt * (w === "petal" ? .03 : .008) * Math.sin(time * 1.3 + i);
+      if (fxPos[i * 3 + 1] < 0) { fxPos[i * 3 + 1] = .5; fxPos[i * 3] = (hash(i, time) - .5) * .8; }
+    }
+  }
+  fxGeo.attributes.position.needsUpdate = true;
+}
+function followSun() {   // keep the sun (and its small, sharp shadow box) over her, light from the upper side
+  const p = anchor.getWorldPosition(new THREE.Vector3()), n = p.clone().normalize();
+  const e = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), n); if (e.lengthSq() < 1e-6) e.set(1, 0, 0); e.normalize();
+  const no = new THREE.Vector3().crossVectors(n, e);
+  sun.target.position.copy(p); sun.position.copy(p).addScaledVector(n, 1.2).addScaledVector(e, .55).addScaledVector(no, .35);
+  sun.target.updateMatrixWorld();
 }
 
 // height under her is eased, so crossing block steps feels like a smooth slope instead of a jolt
@@ -1020,7 +1105,7 @@ function tick() {
     tr.root.getWorldPosition(wp); const d = camera.position.clone().sub(wp).applyQuaternion(tr.root.getWorldQuaternion(new THREE.Quaternion()).invert());
     tr.turn.rotation.y = Math.atan2(d.x, d.z) + .4; tr.doll.userData.pose("idle", 0, time);
   }
-  updateLod();
+  updateLod(); followSun();
   { const op = sm(2.7, 3.3, camera.position.length());   // rim only once nearly the whole globe is in view
     rimMesh.material.opacity = op; rimMesh.visible = op > .01; }
   // facing: voxel dolls face where they walk (else face you); the 2.5D board always faces you
@@ -1049,6 +1134,7 @@ function tick() {
     if (pt > .8) puffs.clear();
   }
   if (char) char.userData.pose(act, Math.max(0, Math.min(1, k)), time);
+  stepWeather(Math.min(.05, time - (tick.last || time)), time); tick.last = time;
   // flag labels
   // flag labels: nearest first; a label that would overlap one already placed stays hidden
   const w = stage.clientWidth, h = stage.clientHeight, cand = [];
@@ -1079,7 +1165,7 @@ function tick() {
   renderer.render(scene, camera);
   requestAnimationFrame(tick);
 }
-globeMesh.material = calmPixelMaterial(earthTexture(256));
+globeMesh.material = calmPixelMaterial(earthTexture(256)); globeMesh.receiveShadow = true;
 syncCard(); markActive(); restoreTraces(); setSky(here.id, true);
 requestAnimationFrame(tick);
 loadLevels().then(L => { if (L) setTimeout(() => buildGlobalTerrain(L), 50); });
