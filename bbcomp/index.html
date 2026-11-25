@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>보디빌딩 대회일정 2026</title>
+<meta name="description" content="2026 전국 보디빌딩 대회 일정 — 연맹·지역 필터, 관심 대회, D-day, 캘린더 추가">
+<meta name="theme-color" content="#111311">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+:root{
+  --bg:#111311;--panel:#1a1d1a;--panel2:#222622;--line:#2e332e;
+  --text:#f1f3ee;--muted:#9aa196;--accent:#d4f55a;--accent-ink:#141a05;
+  --star:#ffcf4a;--danger:#ff6b6b;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text)}
+body{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR",sans-serif;
+  font-size:15px;line-height:1.4;padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+button,input,select{font:inherit;color:inherit}
+a{color:var(--accent)}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px}
+
+header{padding:calc(18px + env(safe-area-inset-top)) 0 10px;border-bottom:2px solid var(--accent)}
+.eyebrow{color:var(--accent);font-weight:800;font-size:13px;letter-spacing:.02em}
+h1{margin:4px 0 2px;font-size:28px;line-height:1.15;font-weight:900;letter-spacing:-.02em}
+h1 em{font-style:normal;color:var(--accent)}
+.sub{color:var(--muted);font-size:13px}
+
+.next{margin:14px 0 4px;background:var(--accent);color:var(--accent-ink);border-radius:14px;padding:12px 14px;
+  display:flex;align-items:center;gap:12px;cursor:pointer;border:0;width:100%;text-align:left}
+.next .dd{font-size:26px;font-weight:900;min-width:64px;text-align:center}
+.next .t{font-weight:800}
+.next .s{font-size:12px;opacity:.75}
+
+.controls{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0 8px;border-bottom:1px solid var(--line)}
+.search{display:flex;gap:8px}
+.search input{flex:1;min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+.search input::placeholder{color:var(--muted)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:8px 0 2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:5px 11px;font-size:13px;cursor:pointer;white-space:nowrap}
+.chip.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+.toggles{display:flex;gap:6px;flex-wrap:wrap;padding-top:6px}
+.count{color:var(--muted);font-size:12px;padding-top:6px}
+
+.month{margin-top:22px}
+.month h2{font-size:20px;margin:0 0 8px;display:flex;align-items:baseline;gap:8px}
+.month h2 small{color:var(--muted);font-size:12px;font-weight:500}
+.day{display:flex;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.day.past{opacity:.45}
+.day.today .dnum{background:var(--accent);color:var(--accent-ink)}
+.dcol{flex:none;width:52px;text-align:center}
+.dnum{display:block;border-radius:10px;background:var(--panel2);padding:6px 0;font-weight:900;font-size:18px;line-height:1.1}
+.dnum small{display:block;font-size:11px;font-weight:600;opacity:.8}
+.dow-6{color:#7fb3ff}.dow-0{color:#ff8a8a}
+.evs{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.ev{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:9px 11px;cursor:pointer;display:flex;gap:8px;align-items:flex-start}
+.ev.major{border-color:#5a5320;background:linear-gradient(90deg,#2a2812,var(--panel) 60%)}
+.ev .main{flex:1;min-width:0}
+.ev .title{font-weight:700;word-break:keep-all}
+.ev .meta{font-size:12px;color:var(--muted);margin-top:2px;word-break:keep-all}
+.ev .fee{color:var(--accent);font-weight:700}
+.badge{display:inline-block;font-size:11px;font-weight:800;border-radius:6px;padding:2px 6px;margin-right:6px;vertical-align:1px;color:#111}
+.fav{flex:none;background:none;border:0;font-size:20px;line-height:1;padding:0 2px;cursor:pointer;color:#555b55}
+.fav.on{color:var(--star)}
+.empty{color:var(--muted);text-align:center;padding:48px 0}
+
+/* calendar */
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin:18px 0 8px}
+.cal-head h2{margin:0;font-size:20px}
+.cal-head button{background:var(--panel);border:1px solid var(--line);border-radius:10px;width:40px;height:36px;cursor:pointer;font-size:18px}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.grid .wd{text-align:center;font-size:12px;color:var(--muted);padding:2px 0}
+.cell{aspect-ratio:1/1.05;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0}
+.cell.blank{background:none;border:0;cursor:default}
+.cell.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.cell.today .n{background:var(--accent);color:var(--accent-ink);border-radius:6px;padding:0 4px}
+.cell .n{font-size:13px;font-weight:700}
+.dots{display:flex;flex-wrap:wrap;gap:2px;justify-content:center}
+.dot{width:6px;height:6px;border-radius:50%}
+.cell .c{font-size:10px;color:var(--muted)}
+.daylist{margin-top:14px}
+
+/* tabs */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;background:rgba(17,19,17,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);
+  display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:10}
+nav.tabs button{flex:1;background:none;border:0;padding:10px 0 12px;cursor:pointer;color:var(--muted);font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav.tabs button .i{font-size:19px;line-height:1}
+nav.tabs button.on{color:var(--accent);font-weight:700}
+
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:20;display:none}
+.scrim.open{display:block}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:21;background:var(--panel);border-radius:18px 18px 0 0;
+  padding:18px 16px calc(18px + env(safe-area-inset-bottom));max-width:640px;margin:0 auto;transform:translateY(105%);transition:transform .22s ease;max-height:85vh;overflow:auto}
+.sheet.open{transform:none}
+.sheet h3{margin:6px 0 4px;font-size:21px;word-break:keep-all}
+.sheet dl{display:grid;grid-template-columns:72px 1fr;gap:8px 10px;margin:14px 0;font-size:14px}
+.sheet dt{color:var(--muted)}
+.sheet dd{margin:0;word-break:keep-all}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{flex:1 1 140px;border:1px solid var(--line);background:var(--panel2);border-radius:12px;padding:11px 12px;cursor:pointer;text-align:center;text-decoration:none;color:var(--text);font-weight:600}
+.btn.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.warn{color:var(--danger)}
+.form label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+.form input,.form select{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.row2{display:flex;gap:8px}.row2>div{flex:1;min-width:0}
+
+.info{margin-top:20px;font-size:13px;color:var(--muted)}
+.info section{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.info h3{color:var(--text);font-size:15px;margin:0 0 6px}
+.info ul{margin:0;padding-left:18px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 10px}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--text);color:var(--bg);
+  padding:8px 14px;border-radius:999px;font-size:13px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:30}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">2026 · 3월–12월</div>
+    <h1>전국 보디빌딩 <em>대회 일정</em></h1>
+    <div class="sub">PCA · NPCA · WNGP · MUSA · ANBC · NPC · NABBA · AFEX · AGP 외</div>
+    <button class="next" id="next" hidden></button>
+  </header>
+
+  <div class="controls" id="controls">
+    <div class="search"><input id="q" type="search" placeholder="지역·대회명 검색 (예: 서울, 파이널)" autocomplete="off"></div>
+    <div class="chips" id="fedChips"></div>
+    <div class="toggles">
+      <button class="chip" id="tUpcoming">지난 대회 숨김</button>
+      <button class="chip" id="tMajor">★ 메이저만</button>
+      <button class="chip" id="tFav">♥ 관심만</button>
+    </div>
+    <div class="count" id="count"></div>
+  </div>
+
+  <main id="view"></main>
+</div>
+
+<nav class="tabs">
+  <button data-tab="list" class="on"><span class="i">☰</span>목록</button>
+  <button data-tab="cal"><span class="i">▦</span>달력</button>
+  <button data-tab="add"><span class="i">＋</span>직접 추가</button>
+  <button data-tab="info"><span class="i">ⓘ</span>안내</button>
+</nav>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ───────── 데이터 ─────────
+   형식: "MM-DD[~DD] [*] 연맹 내용 [| 키=값; 키=값]"
+   * = 메이저(★) 대회.  키: 장소, 참가비, 마감, 비고
+   출처: @gacksung 2026 대회일정(4–12월), @bdink.official(3월·해외), 11–12월 상세 공지(11.24 업데이트) */
+const YEAR = 2026;
+const RAW = `
+03-07~08 몬스터짐 몽골 내추럴/오픈 리저널 | 장소=몽골
+03-21 PCA 창원
+03-22 NPC 내추럴/오픈 리저널
+03-22 NPCA 창원
+03-28 PCA 경남
+03-29 NPCA 경남
+04-04 WNGP 당진
+04-04 PCA 서울
+04-05 NPCA 서울
+04-05 MUSA 당진
+04-05 NPC 내추럴/오픈 리저널
+04-11 * PCA 아산 챔피언십
+04-11 WNGP 구미
+04-12 MUSA 구미
+04-12 * NPCA 아시안 챔피언십
+04-18 몬스터짐 내추럴 리저널
+04-18 PCA 광주
+04-18 WNGP 전라광주
+04-19 MUSA 전라광주
+04-19 NPCA 광주
+04-25~26 * AFEX 알파 챔피언십
+04-25 PCA 전북
+04-25 WNGP 서울
+04-25 NABBA 노비스 퍼스트
+04-26 NABBA 아마추어 클래식 서울
+04-26 MUSA 서울
+04-26 NPCA 전북
+04-26 NPC 내추럴/오픈 리저널
+04-26 ANBC 내추럴
+05-02 WNGP 울산
+05-02 PCA 성남
+05-02~03 몬스터짐 몽골 내추럴/오픈 · 프로 퀄리파이어 | 장소=몽골
+05-03 NPCA 성남
+05-03 MUSA 울산
+05-03 AGONAS 서울
+05-09~10 * 기타 김준호 클래식 코리아
+05-09 WNGP 강북
+05-09 PCA 김포
+05-10 NPCA 김포
+05-10 MUSA 강북
+05-16 WNGP 강남
+05-16 PCA 대구
+05-16 WNGP·MUSA 홍콩 | 장소=홍콩
+05-17 NPCA 대구
+05-17 MUSA 강남
+05-17 NPC 내추럴/오픈 리저널
+05-23 NPC 오픈 리저널
+05-23 * AGP 프로 퀄리파이어
+05-23 WNGP 오산
+05-23 AFEX 노비스 클래식
+05-23 PCA 김해
+05-24 NPCA 김해
+05-24 MUSA 오산
+05-24 NPC 내추럴 리저널
+05-24 * AGP 내추럴 프로 퀄리파이어/프로쇼
+05-30 WNGP 부천
+05-30 PCA 제주
+05-31 NPCA 제주
+05-31 MUSA 부천
+05-31 ANBC 내추럴
+06-06 PCA 화성
+06-07 NPCA 화성
+06-13~14 * NABBA 아시아 오픈 챔피언십
+06-13 몬스터짐 블랙콤 코리아 내추럴 리저널
+06-13 WNGP 창원
+06-13 PCA 인천
+06-14 MUSA 창원
+06-14 NPCA 인천
+06-20 WNGP 의정부
+06-20 PCA 대전
+06-21 NPCA 대전
+06-21 MUSA 의정부
+06-21 NPC 내추럴/오픈 리저널
+06-27 * AFEX 프로 퀄리파이어 서울
+06-27 WNGP 안산
+06-27 PCA 양산
+06-28 NPCA 양산
+06-28 MUSA 안산
+06-28 ANBC 내추럴
+07-04 WNGP 파주
+07-04 PCA 부산
+07-04 WNGP·MUSA 일본 | 장소=일본
+07-05 NPCA 부산
+07-05 MUSA 파주
+07-11~12 몬스터짐 압도 코리아 (내추럴·오픈·프로쇼)
+07-11~12 * NABBA 아마추어 클래식 부산 · ACB
+07-11 WNGP 평택
+07-11 PCA 울산
+07-12 NPCA 울산
+07-12 MUSA 평택
+07-18 AGONAS 광명 안양
+07-18 WNGP 김포
+07-18 PCA 세종
+07-19 NPCA 세종
+07-19 MUSA 김포
+07-19 ANBC 내추럴
+07-25~26 * AFEX 프로 퀄리파이어 부산
+07-25 * WNGP 경기 파이널
+07-25 PCA 천안
+07-26 NPCA 천안
+07-26 * MUSA 경기 파이널
+08-01 WNGP 성남
+08-02 MUSA 성남
+08-08 WNGP 천안
+08-08 PCA 광주
+08-09 NPCA 광주
+08-09 MUSA 천안
+08-15~16 * 기타 BOB 챔피언십
+08-15 PCA 수원
+08-16 NPCA 수원
+08-16 NPC 내추럴/오픈 리저널
+08-22~23 * 몬스터짐 아시안 챔피언십 (오픈·프로 퀄리파이어·프로쇼)
+08-22 WNGP 안양
+08-22 PCA 부천
+08-23 NPCA 부천
+08-23 MUSA 안양
+08-29~30 * AFEX & DRAX 챔피언십
+08-29 WNGP 의왕
+08-29 PCA 고양
+08-30 NPCA 고양
+08-30 MUSA 의왕
+08-30 ANBC 내추럴
+09-05~06 * 몬스터짐 내추럴 리저널 / 프로 퀄리파이어 / 프로쇼
+09-05 WNGP 제주
+09-05 PCA 창원
+09-06 NPCA 창원
+09-06 MUSA 제주
+09-06 AGP 필리핀 프로 퀄리파이어 | 장소=필리핀
+09-12~13 * NABBA 그랑프리
+09-12 NPC 내추럴/오픈 리저널
+09-12 WNGP 대구
+09-12 PCA 용인
+09-13 NPCA 용인
+09-13 MUSA 대구
+09-19 WNGP 인천
+09-19 * AFEX 오메가 파이널
+09-19 PCA 슈퍼시리즈
+09-20 NPCA 슈퍼시리즈
+09-20 MUSA 인천
+09-20 ANBC 내추럴
+09-20 NPC 내추럴/오픈 리저널
+09-26 AGP 내추럴 프로쇼
+09-26~27 * 기타 아마추어 올림피아
+09-26~27 AGP 프로 올스타즈
+10-03 WNGP 남양주
+10-03 PCA 시흥
+10-04 NPCA 시흥
+10-04 MUSA 남양주
+10-10~11 * NABBA 프로쇼
+10-10 AFEX 노비스 클래식 B
+10-10 WNGP 군포
+10-10 PCA 대전
+10-11 NPCA 대전
+10-11 MUSA 군포
+10-17 WNGP 시흥
+10-17 PCA 청주
+10-18 NPCA 청주
+10-18 MUSA 시흥
+10-18 NPC 내추럴/오픈 리저널
+10-24 WNGP 일산
+10-24 PCA 대구
+10-25 NPCA 대구
+10-25 MUSA 일산
+10-25 ANBC 내추럴
+10-25 NPC 내추럴/오픈 리저널
+10-25 * AGP 내추럴 프로 퀄리파이어
+10-31 WNGP 양주
+10-31 PCA 부산
+11-01 MUSA 양주
+11-01 NPCA 부산
+11-07 NABBA 노비스 파이널
+11-07 WNGP 용인
+11-07 PCA 포항
+11-08 NPCA 포항
+11-08 MUSA 용인
+11-14 WNGP 광명
+11-14 PCA 안양
+11-15 NPCA 안양
+11-15 MUSA 광명
+11-21 WNGP 대전
+11-21 PCA 안산
+11-22 NPCA 안산
+11-22 MUSA 대전
+11-28 PCA 서울 포인트리그 | 장소=경기 파주 · 엠파이브; 참가비=16만 원
+11-28 NPCA 뉴 빅터 서울 | 장소=경기 파주 · 엠파이브 (접수처엔 ‘서울 인근’으로 안내); 참가비=15만 원
+11-29 NPCA 서울 포인트리그 | 장소=경기 파주 · 엠파이브; 참가비=18만 원
+11-28 WNGP 부산 | 장소=부산 · 부산보건대 체육관; 참가비=18만 원; 비고=선수 접수 마감
+11-29 MUSA 부산 | 장소=부산 · 부산보건대 체육관; 참가비=18만 원; 비고=선수 접수 마감
+11-29 ANBC 부산 | 장소=부산 · 부산보건대 체육관; 참가비=18만 원; 비고=선수 접수 마감
+11-29 기타 울산시장배 | 장소=울산 · 복합혁신센터 13:00; 비고=접수 마감
+12-05 WNGP 고양 | 장소=경기 파주 · 엠파이브; 참가비=18만 원; 마감=11-29
+12-06 MUSA 고양 | 장소=경기 파주 · 엠파이브; 참가비=18만 원; 마감=11-29
+12-06 ANBC 고양 / ANBC 프로전 | 장소=경기 파주 · 엠파이브; 참가비=18만 원~; 마감=11-29
+12-12 * WNGP 화성 · 하반기 파이널 | 장소=충남 천안 · 남서울대 성암문화체육관; 참가비=일반 18만 원 · 파이널 28만 원; 마감=12-06
+12-13 * MUSA 화성 · 하반기 파이널 | 장소=충남 천안 · 남서울대 성암문화체육관; 참가비=일반 18만 원 · 파이널 28만 원; 마감=12-06
+`;
+
+const FEDS = {
+  PCA:{c:'#6fd3ff',reg:'https://coachn.co.kr',regName:'코치엔'},
+  NPCA:{c:'#9fb8ff',reg:'https://coachn.co.kr',regName:'코치엔'},
+  WNGP:{c:'#d4f55a',reg:'https://unmo.kr',regName:'운동의모든것'},
+  MUSA:{c:'#ffb36b',reg:'https://unmo.kr',regName:'운동의모든것'},
+  'WNGP·MUSA':{c:'#e8d860',reg:'https://unmo.kr',regName:'운동의모든것'},
+  ANBC:{c:'#7ff0b8',reg:'https://unmo.kr',regName:'운동의모든것'},
+  NPC:{c:'#ff8fa3'},
+  NABBA:{c:'#c9a2ff'},
+  AFEX:{c:'#ff7a5c'},
+  AGP:{c:'#f5d76e'},
+  몬스터짐:{c:'#5ce0d8'},
+  AGONAS:{c:'#c0c6bc'},
+  기타:{c:'#b9b9b9'},
+  내일정:{c:'#ffffff'},
+};
+
+function parse(){
+  const out=[];
+  RAW.trim().split('\n').forEach((line,i)=>{
+    let [head,extra]=line.split(' | ');
+    const m=head.match(/^(\d\d)-(\d\d)(?:~(\d\d))?\s+(\*\s+)?(\S+)\s*(.*)$/);
+    if(!m) return;
+    const [,mm,dd,end,star,fed,rest]=m;
+    const ev={id:'d'+i,date:`${YEAR}-${mm}-${dd}`,end:end?`${YEAR}-${mm}-${end}`:null,major:!!star,fed,name:rest};
+    if(extra) extra.split('; ').forEach(kv=>{const k=kv.indexOf('=');ev[kv.slice(0,k)]=kv.slice(k+1)});
+    if(ev['마감']) ev['마감']=`${YEAR}-${ev['마감']}`;
+    out.push(ev);
+  });
+  return out;
+}
+
+/* ───────── 상태 ───────── */
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
+          set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const state={
+  tab:'list', q:'', feds:new Set(), upcoming:LS.get('bb.upcoming',true), major:false, favOnly:false,
+  favs:new Set(LS.get('bb.favs',[])), custom:LS.get('bb.custom',[]),
+  calMonth:null, calSel:null,
+};
+let BASE=parse();
+const all=()=>BASE.concat(state.custom.map(c=>({...c,fed:'내일정'})));
+
+const $=s=>document.querySelector(s);
+const pad=n=>String(n).padStart(2,'0');
+const todayStr=(()=>{const d=new Date();return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`})();
+const toDate=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const WD='일월화수목금토';
+const dow=s=>toDate(s).getDay();
+const daysUntil=s=>Math.round((toDate(s)-toDate(todayStr))/864e5);
+const endOf=e=>e.end||e.date;
+const title=e=>e.fed==='기타'||e.fed==='내일정'?e.name:`${e.fed} ${e.name}`.trim();
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtMD=s=>{const d=toDate(s);return `${d.getMonth()+1}.${pad(d.getDate())}(${WD[d.getDay()]})`};
+const fmtRange=e=>e.end?`${fmtMD(e.date)}–${fmtMD(e.end)}`:fmtMD(e.date);
+const ddLabel=n=>n===0?'D-DAY':n>0?`D-${n}`:`D+${-n}`;
+
+function filtered(){
+  const q=state.q.trim().toLowerCase();
+  return all().filter(e=>{
+    if(state.upcoming && endOf(e)<todayStr) return false;
+    if(state.major && !e.major) return false;
+    if(state.favOnly && !state.favs.has(e.id)) return false;
+    if(state.feds.size){
+      const f=e.fed==='WNGP·MUSA'?['WNGP','MUSA']:[e.fed];
+      if(!f.some(x=>state.feds.has(x))) return false;
+    }
+    if(q){const hay=(title(e)+' '+(e['장소']||'')+' '+(e['비고']||'')).toLowerCase();
+      if(!q.split(/\s+/).every(w=>hay.includes(w))) return false;}
+    return true;
+  }).sort((a,b)=>a.date.localeCompare(b.date)||(b.major-a.major)||a.fed.localeCompare(b.fed));
+}
+
+/* ───────── 렌더 ───────── */
+function badge(e){const c=(FEDS[e.fed]||FEDS.기타).c;return `<span class="badge" style="background:${c}">${esc(e.fed==='내일정'?'MY':e.fed)}</span>`}
+function evCard(e){
+  const meta=[e.end&&esc(fmtRange(e)), e['장소']&&esc(e['장소']), e['참가비']&&`<span class="fee">${esc(e['참가비'])}</span>`,
+    e['마감']&&esc(`접수 마감 ${fmtMD(e['마감'])}`), e['비고']&&esc(e['비고'])].filter(Boolean).join(' · ');
+  return `<div class="ev${e.major?' major':''}" data-id="${e.id}">
+    <div class="main"><div class="title">${badge(e)}${e.major?'<span style="color:var(--star)">★ </span>':''}${esc(title(e))}</div>
+    ${meta?`<div class="meta">${meta}</div>`:''}</div>
+    <button class="fav${state.favs.has(e.id)?' on':''}" data-fav="${e.id}" aria-label="관심 대회">${state.favs.has(e.id)?'♥':'♡'}</button></div>`;
+}
+function dayBlock(date,evs){
+  const d=toDate(date),dw=d.getDay();
+  const cls=['day',date<todayStr&&evs.every(e=>endOf(e)<todayStr)?'past':'',date===todayStr?'today':''].join(' ');
+  return `<div class="${cls}" id="day-${date}"><div class="dcol"><span class="dnum dow-${dw}">${d.getDate()}<small>${WD[dw]}</small></span></div>
+    <div class="evs">${evs.map(evCard).join('')}</div></div>`;
+}
+function groupByDate(list){const g=new Map();list.forEach(e=>{if(!g.has(e.date))g.set(e.date,[]);g.get(e.date).push(e)});return g}
+
+function renderList(){
+  const list=filtered();
+  $('#count').textContent=`${list.length}개 대회`;
+  if(!list.length){$('#view').innerHTML=`<div class="empty">조건에 맞는 대회가 없어요.<br>필터를 바꿔보세요.</div>`;return}
+  const byMonth=new Map();
+  list.forEach(e=>{const m=+e.date.slice(5,7);if(!byMonth.has(m))byMonth.set(m,[]);byMonth.get(m).push(e)});
+  let h='';
+  byMonth.forEach((evs,m)=>{
+    h+=`<section class="month"><h2>${m}월 <small>${evs.length}개</small></h2>`;
+    groupByDate(evs).forEach((es,d)=>h+=dayBlock(d,es));
+    h+='</section>';
+  });
+  $('#view').innerHTML=h;
+}
+
+function renderCal(){
+  const list=filtered();
+  $('#count').textContent=`${list.length}개 대회`;
+  if(!state.calMonth){const t=toDate(todayStr);state.calMonth=t.getFullYear()===YEAR?t.getMonth()+1:3}
+  const m=state.calMonth, first=new Date(YEAR,m-1,1), days=new Date(YEAR,m,0).getDate();
+  const byDay=new Map();
+  list.forEach(e=>{ // 기간 대회는 각 날짜에 표시
+    let d=toDate(e.date);const end=toDate(endOf(e));
+    while(d<=end){const k=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;if(!byDay.has(k))byDay.set(k,[]);byDay.get(k).push(e);d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1)}
+  });
+  let g=[...WD].map((w,i)=>`<div class="wd dow-${i}">${w}</div>`).join('');
+  for(let i=0;i<first.getDay();i++) g+='<div class="cell blank"></div>';
+  for(let d=1;d<=days;d++){
+    const k=`${YEAR}-${pad(m)}-${pad(d)}`, evs=byDay.get(k)||[];
+    const dots=evs.slice(0,6).map(e=>`<span class="dot" style="background:${(FEDS[e.fed]||FEDS.기타).c}"></span>`).join('');
+    g+=`<div class="cell${k===todayStr?' today':''}${k===state.calSel?' sel':''}" data-day="${k}"><span class="n dow-${(first.getDay()+d-1)%7}">${d}</span><div class="dots">${dots}</div>${evs.length>6?`<span class="c">+${evs.length-6}</span>`:''}</div>`;
+  }
+  const sel=state.calSel&&+state.calSel.slice(5,7)===m?state.calSel:null;
+  const selEvs=sel?(byDay.get(sel)||[]):[];
+  $('#view').innerHTML=`<div class="cal-head"><button id="pm" aria-label="이전 달">‹</button><h2>${YEAR}년 ${m}월</h2><button id="nm" aria-label="다음 달">›</button></div>
+    <div class="grid">${g}</div>
+    <div class="daylist">${sel?(selEvs.length?dayBlock(sel,selEvs):`<div class="empty">${fmtMD(sel)} 대회 없음</div>`):'<div class="empty" style="padding:20px 0">날짜를 누르면 대회가 보여요</div>'}</div>`;
+  $('#pm').onclick=()=>{state.calMonth=Math.max(1,m-1);state.calSel=null;render()};
+  $('#nm').onclick=()=>{state.calMonth=Math.min(12,m+1);state.calSel=null;render()};
+}
+
+function renderAdd(){
+  $('#count').textContent='';
+  const mine=state.custom.slice().sort((a,b)=>a.date.localeCompare(b.date));
+  $('#view').innerHTML=`<section class="month"><h2>내 일정 직접 추가</h2>
+    <div class="sub">목록에 없는 대회·출전 계획을 추가하세요. 이 기기에만 저장됩니다.</div>
+    <form class="form" id="addForm">
+      <label>대회명</label><input name="name" required placeholder="예: OO협회 송년 대회">
+      <div class="row2"><div><label>시작일</label><input name="date" type="date" required min="${YEAR}-01-01" max="${YEAR}-12-31"></div>
+      <div><label>종료일(선택)</label><input name="end" type="date" min="${YEAR}-01-01" max="${YEAR}-12-31"></div></div>
+      <label>장소(선택)</label><input name="place" placeholder="예: 서울 · OO체육관">
+      <div class="row2"><div><label>참가비(선택)</label><input name="fee" placeholder="예: 18만 원"></div>
+      <div><label>접수 마감(선택)</label><input name="dl" type="date"></div></div>
+      <div class="btns" style="margin-top:14px"><button class="btn pri" type="submit">추가</button></div>
+    </form></section>
+    ${mine.length?`<section class="month"><h2>내가 추가한 일정 <small>${mine.length}개</small></h2>${[...groupByDate(mine)].map(([d,es])=>dayBlock(d,es)).join('')}</section>`:''}`;
+  $('#addForm').onsubmit=ev=>{
+    ev.preventDefault();const f=new FormData(ev.target);
+    const date=f.get('date'),end=f.get('end');
+    const c={id:'c'+Date.now(),date,end:end&&end>date?end:null,name:f.get('name').trim(),major:false};
+    if(f.get('place'))c['장소']=f.get('place').trim();
+    if(f.get('fee'))c['참가비']=f.get('fee').trim();
+    if(f.get('dl'))c['마감']=f.get('dl');
+    state.custom.push(c);LS.set('bb.custom',state.custom);state.favs.add(c.id);saveFavs();
+    toast('추가했어요');render();
+  };
+}
+
+function renderInfo(){
+  $('#count').textContent='';
+  const legend=Object.entries(FEDS).filter(([k])=>k!=='내일정'&&k!=='WNGP·MUSA').map(([k,v])=>`<span>${badge({fed:k})}</span>`).join('');
+  $('#view').innerHTML=`<div class="info">
+    <section><h3>선수 접수처</h3><ul>
+      <li>PCA · NPCA → <a href="https://coachn.co.kr" target="_blank" rel="noopener">코치엔 coachn.co.kr</a></li>
+      <li>WNGP · MUSA · ANBC → <a href="https://unmo.kr" target="_blank" rel="noopener">운동의모든것 unmo.kr</a></li>
+      <li>그 외 연맹은 각 연맹 공식 채널에서 확인하세요.</li></ul></section>
+    <section><h3>연맹 색상</h3><div class="legend">${legend}</div></section>
+    <section><h3>사용 팁</h3><ul>
+      <li>♡ 를 눌러 관심 대회로 저장 → 상단 ‘관심만’으로 모아보기</li>
+      <li>대회를 누르면 상세 · 캘린더(.ics) 추가 · 접수처 바로가기</li>
+      <li>공유 버튼으로 대회 일정을 친구에게 보내기</li>
+      <li>사파리 공유 → ‘홈 화면에 추가’하면 앱처럼 쓸 수 있어요</li></ul></section>
+    <section><h3>데이터 출처 · 주의</h3>
+      SNS에 공유된 2026 대회일정 이미지(@gacksung, @bdink.official, 11–12월 상세 공지 11.24 업데이트)를 옮겨 적은 것입니다.
+      출처마다 표기가 다르거나 일정이 바뀔 수 있으니 <b>출전 전 반드시 연맹 공지로 날짜·장소·참가비를 확인</b>하세요.
+      ★ 는 원본에서 메이저/챔피언십으로 표시된 대회입니다.</section>
+  </div>`;
+}
+
+function renderNext(){
+  const up=all().filter(e=>endOf(e)>=todayStr).sort((a,b)=>a.date.localeCompare(b.date));
+  const favUp=up.filter(e=>state.favs.has(e.id));
+  const e=favUp[0]||up[0], btn=$('#next');
+  if(!e){btn.hidden=true;return}
+  const n=Math.max(0,daysUntil(e.date));
+  const same=up.filter(x=>x.date===e.date).length;
+  btn.hidden=false;
+  btn.innerHTML=`<div class="dd">${ddLabel(n)}</div><div><div class="s">${favUp[0]?'다음 관심 대회':'다음 대회'} · ${fmtRange(e)}</div>
+    <div class="t">${esc(title(e))}${!favUp[0]&&same>1?` 외 ${same-1}개`:''}</div>${e['장소']?`<div class="s">${esc(e['장소'])}</div>`:''}</div>`;
+  btn.onclick=()=>{ if(favUp[0]) openSheet(e.id); else {setTab('list');requestAnimationFrame(()=>{const el=document.getElementById('day-'+e.date);el&&el.scrollIntoView({behavior:'smooth',block:'center'})})} };
+}
+
+function renderChips(){
+  const order=['PCA','NPCA','WNGP','MUSA','ANBC','NPC','NABBA','AFEX','AGP','몬스터짐','AGONAS','기타'];
+  $('#fedChips').innerHTML=`<button class="chip${state.feds.size?'':' on'}" data-fed="">전체</button>`+
+    order.map(f=>`<button class="chip${state.feds.has(f)?' on':''}" data-fed="${f}">${f}</button>`).join('');
+  $('#tUpcoming').classList.toggle('on',state.upcoming);
+  $('#tMajor').classList.toggle('on',state.major);
+  $('#tFav').classList.toggle('on',state.favOnly);
+  $('#controls').style.display=state.tab==='add'||state.tab==='info'?'none':'';
+}
+
+function render(){
+  renderChips();renderNext();
+  ({list:renderList,cal:renderCal,add:renderAdd,info:renderInfo})[state.tab]();
+}
+
+/* ───────── 상세 시트 ───────── */
+function findEv(id){return all().find(e=>e.id===id)}
+function openSheet(id){
+  const e=findEv(id);if(!e)return;
+  const reg=FEDS[e.fed]&&FEDS[e.fed].reg;
+  const n=daysUntil(e.date);
+  const rows=[['날짜',`${fmtRange(e)} · ${ddLabel(n)}`],['연맹',e.fed==='내일정'?'내 일정':e.fed],['장소',e['장소']],['참가비',e['참가비']],
+    ['접수 마감',e['마감']?`${fmtMD(e['마감'])} · ${ddLabel(daysUntil(e['마감']))}`:null],['비고',e['비고']],
+    ['접수처',reg?`<a href="${reg}" target="_blank" rel="noopener">${FEDS[e.fed].regName}</a>`:null]].filter(r=>r[1]);
+  $('#sheet').innerHTML=`<div>${badge(e)}${e.major?'<span style="color:var(--star);font-weight:700">★ 메이저</span>':''}</div>
+    <h3>${esc(title(e))}</h3>
+    <dl>${rows.map(([k,v])=>`<dt>${k}</dt><dd>${k==='접수처'?v:esc(v)}</dd>`).join('')}</dl>
+    <div class="btns">
+      <button class="btn pri" id="sFav">${state.favs.has(e.id)?'♥ 관심 해제':'♡ 관심 대회'}</button>
+      <button class="btn" id="sIcs">캘린더에 추가</button>
+      <button class="btn" id="sShare">공유</button>
+      ${e.fed==='내일정'?'<button class="btn warn" id="sDel">삭제</button>':''}
+      <button class="btn" id="sClose">닫기</button>
+    </div>`;
+  $('#scrim').classList.add('open');$('#sheet').classList.add('open');
+  $('#sFav').onclick=()=>{toggleFav(e.id);openSheet(e.id)};
+  $('#sIcs').onclick=()=>downloadIcs(e);
+  $('#sShare').onclick=()=>share(e);
+  $('#sClose').onclick=closeSheet;
+  const del=$('#sDel');if(del)del.onclick=()=>{if(confirm('이 일정을 삭제할까요?')){state.custom=state.custom.filter(c=>c.id!==e.id);LS.set('bb.custom',state.custom);state.favs.delete(e.id);saveFavs();closeSheet();render()}};
+}
+function closeSheet(){$('#scrim').classList.remove('open');$('#sheet').classList.remove('open')}
+
+function saveFavs(){LS.set('bb.favs',[...state.favs])}
+function toggleFav(id){state.favs.has(id)?state.favs.delete(id):state.favs.add(id);saveFavs();toast(state.favs.has(id)?'관심 대회에 추가':'관심 대회 해제');render()}
+
+function icsDate(s,add=0){const d=toDate(s);d.setDate(d.getDate()+add);return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`}
+function icsEsc(s){return String(s).replace(/[\\,;]/g,m=>'\\'+m).replace(/\n/g,'\\n')}
+function downloadIcs(e){
+  const desc=[e['참가비']&&`참가비 ${e['참가비']}`,e['마감']&&`접수 마감 ${e['마감']}`,e['비고'],'※ 출전 전 연맹 공지 확인'].filter(Boolean).join('\n');
+  const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//bbcomp//KO','CALSCALE:GREGORIAN','BEGIN:VEVENT',
+    `UID:${e.id}-${e.date}@ynschoi.github.io`,`DTSTAMP:${new Date().toISOString().replace(/[-:]/g,'').slice(0,15)}Z`,
+    `DTSTART;VALUE=DATE:${icsDate(e.date)}`,`DTEND;VALUE=DATE:${icsDate(endOf(e),1)}`,
+    `SUMMARY:${icsEsc(title(e))}`, e['장소']?`LOCATION:${icsEsc(e['장소'])}`:null, `DESCRIPTION:${icsEsc(desc)}`,
+    'BEGIN:VALARM','TRIGGER:-P7D','ACTION:DISPLAY','DESCRIPTION:대회 1주 전','END:VALARM',
+    'END:VEVENT','END:VCALENDAR'].filter(Boolean).join('\r\n');
+  const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${e.date}_${title(e).replace(/[\/\\:*?"<>| ]+/g,'_')}.ics`;
+  document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);
+}
+async function share(e){
+  const text=`🏆 ${title(e)}\n📅 ${YEAR}.${fmtRange(e)}${e['장소']?`\n📍 ${e['장소']}`:''}${e['참가비']?`\n💰 ${e['참가비']}`:''}`;
+  try{ if(navigator.share){await navigator.share({title:title(e),text,url:location.href});return}
+       await navigator.clipboard.writeText(text+'\n'+location.href);toast('복사했어요'); }catch(err){}
+}
+let tt;function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),1400)}
+
+/* ───────── 이벤트 ───────── */
+function setTab(t){state.tab=t;document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));render();window.scrollTo(0,0)}
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
+$('#q').oninput=e=>{state.q=e.target.value;render()};
+$('#fedChips').onclick=e=>{const b=e.target.closest('[data-fed]');if(!b)return;const f=b.dataset.fed;
+  if(!f)state.feds.clear();else state.feds.has(f)?state.feds.delete(f):state.feds.add(f);render()};
+$('#tUpcoming').onclick=()=>{state.upcoming=!state.upcoming;LS.set('bb.upcoming',state.upcoming);render()};
+$('#tMajor').onclick=()=>{state.major=!state.major;render()};
+$('#tFav').onclick=()=>{state.favOnly=!state.favOnly;render()};
+$('#view').addEventListener('click',e=>{
+  const fav=e.target.closest('[data-fav]');if(fav){e.stopPropagation();toggleFav(fav.dataset.fav);return}
+  const cell=e.target.closest('[data-day]');if(cell){state.calSel=cell.dataset.day;render();return}
+  const ev=e.target.closest('.ev');if(ev)openSheet(ev.dataset.id);
+});
+$('#scrim').onclick=closeSheet;
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
+
+render();
+</script>
+</body>
+</html>
