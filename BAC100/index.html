@@ -445,7 +445,7 @@ footer{font-size:12px;color:var(--muted)}
 <div class="wrap">
   <div class="lcol">
   <span id="cnt" hidden></span>
-  <div class="cvwrap"><div class="cvbar"><span class="cvl"><button type="button" class="fmtov" id="fmtTog" aria-label="이미지 비율 바꾸기">9:16</button><button type="button" class="fmtov" id="fontTog" aria-label="글씨체 바꾸기">폰트 1</button></span><span class="cvact"><button type="button" class="fmtov kk" id="cvKakao" aria-label="카카오톡으로 내 지도 공유">카톡 공유</button><button type="button" class="fmtov" id="cvSave" aria-label="이미지 저장">사진 저장</button><button type="button" class="fmtov" id="cvShare" aria-label="링크 공유">링크 공유</button></span></div><div class="cardview"><canvas id="cardImg" role="img" aria-label="나의 명산 지도 카드"></canvas><span id="cardBusy" class="tip" hidden>그리는 중…</span></div><div class="cvbot"><span class="cvlb">정상석</span><button type="button" class="fmtov" id="cbReset">원위치</button><button type="button" class="fmtov" id="cbAuto">잘 보이게</button><span class="cvlb" style="margin-left:auto">크기</span><span class="cbsz" id="cbSz" role="group" aria-label="정상석 크기"></span></div></div>
+  <div class="cvwrap"><div class="cvbar"><span class="cvl"><button type="button" class="fmtov" id="fontTog" aria-label="글씨체 바꾸기">폰트 1</button></span><span class="cvact"><button type="button" class="fmtov kk" id="cvKakao" aria-label="카카오톡으로 내 지도 공유">카톡 공유</button><button type="button" class="fmtov" id="cvSave" aria-label="이미지 저장">사진 저장</button><button type="button" class="fmtov" id="cvShare" aria-label="링크 공유">링크 공유</button></span></div><div class="cardview"><canvas id="cardImg" role="img" aria-label="나의 명산 지도 카드"></canvas><span id="cardBusy" class="tip" hidden>그리는 중…</span></div><div class="cvbot"><span class="cvlb">정상석</span><button type="button" class="fmtov" id="cbReset">원위치</button><button type="button" class="fmtov" id="cbAuto">잘 보이게</button><span class="cvlb" style="margin-left:auto">크기</span><span class="cbsz" id="cbSz" role="group" aria-label="정상석 크기"></span></div></div>
   <div id="linkBox" class="linkbox" hidden><input id="linkIn" class="search" readonly aria-label="공유 링크"><span class="tip" id="linkMsg"></span></div>
 
   <div id="island" class="island" hidden></div>
@@ -958,7 +958,7 @@ let SZ=ls.get("bac100-sz",2); if(!(SZ>=0&&SZ<5)) SZ=2;
 function setSZ(i){ SZ=i; ls.set("bac100-sz",SZ); document.querySelectorAll("#szSeg button,#cbSz button").forEach(x=>x.setAttribute("aria-pressed",x.parentNode.children[i]===x)); relayout(); }
 // ── 스토리 / 게시글 ──
 let FMT="story"; // 처음엔 늘 9:16
-function syncFmt(){ document.getElementById("fmtTog").textContent=FMT==="post"?"4:5":"9:16"; }
+// 4:5 비율 버튼은 뺌 (저장 159번 중 157번이 9:16) — 카톡 카드만 안에서 4:5로 그림
 const APP_URL="https://ynschoi.github.io/BAC100/"; // 어느 주소에서 열어도 공유는 새 짧은 주소로
 const SHARE_URL=APP_URL+"?from=share"; // 공유 링크로 온 사람을 통계에서 따로 세기 위한 표시
 document.getElementById("linkShare").onclick=async()=>{ gc("share-link"); const box=document.getElementById("linkBox"), inp=document.getElementById("linkIn"), msg=document.getElementById("linkMsg");
@@ -967,7 +967,7 @@ document.getElementById("linkShare").onclick=async()=>{ gc("share-link"); const 
   box.hidden=false;
   try{ await navigator.clipboard.writeText(SHARE_URL); msg.textContent="링크를 복사했어요."; }
   catch(_){ inp.focus(); inp.select(); msg.textContent="위 링크를 길게 눌러 복사하세요."; } };
-document.getElementById("fmtTog").onclick=()=>{FMT=FMT==="post"?"story":"post"; gcDay("fmt-"+FMT);ls.set("bac100-fmt",FMT);syncFmt();scheduleCard();}; syncFmt();
+
 let NICK=ls.get("bac100-nick","나")||"나", MOTTO=ls.get("bac100-motto","");
 const nickIn=document.getElementById("nickIn"), mottoIn=document.getElementById("mottoIn");
 nickIn.value=NICK==="나"?"":NICK; mottoIn.value=MOTTO; // 빈칸이면 회색 '나'가 보이고 그대로 '나'로 씀
