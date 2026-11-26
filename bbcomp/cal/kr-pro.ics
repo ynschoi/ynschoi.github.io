@@ -9,7 +9,7 @@ REFRESH-INTERVAL;VALUE=DURATION:P1D
 X-PUBLISHED-TTL:P1D
 BEGIN:VEVENT
 UID:ifbbkorea-agp-pro2@bbcomp
-DTSTAMP:20261126T022646Z
+DTSTAMP:20261126T062239Z
 DTSTART;VALUE=DATE:20260927
 DTEND;VALUE=DATE:20260928
 SUMMARY:IFBB PRO AGP 프로 올스타즈
@@ -21,20 +21,8 @@ LOCATION:잠실 롯데호텔\, 서울 잠실
 URL:https://ifbbprokorea.com/international/agp-pro2/
 END:VEVENT
 BEGIN:VEVENT
-UID:ifbbpro_world-pro-23798@bbcomp
-DTSTAMP:20261126T022646Z
-DTSTART;VALUE=DATE:20261025
-DTEND;VALUE=DATE:20261026
-SUMMARY:IFBB PRO 2026 AGP Natural Pro Qualifier
-DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-agp-natural-pr
- o-qualifier-2/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일
- 정은 주최 측 사정으로 바뀔 수 있어요
-LOCATION:Paju City\, Paju City
-URL:https://www.ifbbpro.com/competition/2026-agp-natural-pro-qualifier-2/
-END:VEVENT
-BEGIN:VEVENT
 UID:ifbbkorea-agp-natural-pq-2@bbcomp
-DTSTAMP:20261126T022646Z
+DTSTAMP:20261126T062239Z
 DTSTART;VALUE=DATE:20261025
 DTEND;VALUE=DATE:20261026
 SUMMARY:NPC AGP 내추럴 프로 퀄리파이어 #2

@@ -2,12 +2,12 @@
  {
   "file": "kr.ics",
   "label": "보디빌딩 대회 · 국내 전체",
-  "count": 61
+  "count": 62
  },
  {
   "file": "kr-pro.ics",
   "label": "보디빌딩 대회 · 국내 프로카드·프로쇼",
-  "count": 3
+  "count": 2
  },
  {
   "file": "world-pro.ics",
@@ -17,12 +17,12 @@
  {
   "file": "fed-pca.ics",
   "label": "보디빌딩 대회 · PCA",
-  "count": 6
+  "count": 7
  },
  {
   "file": "fed-npca.ics",
   "label": "보디빌딩 대회 · NPCA",
-  "count": 8
+  "count": 9
  },
  {
   "file": "fed-wngp.ics",
@@ -47,7 +47,7 @@
  {
   "file": "fed-ifbbpro.ics",
   "label": "보디빌딩 대회 · IFBB PRO",
-  "count": 2
+  "count": 1
  },
  {
   "file": "fed-nabba.ics",
