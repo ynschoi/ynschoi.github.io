@@ -2,27 +2,43 @@ name: bbcomp 대회일정 수집
 
 on:
   schedule:
-    - cron: "17 21 * * 0"   # 매주 월요일 06:17 KST
+    - cron: "17 21 * * 0"   # 매주 월요일 06:17 KST (기본 브랜치에서만 실행됨)
   workflow_dispatch: {}      # Actions 탭에서 수동 실행
+  push:                      # 크롤러를 고치면 바로 한 번 실행
+    paths:
+      - "bbcomp/crawler/**"
+      - ".github/workflows/bbcomp-crawl.yml"
 
 permissions:
   contents: write
 
 concurrency:
-  group: bbcomp-crawl
+  group: bbcomp-crawl-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   crawl:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: 사이트 접속 진단
+        run: python3 bbcomp/crawler/check_sites.py || true
       - name: Crawl
         run: python3 bbcomp/crawler/crawl.py
+      - name: 수집 결과 요약
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          d = json.load(open("bbcomp/data.json"))
+          print("총", len(d["events"]), "건")
+          for k, s in d["sources"].items():
+              print(("OK  " if s.get("ok") else "FAIL"), f"{s.get('count'):>4}", k, s.get("error", "") if not s.get("ok") else "")
+          PY
       - name: Commit if changed
         run: |
           git config user.name "bbcomp-bot"
@@ -32,5 +48,6 @@ jobs:
             echo "변경 없음"
           else
             git commit -m "bbcomp: 대회일정 자동 수집 $(TZ=Asia/Seoul date +%Y-%m-%d)"
-            git push
+            git pull --rebase -q origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}"
           fi
