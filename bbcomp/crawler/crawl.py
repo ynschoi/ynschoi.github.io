@@ -28,7 +28,7 @@ from sources.common import KST, log  # noqa: E402
 DEFAULT_OUT = os.path.join(HERE, "..", "data.json")
 # 순서 = 중복 시 우선순위
 MODULES = ["unmo", "pca", "ifbbkorea", "kbbf", "nabba", "afex", "agonas", "kclassic", "oneclassic", "nac",
-           "musclemania", "wnbf", "fitnessvolt", "ifbbpro_world", "pca_table"]
+           "musclemania", "wnbf", "fitnessvolt", "ifbbpro_world", "ms_table"]
 # 제외: monsterzym(robots.txt 전체 금지 → NPC 월드와이드 캘린더로 대체), kbbf·wnc(접근 제한 403),
 #       icn(사이트 내부 DB API 직접 호출 필요 — 사용하지 않음)
 ACCUMULATE = {"pca", "fitnessvolt"}
@@ -221,9 +221,9 @@ def main():
     if any(e["src"] == "ifbbkorea" for e in events):
         events = [e for e in events if not (e["src"] == "fitnessvolt" and e.get("country") == "KR" and "AGP" in e.get("name", ""))]
     events = korea_pro_cleanup(events)
-    # PCA·NPCA 보충 표: 공식(pca)에 같은 연맹·같은 날 대회가 있으면 공식만 남긴다
-    off = {(e["fed"], e["date"]) for e in events if e["src"] == "pca"}
-    events = [e for e in events if not (e["src"] == "pca_table" and (e["fed"], e["date"]) in off)]
+    # 일정표 보충(ms_table): 공식 출처에 같은 연맹·같은 날 대회가 있으면 공식만 남긴다
+    off = {(e["fed"], e["date"]) for e in events if e["src"] != "ms_table"}
+    events = [e for e in events if not (e["src"] == "ms_table" and (e["fed"], e["date"]) in off)]
     events = dedupe(sorted(events, key=lambda e: MODULES.index(e["src"]) if e["src"] in MODULES else 99))
     events.sort(key=lambda e: (e["date"], e.get("fed", ""), e.get("name", "")))
     changelog = track_changes(events, old, now)
