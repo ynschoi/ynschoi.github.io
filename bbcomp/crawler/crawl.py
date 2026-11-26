@@ -27,7 +27,10 @@ from sources.common import KST, log  # noqa: E402
 
 DEFAULT_OUT = os.path.join(HERE, "..", "data.json")
 # 순서 = 중복 시 우선순위
-MODULES = ["unmo", "pca", "ifbbkorea", "nabba", "monsterzym", "oneclassic", "icn", "nac", "agonas", "ifbbpro_world"]
+MODULES = ["unmo", "pca", "ifbbkorea", "nabba", "afex", "agonas", "kclassic", "oneclassic", "nac",
+           "musclemania", "wnbf", "ifbbpro_world"]
+# 제외: monsterzym(robots.txt 전체 금지 → NPC 월드와이드 캘린더로 대체), kbbf·wnc(접근 제한 403),
+#       icn(사이트 내부 DB API 직접 호출 필요 — 사용하지 않음)
 ACCUMULATE = {"pca"}
 FIELDS = ["place", "city", "country", "fee", "deadline", "divisions", "qualification", "proCards",
           "host", "url", "regUrl", "end"]
@@ -38,9 +41,10 @@ def norm(s):
 
 
 def dedupe(events):
+    """같은 출처 안에서는 이름 전체가 같을 때만, 다른 출처끼리는 같은 연맹·날짜·전체 이름일 때 합친다."""
     out, seen = [], {}
     for e in events:
-        key = (e.get("fed"), e["date"], norm(e.get("name"))[:12])
+        key = (e.get("fed"), e["date"], norm(e.get("name")))
         if key in seen:
             keep = seen[key]
             for f in FIELDS:
@@ -59,7 +63,29 @@ def clean(e, key):
     e.setdefault("tier", "national" if e["country"] == "KR" else "international")
     if e.get("divisions"):
         e["divisions"] = [d.strip() for d in e["divisions"] if d and d.strip()]
+    if key == "ifbbpro_world" and e.get("country") in ("KR", "MN") and re.search(r"monsterzym|asian champ", e.get("name", ""), re.I):
+        localize_monsterzym(e)
     return e
+
+
+# 몬스터짐 대회는 NPC 월드와이드 공식 캘린더(npcnewsonline)에서 가져온다 (event.monsterzym.com은 robots.txt 전체 금지)
+MZ_NAMES = [("show man", "쇼맨"), ("kim jun ho", "김준호 클래식"), ("black chrome", "블랙크롬"), ("overwhelm", "압도"),
+            ("asian champ", "아시안 챔피언십"), ("mongolia", "몽골 챔피언십"), ("natural pro qualifier", "코리아 내추럴 파이널"),
+            ("natural regional", "코리아 내추럴 파이널")]
+MZ_KIND = [("natural pro qualifier", "내추럴 프로 퀄리파이어"), ("open pro qualifier", "오픈 프로 퀄리파이어"),
+           ("pro qualifier", "프로 퀄리파이어"), ("natural regional", "내추럴 리저널"), ("open regional", "오픈 리저널")]
+
+
+def localize_monsterzym(e):
+    n = e["name"].lower()
+    title = next((k for en, k in MZ_NAMES if en in n), None)
+    kind = next((k for en, k in MZ_KIND if en in n), "")
+    e["fed"] = "몬스터짐"
+    e["tier"] = "international" if e.get("country") == "MN" else "national"
+    if title:
+        e["name"] = f"{title} ({kind})" if kind else title
+    e["host"] = e.get("host") or "MONSTERZYM"
+    e["major"] = e.get("major") or "qualifier" in n or "champ" in n
 
 
 def main():
