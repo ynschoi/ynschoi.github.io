@@ -2,7 +2,7 @@
  {
   "file": "kr.ics",
   "label": "BoCal · 국내 전체",
-  "count": 60
+  "count": 86
  },
  {
   "file": "kr-pro.ics",
@@ -17,12 +17,12 @@
  {
   "file": "fed-pca.ics",
   "label": "BoCal · PCA",
-  "count": 6
+  "count": 15
  },
  {
   "file": "fed-npca.ics",
   "label": "BoCal · NPCA",
-  "count": 8
+  "count": 25
  },
  {
   "file": "fed-wngp.ics",

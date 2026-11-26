@@ -9,7 +9,7 @@ REFRESH-INTERVAL;VALUE=DURATION:P1D
 X-PUBLISHED-TTL:P1D
 BEGIN:VEVENT
 UID:pca-pca-2026-10-03-siheung@bbcomp
-DTSTAMP:20261126T082929Z
+DTSTAMP:20261126T084309Z
 DTSTART;VALUE=DATE:20261003
 DTEND;VALUE=DATE:20261004
 SUMMARY:PCA SIHEUNG POINT LEAGUE
@@ -22,7 +22,7 @@ URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=180
 END:VEVENT
 BEGIN:VEVENT
 UID:pca-pca-2026-10-10-daejeon@bbcomp
-DTSTAMP:20261126T082929Z
+DTSTAMP:20261126T084309Z
 DTSTART;VALUE=DATE:20261010
 DTEND;VALUE=DATE:20261011
 SUMMARY:PCA DAEJEON POINT LEAGUE
@@ -36,7 +36,7 @@ URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=191
 END:VEVENT
 BEGIN:VEVENT
 UID:pca-pca-2026-10-17-cheongju@bbcomp
-DTSTAMP:20261126T082929Z
+DTSTAMP:20261126T084309Z
 DTSTART;VALUE=DATE:20261017
 DTEND;VALUE=DATE:20261018
 SUMMARY:PCA CHEONGJU POINT LEAGUE
@@ -50,7 +50,7 @@ URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=202
 END:VEVENT
 BEGIN:VEVENT
 UID:pca-pca-2026-10-24-ad91e81e@bbcomp
-DTSTAMP:20261126T082929Z
+DTSTAMP:20261126T084309Z
 DTSTART;VALUE=DATE:20261024
 DTEND;VALUE=DATE:20261025
 SUMMARY:PCA 노오석 클래식
@@ -64,7 +64,7 @@ URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=213
 END:VEVENT
 BEGIN:VEVENT
 UID:pca-pca-2026-11-07-pohang@bbcomp
-DTSTAMP:20261126T082929Z
+DTSTAMP:20261126T084309Z
 DTSTART;VALUE=DATE:20261107
 DTEND;VALUE=DATE:20261108
 SUMMARY:PCA POHANG POINT LEAGUE
@@ -78,7 +78,7 @@ URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=230
 END:VEVENT
 BEGIN:VEVENT
 UID:pca-pca-2026-11-14-anyang@bbcomp
-DTSTAMP:20261126T062239Z
+DTSTAMP:20261126T084309Z
 DTSTART;VALUE=DATE:20261114
 DTEND;VALUE=DATE:20261115
 SUMMARY:PCA ANYANG POINT LEAGUE
@@ -91,7 +91,7 @@ URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=238
 END:VEVENT
 BEGIN:VEVENT
 UID:pca-pca-2026-11-28-seoul@bbcomp
-DTSTAMP:20261126T082929Z
+DTSTAMP:20261126T084309Z
 DTSTART;VALUE=DATE:20261128
 DTEND;VALUE=DATE:20261129
 SUMMARY:PCA SEOUL POINT LEAGUE
@@ -101,5 +101,141 @@ DESCRIPTION:참가비 160\,000원\n원문 https://coachn.co.kr/sub/competi
  요
 URL:https://coachn.co.kr/sub/competitions_list.php?sca=PCA%EC%A0%91%EC%88%
  98
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-pca-2027-03-06-gimhae@bbcomp
+DTSTAMP:20261126T084309Z
+DTSTART;VALUE=DATE:20270306
+DTEND;VALUE=DATE:20270307
+SUMMARY:PCA GIMHAE POINT LEAGUE
+DESCRIPTION:참가비 130\,000원\n종목 남자 스포츠모델(MEN'S SPO
+ RT MODEL)\, 피지크(PHYSIQUE)\, 머슬모델(MUSCLE MODEL)\, 여자 스
+ 포츠모델(WOMEN'S SPORT MODEL)\, 핏모델(FIT MODEL)\, 비키니(BIKI
+ NI)\, PCA 클래식 보디빌딩(CLASSIC BODYBUILDING)\, PCA 클래식 
+ 피지크(CLASSIC PHYSIQUE)\, 보디빌딩(BODYBUILDING)\n원문 https://
+ coachn.co.kr/sub/competitions_info.php?id=105\n전체 일정 https://ynsc
+ hoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 
+ 있어요
+LOCATION:추후공지 ​ 라 . 주최 ∙ 주관 : PCA KOREA
+URL:https://coachn.co.kr/sub/competitions_info.php?id=105
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-pca-2027-03-13-changwon@bbcomp
+DTSTAMP:20261126T084309Z
+DTSTART;VALUE=DATE:20270313
+DTEND;VALUE=DATE:20270314
+SUMMARY:PCA CHANGWON POINT LEAGUE
+DESCRIPTION:참가비 130\,000원\n종목 남자 스포츠모델(MEN'S SPO
+ RT MODEL)\, 피지크(PHYSIQUE)\, 머슬모델(MUSCLE MODEL)\, 여자 스
+ 포츠모델(WOMEN'S SPORT MODEL)\, 핏모델(FIT MODEL)\, 비키니(BIKI
+ NI)\, PCA 클래식 보디빌딩(CLASSIC BODYBUILDING)\, PCA 클래식 
+ 피지크(CLASSIC PHYSIQUE)\, 보디빌딩(BODYBUILDING)\n원문 https://
+ coachn.co.kr/sub/competitions_info.php?id=108\n전체 일정 https://ynsc
+ hoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 
+ 있어요
+LOCATION:추후공지 ​ 라 . 주최 ∙ 주관 : PCA KOREA
+URL:https://coachn.co.kr/sub/competitions_info.php?id=108
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-pca-2027-03-20-hwaseong@bbcomp
+DTSTAMP:20261126T084309Z
+DTSTART;VALUE=DATE:20270320
+DTEND;VALUE=DATE:20270321
+SUMMARY:PCA HWASEONG POINT LEAGUE
+DESCRIPTION:참가비 130\,000원\n종목 남자 스포츠모델(MEN'S SPO
+ RT MODEL)\, 피지크(PHYSIQUE)\, 머슬모델(MUSCLE MODEL)\, 여자 스
+ 포츠모델(WOMEN'S SPORT MODEL)\, 핏모델(FIT MODEL)\, 비키니(BIKI
+ NI)\, PCA 클래식 보디빌딩(CLASSIC BODYBUILDING)\, PCA 클래식 
+ 피지크(CLASSIC PHYSIQUE)\, 보디빌딩(BODYBUILDING)\n원문 https://
+ coachn.co.kr/sub/competitions_info.php?id=111\n전체 일정 https://ynsc
+ hoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 
+ 있어요
+LOCATION:추후공지 ​ 라 . 주최 ∙ 주관 : PCA KOREA
+URL:https://coachn.co.kr/sub/competitions_info.php?id=111
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-pca-2027-03-27-gimpo@bbcomp
+DTSTAMP:20261126T084309Z
+DTSTART;VALUE=DATE:20270327
+DTEND;VALUE=DATE:20270328
+SUMMARY:PCA GIMPO POINT LEAGUE
+DESCRIPTION:참가비 130\,000원\n종목 남자 스포츠모델(MEN'S SPO
+ RT MODEL)\, 피지크(PHYSIQUE)\, 머슬모델(MUSCLE MODEL)\, 여자 스
+ 포츠모델(WOMEN'S SPORT MODEL)\, 핏모델(FIT MODEL)\, 비키니(BIKI
+ NI)\, PCA 클래식 보디빌딩(CLASSIC BODYBUILDING)\, PCA 클래식 
+ 피지크(CLASSIC PHYSIQUE)\, 보디빌딩(BODYBUILDING)\n원문 https://
+ coachn.co.kr/sub/competitions_info.php?id=114\n전체 일정 https://ynsc
+ hoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 
+ 있어요
+LOCATION:추후공지 ​ 라 . 주최 ∙ 주관  : PCA KOREA
+URL:https://coachn.co.kr/sub/competitions_info.php?id=114
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-pca-2027-04-03-daejeon@bbcomp
+DTSTAMP:20261126T084309Z
+DTSTART;VALUE=DATE:20270403
+DTEND;VALUE=DATE:20270404
+SUMMARY:PCA DAEJEON POINT LEAGUE
+DESCRIPTION:참가비 130\,000원\n종목 남자 스포츠모델(MEN'S SPO
+ RT MODEL)\, 피지크(PHYSIQUE)\, 머슬모델(MUSCLE MODEL)\, 여자 스
+ 포츠모델(WOMEN'S SPORT MODEL)\, 핏모델(FIT MODEL)\, 비키니(BIKI
+ NI)\, PCA 클래식 보디빌딩(CLASSIC BODYBUILDING)\, PCA 클래식 
+ 피지크(CLASSIC PHYSIQUE)\, 보디빌딩(BODYBUILDING)\n원문 https://
+ coachn.co.kr/sub/competitions_info.php?id=117\n전체 일정 https://ynsc
+ hoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 
+ 있어요
+LOCATION:추후공지 ​ 라 . 주최 ∙ 주관 : PCA KOREA
+URL:https://coachn.co.kr/sub/competitions_info.php?id=117
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-pca-2027-04-10-chungcheong@bbcomp
+DTSTAMP:20261126T084309Z
+DTSTART;VALUE=DATE:20270410
+DTEND;VALUE=DATE:20270411
+SUMMARY:PCA CHUNGCHEONG POINT LEAGUE
+DESCRIPTION:참가비 130\,000원\n종목 남자 스포츠모델(MEN'S SPO
+ RT MODEL)\, 피지크(PHYSIQUE)\, 머슬모델(MUSCLE MODEL)\, 여자 스
+ 포츠모델(WOMEN'S SPORT MODEL)\, 핏모델(FIT MODEL)\, 비키니(BIKI
+ NI)\, PCA 클래식 보디빌딩(CLASSIC BODYBUILDING)\, PCA 클래식 
+ 피지크(CLASSIC PHYSIQUE)\, 보디빌딩(BODYBUILDING)\n원문 https://
+ coachn.co.kr/sub/competitions_info.php?id=120\n전체 일정 https://ynsc
+ hoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 
+ 있어요
+LOCATION:추후공지 ​ 라 . 주최 ∙ 주관 : PCA KOREA
+URL:https://coachn.co.kr/sub/competitions_info.php?id=120
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-pca-2027-04-17-goyang@bbcomp
+DTSTAMP:20261126T084309Z
+DTSTART;VALUE=DATE:20270417
+DTEND;VALUE=DATE:20270418
+SUMMARY:PCA GOYANG POINT LEAGUE
+DESCRIPTION:참가비 130\,000원\n종목 남자 스포츠모델(MEN'S SPO
+ RT MODEL)\, 피지크(PHYSIQUE)\, 머슬모델(MUSCLE MODEL)\, 여자 스
+ 포츠모델(WOMEN'S SPORT MODEL)\, 핏모델(FIT MODEL)\, 비키니(BIKI
+ NI)\, PCA 클래식 보디빌딩(CLASSIC BODYBUILDING)\, PCA 클래식 
+ 피지크(CLASSIC PHYSIQUE)\, 보디빌딩(BODYBUILDING)\n원문 https://
+ coachn.co.kr/sub/competitions_info.php?id=123\n전체 일정 https://ynsc
+ hoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 
+ 있어요
+LOCATION:추후공지 ​ 라 . 주최 ∙ 주관 : PCA KOREA
+URL:https://coachn.co.kr/sub/competitions_info.php?id=123
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-pca-2027-04-24-176c3d9a@bbcomp
+DTSTAMP:20261126T084309Z
+DTSTART;VALUE=DATE:20270424
+DTEND;VALUE=DATE:20270425
+SUMMARY:PCA GYEONGGI-DO POINT LEAGUE
+DESCRIPTION:참가비 130\,000원\n종목 남자 스포츠모델(MEN'S SPO
+ RT MODEL)\, 피지크(PHYSIQUE)\, 머슬모델(MUSCLE MODEL)\, 여자 스
+ 포츠모델(WOMEN'S SPORT MODEL)\, 핏모델(FIT MODEL)\, 비키니(BIKI
+ NI)\, PCA 클래식 보디빌딩(CLASSIC BODYBUILDING)\, PCA 클래식 
+ 피지크(CLASSIC PHYSIQUE)\, 보디빌딩(BODYBUILDING)\n원문 https://
+ coachn.co.kr/sub/competitions_info.php?id=126\n전체 일정 https://ynsc
+ hoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 
+ 있어요
+LOCATION:추후공지 ​ 라 . 주최 ∙ 주관 : PCA KOREA
+URL:https://coachn.co.kr/sub/competitions_info.php?id=126
 END:VEVENT
 END:VCALENDAR
