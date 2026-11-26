@@ -1,0 +1,120 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//bbcomp//schedule//KO
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:보디빌딩 대회 · NPCA
+X-WR-TIMEZONE:Asia/Seoul
+REFRESH-INTERVAL;VALUE=DURATION:P1D
+X-PUBLISHED-TTL:P1D
+BEGIN:VEVENT
+UID:pca-npca-2026-10-04-siheung@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261004
+DTEND;VALUE=DATE:20261005
+SUMMARY:NPCA SIHEUNG POINT LEAGUE
+DESCRIPTION:종목 여자 스포츠 모델\, 남자 스포츠 모델\, 피
+ 지크\, 머슬모델\, 비키니\, 클래식 보디빌딩\, 클래식 
+ 피지크\, 보디빌딩\n원문 https://coachn.co.kr/bbs/board.php?bo_ta
+ ble=magazine&wr_id=188\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:인천 하버파크 호텔
+URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=188
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-npca-2026-10-11-daejeon@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261011
+DTEND;VALUE=DATE:20261012
+SUMMARY:NPCA DAEJEON POINT LEAGUE
+DESCRIPTION:종목 여자 스포츠 모델\, 남자 스포츠 모델\, 피
+ 지크\, 머슬 모델\, 비키니\, 클래식 보디빌딩\, 클래식 
+ 피지크\, 보디빌딩\n원문 https://coachn.co.kr/bbs/board.php?bo_ta
+ ble=magazine&wr_id=198\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:충청북도 c&v 센터
+URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=198
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-npca-2026-10-18-cheongju@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261018
+DTEND;VALUE=DATE:20261019
+SUMMARY:NPCA CHEONGJU POINT LEAGUE
+DESCRIPTION:종목 남자 스포츠 모델\, 피지크\, 머슬 모델\, 
+ 비키니\, 클래식 보디빌딩\, 클래식 피지크\, 보디빌딩\n
+ 원문 https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=207\n
+ 전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측
+  사정으로 바뀔 수 있어요
+LOCATION:충청북도 c&v 센터
+URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=207
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-npca-2026-10-25-ad91e81e@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261025
+DTEND;VALUE=DATE:20261026
+SUMMARY:NPCA 노오석 클래식
+DESCRIPTION:종목 여자 스포츠 모델\, 남자 스포츠 모델\, 피
+ 지크\, 머슬 모델\, 비키니\, 클래식 보디빌딩\, 클래식 
+ 피지크\, 보디빌딩\n원문 https://coachn.co.kr/bbs/board.php?bo_ta
+ ble=magazine&wr_id=220\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:대구 DTC
+URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=220
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-npca-2026-11-01-busan@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261101
+DTEND;VALUE=DATE:20261102
+SUMMARY:NPCA BUSAN POINT LEAGUE
+DESCRIPTION:종목 여자 스포츠 모델\, 남자 스포츠 모델\, 피
+ 지크\, 머슬 모델\, 비키니\, 클래식 보디빌딩\, 클래식 
+ 피지크\, 보디빌딩\n원문 https://coachn.co.kr/bbs/board.php?bo_ta
+ ble=magazine&wr_id=227\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:김해 가야대학교
+URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=227
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-npca-2026-11-08-pohang@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261108
+DTEND;VALUE=DATE:20261109
+SUMMARY:NPCA POHANG POINT LEAGUE
+DESCRIPTION:종목 여자 스포츠 모델\, 남자 스포츠 모델\, 피
+ 지크\, 비키니\, 클래식 보디빌딩\, 클래식 피지크\, 보
+ 디빌딩\n원문 https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr
+ _id=236\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 
+ 주최 측 사정으로 바뀔 수 있어요
+LOCATION:경주 신경주 대학교
+URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=236
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-npca-2026-11-28-nv-newvictorseriesinseoul@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261128
+DTEND;VALUE=DATE:20261129
+SUMMARY:NPCA NEW VICTOR SERIES IN SEOUL
+DESCRIPTION:참가비 150\,000원\n원문 https://coachn.co.kr/sub/competi
+ tions_list.php?sca=NPCA%EB%89%B4%EB%B9%85%ED%84%B0%EC%A0%91%EC%88%98\n전
+ 체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 
+ 사정으로 바뀔 수 있어요
+URL:https://coachn.co.kr/sub/competitions_list.php?sca=NPCA%EB%89%B4%EB%B9
+ %85%ED%84%B0%EC%A0%91%EC%88%98
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-npca-2026-11-29-seoul@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261129
+DTEND;VALUE=DATE:20261130
+SUMMARY:NPCA SEOUL POINT LEAGUE
+DESCRIPTION:참가비 180\,000원\n원문 https://coachn.co.kr/sub/competi
+ tions_list.php?sca=NPCA%EC%A0%91%EC%88%98\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+URL:https://coachn.co.kr/sub/competitions_list.php?sca=NPCA%EC%A0%91%EC%88
+ %98
+END:VEVENT
+END:VCALENDAR

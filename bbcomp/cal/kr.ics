@@ -1,0 +1,1042 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//bbcomp//schedule//KO
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:보디빌딩 대회 · 국내 전체
+X-WR-TIMEZONE:Asia/Seoul
+REFRESH-INTERVAL;VALUE=DURATION:P1D
+X-PUBLISHED-TTL:P1D
+BEGIN:VEVENT
+UID:ifbbkorea-agp-pro2@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20260927
+DTEND;VALUE=DATE:20260928
+SUMMARY:IFBB PRO AGP 프로 올스타즈
+DESCRIPTION:종목 핏 모델\, 비키니\, 웰니스\, 피겨\, 멘즈 
+ 피지크\, 클래식 피지크\, 보디빌딩 212\n원문 https://ifbbpr
+ okorea.com/international/agp-pro2/\n전체 일정 https://ynschoi.github.
+ io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:잠실 롯데호텔\, 서울 잠실
+URL:https://ifbbprokorea.com/international/agp-pro2/
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-pca-2026-10-03-siheung@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261003
+DTEND;VALUE=DATE:20261004
+SUMMARY:PCA SIHEUNG POINT LEAGUE
+DESCRIPTION:종목 남자 스포츠 모델\, 클래식 보디빌딩\, 비
+ 키니\, 클래식 피지크\n원문 https://coachn.co.kr/bbs/board.php?b
+ o_table=magazine&wr_id=180\n전체 일정 https://ynschoi.github.io/bbcom
+ p/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:인천 하버파크 호텔
+URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=180
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-592@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261003
+DTEND;VALUE=DATE:20261004
+SUMMARY:WNGP 남양주
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-09-27\n종목 클래
+ 식피지크 비기너\, 클래식피지크 노비스\, 클래식피지
+ 크 오픈\, 클래식피지크 AGE\, 클래식피지크 중/고등부\, 
+ 클래식피지크 대학부\, 클래식보디빌딩 비기너\, 클래
+ 식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 클래식보
+ 디빌딩 AGE\, 클래식보디빌딩 중/고등부\, 클래식보디빌
+ 딩 대학부\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디
+ 빌딩 오픈\, 보디빌딩 AGE\, 보디빌딩 중/고등부\, 보디빌
+ 딩 대학부\, 피지크 비기너\, 피지크 노비스 외\n원문 htt
+ ps://unmo.kr/m/shop/tm_view.php?gs_id=592\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:루터대학교 대강당
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=592
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-593@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261004
+DTEND;VALUE=DATE:20261005
+SUMMARY:MUSA 남양주
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-09-27\n종목 클래
+ 식피지크 비기너\, 클래식피지크 노비스\, 클래식피지
+ 크 오픈\, 클래식피지크 AGE\, 클래식피지크 중/고등부\, 
+ 클래식피지크 대학부\, 클래식보디빌딩 비기너\, 클래
+ 식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 클래식보
+ 디빌딩 AGE\, 클래식보디빌딩 중/고등부\, 클래식보디빌
+ 딩 대학부\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디
+ 빌딩 오픈\, 보디빌딩 AGE\, 보디빌딩 중/고등부\, 보디빌
+ 딩 대학부\, 피지크 비기너\, 피지크 노비스 외\n원문 htt
+ ps://unmo.kr/m/shop/tm_view.php?gs_id=593\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:루터대학교 대강당
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=593
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-npca-2026-10-04-siheung@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261004
+DTEND;VALUE=DATE:20261005
+SUMMARY:NPCA SIHEUNG POINT LEAGUE
+DESCRIPTION:종목 여자 스포츠 모델\, 남자 스포츠 모델\, 피
+ 지크\, 머슬모델\, 비키니\, 클래식 보디빌딩\, 클래식 
+ 피지크\, 보디빌딩\n원문 https://coachn.co.kr/bbs/board.php?bo_ta
+ ble=magazine&wr_id=188\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:인천 하버파크 호텔
+URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=188
+END:VEVENT
+BEGIN:VEVENT
+UID:afex-2026-novice-b@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261010
+DTEND;VALUE=DATE:20261011
+SUMMARY:AFEX 노비스 클래식 B
+DESCRIPTION:참가비 250\,000원~300\,000원\n접수 마감 2026-10-02\n
+ 종목 내추럴 보디빌딩\, 내추럴 남자 클래식 모델\, 내
+ 추럴 여자 클래식 모델\, 내추럴 피지크 모델\, 내추럴 
+ 비키니 모델\, 내추럴 남자 스포츠 모델\, 내추럴 여자 
+ 스포츠 모델\, 내추럴 핏모델\, 보디빌딩\, 남자 클래식 
+ 모델\, 여자 클래식 모델\, 피지크 모델\, 비키니 모델\, 
+ 남자 스포츠 모델\, 여자 스포츠 모델\, 핏모델\n원문 htt
+ ps://www.afex.co.kr/27\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:스위스 그랜드 호텔 그랜드볼룸\, 서울
+URL:https://www.afex.co.kr/27
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25142@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261010
+DTEND;VALUE=DATE:20261011
+SUMMARY:IFBB PRO 2026 Ultimate Warriors Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-ultimate-warri
+ ors-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 
+ 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Anaheim\, Anaheim\, California
+URL:https://www.ifbbpro.com/competition/2026-ultimate-warriors-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-595@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261010
+DTEND;VALUE=DATE:20261011
+SUMMARY:MUSA 군포
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-10-04\n종목 클래
+ 식피지크 비기너\, 클래식피지크 노비스\, 클래식피지
+ 크 오픈\, 클래식피지크 AGE\, 클래식피지크 중/고등부\, 
+ 클래식피지크 대학부\, 클래식보디빌딩 비기너\, 클래
+ 식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 클래식보
+ 디빌딩 AGE\, 클래식보디빌딩 중/고등부\, 클래식보디빌
+ 딩 대학부\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디
+ 빌딩 오픈\, 보디빌딩 AGE\, 보디빌딩 중/고등부\, 보디빌
+ 딩 대학부\, 피지크 비기너\, 피지크 노비스 외\n원문 htt
+ ps://unmo.kr/m/shop/tm_view.php?gs_id=595\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:경기과학기술대학교 체육관
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=595
+END:VEVENT
+BEGIN:VEVENT
+UID:nabba-2026-pro-show@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261010
+DTEND;VALUE=DATE:20261011
+SUMMARY:NABBA PRO SHOW
+DESCRIPTION:참가비 400\,000원\n접수 마감 2026-10-09\n종목 PRO\, 
+ PDQ\n원문 https://nabba.kr/board/com_schedule.html\n전체 일정 https
+ ://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바
+ 뀔 수 있어요
+LOCATION:하얏트 리젠시 인천 파라다이스시티
+URL:https://nabba.kr/board/com_schedule.html
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-pca-2026-10-10-daejeon@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261010
+DTEND;VALUE=DATE:20261011
+SUMMARY:PCA DAEJEON POINT LEAGUE
+DESCRIPTION:종목 남자 스포츠 모델\, 여자 스포츠 모델\, 보
+ 디빌딩\, 클래식 보디빌딩\, 피지크\, 클래식 피지크\n원
+ 문 https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=191\n전
+ 체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 
+ 사정으로 바뀔 수 있어요
+LOCATION:충청북도 c&v 센터
+URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=191
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-594@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261010
+DTEND;VALUE=DATE:20261011
+SUMMARY:WNGP 군포
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-10-04\n종목 클래
+ 식피지크 비기너\, 클래식피지크 노비스\, 클래식피지
+ 크 오픈\, 클래식피지크 AGE\, 클래식피지크 중/고등부\, 
+ 클래식피지크 대학부\, 클래식보디빌딩 비기너\, 클래
+ 식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 클래식보
+ 디빌딩 AGE\, 클래식보디빌딩 중/고등부\, 클래식보디빌
+ 딩 대학부\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디
+ 빌딩 오픈\, 보디빌딩 AGE\, 보디빌딩 중/고등부\, 보디빌
+ 딩 대학부\, 피지크 비기너\, 피지크 노비스 외\n원문 htt
+ ps://unmo.kr/m/shop/tm_view.php?gs_id=594\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:경기과학기술대학교 체육관
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=594
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-npca-2026-10-11-daejeon@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261011
+DTEND;VALUE=DATE:20261012
+SUMMARY:NPCA DAEJEON POINT LEAGUE
+DESCRIPTION:종목 여자 스포츠 모델\, 남자 스포츠 모델\, 피
+ 지크\, 머슬 모델\, 비키니\, 클래식 보디빌딩\, 클래식 
+ 피지크\, 보디빌딩\n원문 https://coachn.co.kr/bbs/board.php?bo_ta
+ ble=magazine&wr_id=198\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:충청북도 c&v 센터
+URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=198
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23217@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261016
+DTEND;VALUE=DATE:20261018
+SUMMARY:IFBB PRO 2026 Hurricane Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-hurricane-pro/
+ \n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 
+ 측 사정으로 바뀔 수 있어요
+LOCATION:St. Petersburg\, St. Petersburg\, Florida
+URL:https://www.ifbbpro.com/competition/2026-hurricane-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-pca-2026-10-17-cheongju@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261017
+DTEND;VALUE=DATE:20261018
+SUMMARY:PCA CHEONGJU POINT LEAGUE
+DESCRIPTION:종목 보디빌딩\, 남자 스포츠 모델\, 클래식 보
+ 디빌딩\, 피지크\, 클래식 피지크\n원문 https://coachn.co.kr/
+ bbs/board.php?bo_table=magazine&wr_id=202\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:충청북도 c&v 센터
+URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=202
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-596@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261017
+DTEND;VALUE=DATE:20261018
+SUMMARY:WNGP 시흥
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-10-11\n종목 클래
+ 식피지크 비기너\, 클래식피지크 노비스\, 클래식피지
+ 크 오픈\, 클래식피지크 AGE\, 클래식피지크 중/고등부\, 
+ 클래식피지크 대학부\, 클래식보디빌딩 비기너\, 클래
+ 식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 클래식보
+ 디빌딩 AGE\, 클래식보디빌딩 중/고등부\, 클래식보디빌
+ 딩 대학부\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디
+ 빌딩 오픈\, 보디빌딩 AGE\, 보디빌딩 중/고등부\, 보디빌
+ 딩 대학부\, 피지크 비기너\, 피지크 노비스 외\n원문 htt
+ ps://unmo.kr/m/shop/tm_view.php?gs_id=596\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:성결대학교 기념관 대강당 5층
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=596
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-597@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261018
+DTEND;VALUE=DATE:20261019
+SUMMARY:MUSA 시흥
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-10-11\n종목 클래
+ 식피지크 비기너\, 클래식피지크 노비스\, 클래식피지
+ 크 오픈\, 클래식피지크 AGE\, 클래식피지크 중/고등부\, 
+ 클래식피지크 대학부\, 클래식보디빌딩 비기너\, 클래
+ 식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 클래식보
+ 디빌딩 AGE\, 클래식보디빌딩 중/고등부\, 클래식보디빌
+ 딩 대학부\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디
+ 빌딩 오픈\, 보디빌딩 AGE\, 보디빌딩 중/고등부\, 보디빌
+ 딩 대학부\, 피지크 비기너\, 피지크 노비스 외\n원문 htt
+ ps://unmo.kr/m/shop/tm_view.php?gs_id=597\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:성결대학교 기념관 대강당 5층
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=597
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbkorea-natural-regional-11@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261018
+DTEND;VALUE=DATE:20261019
+SUMMARY:NPC 내추럴 리저널 #11
+DESCRIPTION:참가비 39만원 (트루 노비스 24만원) / 종목 추가
+  15만원\n접수 마감 2026-10-11\n종목 핏 모델\, 비키니\, 웰
+ 니스\, 피겨\, 멘즈 피지크\, 클래식 피지크\, 보디빌딩\n
+ 원문 https://ifbbprokorea.com/schedule/natural-regional-11/\n전체 일
+ 정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으
+ 로 바뀔 수 있어요
+LOCATION:엠파이브 방송센터\, 경기도 파주시
+URL:https://ifbbprokorea.com/schedule/natural-regional-11/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbkorea-open-regional-11@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261018
+DTEND;VALUE=DATE:20261019
+SUMMARY:NPC 오픈 리저널 #11
+DESCRIPTION:참가비 39만원 (트루 노비스 24만원) / 종목 추가
+  15만원\n접수 마감 2026-10-11\n종목 핏 모델\, 비키니\, 웰
+ 니스\, 피겨\, 멘즈 피지크\, 클래식 피지크\, 보디빌딩\n
+ 원문 https://ifbbprokorea.com/schedule/open-regional-11/\n전체 일정
+  https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로
+  바뀔 수 있어요
+LOCATION:엠파이브 방송센터\, 경기도 파주시
+URL:https://ifbbprokorea.com/schedule/open-regional-11/
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-npca-2026-10-18-cheongju@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261018
+DTEND;VALUE=DATE:20261019
+SUMMARY:NPCA CHEONGJU POINT LEAGUE
+DESCRIPTION:종목 남자 스포츠 모델\, 피지크\, 머슬 모델\, 
+ 비키니\, 클래식 보디빌딩\, 클래식 피지크\, 보디빌딩\n
+ 원문 https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=207\n
+ 전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측
+  사정으로 바뀔 수 있어요
+LOCATION:충청북도 c&v 센터
+URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=207
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-pca-2026-10-24-ad91e81e@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261024
+DTEND;VALUE=DATE:20261025
+SUMMARY:PCA 노오석 클래식
+DESCRIPTION:종목 남자 스포츠 모델\, 비키니\, 머슬 모델\, 
+ 보디빌딩\, 클래식 보디빌딩\, 클래식 피지크\, 피지크\n
+ 원문 https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=213\n
+ 전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측
+  사정으로 바뀔 수 있어요
+LOCATION:대구 DTC
+URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=213
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-598@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261024
+DTEND;VALUE=DATE:20261025
+SUMMARY:WNGP 일산
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-10-18\n종목 클래
+ 식피지크 비기너\, 클래식피지크 노비스\, 클래식피지
+ 크 오픈\, 클래식피지크 AGE\, 클래식피지크 중/고등부\, 
+ 클래식피지크 대학부\, 클래식보디빌딩 비기너\, 클래
+ 식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 클래식보
+ 디빌딩 AGE\, 클래식보디빌딩 중/고등부\, 클래식보디빌
+ 딩 대학부\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디
+ 빌딩 오픈\, 보디빌딩 AGE\, 보디빌딩 중/고등부\, 보디빌
+ 딩 대학부\, 피지크 비기너\, 피지크 노비스 외\n원문 htt
+ ps://unmo.kr/m/shop/tm_view.php?gs_id=598\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:대교 미디어센터
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=598
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-630@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261024
+DTEND;VALUE=DATE:20261025
+SUMMARY:ZENITH NATURAL FITNESS COMPETITION
+DESCRIPTION:참가비 150\,000원\n접수 마감 2026-10-21\n종목 보디
+ 빌딩 비기너\, 보디빌딩 오픈\, 클래식피지크 비기너\, 
+ 클래식피지크 오픈\, 피지크 비기너\, 피지크 오픈\, 남
+ 성 스포츠모델 비기너\, 남성 스포츠모델 오픈\, 비키니
+  비기너\, 비키니 오픈\, 비키니모델 오픈\n원문 https://un
+ mo.kr/m/shop/tm_view.php?gs_id=630\n전체 일정 https://ynschoi.github.
+ io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:경기 수원시 팔달구 향교로3번길 21\, 2F MDM\, 제니
+ 스 공식 대회장
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=630
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-616@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261025
+DTEND;VALUE=DATE:20261026
+SUMMARY:ANBC 일산
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-10-18\n종목 클래
+ 식피지크 중/고등부\, 클래식피지크 루키(~23세까지)\, 
+ 클래식피지크 비기너\, 클래식피지크 노비스\, 클래식
+ 피지크 오픈\, 클래식피지크 시니어(40~49세)\, 클래식피
+ 지크 마스터(50세 이상)\, 클래식보디빌딩 중/고등부\, 
+ 클래식보디빌딩 루키(~23세까지)\, 클래식보디빌딩 비기
+ 너\, 클래식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 
+ 클래식보디빌딩 시니어(40~49세)\, 클래식보디빌딩 마스
+ 터(50세 이상)\, 보디빌딩 중/고등부\, 보디빌딩 루키(~23
+ 세까지)\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디빌
+ 딩 오픈\, 보디빌딩 시니어(40~49세까지) 외\n원문 https://u
+ nmo.kr/m/shop/tm_view.php?gs_id=616\n전체 일정 https://ynschoi.github
+ .io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:대교 미디어센터
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=616
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-599@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261025
+DTEND;VALUE=DATE:20261026
+SUMMARY:MUSA 일산
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-10-18\n종목 클래
+ 식피지크 비기너\, 클래식피지크 노비스\, 클래식피지
+ 크 오픈\, 클래식피지크 AGE\, 클래식피지크 중/고등부\, 
+ 클래식피지크 대학부\, 클래식보디빌딩 비기너\, 클래
+ 식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 클래식보
+ 디빌딩 AGE\, 클래식보디빌딩 중/고등부\, 클래식보디빌
+ 딩 대학부\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디
+ 빌딩 오픈\, 보디빌딩 AGE\, 보디빌딩 중/고등부\, 보디빌
+ 딩 대학부\, 피지크 비기너\, 피지크 노비스 외\n원문 htt
+ ps://unmo.kr/m/shop/tm_view.php?gs_id=599\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:대교 미디어센터
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=599
+END:VEVENT
+BEGIN:VEVENT
+UID:musclemania-kr-2026@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261025
+DTEND;VALUE=DATE:20261026
+SUMMARY:MUSCLEMANIA 머슬마니아 코리아 챔피언십
+DESCRIPTION:접수 마감 2026-10-18\n종목 보디빌딩\, 클래식\, 
+ 피지크\, 모델\, 피트니스\, 데님\, 트랜스포메이션\, 미
+ 즈비키니\, 피규어\n원문 https://www.mmkorea.com/\n전체 일정 
+ https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 
+ 바뀔 수 있어요
+LOCATION:광운대학교 동해문화예술관\, 서울
+URL:https://www.mmkorea.com/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbkorea-agp-natural-pq-2@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261025
+DTEND;VALUE=DATE:20261026
+SUMMARY:NPC AGP 내추럴 프로 퀄리파이어 #2
+DESCRIPTION:참가비 48만원 / 종목 추가 15만원\n접수 마감 202
+ 6-10-18\n종목 핏 모델\, 비키니\, 웰니스\, 피겨\, 멘즈 피
+ 지크\, 클래식 피지크\, 보디빌딩\n원문 https://ifbbprokorea.
+ com/schedule/agp-natural-pq-2/\n전체 일정 https://ynschoi.github.io/b
+ bcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:엠파이브 방송센터\, 경기도 파주시
+URL:https://ifbbprokorea.com/schedule/agp-natural-pq-2/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbkorea-natural-regional-12@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261025
+DTEND;VALUE=DATE:20261026
+SUMMARY:NPC 내추럴 리저널 #12
+DESCRIPTION:참가비 39만원 (트루 노비스 24만원) / 종목 추가
+  15만원\n접수 마감 2026-10-18\n종목 핏 모델\, 비키니\, 웰
+ 니스\, 피겨\, 멘즈 피지크\, 클래식 피지크\, 보디빌딩\n
+ 원문 https://ifbbprokorea.com/schedule/natural-regional-12/\n전체 일
+ 정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으
+ 로 바뀔 수 있어요
+LOCATION:엠파이브 방송센터\, 경기도 파주시
+URL:https://ifbbprokorea.com/schedule/natural-regional-12/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbkorea-open-regional-12@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261025
+DTEND;VALUE=DATE:20261026
+SUMMARY:NPC 오픈 리저널 #12
+DESCRIPTION:참가비 39만원 (트루 노비스 24만원) / 종목 추가
+  15만원\n접수 마감 2026-10-18\n종목 핏 모델\, 비키니\, 웰
+ 니스\, 피겨\, 멘즈 피지크\, 클래식 피지크\, 보디빌딩\n
+ 원문 https://ifbbprokorea.com/schedule/open-regional-12/\n전체 일정
+  https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로
+  바뀔 수 있어요
+LOCATION:엠파이브 방송센터\, 경기도 파주시
+URL:https://ifbbprokorea.com/schedule/open-regional-12/
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-npca-2026-10-25-ad91e81e@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261025
+DTEND;VALUE=DATE:20261026
+SUMMARY:NPCA 노오석 클래식
+DESCRIPTION:종목 여자 스포츠 모델\, 남자 스포츠 모델\, 피
+ 지크\, 머슬 모델\, 비키니\, 클래식 보디빌딩\, 클래식 
+ 피지크\, 보디빌딩\n원문 https://coachn.co.kr/bbs/board.php?bo_ta
+ ble=magazine&wr_id=220\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:대구 DTC
+URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=220
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23176@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261101
+SUMMARY:IFBB PRO 2026 All South Championships
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-all-south-cham
+ pionships/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정
+ 은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Orlando\, Orlando\, Florida
+URL:https://www.ifbbpro.com/competition/2026-all-south-championships/
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-600@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261101
+SUMMARY:WNGP 양주
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-10-25\n종목 클래
+ 식피지크 비기너\, 클래식피지크 노비스\, 클래식피지
+ 크 오픈\, 클래식피지크 AGE\, 클래식피지크 중/고등부\, 
+ 클래식피지크 대학부\, 클래식보디빌딩 비기너\, 클래
+ 식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 클래식보
+ 디빌딩 AGE\, 클래식보디빌딩 중/고등부\, 클래식보디빌
+ 딩 대학부\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디
+ 빌딩 오픈\, 보디빌딩 AGE\, 보디빌딩 중/고등부\, 보디빌
+ 딩 대학부\, 피지크 비기너\, 피지크 노비스 외\n원문 htt
+ ps://unmo.kr/m/shop/tm_view.php?gs_id=600\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:파주 엠파이브 방송센터
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=600
+END:VEVENT
+BEGIN:VEVENT
+UID:kclassic-2273@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261101
+SUMMARY:케이클래식 내추럴 부산
+DESCRIPTION:참가비 얼리버드 14만원 / 일반 17만원 / 추가 20
+ 만원 (종목 추가 8만원)\n접수 마감 2026-10-25\n종목 바디
+ 빌딩\, 클래식바디빌딩\, 클래식피지크\, 피지크\, 스포
+ 츠모델(남)\, 스포츠모델(여)\, 비키니\, 모노키니\, 애슬
+ 레저모델(남)\, 애슬레저모델(여)\, 케이모델(남)\, 케이
+ 모델(여)\n원문 https://kismos.co.kr/product/detail.html?product_no=2
+ 273&cate_no=822&display_group=1\n전체 일정 https://ynschoi.github.io/
+ bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:피아크 별관 아트홀\, 부산
+URL:https://kismos.co.kr/product/detail.html?product_no=2273&cate_no=822&d
+ isplay_group=1
+END:VEVENT
+BEGIN:VEVENT
+UID:kclassic-2272@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261101
+SUMMARY:케이클래식 부산
+DESCRIPTION:참가비 얼리버드 14만원 / 일반 17만원 / 추가 20
+ 만원 (종목 추가 8만원)\n접수 마감 2026-10-25\n종목 바디
+ 빌딩\, 클래식바디빌딩\, 클래식피지크\, 피지크\, 스포
+ 츠모델(남)\, 스포츠모델(여)\, 비키니\, 피규어\n원문 htt
+ ps://kismos.co.kr/product/detail.html?product_no=2272&cate_no=822&display
+ _group=1\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 
+ 주최 측 사정으로 바뀔 수 있어요
+LOCATION:피아크 별관 아트홀\, 부산
+URL:https://kismos.co.kr/product/detail.html?product_no=2272&cate_no=822&d
+ isplay_group=1
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-601@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261101
+DTEND;VALUE=DATE:20261102
+SUMMARY:MUSA 양주
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-10-25\n종목 클래
+ 식피지크 비기너\, 클래식피지크 노비스\, 클래식피지
+ 크 오픈\, 클래식피지크 AGE\, 클래식피지크 중/고등부\, 
+ 클래식피지크 대학부\, 클래식보디빌딩 비기너\, 클래
+ 식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 클래식보
+ 디빌딩 AGE\, 클래식보디빌딩 중/고등부\, 클래식보디빌
+ 딩 대학부\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디
+ 빌딩 오픈\, 보디빌딩 AGE\, 보디빌딩 중/고등부\, 보디빌
+ 딩 대학부\, 피지크 비기너\, 피지크 노비스 외\n원문 htt
+ ps://unmo.kr/m/shop/tm_view.php?gs_id=601\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:파주 엠파이브 방송센터
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=601
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-npca-2026-11-01-busan@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261101
+DTEND;VALUE=DATE:20261102
+SUMMARY:NPCA BUSAN POINT LEAGUE
+DESCRIPTION:종목 여자 스포츠 모델\, 남자 스포츠 모델\, 피
+ 지크\, 머슬 모델\, 비키니\, 클래식 보디빌딩\, 클래식 
+ 피지크\, 보디빌딩\n원문 https://coachn.co.kr/bbs/board.php?bo_ta
+ ble=magazine&wr_id=227\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:김해 가야대학교
+URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=227
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-24647@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261107
+DTEND;VALUE=DATE:20261108
+SUMMARY:IFBB PRO 2026 Chattanooga Night of Champions Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-chattanooga-ni
+ ght-of-champions-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Chattanooga\, Chattanooga\, Tennessee
+URL:https://www.ifbbpro.com/competition/2026-chattanooga-night-of-champion
+ s-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-pca-2026-11-07-pohang@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261107
+DTEND;VALUE=DATE:20261108
+SUMMARY:PCA POHANG POINT LEAGUE
+DESCRIPTION:종목 남자 스포츠 모델\, 보디빌딩\, 클래식 보
+ 디빌딩\, 비키니\, 클래식 피지크\n원문 https://coachn.co.kr/
+ bbs/board.php?bo_table=magazine&wr_id=230\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:신경주 대학교
+URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=230
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-602@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261107
+DTEND;VALUE=DATE:20261108
+SUMMARY:WNGP 용인
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-11-01\n종목 클래
+ 식피지크 비기너\, 클래식피지크 노비스\, 클래식피지
+ 크 오픈\, 클래식피지크 AGE\, 클래식피지크 중/고등부\, 
+ 클래식피지크 대학부\, 클래식보디빌딩 비기너\, 클래
+ 식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 클래식보
+ 디빌딩 AGE\, 클래식보디빌딩 중/고등부\, 클래식보디빌
+ 딩 대학부\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디
+ 빌딩 오픈\, 보디빌딩 AGE\, 보디빌딩 중/고등부\, 보디빌
+ 딩 대학부\, 피지크 비기너\, 피지크 노비스 외\n원문 htt
+ ps://unmo.kr/m/shop/tm_view.php?gs_id=602\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:안양대학교 아리홀
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=602
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-603@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261108
+DTEND;VALUE=DATE:20261109
+SUMMARY:MUSA 용인
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-11-01\n종목 클래
+ 식피지크 비기너\, 클래식피지크 노비스\, 클래식피지
+ 크 오픈\, 클래식피지크 AGE\, 클래식피지크 중/고등부\, 
+ 클래식피지크 대학부\, 클래식보디빌딩 비기너\, 클래
+ 식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 클래식보
+ 디빌딩 AGE\, 클래식보디빌딩 중/고등부\, 클래식보디빌
+ 딩 대학부\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디
+ 빌딩 오픈\, 보디빌딩 AGE\, 보디빌딩 중/고등부\, 보디빌
+ 딩 대학부\, 피지크 비기너\, 피지크 노비스 외\n원문 htt
+ ps://unmo.kr/m/shop/tm_view.php?gs_id=603\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:안양대학교 아리홀
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=603
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-npca-2026-11-08-pohang@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261108
+DTEND;VALUE=DATE:20261109
+SUMMARY:NPCA POHANG POINT LEAGUE
+DESCRIPTION:종목 여자 스포츠 모델\, 남자 스포츠 모델\, 피
+ 지크\, 비키니\, 클래식 보디빌딩\, 클래식 피지크\, 보
+ 디빌딩\n원문 https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr
+ _id=236\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 
+ 주최 측 사정으로 바뀔 수 있어요
+LOCATION:경주 신경주 대학교
+URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=236
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25582@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261114
+DTEND;VALUE=DATE:20261115
+SUMMARY:IFBB PRO 2026 Irongames Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-irongames-pro/
+ \n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 
+ 측 사정으로 바뀔 수 있어요
+LOCATION:San Diego\, San Diego\, California
+URL:https://www.ifbbpro.com/competition/2026-irongames-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-604@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261114
+DTEND;VALUE=DATE:20261115
+SUMMARY:WNGP 광명
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-11-08\n종목 클래
+ 식피지크 비기너\, 클래식피지크 노비스\, 클래식피지
+ 크 오픈\, 클래식피지크 AGE\, 클래식피지크 중/고등부\, 
+ 클래식피지크 대학부\, 클래식보디빌딩 비기너\, 클래
+ 식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 클래식보
+ 디빌딩 AGE\, 클래식보디빌딩 중/고등부\, 클래식보디빌
+ 딩 대학부\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디
+ 빌딩 오픈\, 보디빌딩 AGE\, 보디빌딩 중/고등부\, 보디빌
+ 딩 대학부\, 피지크 비기너\, 피지크 노비스 외\n원문 htt
+ ps://unmo.kr/m/shop/tm_view.php?gs_id=604\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:서울 에스플렉스 센터
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=604
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-605@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261115
+DTEND;VALUE=DATE:20261116
+SUMMARY:MUSA 광명
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-11-08\n종목 클래
+ 식피지크 비기너\, 클래식피지크 노비스\, 클래식피지
+ 크 오픈\, 클래식피지크 AGE\, 클래식피지크 중/고등부\, 
+ 클래식피지크 대학부\, 클래식보디빌딩 비기너\, 클래
+ 식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 클래식보
+ 디빌딩 AGE\, 클래식보디빌딩 중/고등부\, 클래식보디빌
+ 딩 대학부\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디
+ 빌딩 오픈\, 보디빌딩 AGE\, 보디빌딩 중/고등부\, 보디빌
+ 딩 대학부\, 피지크 비기너\, 피지크 노비스 외\n원문 htt
+ ps://unmo.kr/m/shop/tm_view.php?gs_id=605\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:서울 에스플렉스 센터
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=605
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-631@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261115
+DTEND;VALUE=DATE:20261116
+SUMMARY:ZENITH NATURAL FITNESS COMPETITION
+DESCRIPTION:참가비 150\,000원\n접수 마감 2026-11-11\n종목 보디
+ 빌딩 비기너\, 보디빌딩 오픈\, 클래식피지크 비기너\, 
+ 클래식피지크 오픈\, 피지크 비기너\, 피지크 오픈\, 남
+ 성 스포츠모델 비기너\, 남성 스포츠모델 오픈\, 비키니
+  비기너\, 비키니 오픈\, 비키니모델 오픈\n원문 https://un
+ mo.kr/m/shop/tm_view.php?gs_id=631\n전체 일정 https://ynschoi.github.
+ io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:경기 수원시 팔달구 향교로3번길 21\, 2F MDM\, 제니
+ 스 공식 대회장
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=631
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25694@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261121
+DTEND;VALUE=DATE:20261123
+SUMMARY:IFBB PRO 2026 Atlantic Coast Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-atlantic-coast
+ -pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주
+ 최 측 사정으로 바뀔 수 있어요
+LOCATION:Fort Lauderdale\, Fort Lauderdale\, Florida
+URL:https://www.ifbbpro.com/competition/2026-atlantic-coast-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25167@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261121
+DTEND;VALUE=DATE:20261122
+SUMMARY:IFBB PRO 2026 Shawn Ray’s Hawaiian Classic Masters Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-shawn-rays-haw
+ aiian-classic-masters-pro/\n전체 일정 https://ynschoi.github.io/bbcom
+ p/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Honolulu\, Honolulu\, HawaII
+URL:https://www.ifbbpro.com/competition/2026-shawn-rays-hawaiian-classic-m
+ asters-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-606@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261121
+DTEND;VALUE=DATE:20261122
+SUMMARY:WNGP 대전
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-11-15\n종목 클래
+ 식피지크 비기너\, 클래식피지크 노비스\, 클래식피지
+ 크 오픈\, 클래식피지크 AGE\, 클래식피지크 중/고등부\, 
+ 클래식피지크 대학부\, 클래식보디빌딩 비기너\, 클래
+ 식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 클래식보
+ 디빌딩 AGE\, 클래식보디빌딩 중/고등부\, 클래식보디빌
+ 딩 대학부\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디
+ 빌딩 오픈\, 보디빌딩 AGE\, 보디빌딩 중/고등부\, 보디빌
+ 딩 대학부\, 피지크 비기너\, 피지크 노비스 외\n원문 htt
+ ps://unmo.kr/m/shop/tm_view.php?gs_id=606\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:갈마 체육관
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=606
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-607@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261122
+DTEND;VALUE=DATE:20261123
+SUMMARY:MUSA 대전
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-11-15\n종목 클래
+ 식피지크 비기너\, 클래식피지크 노비스\, 클래식피지
+ 크 오픈\, 클래식피지크 AGE\, 클래식피지크 중/고등부\, 
+ 클래식피지크 대학부\, 클래식보디빌딩 비기너\, 클래
+ 식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 클래식보
+ 디빌딩 AGE\, 클래식보디빌딩 중/고등부\, 클래식보디빌
+ 딩 대학부\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디
+ 빌딩 오픈\, 보디빌딩 AGE\, 보디빌딩 중/고등부\, 보디빌
+ 딩 대학부\, 피지크 비기너\, 피지크 노비스 외\n원문 htt
+ ps://unmo.kr/m/shop/tm_view.php?gs_id=607\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:갈마 체육관
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=607
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-npca-2026-11-28-nv-newvictorseriesinseoul@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261128
+DTEND;VALUE=DATE:20261129
+SUMMARY:NPCA NEW VICTOR SERIES IN SEOUL
+DESCRIPTION:참가비 150\,000원\n원문 https://coachn.co.kr/sub/competi
+ tions_list.php?sca=NPCA%EB%89%B4%EB%B9%85%ED%84%B0%EC%A0%91%EC%88%98\n전
+ 체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 
+ 사정으로 바뀔 수 있어요
+URL:https://coachn.co.kr/sub/competitions_list.php?sca=NPCA%EB%89%B4%EB%B9
+ %85%ED%84%B0%EC%A0%91%EC%88%98
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-pca-2026-11-28-seoul@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261128
+DTEND;VALUE=DATE:20261129
+SUMMARY:PCA SEOUL POINT LEAGUE
+DESCRIPTION:참가비 160\,000원\n원문 https://coachn.co.kr/sub/competi
+ tions_list.php?sca=PCA%EC%A0%91%EC%88%98\n전체 일정 https://ynschoi.g
+ ithub.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어
+ 요
+URL:https://coachn.co.kr/sub/competitions_list.php?sca=PCA%EC%A0%91%EC%88%
+ 98
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-608@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261128
+DTEND;VALUE=DATE:20261129
+SUMMARY:WNGP 부산
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-11-22\n종목 클래
+ 식피지크 비기너\, 클래식피지크 노비스\, 클래식피지
+ 크 오픈\, 클래식피지크 AGE\, 클래식피지크 중/고등부\, 
+ 클래식피지크 대학부\, 클래식보디빌딩 비기너\, 클래
+ 식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 클래식보
+ 디빌딩 AGE\, 클래식보디빌딩 중/고등부\, 클래식보디빌
+ 딩 대학부\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디
+ 빌딩 오픈\, 보디빌딩 AGE\, 보디빌딩 중/고등부\, 보디빌
+ 딩 대학부\, 피지크 비기너\, 피지크 노비스 외\n원문 htt
+ ps://unmo.kr/m/shop/tm_view.php?gs_id=608\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:보건대학교 체육관
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=608
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-617@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261129
+DTEND;VALUE=DATE:20261130
+SUMMARY:ANBC 부산
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-11-22\n종목 클래
+ 식피지크 중/고등부\, 클래식피지크 루키(~23세까지)\, 
+ 클래식피지크 비기너\, 클래식피지크 노비스\, 클래식
+ 피지크 오픈\, 클래식피지크 시니어(40~49세)\, 클래식피
+ 지크 마스터(50세 이상)\, 클래식보디빌딩 중/고등부\, 
+ 클래식보디빌딩 루키(~23세까지)\, 클래식보디빌딩 비기
+ 너\, 클래식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 
+ 클래식보디빌딩 시니어(40~49세)\, 클래식보디빌딩 마스
+ 터(50세 이상)\, 보디빌딩 중/고등부\, 보디빌딩 루키(~23
+ 세까지)\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디빌
+ 딩 오픈\, 보디빌딩 시니어(40~49세까지) 외\n원문 https://u
+ nmo.kr/m/shop/tm_view.php?gs_id=617\n전체 일정 https://ynschoi.github
+ .io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:보건대학교 체육관
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=617
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-609@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261129
+DTEND;VALUE=DATE:20261130
+SUMMARY:MUSA 부산
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-11-22\n종목 클래
+ 식피지크 비기너\, 클래식피지크 노비스\, 클래식피지
+ 크 오픈\, 클래식피지크 AGE\, 클래식피지크 중/고등부\, 
+ 클래식피지크 대학부\, 클래식보디빌딩 비기너\, 클래
+ 식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 클래식보
+ 디빌딩 AGE\, 클래식보디빌딩 중/고등부\, 클래식보디빌
+ 딩 대학부\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디
+ 빌딩 오픈\, 보디빌딩 AGE\, 보디빌딩 중/고등부\, 보디빌
+ 딩 대학부\, 피지크 비기너\, 피지크 노비스 외\n원문 htt
+ ps://unmo.kr/m/shop/tm_view.php?gs_id=609\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:보건대학교 체육관
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=609
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-npca-2026-11-29-seoul@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261129
+DTEND;VALUE=DATE:20261130
+SUMMARY:NPCA SEOUL POINT LEAGUE
+DESCRIPTION:참가비 180\,000원\n원문 https://coachn.co.kr/sub/competi
+ tions_list.php?sca=NPCA%EC%A0%91%EC%88%98\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+URL:https://coachn.co.kr/sub/competitions_list.php?sca=NPCA%EC%A0%91%EC%88
+ %98
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-610@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261205
+DTEND;VALUE=DATE:20261206
+SUMMARY:WNGP 고양
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-11-29\n종목 클래
+ 식피지크 비기너\, 클래식피지크 노비스\, 클래식피지
+ 크 오픈\, 클래식피지크 AGE\, 클래식피지크 중/고등부\, 
+ 클래식피지크 대학부\, 클래식보디빌딩 비기너\, 클래
+ 식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 클래식보
+ 디빌딩 AGE\, 클래식보디빌딩 중/고등부\, 클래식보디빌
+ 딩 대학부\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디
+ 빌딩 오픈\, 보디빌딩 AGE\, 보디빌딩 중/고등부\, 보디빌
+ 딩 대학부\, 피지크 비기너\, 피지크 노비스 외\n원문 htt
+ ps://unmo.kr/m/shop/tm_view.php?gs_id=610\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:파주 엠파이브 방송센터
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=610
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-618@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261206
+DTEND;VALUE=DATE:20261207
+SUMMARY:ANBC 고양 & 파이널 (프로전)
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-11-29\n종목 클래
+ 식피지크 중/고등부\, 클래식피지크 루키(~23세까지)\, 
+ 클래식피지크 비기너\, 클래식피지크 노비스\, 클래식
+ 피지크 오픈\, 클래식피지크 시니어(40~49세)\, 클래식피
+ 지크 마스터(50세 이상)\, 클래식보디빌딩 중/고등부\, 
+ 클래식보디빌딩 루키(~23세까지)\, 클래식보디빌딩 비기
+ 너\, 클래식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 
+ 클래식보디빌딩 시니어(40~49세)\, 클래식보디빌딩 마스
+ 터(50세 이상)\, 보디빌딩 중/고등부\, 보디빌딩 루키(~23
+ 세까지)\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디빌
+ 딩 오픈\, 보디빌딩 시니어(40~49세까지) 외\n원문 https://u
+ nmo.kr/m/shop/tm_view.php?gs_id=618\n전체 일정 https://ynschoi.github
+ .io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=618
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-611@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261206
+DTEND;VALUE=DATE:20261207
+SUMMARY:MUSA 고양
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-11-29\n종목 클래
+ 식피지크 비기너\, 클래식피지크 노비스\, 클래식피지
+ 크 오픈\, 클래식피지크 AGE\, 클래식피지크 중/고등부\, 
+ 클래식피지크 대학부\, 클래식보디빌딩 비기너\, 클래
+ 식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 클래식보
+ 디빌딩 AGE\, 클래식보디빌딩 중/고등부\, 클래식보디빌
+ 딩 대학부\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디
+ 빌딩 오픈\, 보디빌딩 AGE\, 보디빌딩 중/고등부\, 보디빌
+ 딩 대학부\, 피지크 비기너\, 피지크 노비스 외\n원문 htt
+ ps://unmo.kr/m/shop/tm_view.php?gs_id=611\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:파주 엠파이브 방송센터
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=611
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-625@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261212
+DTEND;VALUE=DATE:20261213
+SUMMARY:WNGP 파이널 (하반기 프로카드)
+DESCRIPTION:참가비 280\,000원\n접수 마감 2026-12-06\n종목 클래
+ 식피지크\, 클래식보디빌딩\, 보디빌딩\, 피지크\, 스포
+ 츠모델(여)\, 스포츠모델(남)\, 비키니\, 머슬모델\n원문 
+ https://unmo.kr/m/shop/tm_view.php?gs_id=625\n전체 일정 https://ynsch
+ oi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 
+ 있어요
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=625
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-612@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261212
+DTEND;VALUE=DATE:20261213
+SUMMARY:WNGP 화성
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-12-06\n종목 클래
+ 식피지크 비기너\, 클래식피지크 노비스\, 클래식피지
+ 크 오픈\, 클래식피지크 AGE\, 클래식피지크 중/고등부\, 
+ 클래식피지크 대학부\, 클래식보디빌딩 비기너\, 클래
+ 식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 클래식보
+ 디빌딩 AGE\, 클래식보디빌딩 중/고등부\, 클래식보디빌
+ 딩 대학부\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디
+ 빌딩 오픈\, 보디빌딩 AGE\, 보디빌딩 중/고등부\, 보디빌
+ 딩 대학부\, 피지크 비기너\, 피지크 노비스 외\n원문 htt
+ ps://unmo.kr/m/shop/tm_view.php?gs_id=612\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=612
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-626@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261213
+DTEND;VALUE=DATE:20261214
+SUMMARY:MUSA 파이널 (하반기 프로카드)
+DESCRIPTION:참가비 280\,000원\n접수 마감 2026-12-06\n종목 클래
+ 식피지크\, 클래식보디빌딩\, 보디빌딩\, 피지크\, 스포
+ 츠모델(여)\, 스포츠모델(남)\, 비키니\, 머슬모델\n원문 
+ https://unmo.kr/m/shop/tm_view.php?gs_id=626\n전체 일정 https://ynsch
+ oi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 
+ 있어요
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=626
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-613@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261213
+DTEND;VALUE=DATE:20261214
+SUMMARY:MUSA 화성
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-12-06\n종목 클래
+ 식피지크 비기너\, 클래식피지크 노비스\, 클래식피지
+ 크 오픈\, 클래식피지크 AGE\, 클래식피지크 중/고등부\, 
+ 클래식피지크 대학부\, 클래식보디빌딩 비기너\, 클래
+ 식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 클래식보
+ 디빌딩 AGE\, 클래식보디빌딩 중/고등부\, 클래식보디빌
+ 딩 대학부\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디
+ 빌딩 오픈\, 보디빌딩 AGE\, 보디빌딩 중/고등부\, 보디빌
+ 딩 대학부\, 피지크 비기너\, 피지크 노비스 외\n원문 htt
+ ps://unmo.kr/m/shop/tm_view.php?gs_id=613\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=613
+END:VEVENT
+END:VCALENDAR

@@ -97,7 +97,7 @@ def parse_kdate(s, year_hint=None):
     if m:
         y, mo, d = m.groups()
         start = iso(y, mo, d)
-        m2 = re.search(r"^\s*(?:\([^)]*\)|[월화수목금토일]요일)?\s*[~\-–]\s*(?:(\d{4})\s*[-./]\s*)?(?:(\d{1,2})\s*[-./]\s*)?(\d{1,2})\b",
+        m2 = re.search(r"^\s*\.?\s*(?:\([^)]*\)|[월화수목금토일]요일)?\s*[~\-–]\s*(?:(\d{4})\s*[-./]\s*)?(?:(\d{1,2})\s*[-./]\s*)?(\d{1,2})\b",
                        s[m.end():])
         end = iso(m2.group(1) or y, m2.group(2) or mo, m2.group(3)) if m2 else None
         return start, (end if end and end > start else None)

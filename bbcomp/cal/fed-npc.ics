@@ -1,0 +1,84 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//bbcomp//schedule//KO
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:보디빌딩 대회 · NPC
+X-WR-TIMEZONE:Asia/Seoul
+REFRESH-INTERVAL;VALUE=DURATION:P1D
+X-PUBLISHED-TTL:P1D
+BEGIN:VEVENT
+UID:ifbbkorea-natural-regional-11@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261018
+DTEND;VALUE=DATE:20261019
+SUMMARY:NPC 내추럴 리저널 #11
+DESCRIPTION:참가비 39만원 (트루 노비스 24만원) / 종목 추가
+  15만원\n접수 마감 2026-10-11\n종목 핏 모델\, 비키니\, 웰
+ 니스\, 피겨\, 멘즈 피지크\, 클래식 피지크\, 보디빌딩\n
+ 원문 https://ifbbprokorea.com/schedule/natural-regional-11/\n전체 일
+ 정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으
+ 로 바뀔 수 있어요
+LOCATION:엠파이브 방송센터\, 경기도 파주시
+URL:https://ifbbprokorea.com/schedule/natural-regional-11/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbkorea-open-regional-11@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261018
+DTEND;VALUE=DATE:20261019
+SUMMARY:NPC 오픈 리저널 #11
+DESCRIPTION:참가비 39만원 (트루 노비스 24만원) / 종목 추가
+  15만원\n접수 마감 2026-10-11\n종목 핏 모델\, 비키니\, 웰
+ 니스\, 피겨\, 멘즈 피지크\, 클래식 피지크\, 보디빌딩\n
+ 원문 https://ifbbprokorea.com/schedule/open-regional-11/\n전체 일정
+  https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로
+  바뀔 수 있어요
+LOCATION:엠파이브 방송센터\, 경기도 파주시
+URL:https://ifbbprokorea.com/schedule/open-regional-11/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbkorea-agp-natural-pq-2@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261025
+DTEND;VALUE=DATE:20261026
+SUMMARY:NPC AGP 내추럴 프로 퀄리파이어 #2
+DESCRIPTION:참가비 48만원 / 종목 추가 15만원\n접수 마감 202
+ 6-10-18\n종목 핏 모델\, 비키니\, 웰니스\, 피겨\, 멘즈 피
+ 지크\, 클래식 피지크\, 보디빌딩\n원문 https://ifbbprokorea.
+ com/schedule/agp-natural-pq-2/\n전체 일정 https://ynschoi.github.io/b
+ bcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:엠파이브 방송센터\, 경기도 파주시
+URL:https://ifbbprokorea.com/schedule/agp-natural-pq-2/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbkorea-natural-regional-12@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261025
+DTEND;VALUE=DATE:20261026
+SUMMARY:NPC 내추럴 리저널 #12
+DESCRIPTION:참가비 39만원 (트루 노비스 24만원) / 종목 추가
+  15만원\n접수 마감 2026-10-18\n종목 핏 모델\, 비키니\, 웰
+ 니스\, 피겨\, 멘즈 피지크\, 클래식 피지크\, 보디빌딩\n
+ 원문 https://ifbbprokorea.com/schedule/natural-regional-12/\n전체 일
+ 정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으
+ 로 바뀔 수 있어요
+LOCATION:엠파이브 방송센터\, 경기도 파주시
+URL:https://ifbbprokorea.com/schedule/natural-regional-12/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbkorea-open-regional-12@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261025
+DTEND;VALUE=DATE:20261026
+SUMMARY:NPC 오픈 리저널 #12
+DESCRIPTION:참가비 39만원 (트루 노비스 24만원) / 종목 추가
+  15만원\n접수 마감 2026-10-18\n종목 핏 모델\, 비키니\, 웰
+ 니스\, 피겨\, 멘즈 피지크\, 클래식 피지크\, 보디빌딩\n
+ 원문 https://ifbbprokorea.com/schedule/open-regional-12/\n전체 일정
+  https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로
+  바뀔 수 있어요
+LOCATION:엠파이브 방송센터\, 경기도 파주시
+URL:https://ifbbprokorea.com/schedule/open-regional-12/
+END:VEVENT
+END:VCALENDAR

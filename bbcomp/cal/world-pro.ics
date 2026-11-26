@@ -1,0 +1,2718 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//bbcomp//schedule//KO
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:보디빌딩 대회 · 해외 프로
+X-WR-TIMEZONE:Asia/Seoul
+REFRESH-INTERVAL;VALUE=DURATION:P1D
+X-PUBLISHED-TTL:P1D
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23728@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261003
+DTEND;VALUE=DATE:20261004
+SUMMARY:IFBB PRO 2026 Ace of Stage Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-ace-of-stage-p
+ ro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주
+ 최 측 사정으로 바뀔 수 있어요
+LOCATION:Las Vegas\, Las Vegas\, NV
+URL:https://www.ifbbpro.com/competition/2026-ace-of-stage-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25163@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261003
+DTEND;VALUE=DATE:20261005
+SUMMARY:IFBB PRO 2026 Armenia Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-armenia-pro-qu
+ alifier-2/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정
+ 은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Yerevan\, Yerevan
+URL:https://www.ifbbpro.com/competition/2026-armenia-pro-qualifier-2/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23365@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261003
+DTEND;VALUE=DATE:20261004
+SUMMARY:IFBB PRO 2026 Canadian National Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-canadian-natio
+ nal-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 
+ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Toronto\, Toronto\, Ontario
+URL:https://www.ifbbpro.com/competition/2026-canadian-national-pro-qualifi
+ er/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23713@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261003
+DTEND;VALUE=DATE:20261005
+SUMMARY:IFBB PRO 2026 Everest Muscle Legends Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-everest-muscle
+ -legends-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일
+ 정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Warsaw\, Warsaw
+URL:https://www.ifbbpro.com/competition/2026-everest-muscle-legends-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23459@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261003
+DTEND;VALUE=DATE:20261004
+SUMMARY:IFBB PRO 2026 Southern Muscle Showdown Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-southern-muscl
+ e-showdown-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일
+ 정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Dalton\, Dalton\, GA
+URL:https://www.ifbbpro.com/competition/2026-southern-muscle-showdown-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23914@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261003
+DTEND;VALUE=DATE:20261004
+SUMMARY:IFBB PRO 2026 Texas Natural Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-texas-natural-
+ pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주
+ 최 측 사정으로 바뀔 수 있어요
+LOCATION:Beaumont\, Beaumont\, TX
+URL:https://www.ifbbpro.com/competition/2026-texas-natural-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23362@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261003
+DTEND;VALUE=DATE:20261004
+SUMMARY:IFBB PRO 2026 Toulouse Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-toulouse-pro-q
+ ualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은
+  주최 측 사정으로 바뀔 수 있어요
+LOCATION:Toulouse-Labege\, Toulouse-Labege
+URL:https://www.ifbbpro.com/competition/2026-toulouse-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23139@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261003
+DTEND;VALUE=DATE:20261004
+SUMMARY:IFBB PRO 2026 Tsunami Nutrition Toulouse Championship
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-tsunami-nutrit
+ ion-toulouse-championship/\n전체 일정 https://ynschoi.github.io/bbcom
+ p/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Toulouse-Labege\, Toulouse-Labege
+URL:https://www.ifbbpro.com/competition/2026-tsunami-nutrition-toulouse-ch
+ ampionship/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25018@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261003
+DTEND;VALUE=DATE:20261005
+SUMMARY:IFBB PRO 2026 Vietnam Natural Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-vietnam-natura
+ l-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 
+ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Ho Chi Minh City\, Ho Chi Minh City
+URL:https://www.ifbbpro.com/competition/2026-vietnam-natural-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-ace-of-stage-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261003
+DTEND;VALUE=DATE:20261004
+SUMMARY:IFBB PRO Ace of Stage Pro
+DESCRIPTION:종목 Men's Physique\, Women's Fit Model\, Men's Physique - M
+ asters 40+\, Men's Physique - Masters 50+\, Women's Fit Model - Masters 4
+ 0+\n원문 https://fitnessvolt.com/bodybuilding/contests/2026-ace-of-stag
+ e-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 
+ 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Las Vegas\, Las Vegas\, NV
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-ace-of-stage-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-everest-muscle-legends-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261003
+DTEND;VALUE=DATE:20261004
+SUMMARY:IFBB PRO Everest Muscle Legends Pro
+DESCRIPTION:종목 Men's Open Bodybuilding\, Men's Open Bodybuilding - Mas
+ ters 40+\n원문 https://fitnessvolt.com/bodybuilding/contests/2026-evere
+ st-muscle-legends-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Warsaw
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-everest-muscle-lege
+ nds-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-southern-muscle-showdown-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261003
+DTEND;VALUE=DATE:20261004
+SUMMARY:IFBB PRO Southern Muscle Showdown Pro
+DESCRIPTION:종목 Men's Classic Physique\, Women's Bikini\, Men's Classic
+  Physique - Masters 40+\, Women's Bikini - Masters 40+\, Women's Bikini -
+  Masters 50+\, Women's Bikini - Masters 60+\n원문 https://fitnessvolt.c
+ om/bodybuilding/contests/2026-southern-muscle-showdown-pro/\n전체 일
+ 정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으
+ 로 바뀔 수 있어요
+LOCATION:Dalton\, Dalton\, GA
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-southern-muscle-sho
+ wdown-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-texas-natural-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261003
+DTEND;VALUE=DATE:20261004
+SUMMARY:IFBB PRO Texas Natural Pro
+DESCRIPTION:종목 Women's Bikini\, Women's Fit Model\n원문 https://fitn
+ essvolt.com/bodybuilding/contests/2026-texas-natural-pro/\n전체 일정 
+ https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 
+ 바뀔 수 있어요
+LOCATION:Beaumont\, Beaumont\, TX
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-texas-natural-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-tsunami-nutrition-toulouse-championship@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261003
+DTEND;VALUE=DATE:20261004
+SUMMARY:IFBB PRO Tsunami Nutrition Showdown Toulouse Pro
+DESCRIPTION:종목 Men's Classic Physique\, Men's Physique\, Women's Welln
+ ess\n원문 https://fitnessvolt.com/bodybuilding/contests/2026-tsunami-nu
+ trition-toulouse-championship/\n전체 일정 https://ynschoi.github.io/b
+ bcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Toulouse-Labege
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-tsunami-nutrition-t
+ oulouse-championship/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1032328@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261003
+DTEND;VALUE=DATE:20261004
+SUMMARY:NPC WW Tsunami Nutrition Toulouse Open Pro Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Fitness\, Bodybuil
+ ding\, Men's Physique\, Wellness\, Women's Bodybuilding\, Fit Model\, Wom
+ en's Physique\n원문 https://npcnewsonline.com/schedule_event/2026-npc-w
+ orldwide-tsunami-nutrition-open-pro-qualifier/\n전체 일정 https://yns
+ choi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 
+ 있어요
+LOCATION:Toulouse-Labege
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-tsunami-nu
+ trition-open-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23735@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261004
+DTEND;VALUE=DATE:20261005
+SUMMARY:IFBB PRO 2026 Balkan Grand Prix Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-balkan-grand-p
+ rix-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 
+ 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Sofia\, Sofia
+URL:https://www.ifbbpro.com/competition/2026-balkan-grand-prix-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-24056@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261004
+DTEND;VALUE=DATE:20261005
+SUMMARY:IFBB PRO 2026 Pharlabs Mexico Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-pharlabs-mexic
+ o-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 
+ 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Nuevo Vallarta Nayarit\, Nuevo Vallarta Nayarit
+URL:https://www.ifbbpro.com/competition/2026-pharlabs-mexico-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-balkan-grand-prix-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261004
+DTEND;VALUE=DATE:20261005
+SUMMARY:IFBB PRO Balkan Grand Prix Pro
+DESCRIPTION:종목 Men's 212 Bodybuilding\, Women's Figure\, Women's Welln
+ ess\n원문 https://fitnessvolt.com/bodybuilding/contests/2026-balkan-gra
+ nd-prix-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정
+ 은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Sofia
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-balkan-grand-prix-p
+ ro/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-pharlabs-mexico-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261004
+DTEND;VALUE=DATE:20261005
+SUMMARY:IFBB PRO Pharlabs Mexico Pro
+DESCRIPTION:종목 Men's Open Bodybuilding\, Men's 212 Bodybuilding\, Men'
+ s Classic Physique\, Men's Physique\, Women's Bodybuilding\, Women's Phys
+ ique\, Women's Figure\, Women's Bikini\, Women's Wellness\n원문 https:/
+ /fitnessvolt.com/bodybuilding/contests/2026-pharlabs-mexico-pro/\n전체 
+ 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정
+ 으로 바뀔 수 있어요
+LOCATION:Nuevo Vallarta Nayarit
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-pharlabs-mexico-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-24764@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261010
+DTEND;VALUE=DATE:20261011
+SUMMARY:IFBB PRO 2026 EVLS Prague Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-evls-prague-pr
+ o-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정
+ 은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Prague\, Prague
+URL:https://www.ifbbpro.com/competition/2026-evls-prague-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25134@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261010
+DTEND;VALUE=DATE:20261011
+SUMMARY:IFBB PRO 2026 Musclecontest Philippines Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-musclecontest-
+ philippines-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 
+ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Subic Bay\, Subic Bay
+URL:https://www.ifbbpro.com/competition/2026-musclecontest-philippines-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25140@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261010
+DTEND;VALUE=DATE:20261011
+SUMMARY:IFBB PRO 2026 Musclecontest Philippines Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-musclecontest-
+ philippines-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcom
+ p/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Subic Bay\, Subic Bay
+URL:https://www.ifbbpro.com/competition/2026-musclecontest-philippines-pro
+ -qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23709@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261010
+DTEND;VALUE=DATE:20261012
+SUMMARY:IFBB PRO 2026 Natural Champions Games Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-natural-champi
+ ons-games/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정
+ 은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Warsaw\, Warsaw
+URL:https://www.ifbbpro.com/competition/2026-natural-champions-games/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-musclecontest-philippines-pro-2026@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261010
+DTEND;VALUE=DATE:20261011
+SUMMARY:IFBB PRO Musclecontest Philippines Pro
+DESCRIPTION:종목 Women's Bikini\, Women's Bikini - Masters 40+\n원문 h
+ ttps://fitnessvolt.com/bodybuilding/contests/musclecontest-philippines-pr
+ o-2026/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 
+ 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Subic Bay
+URL:https://fitnessvolt.com/bodybuilding/contests/musclecontest-philippine
+ s-pro-2026/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-ultimate-warriors-pro-2026@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261010
+DTEND;VALUE=DATE:20261011
+SUMMARY:IFBB PRO Ultimate Warriors Pro
+DESCRIPTION:종목 Women's Bikini\n원문 https://fitnessvolt.com/bodybuil
+ ding/contests/ultimate-warriors-pro-2026/\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:Anaheim\, Anaheim\, California
+URL:https://fitnessvolt.com/bodybuilding/contests/ultimate-warriors-pro-20
+ 26/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1060832@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261010
+DTEND;VALUE=DATE:20261012
+SUMMARY:NPC WW Champions Games Natural Regional & Pro Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Fitness\, Bodybuil
+ ding\, Men's Physique\, Wellness\, Fit Model\, Women's Physique\n원문 h
+ ttps://npcnewsonline.com/schedule_event/2026-npc-worldwide-champions-game
+ s-natural-regional-pro-qualifier/\n전체 일정 https://ynschoi.github.i
+ o/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Warsaw
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-champions-
+ games-natural-regional-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1052155@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261010
+DTEND;VALUE=DATE:20261012
+SUMMARY:NPC WW EVLS Prague Pro Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Bodybuilding\, Men
+ 's Physique\, Wellness\, Fit Model\n원문 https://npcnewsonline.com/sche
+ dule_event/2026-npc-worldwide-evls-prague-pro-qualifier/\n전체 일정 h
+ ttps://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 
+ 바뀔 수 있어요
+LOCATION:Prague
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-evls-pragu
+ e-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1060836@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261010
+DTEND;VALUE=DATE:20261011
+SUMMARY:NPC WW Musclecontest Philippines Regional & Pro Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Bodybuilding\, Men
+ 's Physique\, Wellness\, Fit Model\, Women's Physique\n원문 https://npc
+ newsonline.com/schedule_event/2026-npc-worldwide-musclecontest-philippine
+ s-regional-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp
+ /\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Manila
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-musclecont
+ est-philippines-regional-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-24760@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261011
+DTEND;VALUE=DATE:20261012
+SUMMARY:IFBB PRO 2026 EVLS Prague Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-evls-prague-pr
+ o/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최
+  측 사정으로 바뀔 수 있어요
+LOCATION:Prague\, Prague
+URL:https://www.ifbbpro.com/competition/2026-evls-prague-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-24669@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261011
+DTEND;VALUE=DATE:20261012
+SUMMARY:IFBB PRO 2026 Felipe Fiero Classic Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-felipe-fiero-c
+ lassic-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Santiago de Chile\, Santiago de Chile
+URL:https://www.ifbbpro.com/competition/2026-felipe-fiero-classic-pro-qual
+ ifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-evls-prague-pro-2026@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261011
+DTEND;VALUE=DATE:20261012
+SUMMARY:IFBB PRO EVLS Prague Pro
+DESCRIPTION:종목 Men's Open Bodybuilding\, Men's 212 Bodybuilding\, Men'
+ s Classic Physique\, Men's Physique\, Women's Figure\, Women's Bikini\, W
+ omen's Wellness\n원문 https://fitnessvolt.com/bodybuilding/contests/evl
+ s-prague-pro-2026/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 
+ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Prague
+URL:https://fitnessvolt.com/bodybuilding/contests/evls-prague-pro-2026/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1060842@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261011
+DTEND;VALUE=DATE:20261012
+SUMMARY:NPC WW Felipe Fierro Classic Pro Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Fitness\, Bodybuil
+ ding\, Men's Physique\, Wellness\, Women's Bodybuilding\, Fit Model\, Wom
+ en's Physique\n원문 https://npcnewsonline.com/schedule_event/2026-npc-w
+ orldwide-felipe-fierro-classic-pro-qualifier/\n전체 일정 https://ynsc
+ hoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 
+ 있어요
+LOCATION:Santiago
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-felipe-fie
+ rro-classic-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25151@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261016
+DTEND;VALUE=DATE:20261019
+SUMMARY:IFBB PRO 2026 Amateur Olympia Brazil Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-amateur-olympi
+ a-brazil-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\
+ n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Sao Paulo\, Sao Paulo
+URL:https://www.ifbbpro.com/competition/2026-amateur-olympia-brazil-pro-qu
+ alifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25147@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261016
+DTEND;VALUE=DATE:20261019
+SUMMARY:IFBB PRO 2026 Musclecontest Brazil Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-musclecontest-
+ brazil-pro-2/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일
+ 정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Sao Paulo\, Sao Paulo
+URL:https://www.ifbbpro.com/competition/2026-musclecontest-brazil-pro-2/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-hurricane-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261016
+DTEND;VALUE=DATE:20261017
+SUMMARY:IFBB PRO Hurricane Pro
+DESCRIPTION:종목 Men's Open Bodybuilding\, Men's Classic Physique\, Men'
+ s Physique\, Women's Figure\, Women's Bikini\, Men's Open Bodybuilding - 
+ Masters 40+\, Men's Open Bodybuilding - Masters 45+\, Men's Open Bodybuil
+ ding - Masters 50+\, Men's Open Bodybuilding - Masters 55+\, Men's Open B
+ odybuilding - Masters 60+\, Men's Open Bodybuilding - Masters 70+\, Men's
+  212 Bodybuilding - Masters 40+\, Men's Classic Physique - Masters 40+\, 
+ Men's Classic Physique - Masters 45+\, Men's Classic Physique - Masters 5
+ 0+\, Men's Classic Physique - Masters 55+\, Men's Classic Physique - Mast
+ ers 60+\, Men's Physique - Masters 40+\, Men's Physique - Masters 45+\, M
+ en's Physique - Masters 50+ 외\n원문 https://fitnessvolt.com/bodybuild
+ ing/contests/2026-hurricane-pro/\n전체 일정 https://ynschoi.github.io
+ /bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:St. Petersburg\, St. Petersburg\, Florida
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-hurricane-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-musclecontest-brazil-pro-sao-paulo-2026@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261016
+DTEND;VALUE=DATE:20261017
+SUMMARY:IFBB PRO Musclecontest Brazil Pro (Sao Paulo)
+DESCRIPTION:종목 Men's 212 Bodybuilding\, Men's Classic Physique\, Women
+ 's Bikini\n원문 https://fitnessvolt.com/bodybuilding/contests/musclecon
+ test-brazil-pro-sao-paulo-2026/\n전체 일정 https://ynschoi.github.io/
+ bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Sao Paulo
+URL:https://fitnessvolt.com/bodybuilding/contests/musclecontest-brazil-pro
+ -sao-paulo-2026/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-1-bro-pro-show-2026@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261017
+DTEND;VALUE=DATE:20261018
+SUMMARY:IFBB PRO 1 Bro Pro Show
+DESCRIPTION:종목 Men's 212 Bodybuilding\, Women's Figure\, Women's Welln
+ ess\, Women's Fit Model\n원문 https://fitnessvolt.com/bodybuilding/cont
+ ests/1-bro-pro-show-2026/\n전체 일정 https://ynschoi.github.io/bbcomp
+ /\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Bradford
+URL:https://fitnessvolt.com/bodybuilding/contests/1-bro-pro-show-2026/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25351@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261017
+DTEND;VALUE=DATE:20261018
+SUMMARY:IFBB PRO 2026 1 Bro Pro Show
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-1-bro-pro-show
+ /\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 
+ 측 사정으로 바뀔 수 있어요
+LOCATION:Bradford\, Bradford
+URL:https://www.ifbbpro.com/competition/2026-1-bro-pro-show/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23147@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261017
+DTEND;VALUE=DATE:20261019
+SUMMARY:IFBB PRO 2026 Fitparade Natural Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-fitparade-natu
+ ral-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 
+ 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Budapest\, Budapest
+URL:https://www.ifbbpro.com/competition/2026-fitparade-natural-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23667@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261017
+DTEND;VALUE=DATE:20261018
+SUMMARY:IFBB PRO 2026 Kentucky Bourbon Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-kentucky-bourb
+ on-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 
+ 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Louisville\, Louisville\, KY
+URL:https://www.ifbbpro.com/competition/2026-kentucky-bourbon-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-24659@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261017
+DTEND;VALUE=DATE:20261018
+SUMMARY:IFBB PRO 2026 NZ Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-nz-pro/\n전
+ 체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 
+ 사정으로 바뀔 수 있어요
+LOCATION:Palmerston North\, Palmerston North
+URL:https://www.ifbbpro.com/competition/2026-nz-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23157@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261017
+DTEND;VALUE=DATE:20261018
+SUMMARY:IFBB PRO 2026 Queen City Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-queen-city-pro
+ /\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 
+ 측 사정으로 바뀔 수 있어요
+LOCATION:Charlotte\, Charlotte\, NC
+URL:https://www.ifbbpro.com/competition/2026-queen-city-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25355@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261017
+DTEND;VALUE=DATE:20261018
+SUMMARY:IFBB PRO 2026 TBJP International British Finals Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-tbjp-internati
+ onal-british-finals-pro-qualifier/\n전체 일정 https://ynschoi.github.
+ io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Bradford\, Bradford
+URL:https://www.ifbbpro.com/competition/2026-tbjp-international-british-fi
+ nals-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-fitparade-natural-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261017
+DTEND;VALUE=DATE:20261018
+SUMMARY:IFBB PRO Fitparade Natural Pro
+DESCRIPTION:종목 Women's Bikini\n원문 https://fitnessvolt.com/bodybuil
+ ding/contests/2026-fitparade-natural-pro/\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:Budapest
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-fitparade-natural-p
+ ro/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-kentucky-bourbon-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261017
+DTEND;VALUE=DATE:20261018
+SUMMARY:IFBB PRO Kentucky Bourbon Pro
+DESCRIPTION:종목 Men's Physique\, Women's Bikini\, Women's Fit Model\, M
+ en's Physique - Masters 40+\, Men's Physique - Masters 50+\, Women's Biki
+ ni - Masters 40+\, Women's Bikini - Masters 50+\, Women's Fit Model - Mas
+ ters 40+\, Women's Fit Model - Masters 50+\n원문 https://fitnessvolt.co
+ m/bodybuilding/contests/2026-kentucky-bourbon-pro/\n전체 일정 https:/
+ /ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 
+ 수 있어요
+LOCATION:Louisville\, Louisville\, KY
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-kentucky-bourbon-pr
+ o/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-nz-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261017
+DTEND;VALUE=DATE:20261018
+SUMMARY:IFBB PRO NZ Pro
+DESCRIPTION:종목 Women's Bikini\n원문 https://fitnessvolt.com/bodybuil
+ ding/contests/2026-nz-pro/\n전체 일정 https://ynschoi.github.io/bbcom
+ p/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Palmerston North
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-nz-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-queen-city-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261017
+DTEND;VALUE=DATE:20261018
+SUMMARY:IFBB PRO Queen City Pro
+DESCRIPTION:종목 Women's Figure\, Women's Figure - Masters 40+\, Women's
+  Figure - Masters 50+\, Women's Figure - Masters 60+\n원문 https://fitn
+ essvolt.com/bodybuilding/contests/2026-queen-city-pro/\n전체 일정 htt
+ ps://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바
+ 뀔 수 있어요
+LOCATION:Charlotte\, Charlotte\, NC
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-queen-city-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23372@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261018
+DTEND;VALUE=DATE:20261019
+SUMMARY:IFBB PRO 2026 Fitparade Hungary Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-fitparade-hung
+ ary-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 
+ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Budapest\, Budapest
+URL:https://www.ifbbpro.com/competition/2026-fitparade-hungary-pro-qualifi
+ er/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23152@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261018
+DTEND;VALUE=DATE:20261019
+SUMMARY:IFBB PRO 2026 Fitparade Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-fitparade-pro/
+ \n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 
+ 측 사정으로 바뀔 수 있어요
+LOCATION:Budapest\, Budapest
+URL:https://www.ifbbpro.com/competition/2026-fitparade-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-24708@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261018
+DTEND;VALUE=DATE:20261019
+SUMMARY:IFBB PRO 2026 Malaysia Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-malaysia-pro-q
+ ualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은
+  주최 측 사정으로 바뀔 수 있어요
+LOCATION:Bangsar South\, Bangsar South
+URL:https://www.ifbbpro.com/competition/2026-malaysia-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23901@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261018
+DTEND;VALUE=DATE:20261019
+SUMMARY:IFBB PRO 2026 Xtreme Natural Muscle Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-xtreme-natural
+ -muscle-pro-2/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일
+ 정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:New Westminster\, New Westminster\, British Columbia
+URL:https://www.ifbbpro.com/competition/2026-xtreme-natural-muscle-pro-2/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23906@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261018
+DTEND;VALUE=DATE:20261019
+SUMMARY:IFBB PRO 2026 Xtreme Natural Muscle Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-xtreme-natural
+ -muscle-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:New Westminster\, New Westminster\, British Columbia
+URL:https://www.ifbbpro.com/competition/2026-xtreme-natural-muscle-pro-qua
+ lifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-fitparade-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261018
+DTEND;VALUE=DATE:20261019
+SUMMARY:IFBB PRO Fitparade Pro
+DESCRIPTION:종목 Men's Classic Physique\, Women's Bikini\n원문 https:/
+ /fitnessvolt.com/bodybuilding/contests/2026-fitparade-pro/\n전체 일정
+  https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로
+  바뀔 수 있어요
+LOCATION:Budapest
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-fitparade-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-xtreme-natural-muscle-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261018
+DTEND;VALUE=DATE:20261019
+SUMMARY:IFBB PRO Xtreme Natural Muscle Pro
+DESCRIPTION:종목 Men's Physique\, Women's Bikini\, Women's Fit Model\n
+ 원문 https://fitnessvolt.com/bodybuilding/contests/2026-xtreme-natural-
+ muscle-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정
+ 은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:New Westminster\, New Westminster\, British Columbia
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-xtreme-natural-musc
+ le-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1030327@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261018
+DTEND;VALUE=DATE:20261019
+SUMMARY:NPC WW IFBB Professional League FitParade Eagle Classic Pro Qualif
+ ier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Fitness\, Bodybuil
+ ding\, Men's Physique\, Wellness\, Women's Bodybuilding\, Fit Model\, Wom
+ en's Physique\n원문 https://npcnewsonline.com/schedule_event/2026-ifbb-
+ professional-league-fitparade-eagle-classic-pro-qualifier/\n전체 일정
+  https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로
+  바뀔 수 있어요
+LOCATION:Budapest
+URL:https://npcnewsonline.com/schedule_event/2026-ifbb-professional-league
+ -fitparade-eagle-classic-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1032332@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261018
+DTEND;VALUE=DATE:20261019
+SUMMARY:NPC WW Invictus Cup Regional Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Fitness\, Bodybuil
+ ding\, Men's Physique\, Wellness\, Women's Bodybuilding\, Fit Model\, Wom
+ en's Physique\n원문 https://npcnewsonline.com/schedule_event/2026-npc-w
+ orldwide-invictus-cup-regional-qualifier/\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:Cesena
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-invictus-c
+ up-regional-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25031@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261022
+DTEND;VALUE=DATE:20261024
+SUMMARY:IFBB PRO 2026 LYFT Oman Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-lyft-oman-pro-
+ qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정
+ 은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Muscat\, Muscat
+URL:https://www.ifbbpro.com/competition/2026-lyft-oman-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-24031@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261024
+DTEND;VALUE=DATE:20261026
+SUMMARY:IFBB PRO 2026 Amateur Olympia Italy Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-amateur-olympi
+ a-italy-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Milan\, Milan
+URL:https://www.ifbbpro.com/competition/2026-amateur-olympia-italy-pro-qua
+ lifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23972@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261024
+DTEND;VALUE=DATE:20261025
+SUMMARY:IFBB PRO 2026 Moscow Showdown Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-moscow-showdow
+ n-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 
+ 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Moscow\, Moscow
+URL:https://www.ifbbpro.com/competition/2026-moscow-showdown-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25153@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261024
+DTEND;VALUE=DATE:20261025
+SUMMARY:IFBB PRO 2026 Musclecontest Vietnam Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-musclecontest-
+ vietnam-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정
+ 은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Ho Chi Minh City\, Ho Chi Minh City
+URL:https://www.ifbbpro.com/competition/2026-musclecontest-vietnam-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25157@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261024
+DTEND;VALUE=DATE:20261025
+SUMMARY:IFBB PRO 2026 Musclecontest Vietnam Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-musclecontest-
+ vietnam-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Ho Chi Minh City\, Ho Chi Minh City
+URL:https://www.ifbbpro.com/competition/2026-musclecontest-vietnam-pro-qua
+ lifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23675@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261024
+DTEND;VALUE=DATE:20261025
+SUMMARY:IFBB PRO 2026 Muscletown Natural Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-muscletown-nat
+ ural-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은
+  주최 측 사정으로 바뀔 수 있어요
+LOCATION:York\, York\, PA
+URL:https://www.ifbbpro.com/competition/2026-muscletown-natural-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23375@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261024
+DTEND;VALUE=DATE:20261025
+SUMMARY:IFBB PRO 2026 Tsunami Nutrition France Natural Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-tsunami-nutrit
+ ion-france-natural-pro-qualifier/\n전체 일정 https://ynschoi.github.i
+ o/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Marseille\, Marseille
+URL:https://www.ifbbpro.com/competition/2026-tsunami-nutrition-france-natu
+ ral-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23161@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261024
+DTEND;VALUE=DATE:20261025
+SUMMARY:IFBB PRO 2026 Tsunami Nutrition Natural Championship
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-tsunami-nutrit
+ ion-natural-championship/\n전체 일정 https://ynschoi.github.io/bbcomp
+ /\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Marseille\, Marseille
+URL:https://www.ifbbpro.com/competition/2026-tsunami-nutrition-natural-cha
+ mpionship/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23166@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261024
+DTEND;VALUE=DATE:20261025
+SUMMARY:IFBB PRO 2026 Ultimate Grand Prix Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-ultimate-grand
+ -prix-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정
+ 은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Boca Raton\, Boca Raton\, FL
+URL:https://www.ifbbpro.com/competition/2026-ultimate-grand-prix-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-moscow-showdown-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261024
+DTEND;VALUE=DATE:20261025
+SUMMARY:IFBB PRO Moscow Showdown Pro
+DESCRIPTION:종목 Men's Classic Physique\, Women's Wellness\n원문 https
+ ://fitnessvolt.com/bodybuilding/contests/2026-moscow-showdown-pro/\n전
+ 체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 
+ 사정으로 바뀔 수 있어요
+LOCATION:Moscow
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-moscow-showdown-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-musclecontest-vietnam-pro-2026@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261024
+DTEND;VALUE=DATE:20261025
+SUMMARY:IFBB PRO Musclecontest Vietnam Pro
+DESCRIPTION:종목 Men's Physique\, Men's Physique - Masters 40+\n원문 h
+ ttps://fitnessvolt.com/bodybuilding/contests/musclecontest-vietnam-pro-20
+ 26/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주
+ 최 측 사정으로 바뀔 수 있어요
+LOCATION:Ho Chi Minh City
+URL:https://fitnessvolt.com/bodybuilding/contests/musclecontest-vietnam-pr
+ o-2026/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-muscletown-natural-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261024
+DTEND;VALUE=DATE:20261025
+SUMMARY:IFBB PRO Muscletown Natural Pro
+DESCRIPTION:종목 Men's Physique\, Women's Figure\, Women's Bikini\, Wome
+ n's Fit Model\n원문 https://fitnessvolt.com/bodybuilding/contests/2026-
+ muscletown-natural-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\
+ n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:York\, York\, PA
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-muscletown-natural-
+ pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-tsunami-nutrition-natural-championship@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261024
+DTEND;VALUE=DATE:20261025
+SUMMARY:IFBB PRO Tsunami Nutrition Natural Championship
+DESCRIPTION:종목 Men's Open Bodybuilding\, Men's Classic Physique\, Men'
+ s Physique\, Women's Physique\, Women's Figure\, Women's Fitness\, Women'
+ s Bikini\, Women's Wellness\, Women's Fit Model\n원문 https://fitnessvo
+ lt.com/bodybuilding/contests/2026-tsunami-nutrition-natural-championship/
+ \n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 
+ 측 사정으로 바뀔 수 있어요
+LOCATION:Marseille
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-tsunami-nutrition-n
+ atural-championship/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-ultimate-grand-prix-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261024
+DTEND;VALUE=DATE:20261025
+SUMMARY:IFBB PRO Ultimate Grand Prix Pro
+DESCRIPTION:종목 Women's Bikini\, Women's Bikini - Masters 35+\, Women's
+  Bikini - Masters 40+\, Women's Bikini - Masters 50+\, Women's Bikini - M
+ asters 60+\n원문 https://fitnessvolt.com/bodybuilding/contests/2026-ult
+ imate-grand-prix-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Boca Raton\, Boca Raton\, FL
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-ultimate-grand-prix
+ -pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1054928@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261024
+DTEND;VALUE=DATE:20261025
+SUMMARY:NPC WW Musclecontest Vietnam Regional & Pro Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Bodybuilding\, Men
+ 's Physique\, Wellness\, Fit Model\, Women's Physique\n원문 https://npc
+ newsonline.com/schedule_event/2026-npc-worldwide-musclecontest-vietnam-re
+ gional-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Ho Chi Minh
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-musclecont
+ est-vietnam-regional-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1032334@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261024
+DTEND;VALUE=DATE:20261026
+SUMMARY:NPC WW Olympia Amateur Italy Pro Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Fitness\, Bodybuil
+ ding\, Men's Physique\, Wellness\, Women's Bodybuilding\, Fit Model\, Wom
+ en's Physique\n원문 https://npcnewsonline.com/schedule_event/2026-npc-w
+ orldwide-olympia-amateur-italy-pro-qualifier/\n전체 일정 https://ynsc
+ hoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 
+ 있어요
+LOCATION:Milan
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-olympia-am
+ ateur-italy-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1032336@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261024
+DTEND;VALUE=DATE:20261025
+SUMMARY:NPC WW Tsunami Nutrition Natural Pro Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Fitness\, Bodybuil
+ ding\, Men's Physique\, Wellness\, Fit Model\, Women's Physique\n원문 h
+ ttps://npcnewsonline.com/schedule_event/2026-npc-worldwide-tsunami-nutrit
+ ion-natural-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcom
+ p/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Marseille
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-tsunami-nu
+ trition-natural-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1033478@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261024
+DTEND;VALUE=DATE:20261025
+SUMMARY:NPC WW iCandy Classic Mother City Open Regional Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Fitness\, Bodybuil
+ ding\, Men's Physique\, Wellness\, Women's Bodybuilding\, Fit Model\, Wom
+ en's Physique\n원문 https://npcnewsonline.com/schedule_event/2026-npc-w
+ orldwide-icandy-classic-mother-city-open-regional-qualifier/\n전체 일
+ 정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으
+ 로 바뀔 수 있어요
+LOCATION:Cape Town
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-icandy-cla
+ ssic-mother-city-open-regional-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23170@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261025
+DTEND;VALUE=DATE:20261026
+SUMMARY:IFBB PRO 2026 365 Grand Prix Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-365-grand-prix
+ -pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주
+ 최 측 사정으로 바뀔 수 있어요
+LOCATION:Kosice\, Kosice
+URL:https://www.ifbbpro.com/competition/2026-365-grand-prix-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23798@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261025
+DTEND;VALUE=DATE:20261026
+SUMMARY:IFBB PRO 2026 AGP Natural Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-agp-natural-pr
+ o-qualifier-2/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일
+ 정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Paju City\, Paju City
+URL:https://www.ifbbpro.com/competition/2026-agp-natural-pro-qualifier-2/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-24023@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261025
+DTEND;VALUE=DATE:20261026
+SUMMARY:IFBB PRO 2026 Koloseum Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-koloseum-pro/\
+ n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 
+ 측 사정으로 바뀔 수 있어요
+LOCATION:Milan\, Milan
+URL:https://www.ifbbpro.com/competition/2026-koloseum-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-365-grand-prix-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261025
+DTEND;VALUE=DATE:20261026
+SUMMARY:IFBB PRO 365 Grand Prix Pro
+DESCRIPTION:종목 Men's Open Bodybuilding\, Men's Classic Physique\, Men'
+ s Physique\, Women's Bikini\n원문 https://fitnessvolt.com/bodybuilding/
+ contests/2026-365-grand-prix-pro/\n전체 일정 https://ynschoi.github.i
+ o/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Kosice
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-365-grand-prix-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-koloseum-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261025
+DTEND;VALUE=DATE:20261026
+SUMMARY:IFBB PRO Koloseum Pro
+DESCRIPTION:종목 Men's 212 Bodybuilding\, Women's Fit Model\n원문 http
+ s://fitnessvolt.com/bodybuilding/contests/2026-koloseum-pro/\n전체 일
+ 정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으
+ 로 바뀔 수 있어요
+LOCATION:Milan
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-koloseum-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23184@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261030
+DTEND;VALUE=DATE:20261102
+SUMMARY:IFBB PRO 2026 Euronaturals Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-euronaturals-p
+ ro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주
+ 최 측 사정으로 바뀔 수 있어요
+LOCATION:Madrid\, Madrid
+URL:https://www.ifbbpro.com/competition/2026-euronaturals-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23378@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261030
+DTEND;VALUE=DATE:20261102
+SUMMARY:IFBB PRO 2026 Euronaturals Spain Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-euronaturals-s
+ pain-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※
+  일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Madrid\, Madrid
+URL:https://www.ifbbpro.com/competition/2026-euronaturals-spain-pro-qualif
+ ier/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-euronaturals-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261030
+DTEND;VALUE=DATE:20261031
+SUMMARY:IFBB PRO Euronaturals Pro
+DESCRIPTION:종목 Men's Open Bodybuilding\, Men's Classic Physique\, Men'
+ s Physique\, Women's Physique\, Women's Figure\, Women's Bikini\, Women's
+  Wellness\, Women's Fit Model\n원문 https://fitnessvolt.com/bodybuildin
+ g/contests/2026-euronaturals-pro/\n전체 일정 https://ynschoi.github.i
+ o/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Madrid
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-euronaturals-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-24785@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261102
+SUMMARY:IFBB PRO 2026 Amateur Olympia Japan Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-amateur-olympi
+ a-japan-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Tokyo\, Tokyo
+URL:https://www.ifbbpro.com/competition/2026-amateur-olympia-japan-pro-qua
+ lifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-24683@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261102
+SUMMARY:IFBB PRO 2026 Champions Golden Cup Poland Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-champions-gold
+ en-cup-poland-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbc
+ omp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Warsaw\, Warsaw
+URL:https://www.ifbbpro.com/competition/2026-champions-golden-cup-poland-p
+ ro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23717@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261102
+SUMMARY:IFBB PRO 2026 Everest Muscle Stars Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-everest-muscle
+ -stars-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정
+ 은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Warsaw\, Warsaw
+URL:https://www.ifbbpro.com/competition/2026-everest-muscle-stars-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23682@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261101
+SUMMARY:IFBB PRO 2026 Kentucky Natural Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-kentucky-natur
+ al-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 
+ 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Covington\, Covington\, KY
+URL:https://www.ifbbpro.com/competition/2026-kentucky-natural-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-24672@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261101
+SUMMARY:IFBB PRO 2026 NZ Nationals Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-nz-nationals-p
+ ro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일
+ 정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Auckland\, Auckland
+URL:https://www.ifbbpro.com/competition/2026-nz-nationals-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-24675@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261101
+SUMMARY:IFBB PRO 2026 NZ Natural Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-nz-natural-pro
+ -qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정
+ 은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Auckland\, Auckland
+URL:https://www.ifbbpro.com/competition/2026-nz-natural-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-all-south-championships@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261101
+SUMMARY:IFBB PRO All South Championships
+DESCRIPTION:종목 Women's Wellness\, Women's Fit Model\, Women's Wellness
+  - Masters 35+\, Women's Wellness - Masters 40+\, Women's Wellness - Mast
+ ers 50+\, Women's Fit Model - Masters 35+\, Women's Fit Model - Masters 4
+ 0+\, Women's Fit Model - Masters 50+\n원문 https://fitnessvolt.com/body
+ building/contests/2026-all-south-championships/\n전체 일정 https://yn
+ schoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수
+  있어요
+LOCATION:Orlando\, Orlando\, Florida
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-all-south-champions
+ hips/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-everest-muscle-stars-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261101
+SUMMARY:IFBB PRO Everest Muscle Stars Pro
+DESCRIPTION:종목 Men's Open Bodybuilding\, Men's Open Bodybuilding - Mas
+ ters 40+\n원문 https://fitnessvolt.com/bodybuilding/contests/2026-evere
+ st-muscle-stars-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Warsaw
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-everest-muscle-star
+ s-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-kentucky-natural-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261101
+SUMMARY:IFBB PRO Kentucky Natural Pro
+DESCRIPTION:종목 Women's Bikini\n원문 https://fitnessvolt.com/bodybuil
+ ding/contests/2026-kentucky-natural-pro/\n전체 일정 https://ynschoi.g
+ ithub.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어
+ 요
+LOCATION:Covington\, Covington\, KY
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-kentucky-natural-pr
+ o/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1044829@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261101
+SUMMARY:NPC WW Amateur Olympia Japan Day 1
+DESCRIPTION:종목 Bikini\, Classic Physique\, Bodybuilding\, Fit Model\n
+ 원문 https://npcnewsonline.com/schedule_event/2026-npc-worldwide-amateu
+ r-olympia-japan-day-1/\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:TBD
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-amateur-ol
+ ympia-japan-day-1/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1060848@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261102
+SUMMARY:NPC WW Champions Golden Cup Regional & Pro Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Fitness\, Bodybuil
+ ding\, Men's Physique\, Wellness\, Women's Bodybuilding\, Fit Model\, Wom
+ en's Physique\n원문 https://npcnewsonline.com/schedule_event/2026-npc-w
+ orldwide-champions-golden-cup-regional-pro-qualifier/\n전체 일정 http
+ s://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바
+ 뀔 수 있어요
+LOCATION:Warsaw
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-champions-
+ golden-cup-regional-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1052157@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261102
+SUMMARY:NPC WW Euronaturals Pro Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Fitness\, Bodybuil
+ ding\, Men's Physique\, Wellness\, Fit Model\, Women's Physique\n원문 h
+ ttps://npcnewsonline.com/schedule_event/2026-npc-worldwide-euronaturals-p
+ ro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일
+ 정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Madrid
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-euronatura
+ ls-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1033490@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261101
+SUMMARY:NPC WW Natural Pro Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Fitness\, Bodybuil
+ ding\, Men's Physique\, Wellness\, Fit Model\, Women's Physique\n원문 h
+ ttps://npcnewsonline.com/schedule_event/2026-npc-worldwide-natural-pro-qu
+ alifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 
+ 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Auckland
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-natural-pr
+ o-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1033492@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261101
+SUMMARY:NPC WW Open Nationals Pro Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Fitness\, Bodybuil
+ ding\, Men's Physique\, Wellness\, Fit Model\, Women's Physique\n원문 h
+ ttps://npcnewsonline.com/schedule_event/2026-npc-worldwide-open-nationals
+ -pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일
+ 정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Auckland
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-open-natio
+ nals-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25515@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261101
+DTEND;VALUE=DATE:20261102
+SUMMARY:IFBB PRO 2026 Marrakech Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-marrekech-pro/
+ \n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 
+ 측 사정으로 바뀔 수 있어요
+LOCATION:Marrakesh\, Marrakesh
+URL:https://www.ifbbpro.com/competition/2026-marrekech-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25744@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261101
+DTEND;VALUE=DATE:20261102
+SUMMARY:IFBB PRO 2026 Marrakech Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-marrakech-pro-
+ qualifier-2/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정
+ 은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Marrakesh\, Marrakesh
+URL:https://www.ifbbpro.com/competition/2026-marrakech-pro-qualifier-2/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23180@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261101
+DTEND;VALUE=DATE:20261102
+SUMMARY:IFBB PRO 2026 Spain Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-spain-pro/\n
+ 전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측
+  사정으로 바뀔 수 있어요
+LOCATION:Alicante\, Alicante
+URL:https://www.ifbbpro.com/competition/2026-spain-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-marrekech-pro-2026@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261101
+DTEND;VALUE=DATE:20261102
+SUMMARY:IFBB PRO Marrekech Pro
+DESCRIPTION:종목 Men's Physique\n원문 https://fitnessvolt.com/bodybuil
+ ding/contests/marrekech-pro-2026/\n전체 일정 https://ynschoi.github.i
+ o/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Marrakesh
+URL:https://fitnessvolt.com/bodybuilding/contests/marrekech-pro-2026/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-spain-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261101
+DTEND;VALUE=DATE:20261102
+SUMMARY:IFBB PRO Spain Pro
+DESCRIPTION:종목 Men's 212 Bodybuilding\, Men's Classic Physique\, Women
+ 's Bikini\, Women's Wellness\n원문 https://fitnessvolt.com/bodybuilding
+ /contests/2026-spain-pro/\n전체 일정 https://ynschoi.github.io/bbcomp
+ /\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Alicante
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-spain-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1044831@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261101
+DTEND;VALUE=DATE:20261102
+SUMMARY:NPC WW Amateur Olympia Japan Day 2
+DESCRIPTION:종목 Figure\, Men's Physique\, Wellness\, Women's Physique\n
+ 원문 https://npcnewsonline.com/schedule_event/2026-npc-worldwide-amateu
+ r-olympia-japan-day-2/\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:TBD
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-amateur-ol
+ ympia-japan-day-2/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25360@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261106
+DTEND;VALUE=DATE:20261108
+SUMMARY:IFBB PRO 2026 Kuwait Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-kuwait-pro/\n
+ 전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측
+  사정으로 바뀔 수 있어요
+LOCATION:Kuwait City\, Kuwait City
+URL:https://www.ifbbpro.com/competition/2026-kuwait-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25365@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261106
+DTEND;VALUE=DATE:20261108
+SUMMARY:IFBB PRO 2026 Kuwait Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-kuwait-pro-qua
+ lifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 
+ 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Kuwait City\, Kuwait City
+URL:https://www.ifbbpro.com/competition/2026-kuwait-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-kuwait-pro-2026@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261106
+DTEND;VALUE=DATE:20261107
+SUMMARY:IFBB PRO Kuwait Pro
+DESCRIPTION:종목 Men's Classic Physique\, Men's Physique\n원문 https:/
+ /fitnessvolt.com/bodybuilding/contests/kuwait-pro-2026/\n전체 일정 ht
+ tps://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 
+ 바뀔 수 있어요
+LOCATION:Kuwait City
+URL:https://fitnessvolt.com/bodybuilding/contests/kuwait-pro-2026/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25719@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261107
+DTEND;VALUE=DATE:20261108
+SUMMARY:IFBB PRO 2026 East Coast Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-east-coast-pro
+ /\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 
+ 측 사정으로 바뀔 수 있어요
+LOCATION:Wayne\, Wayne\, NJ
+URL:https://www.ifbbpro.com/competition/2026-east-coast-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23957@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261107
+DTEND;VALUE=DATE:20261108
+SUMMARY:IFBB PRO 2026 Kazakhstan Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-kazakhstan-pro
+ /\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 
+ 측 사정으로 바뀔 수 있어요
+LOCATION:Almaty\, Almaty
+URL:https://www.ifbbpro.com/competition/2026-kazakhstan-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23961@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261107
+DTEND;VALUE=DATE:20261108
+SUMMARY:IFBB PRO 2026 Kazakhstan Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-kazakhstan-pro
+ -qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정
+ 은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Almaty\, Almaty
+URL:https://www.ifbbpro.com/competition/2026-kazakhstan-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-24879@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261107
+DTEND;VALUE=DATE:20261108
+SUMMARY:IFBB PRO 2026 Moe’s Muscles Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-moes-muscles-p
+ ro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주
+ 최 측 사정으로 바뀔 수 있어요
+LOCATION:Auckland\, Auckland
+URL:https://www.ifbbpro.com/competition/2026-moes-muscles-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25578@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261107
+DTEND;VALUE=DATE:20261109
+SUMMARY:IFBB PRO 2026 Musclecontet FitPira Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-musclecontet-f
+ itpira-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정
+ 은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Piracicaba\, Piracicaba
+URL:https://www.ifbbpro.com/competition/2026-musclecontet-fitpira-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23516@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261107
+DTEND;VALUE=DATE:20261109
+SUMMARY:IFBB PRO 2026 Pharlabs Mexican National Championships Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-pharlabs-mexic
+ an-national-championships-pro-qualifier/\n전체 일정 https://ynschoi.g
+ ithub.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어
+ 요
+LOCATION:Puebla\, Puebla
+URL:https://www.ifbbpro.com/competition/2026-pharlabs-mexican-national-cha
+ mpionships-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23767@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261107
+DTEND;VALUE=DATE:20261109
+SUMMARY:IFBB PRO 2026 Romania Muscle Fest Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-romania-muscle
+ -fest-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정
+ 은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Bucharest\, Bucharest
+URL:https://www.ifbbpro.com/competition/2026-romania-muscle-fest-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23785@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261107
+DTEND;VALUE=DATE:20261109
+SUMMARY:IFBB PRO 2026 Romania Muscle Fest Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-romania-muscle
+ -fest-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Bucharest\, Bucharest
+URL:https://www.ifbbpro.com/competition/2026-romania-muscle-fest-pro-quali
+ fier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-24011@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261107
+DTEND;VALUE=DATE:20261108
+SUMMARY:IFBB PRO 2026 Steve Karr Las Vegas Classic Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-steve-karr-las
+ -vegas-classic-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※
+  일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Las Vegas\, Las Vegas\, NV
+URL:https://www.ifbbpro.com/competition/2026-steve-karr-las-vegas-classic-
+ pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-chattanooga-night-of-champions-pro-2026@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261107
+DTEND;VALUE=DATE:20261108
+SUMMARY:IFBB PRO Chattanooga Night of Champions Pro
+DESCRIPTION:종목 Women's Fitness\, Women's Wellness\, Women's Fitness - 
+ Masters 40+\, Women's Wellness - Masters 40+\n원문 https://fitnessvolt.
+ com/bodybuilding/contests/chattanooga-night-of-champions-pro-2026/\n전
+ 체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 
+ 사정으로 바뀔 수 있어요
+LOCATION:Chattanooga\, Chattanooga\, Tennessee
+URL:https://fitnessvolt.com/bodybuilding/contests/chattanooga-night-of-cha
+ mpions-pro-2026/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-east-coast-pro-2026@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261107
+DTEND;VALUE=DATE:20261108
+SUMMARY:IFBB PRO East Coast Pro
+DESCRIPTION:종목 Men's Physique\, Women's Bikini\n원문 https://fitness
+ volt.com/bodybuilding/contests/east-coast-pro-2026/\n전체 일정 https:
+ //ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔
+  수 있어요
+LOCATION:Wayne\, Wayne\, NJ
+URL:https://fitnessvolt.com/bodybuilding/contests/east-coast-pro-2026/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-kazakhstan-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261107
+DTEND;VALUE=DATE:20261108
+SUMMARY:IFBB PRO Kazakhstan Pro
+DESCRIPTION:종목 Women's Wellness\n원문 https://fitnessvolt.com/bodybu
+ ilding/contests/2026-kazakhstan-pro/\n전체 일정 https://ynschoi.githu
+ b.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Almaty
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-kazakhstan-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-moes-muscles-pro-2026@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261107
+DTEND;VALUE=DATE:20261108
+SUMMARY:IFBB PRO Moe’s Muscles Pro
+DESCRIPTION:종목 Men's Classic Physique\n원문 https://fitnessvolt.com/
+ bodybuilding/contests/moes-muscles-pro-2026/\n전체 일정 https://ynsch
+ oi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 
+ 있어요
+LOCATION:Auckland
+URL:https://fitnessvolt.com/bodybuilding/contests/moes-muscles-pro-2026/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-musclecontet-fitpira-pro-2026@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261107
+DTEND;VALUE=DATE:20261108
+SUMMARY:IFBB PRO Musclecontet FitPira Pro
+DESCRIPTION:종목 Men's Classic Physique\, Men's Physique\, Women's Bikin
+ i\n원문 https://fitnessvolt.com/bodybuilding/contests/musclecontet-fitp
+ ira-pro-2026/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일
+ 정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Piracicaba
+URL:https://fitnessvolt.com/bodybuilding/contests/musclecontet-fitpira-pro
+ -2026/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-romania-muscle-fest-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261107
+DTEND;VALUE=DATE:20261108
+SUMMARY:IFBB PRO Romania Muscle Fest Pro
+DESCRIPTION:종목 Men's Open Bodybuilding\, Men's 212 Bodybuilding\, Men'
+ s Classic Physique\, Men's Physique\, Women's Bodybuilding\, Women's Phys
+ ique\, Women's Figure\, Women's Bikini\, Women's Wellness\, Women's Fit M
+ odel\n원문 https://fitnessvolt.com/bodybuilding/contests/2026-romania-m
+ uscle-fest-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일
+ 정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Bucharest
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-romania-muscle-fest
+ -pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-steve-karr-las-vegas-classic-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261107
+DTEND;VALUE=DATE:20261108
+SUMMARY:IFBB PRO Steve Karr Las Vegas Classic Pro
+DESCRIPTION:종목 Men's 212 Bodybuilding\, Men's Classic Physique\, Men's
+  Physique\, Women's Bodybuilding\, Women's Physique\, Women's Fit Model\n
+ 원문 https://fitnessvolt.com/bodybuilding/contests/2026-steve-karr-las-
+ vegas-classic-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 
+ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Las Vegas\, Las Vegas\, NV
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-steve-karr-las-vega
+ s-classic-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1033488@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261107
+DTEND;VALUE=DATE:20261108
+SUMMARY:NPC WW Kazakhstan Pro Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Fitness\, Bodybuil
+ ding\, Men's Physique\, Wellness\, Fit Model\, Women's Physique\n원문 h
+ ttps://npcnewsonline.com/schedule_event/2026-npc-worldwide-kazakhstan-pro
+ -qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정
+ 은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Almaty
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-kazakhstan
+ -pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1031017@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261107
+DTEND;VALUE=DATE:20261109
+SUMMARY:NPC WW Pharlabs Mexican National Championships Regional & Pro Qual
+ ifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Bodybuilding\, Men
+ 's Physique\, Wellness\, Fit Model\, Women's Physique\n원문 https://npc
+ newsonline.com/schedule_event/2026-npc-worldwide-pharlabs-mexican-nationa
+ l-championships-regional-pro-qualifier/\n전체 일정 https://ynschoi.gi
+ thub.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어
+ 요
+LOCATION:Puebla
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-pharlabs-m
+ exican-national-championships-regional-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1032340@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261108
+DTEND;VALUE=DATE:20261109
+SUMMARY:NPC WW Campionati Assoluti Regional Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Fitness\, Bodybuil
+ ding\, Men's Physique\, Wellness\, Women's Bodybuilding\, Fit Model\, Wom
+ en's Physique\n원문 https://npcnewsonline.com/schedule_event/2026-npc-w
+ orldwide-campionati-assoluti-regional-qualifier/\n전체 일정 https://y
+ nschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 
+ 수 있어요
+LOCATION:Cesena
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-campionati
+ -assoluti-regional-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23743@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261113
+DTEND;VALUE=DATE:20261116
+SUMMARY:IFBB PRO 2026 Ben Weider Natural Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-ben-weider-nat
+ ural-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은
+  주최 측 사정으로 바뀔 수 있어요
+LOCATION:Alexandria\, Alexandria\, VA
+URL:https://www.ifbbpro.com/competition/2026-ben-weider-natural-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23746@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261113
+DTEND;VALUE=DATE:20261116
+SUMMARY:IFBB PRO 2026 Ben Weider Natural Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-ben-weider-nat
+ ural-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※
+  일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Alexandria\, Alexandria\, VA
+URL:https://www.ifbbpro.com/competition/2026-ben-weider-natural-pro-qualif
+ ier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25758@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261113
+DTEND;VALUE=DATE:20261116
+SUMMARY:IFBB PRO 2026 Gomeisa Ultimate Battle Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-gomeisa-ultima
+ te-battle-pro-qualifier-2/\n전체 일정 https://ynschoi.github.io/bbcom
+ p/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Bogota\, Bogota
+URL:https://www.ifbbpro.com/competition/2026-gomeisa-ultimate-battle-pro-q
+ ualifier-2/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-ben-weider-natural-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261113
+DTEND;VALUE=DATE:20261114
+SUMMARY:IFBB PRO Ben Weider Natural Pro
+DESCRIPTION:종목 Men's Open Bodybuilding\, Classic Physique\, Men's Phys
+ ique\, Women's Physique\, Figure\, Fitness\, Bikini\, Wellness\, Fit Mode
+ l\n원문 https://fitnessvolt.com/bodybuilding/contests/2026-ben-weider-n
+ atural-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정
+ 은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Alexandria\, VA
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-ben-weider-natural-
+ pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25575@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261114
+DTEND;VALUE=DATE:20261115
+SUMMARY:IFBB PRO 2026 Denmark Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-denmark-pro-qu
+ alifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 
+ 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Copenhagen\, Copenhagen
+URL:https://www.ifbbpro.com/competition/2026-denmark-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-24036@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261114
+DTEND;VALUE=DATE:20261116
+SUMMARY:IFBB PRO 2026 Euro Masters Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-euro-masters-p
+ ro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일
+ 정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Milan\, Milan
+URL:https://www.ifbbpro.com/competition/2026-euro-masters-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25725@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261114
+DTEND;VALUE=DATE:20261115
+SUMMARY:IFBB PRO 2026 KC Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-kc-pro/\n전
+ 체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 
+ 사정으로 바뀔 수 있어요
+LOCATION:Kansas City\, Kansas City\, MO
+URL:https://www.ifbbpro.com/competition/2026-kc-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25588@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261114
+DTEND;VALUE=DATE:20261115
+SUMMARY:IFBB PRO 2026 Luciano Cruz Juiz de Fora Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-luciano-cruz-j
+ uiz-de-fora-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 
+ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Juiz de Fora\, Juiz de Fora
+URL:https://www.ifbbpro.com/competition/2026-luciano-cruz-juiz-de-fora-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23847@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261114
+DTEND;VALUE=DATE:20261115
+SUMMARY:IFBB PRO 2026 Oklahoma Grand Prix Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-oklahoma-grand
+ -prix-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정
+ 은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Edmond\, Edmond\, OK
+URL:https://www.ifbbpro.com/competition/2026-oklahoma-grand-prix-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-irongames-pro-2026@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261114
+DTEND;VALUE=DATE:20261115
+SUMMARY:IFBB PRO Irongames Pro
+DESCRIPTION:종목 Men's Physique\n원문 https://fitnessvolt.com/bodybuil
+ ding/contests/irongames-pro-2026/\n전체 일정 https://ynschoi.github.i
+ o/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:San Diego\, San Diego\, California
+URL:https://fitnessvolt.com/bodybuilding/contests/irongames-pro-2026/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-kc-pro-2026@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261114
+DTEND;VALUE=DATE:20261115
+SUMMARY:IFBB PRO KC Pro
+DESCRIPTION:종목 Men's Classic Physique\, Women's Bikini\n원문 https:/
+ /fitnessvolt.com/bodybuilding/contests/kc-pro-2026/\n전체 일정 https:
+ //ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔
+  수 있어요
+LOCATION:Kansas City\, Kansas City\, MO
+URL:https://fitnessvolt.com/bodybuilding/contests/kc-pro-2026/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-luciano-cruz-juiz-de-fora-pro-2026@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261114
+DTEND;VALUE=DATE:20261115
+SUMMARY:IFBB PRO Luciano Cruz Juiz de Fora Pro
+DESCRIPTION:종목 Men's Physique\, Women's Bodybuilding\, Women's Physiqu
+ e\n원문 https://fitnessvolt.com/bodybuilding/contests/luciano-cruz-juiz
+ -de-fora-pro-2026/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 
+ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Juiz de Fora
+URL:https://fitnessvolt.com/bodybuilding/contests/luciano-cruz-juiz-de-for
+ a-pro-2026/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-oklahoma-grand-prix-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261114
+DTEND;VALUE=DATE:20261115
+SUMMARY:IFBB PRO Oklahoma Grand Prix Pro
+DESCRIPTION:종목 Men's Open Bodybuilding\, Wellness\n원문 https://fitn
+ essvolt.com/bodybuilding/contests/2026-oklahoma-grand-prix-pro/\n전체 
+ 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정
+ 으로 바뀔 수 있어요
+LOCATION:Edmond\, OK
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-oklahoma-grand-prix
+ -pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1030023@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261114
+DTEND;VALUE=DATE:20261115
+SUMMARY:NPC WW Battle of the North Pro Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Fitness\, Bodybuil
+ ding\, Men's Physique\, Wellness\, Women's Bodybuilding\, Fit Model\, Wom
+ en's Physique\n원문 https://npcnewsonline.com/schedule_event/2026-npc-w
+ orldwide-battle-of-the-north-pro-qualifier/\n전체 일정 https://ynscho
+ i.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:Copenhagen
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-battle-of-
+ the-north-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25443@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261115
+DTEND;VALUE=DATE:20261117
+SUMMARY:IFBB PRO 2026 Tunisia Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-tunisia-pro-qu
+ alifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 
+ 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Tunis\, Tunis
+URL:https://www.ifbbpro.com/competition/2026-tunisia-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1060858@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261115
+DTEND;VALUE=DATE:20261116
+SUMMARY:NPC WW Gomeisa Ultimate Battle Bogota Pro Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Fitness\, Bodybuil
+ ding\, Men's Physique\, Wellness\, Women's Bodybuilding\, Fit Model\, Wom
+ en's Physique\n원문 https://npcnewsonline.com/schedule_event/2026-npc-w
+ orldwide-gomeisa-ultimate-battle-bogota-pro-qualifier/\n전체 일정 htt
+ ps://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바
+ 뀔 수 있어요
+LOCATION:Bogota
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-gomeisa-ul
+ timate-battle-bogota-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23189@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261120
+DTEND;VALUE=DATE:20261123
+SUMMARY:IFBB PRO 2026 Spanish Grand Prix Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-spanish-grand-
+ prix-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은
+  주최 측 사정으로 바뀔 수 있어요
+LOCATION:Madrid\, Madrid
+URL:https://www.ifbbpro.com/competition/2026-spanish-grand-prix-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-spanish-grand-prix-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261120
+DTEND;VALUE=DATE:20261121
+SUMMARY:IFBB PRO Spanish Grand Prix Pro
+DESCRIPTION:종목 Classic Physique\, Men's Physique\, Figure\, Bikini\, W
+ ellness\, Fit Model\n원문 https://fitnessvolt.com/bodybuilding/contests
+ /2026-spanish-grand-prix-pro/\n전체 일정 https://ynschoi.github.io/bb
+ comp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Madrid
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-spanish-grand-prix-
+ pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23706@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261121
+DTEND;VALUE=DATE:20261122
+SUMMARY:IFBB PRO 2026 Apollon Nutrition Europe Naturals Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-portugal-natur
+ al-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 
+ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Carcavelos\, Carcavelos
+URL:https://www.ifbbpro.com/competition/2026-portugal-natural-pro-qualifie
+ r/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23193@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261121
+DTEND;VALUE=DATE:20261122
+SUMMARY:IFBB PRO 2026 Apollon Nutrition Europe Naturals Pro Show
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-mr-big-evoluti
+ on-natural-pro-championships/\n전체 일정 https://ynschoi.github.io/bb
+ comp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Carcavelos\, Carcavelos
+URL:https://www.ifbbpro.com/competition/2026-mr-big-evolution-natural-pro-
+ championships/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-24042@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261121
+DTEND;VALUE=DATE:20261122
+SUMMARY:IFBB PRO 2026 Dennis James Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-dennis-james-p
+ ro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일
+ 정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:St. Leon-Rot\, St. Leon-Rot
+URL:https://www.ifbbpro.com/competition/2026-dennis-james-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23692@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261121
+DTEND;VALUE=DATE:20261122
+SUMMARY:IFBB PRO 2026 Maryland Night of Champions Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-maryland-night
+ -of-champions-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 
+ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Towson\, Towson\, MD
+URL:https://www.ifbbpro.com/competition/2026-maryland-night-of-champions-p
+ ro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23463@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261121
+DTEND;VALUE=DATE:20261122
+SUMMARY:IFBB PRO 2026 Southern Natural Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-southern-natur
+ al-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 
+ 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Lawrenceville\, Lawrenceville\, GA
+URL:https://www.ifbbpro.com/competition/2026-southern-natural-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25519@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261121
+DTEND;VALUE=DATE:20261122
+SUMMARY:IFBB PRO 2026 Thailand Nationals Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-thailand-natio
+ nals-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※
+  일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Bangkok\, Bangkok
+URL:https://www.ifbbpro.com/competition/2026-thailand-nationals-pro-qualif
+ ier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25522@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261121
+DTEND;VALUE=DATE:20261122
+SUMMARY:IFBB PRO 2026 Thailand Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-thailand-pro-2
+ /\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 
+ 측 사정으로 바뀔 수 있어요
+LOCATION:Bangkok\, Bangkok
+URL:https://www.ifbbpro.com/competition/2026-thailand-pro-2/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-atlantic-coast-pro-2026@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261121
+DTEND;VALUE=DATE:20261122
+SUMMARY:IFBB PRO Atlantic Coast Pro
+DESCRIPTION:종목 Men's 212 Bodybuilding\, Men's Classic Physique\, Men's
+  Physique\, Women's Physique\, Women's Figure\, Women's Bikini\, Men's Op
+ en Bodybuilding - Masters 40+\, Men's Open Bodybuilding - Masters 45+\, M
+ en's Open Bodybuilding - Masters 50+\, Men's Open Bodybuilding - Masters 
+ 55+\, Men's Open Bodybuilding - Masters 60+\, Men's Open Bodybuilding - M
+ asters 70+\, Men's 212 Bodybuilding - Masters 40+\, Men's Classic Physiqu
+ e - Masters 40+\, Men's Classic Physique - Masters 45+\, Men's Classic Ph
+ ysique - Masters 50+\, Men's Classic Physique - Masters 55+\, Men's Class
+ ic Physique - Masters 60+\, Men's Physique - Masters 40+\, Men's Physique
+  - Masters 45+ 외\n원문 https://fitnessvolt.com/bodybuilding/contests/
+ atlantic-coast-pro-2026/\n전체 일정 https://ynschoi.github.io/bbcomp/
+ \n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Fort Lauderdale\, Fort Lauderdale\, Florida
+URL:https://fitnessvolt.com/bodybuilding/contests/atlantic-coast-pro-2026/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-maryland-night-of-champions-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261121
+DTEND;VALUE=DATE:20261122
+SUMMARY:IFBB PRO Maryland Night of Champions Pro
+DESCRIPTION:종목 Classic Physique\, Men's Physique\, Figure\, Bikini\, F
+ it Model\n원문 https://fitnessvolt.com/bodybuilding/contests/2026-maryl
+ and-night-of-champions-pro/\n전체 일정 https://ynschoi.github.io/bbco
+ mp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Towson\, MD
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-maryland-night-of-c
+ hampions-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-mr-big-evolution-natural-pro-championships@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261121
+DTEND;VALUE=DATE:20261122
+SUMMARY:IFBB PRO Mr Big Evolution Natural Pro Championships
+DESCRIPTION:종목 Men's Open Bodybuilding\, Classic Physique\, Men's Phys
+ ique\, Figure\, Bikini\, Wellness\n원문 https://fitnessvolt.com/bodybui
+ lding/contests/2026-mr-big-evolution-natural-pro-championships/\n전체 
+ 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정
+ 으로 바뀔 수 있어요
+LOCATION:Carcavelos
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-mr-big-evolution-na
+ tural-pro-championships/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-shawn-rays-hawaiian-classic-masters-pro-2026@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261121
+DTEND;VALUE=DATE:20261122
+SUMMARY:IFBB PRO Shawn Ray’s Hawaiian Classic Masters Pro
+DESCRIPTION:종목 Men's Physique\, Women's Bikini\, Men's Physique - Mast
+ ers 40+\, Women's Bikini - Masters 40+\n원문 https://fitnessvolt.com/bo
+ dybuilding/contests/shawn-rays-hawaiian-classic-masters-pro-2026/\n전체
+  일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사
+ 정으로 바뀔 수 있어요
+LOCATION:Honolulu
+URL:https://fitnessvolt.com/bodybuilding/contests/shawn-rays-hawaiian-clas
+ sic-masters-pro-2026/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-southern-natural-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261121
+DTEND;VALUE=DATE:20261122
+SUMMARY:IFBB PRO Southern Natural Pro
+DESCRIPTION:종목 Men's Open Bodybuilding\, Classic Physique\, Men's Phys
+ ique\n원문 https://fitnessvolt.com/bodybuilding/contests/2026-southern-
+ natural-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정
+ 은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Lawrenceville\, GA
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-southern-natural-pr
+ o/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-thailand-pro-bangkok-2026@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261121
+DTEND;VALUE=DATE:20261122
+SUMMARY:IFBB PRO Thailand Pro (Bangkok)
+DESCRIPTION:종목 Men's Classic Physique\n원문 https://fitnessvolt.com/
+ bodybuilding/contests/thailand-pro-bangkok-2026/\n전체 일정 https://y
+ nschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 
+ 수 있어요
+LOCATION:Bangkok
+URL:https://fitnessvolt.com/bodybuilding/contests/thailand-pro-bangkok-202
+ 6/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1052161@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261121
+DTEND;VALUE=DATE:20261122
+SUMMARY:NPC WW Apollon Nutrition Europe Naturals Pro Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Bodybuilding\, Men
+ 's Physique\, Wellness\, Fit Model\, Women's Physique\n원문 https://npc
+ newsonline.com/schedule_event/2026-npc-worldwide-apollon-nutrition-europe
+ -naturals-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/
+ \n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Carcavelos
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-apollon-nu
+ trition-europe-naturals-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-24334@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261122
+DTEND;VALUE=DATE:20261123
+SUMMARY:IFBB PRO 2022 Global Classic Zhuhai Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2022-global-classic
+ -zhuhai-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정
+ 은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Zhuhai\, Zhuhai
+URL:https://www.ifbbpro.com/competition/2022-global-classic-zhuhai-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-24330@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261122
+DTEND;VALUE=DATE:20261123
+SUMMARY:IFBB PRO 2026 Global Classic Zhuhai Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-global-classic
+ -zhuhai-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Zhuhai\, Zhuhai
+URL:https://www.ifbbpro.com/competition/2026-global-classic-zhuhai-pro-qua
+ lifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23197@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261122
+DTEND;VALUE=DATE:20261123
+SUMMARY:IFBB PRO 2026 Mr Big Evolution Pro Portugal Masters
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-mr-big-evoluti
+ on-pro-portugal-masters/\n전체 일정 https://ynschoi.github.io/bbcomp/
+ \n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Carcavelos\, Carcavelos
+URL:https://www.ifbbpro.com/competition/2026-mr-big-evolution-pro-portugal
+ -masters/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25037@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261122
+DTEND;VALUE=DATE:20261123
+SUMMARY:IFBB PRO 2026 New Mexico Natural Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-new-mexico-nat
+ ural-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은
+  주최 측 사정으로 바뀔 수 있어요
+LOCATION:Albuquerque\, Albuquerque\, NM
+URL:https://www.ifbbpro.com/competition/2026-new-mexico-natural-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-mr-big-evolution-pro-portugal-masters@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261122
+DTEND;VALUE=DATE:20261123
+SUMMARY:IFBB PRO Mr Big Evolution Pro Portugal Masters
+DESCRIPTION:종목 Men's Open Bodybuilding\, Men's 212 Bodybuilding\, Clas
+ sic Physique\, Men's Physique\, Women's Physique\, Figure\, Bikini\, Well
+ ness\, Women's Bodybuilding\n원문 https://fitnessvolt.com/bodybuilding/
+ contests/2026-mr-big-evolution-pro-portugal-masters/\n전체 일정 https
+ ://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바
+ 뀔 수 있어요
+LOCATION:Carcavelos
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-mr-big-evolution-pr
+ o-portugal-masters/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-new-mexico-natural-pro-2026@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261122
+DTEND;VALUE=DATE:20261123
+SUMMARY:IFBB PRO New Mexico Natural Pro
+DESCRIPTION:종목 Women's Bikini\, Women's Fit Model\n원문 https://fitn
+ essvolt.com/bodybuilding/contests/new-mexico-natural-pro-2026/\n전체 
+ 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정
+ 으로 바뀔 수 있어요
+LOCATION:Albuquerque\, Albuquerque\, NM
+URL:https://fitnessvolt.com/bodybuilding/contests/new-mexico-natural-pro-2
+ 026/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23495@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261128
+DTEND;VALUE=DATE:20261129
+SUMMARY:IFBB PRO 2026 Huanji China Natural Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-huanji-china-n
+ atural-pro-qualifier-2/\n전체 일정 https://ynschoi.github.io/bbcomp/\
+ n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Hangzhou\, Hangzhou
+URL:https://www.ifbbpro.com/competition/2026-huanji-china-natural-pro-qual
+ ifier-2/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-huanji-china-natural-pro@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261128
+DTEND;VALUE=DATE:20261129
+SUMMARY:IFBB PRO Huanji China Natural Pro
+DESCRIPTION:종목 Classic Physique\, Men's Physique\, Bikini\, Fit Model\
+ n원문 https://fitnessvolt.com/bodybuilding/contests/2026-huanji-china-n
+ atural-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정
+ 은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Hangzhou
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-huanji-china-natura
+ l-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23701@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261129
+DTEND;VALUE=DATE:20261130
+SUMMARY:IFBB PRO 2026 Bigman Spain Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-bigman-spain-p
+ ro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일
+ 정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Alicante\, Alicante
+URL:https://www.ifbbpro.com/competition/2026-bigman-spain-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23201@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261129
+DTEND;VALUE=DATE:20261130
+SUMMARY:IFBB PRO 2026 Bigman Weekend Championships Pro Show
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-bigman-weekend
+ -championships-pro-show/\n전체 일정 https://ynschoi.github.io/bbcomp/
+ \n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Alicante\, Alicante
+URL:https://www.ifbbpro.com/competition/2026-bigman-weekend-championships-
+ pro-show/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23266@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261129
+DTEND;VALUE=DATE:20261130
+SUMMARY:IFBB PRO 2026 Huanji China Natural Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-huanji-china-n
+ atural-pro-2/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일
+ 정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Hangzhou\, Hangzhou
+URL:https://www.ifbbpro.com/competition/2026-huanji-china-natural-pro-2/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23271@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261129
+DTEND;VALUE=DATE:20261130
+SUMMARY:IFBB PRO 2026 Huanji China Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-huanji-china-p
+ ro-6/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주
+ 최 측 사정으로 바뀔 수 있어요
+LOCATION:Hangzhou\, Hangzhou
+URL:https://www.ifbbpro.com/competition/2026-huanji-china-pro-6/
+END:VEVENT
+BEGIN:VEVENT
+UID:fitnessvolt-2026-bigman-weekend-championships-pro-show@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261129
+DTEND;VALUE=DATE:20261130
+SUMMARY:IFBB PRO Bigman Weekend Championships Pro Show
+DESCRIPTION:종목 Men's Open Bodybuilding\, Bikini\n원문 https://fitnes
+ svolt.com/bodybuilding/contests/2026-bigman-weekend-championships-pro-sho
+ w/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최
+  측 사정으로 바뀔 수 있어요
+LOCATION:Alicante
+URL:https://fitnessvolt.com/bodybuilding/contests/2026-bigman-weekend-cham
+ pionships-pro-show/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25776@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261204
+DTEND;VALUE=DATE:20261206
+SUMMARY:IFBB PRO 2026 Saudi Arabia Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-saudi-arabia-p
+ ro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일
+ 정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Riyadh\, Riyadh
+URL:https://www.ifbbpro.com/competition/2026-saudi-arabia-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25276@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261204
+DTEND;VALUE=DATE:20261207
+SUMMARY:IFBB PRO 2026 Taiwan Pro Grand Finale
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-taiwan-pro-gra
+ nd-finale/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정
+ 은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Kaohsiung\, Kaohsiung
+URL:https://www.ifbbpro.com/competition/2026-taiwan-pro-grand-finale/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25280@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261204
+DTEND;VALUE=DATE:20261207
+SUMMARY:IFBB PRO 2026 Taiwan Pro Qualifier Grand Finale
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-taiwan-pro-qua
+ lifier-grand-finale/\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Kaohsiung\, Kaohsiung
+URL:https://www.ifbbpro.com/competition/2026-taiwan-pro-qualifier-grand-fi
+ nale/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25507@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261205
+DTEND;VALUE=DATE:20261206
+SUMMARY:IFBB PRO 2026 African Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-african-pro-qu
+ alifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 
+ 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Johannesburg\, Johannesburg
+URL:https://www.ifbbpro.com/competition/2026-african-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25740@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261205
+DTEND;VALUE=DATE:20261206
+SUMMARY:IFBB PRO 2026 Battle of the Bay Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-battle-of-the-
+ bay-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 
+ 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Union City\, Union City\, CA
+URL:https://www.ifbbpro.com/competition/2026-battle-of-the-bay-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23381@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261205
+DTEND;VALUE=DATE:20261206
+SUMMARY:IFBB PRO 2026 Caribbean Grand Prix Natural Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-caribbean-gran
+ d-prix-natural-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bb
+ comp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Nassau\, Nassau
+URL:https://www.ifbbpro.com/competition/2026-caribbean-grand-prix-natural-
+ pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25602@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261205
+DTEND;VALUE=DATE:20261206
+SUMMARY:IFBB PRO 2026 Musclecontest Nacional Masters Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-musclecontest-
+ nacional-masters-pro-qualifier/\n전체 일정 https://ynschoi.github.io/
+ bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Campinas\, Campinas
+URL:https://www.ifbbpro.com/competition/2026-musclecontest-nacional-master
+ s-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25789@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261205
+DTEND;VALUE=DATE:20261206
+SUMMARY:IFBB PRO 2026 Saudi Arabia Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-saudi-arabia-p
+ ro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주
+ 최 측 사정으로 바뀔 수 있어요
+LOCATION:Riyadh\, Riyadh
+URL:https://www.ifbbpro.com/competition/2026-saudi-arabia-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1033500@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261205
+DTEND;VALUE=DATE:20261207
+SUMMARY:NPC WW African Open Pro Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Fitness\, Bodybuil
+ ding\, Men's Physique\, Wellness\, Women's Bodybuilding\, Fit Model\, Wom
+ en's Physique\n원문 https://npcnewsonline.com/schedule_event/2026-npc-w
+ orldwide-african-open-pro-qualifier/\n전체 일정 https://ynschoi.githu
+ b.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Johannesburg
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-african-op
+ en-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1031025@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261205
+DTEND;VALUE=DATE:20261206
+SUMMARY:NPC WW Caribbean Grand Prix Bahamas Natural Pro Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Fitness\, Bodybuil
+ ding\, Men's Physique\, Wellness\, Fit Model\, Women's Physique\n원문 h
+ ttps://npcnewsonline.com/schedule_event/2026-npc-worldwide-caribbean-gran
+ d-prix-bahamas-natural-pro-qualifier/\n전체 일정 https://ynschoi.gith
+ ub.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Nassau
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-caribbean-
+ grand-prix-bahamas-natural-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1033502@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261205
+DTEND;VALUE=DATE:20261207
+SUMMARY:NPC WW iCandy Classic Jozi Open Regional Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Fitness\, Bodybuil
+ ding\, Men's Physique\, Wellness\, Women's Bodybuilding\, Fit Model\, Wom
+ en's Physique\n원문 https://npcnewsonline.com/schedule_event/2026-npc-w
+ orldwide-icandy-classic-jozi-open-regional-qualifier/\n전체 일정 http
+ s://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바
+ 뀔 수 있어요
+LOCATION:Johannesburg
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-icandy-cla
+ ssic-jozi-open-regional-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25510@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261206
+DTEND;VALUE=DATE:20261207
+SUMMARY:IFBB PRO 2026 African Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-african-pro/\n
+ 전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측
+  사정으로 바뀔 수 있어요
+LOCATION:Johannesburg\, Johannesburg
+URL:https://www.ifbbpro.com/competition/2026-african-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25598@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261206
+DTEND;VALUE=DATE:20261207
+SUMMARY:IFBB PRO 2026 Musclecontest Nacional Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-musclecontest-
+ nacional-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일
+ 정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Campinas\, Campinas
+URL:https://www.ifbbpro.com/competition/2026-musclecontest-nacional-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25604@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261206
+DTEND;VALUE=DATE:20261207
+SUMMARY:IFBB PRO 2026 Musclecontest Nacional Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-musclecontest-
+ nacional-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\
+ n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Campinas\, Campinas
+URL:https://www.ifbbpro.com/competition/2026-musclecontest-nacional-pro-qu
+ alifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25468@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261211
+DTEND;VALUE=DATE:20261213
+SUMMARY:IFBB PRO 2026 Argentina Naturals Muscleshow Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-argentina-natu
+ rals-muscleshow-pro-qualifier/\n전체 일정 https://ynschoi.github.io/b
+ bcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Rosario\, Rosario
+URL:https://www.ifbbpro.com/competition/2026-argentina-naturals-muscleshow
+ -pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25474@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261211
+DTEND;VALUE=DATE:20261214
+SUMMARY:IFBB PRO 2026 Argentina World Muscleshow Masters Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-argentina-worl
+ d-muscleshow-masters-pro-qualifier/\n전체 일정 https://ynschoi.github
+ .io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Rosario\, Rosario
+URL:https://www.ifbbpro.com/competition/2026-argentina-world-muscleshow-ma
+ sters-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25471@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261211
+DTEND;VALUE=DATE:20261214
+SUMMARY:IFBB PRO 2026 Argentina World Muscleshow Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-argentina-worl
+ d-muscleshow-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbco
+ mp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Rosario\, Rosario
+URL:https://www.ifbbpro.com/competition/2026-argentina-world-muscleshow-pr
+ o-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23276@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261212
+DTEND;VALUE=DATE:20261214
+SUMMARY:IFBB PRO 2026 Huanji China Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-huanji-china-p
+ ro-7/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주
+ 최 측 사정으로 바뀔 수 있어요
+LOCATION:Beijing\, Beijing
+URL:https://www.ifbbpro.com/competition/2026-huanji-china-pro-7/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23497@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261212
+DTEND;VALUE=DATE:20261213
+SUMMARY:IFBB PRO 2026 Huanji China Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-huanji-china-p
+ ro-qualifier-3/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일
+ 정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Beijing\, Beijing
+URL:https://www.ifbbpro.com/competition/2026-huanji-china-pro-qualifier-3/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25592@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261212
+DTEND;VALUE=DATE:20261213
+SUMMARY:IFBB PRO 2026 Musclecontest Austria Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-musclecontest-
+ austria-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정
+ 은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Schwechat\, Schwechat
+URL:https://www.ifbbpro.com/competition/2026-musclecontest-austria-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1067238@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261212
+DTEND;VALUE=DATE:20261213
+SUMMARY:NPC WW Naturals Muscleshow Pro Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Fitness\, Bodybuil
+ ding\, Men's Physique\, Wellness\, Fit Model\, Women's Physique\n원문 h
+ ttps://npcnewsonline.com/schedule_event/2026-npc-worldwide-naturals-muscl
+ eshow-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Rosario
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-naturals-m
+ uscleshow-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1067240@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261212
+DTEND;VALUE=DATE:20261214
+SUMMARY:NPC WW World Muscleshow Pro Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Fitness\, Bodybuil
+ ding\, Men's Physique\, Wellness\, Women's Bodybuilding\, Fit Model\, Wom
+ en's Physique\n원문 https://npcnewsonline.com/schedule_event/2026-npc-w
+ orldwide-world-muscleshow-pro-qualifier/\n전체 일정 https://ynschoi.g
+ ithub.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어
+ 요
+LOCATION:Rosario
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-world-musc
+ leshow-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25477@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261213
+DTEND;VALUE=DATE:20261214
+SUMMARY:IFBB PRO 2026 Argentina Sur Pro Cup
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-argentina-sur-
+ pro-cup/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 
+ 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Rosario\, Rosario
+URL:https://www.ifbbpro.com/competition/2026-argentina-sur-pro-cup/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25596@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261213
+DTEND;VALUE=DATE:20261214
+SUMMARY:IFBB PRO 2026 Musclecontest Austria Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-musclecontest-
+ austria-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Schwechat\, Schwechat
+URL:https://www.ifbbpro.com/competition/2026-musclecontest-austria-pro-qua
+ lifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-24182@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261218
+DTEND;VALUE=DATE:20261221
+SUMMARY:IFBB PRO 2026 Amateur Olympia India
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-amateur-olympi
+ a-india/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 
+ 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Mumbai\, Mumbai
+URL:https://www.ifbbpro.com/competition/2026-amateur-olympia-india/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25892@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261218
+DTEND;VALUE=DATE:20261221
+SUMMARY:IFBB PRO 2026 Bharat India Pro Show
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-india-pro/\n
+ 전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측
+  사정으로 바뀔 수 있어요
+LOCATION:Mumbai\, Mumbai
+URL:https://www.ifbbpro.com/competition/2026-india-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-26140@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261219
+DTEND;VALUE=DATE:20261220
+SUMMARY:IFBB PRO 2026 Japan Natural Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-japan-natural-
+ pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일
+ 정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Osaka\, Osaka
+URL:https://www.ifbbpro.com/competition/2026-japan-natural-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1067242@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261219
+DTEND;VALUE=DATE:20261220
+SUMMARY:NPC WW ZeniX Teppen Classic Natural Pro Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Bodybuilding\, Men
+ 's Physique\, Wellness\, Fit Model\, Women's Physique\n원문 https://npc
+ newsonline.com/schedule_event/2026-npc-worldwide-zenix-teppen-classic-nat
+ ural-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※
+  일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:TBD
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-zenix-tepp
+ en-classic-natural-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23776@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261220
+DTEND;VALUE=DATE:20261221
+SUMMARY:IFBB PRO 2026 William Bonac Classic Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-william-bonac-
+ classic-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Zaandam\, Zaandam
+URL:https://www.ifbbpro.com/competition/2026-william-bonac-classic-pro-qua
+ lifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1050625@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261220
+DTEND;VALUE=DATE:20261221
+SUMMARY:NPC WW William Bonac Classic Pro Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Bodybuilding\, Men
+ 's Physique\, Wellness\, Women's Bodybuilding\, Fit Model\, Women's Physi
+ que\n원문 https://npcnewsonline.com/schedule_event/2026-npc-worldwide-w
+ illiam-bonac-classic-pro-qualifier/\n전체 일정 https://ynschoi.github
+ .io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Zaandam
+URL:https://npcnewsonline.com/schedule_event/2026-npc-worldwide-william-bo
+ nac-classic-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25371@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20270108
+DTEND;VALUE=DATE:20270110
+SUMMARY:IFBB PRO 2027 Libya Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2027-libya-pro-qual
+ ifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 
+ 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Tripoli\, Tripoli
+URL:https://www.ifbbpro.com/competition/2027-libya-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-26365@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20270123
+DTEND;VALUE=DATE:20270125
+SUMMARY:IFBB PRO 2027 Armenia Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2027-armenia-pro-qu
+ alifier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 
+ 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Yerevan\, Yerevan
+URL:https://www.ifbbpro.com/competition/2027-armenia-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-26402@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20270129
+DTEND;VALUE=DATE:20270131
+SUMMARY:IFBB PRO 2027 Iraq Pro Qualifier
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2027-iraq-pro-quali
+ fier/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주
+ 최 측 사정으로 바뀔 수 있어요
+LOCATION:Erbil\, Erbil
+URL:https://www.ifbbpro.com/competition/2027-iraq-pro-qualifier/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-npc-1072327@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20270227
+DTEND;VALUE=DATE:20270301
+SUMMARY:NPC WW Musclecontest Japan Open Regional & Pro Qualifier
+DESCRIPTION:종목 Bikini\, Classic Physique\, Figure\, Bodybuilding\, Men
+ 's Physique\, Wellness\, Fit Model\, Women's Physique\n원문 https://npc
+ newsonline.com/schedule_event/2027-npc-worldwide-musclecontest-japan-open
+ -regional-pro-qualifier/\n전체 일정 https://ynschoi.github.io/bbcomp/
+ \n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Tokyo
+URL:https://npcnewsonline.com/schedule_event/2027-npc-worldwide-musclecont
+ est-japan-open-regional-pro-qualifier/
+END:VEVENT
+END:VCALENDAR

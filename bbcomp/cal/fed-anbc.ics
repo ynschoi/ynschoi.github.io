@@ -1,0 +1,75 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//bbcomp//schedule//KO
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:보디빌딩 대회 · ANBC
+X-WR-TIMEZONE:Asia/Seoul
+REFRESH-INTERVAL;VALUE=DURATION:P1D
+X-PUBLISHED-TTL:P1D
+BEGIN:VEVENT
+UID:unmo-616@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261025
+DTEND;VALUE=DATE:20261026
+SUMMARY:ANBC 일산
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-10-18\n종목 클래
+ 식피지크 중/고등부\, 클래식피지크 루키(~23세까지)\, 
+ 클래식피지크 비기너\, 클래식피지크 노비스\, 클래식
+ 피지크 오픈\, 클래식피지크 시니어(40~49세)\, 클래식피
+ 지크 마스터(50세 이상)\, 클래식보디빌딩 중/고등부\, 
+ 클래식보디빌딩 루키(~23세까지)\, 클래식보디빌딩 비기
+ 너\, 클래식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 
+ 클래식보디빌딩 시니어(40~49세)\, 클래식보디빌딩 마스
+ 터(50세 이상)\, 보디빌딩 중/고등부\, 보디빌딩 루키(~23
+ 세까지)\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디빌
+ 딩 오픈\, 보디빌딩 시니어(40~49세까지) 외\n원문 https://u
+ nmo.kr/m/shop/tm_view.php?gs_id=616\n전체 일정 https://ynschoi.github
+ .io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:대교 미디어센터
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=616
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-617@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261129
+DTEND;VALUE=DATE:20261130
+SUMMARY:ANBC 부산
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-11-22\n종목 클래
+ 식피지크 중/고등부\, 클래식피지크 루키(~23세까지)\, 
+ 클래식피지크 비기너\, 클래식피지크 노비스\, 클래식
+ 피지크 오픈\, 클래식피지크 시니어(40~49세)\, 클래식피
+ 지크 마스터(50세 이상)\, 클래식보디빌딩 중/고등부\, 
+ 클래식보디빌딩 루키(~23세까지)\, 클래식보디빌딩 비기
+ 너\, 클래식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 
+ 클래식보디빌딩 시니어(40~49세)\, 클래식보디빌딩 마스
+ 터(50세 이상)\, 보디빌딩 중/고등부\, 보디빌딩 루키(~23
+ 세까지)\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디빌
+ 딩 오픈\, 보디빌딩 시니어(40~49세까지) 외\n원문 https://u
+ nmo.kr/m/shop/tm_view.php?gs_id=617\n전체 일정 https://ynschoi.github
+ .io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:보건대학교 체육관
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=617
+END:VEVENT
+BEGIN:VEVENT
+UID:unmo-618@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261206
+DTEND;VALUE=DATE:20261207
+SUMMARY:ANBC 고양 & 파이널 (프로전)
+DESCRIPTION:참가비 180\,000원\n접수 마감 2026-11-29\n종목 클래
+ 식피지크 중/고등부\, 클래식피지크 루키(~23세까지)\, 
+ 클래식피지크 비기너\, 클래식피지크 노비스\, 클래식
+ 피지크 오픈\, 클래식피지크 시니어(40~49세)\, 클래식피
+ 지크 마스터(50세 이상)\, 클래식보디빌딩 중/고등부\, 
+ 클래식보디빌딩 루키(~23세까지)\, 클래식보디빌딩 비기
+ 너\, 클래식보디빌딩 노비스\, 클래식보디빌딩 오픈\, 
+ 클래식보디빌딩 시니어(40~49세)\, 클래식보디빌딩 마스
+ 터(50세 이상)\, 보디빌딩 중/고등부\, 보디빌딩 루키(~23
+ 세까지)\, 보디빌딩 비기너\, 보디빌딩 노비스\, 보디빌
+ 딩 오픈\, 보디빌딩 시니어(40~49세까지) 외\n원문 https://u
+ nmo.kr/m/shop/tm_view.php?gs_id=618\n전체 일정 https://ynschoi.github
+ .io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+URL:https://unmo.kr/m/shop/tm_view.php?gs_id=618
+END:VEVENT
+END:VCALENDAR

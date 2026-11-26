@@ -1,0 +1,45 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//bbcomp//schedule//KO
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:보디빌딩 대회 · 케이클래식
+X-WR-TIMEZONE:Asia/Seoul
+REFRESH-INTERVAL;VALUE=DURATION:P1D
+X-PUBLISHED-TTL:P1D
+BEGIN:VEVENT
+UID:kclassic-2273@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261101
+SUMMARY:케이클래식 내추럴 부산
+DESCRIPTION:참가비 얼리버드 14만원 / 일반 17만원 / 추가 20
+ 만원 (종목 추가 8만원)\n접수 마감 2026-10-25\n종목 바디
+ 빌딩\, 클래식바디빌딩\, 클래식피지크\, 피지크\, 스포
+ 츠모델(남)\, 스포츠모델(여)\, 비키니\, 모노키니\, 애슬
+ 레저모델(남)\, 애슬레저모델(여)\, 케이모델(남)\, 케이
+ 모델(여)\n원문 https://kismos.co.kr/product/detail.html?product_no=2
+ 273&cate_no=822&display_group=1\n전체 일정 https://ynschoi.github.io/
+ bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:피아크 별관 아트홀\, 부산
+URL:https://kismos.co.kr/product/detail.html?product_no=2273&cate_no=822&d
+ isplay_group=1
+END:VEVENT
+BEGIN:VEVENT
+UID:kclassic-2272@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261101
+SUMMARY:케이클래식 부산
+DESCRIPTION:참가비 얼리버드 14만원 / 일반 17만원 / 추가 20
+ 만원 (종목 추가 8만원)\n접수 마감 2026-10-25\n종목 바디
+ 빌딩\, 클래식바디빌딩\, 클래식피지크\, 피지크\, 스포
+ 츠모델(남)\, 스포츠모델(여)\, 비키니\, 피규어\n원문 htt
+ ps://kismos.co.kr/product/detail.html?product_no=2272&cate_no=822&display
+ _group=1\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 
+ 주최 측 사정으로 바뀔 수 있어요
+LOCATION:피아크 별관 아트홀\, 부산
+URL:https://kismos.co.kr/product/detail.html?product_no=2272&cate_no=822&d
+ isplay_group=1
+END:VEVENT
+END:VCALENDAR

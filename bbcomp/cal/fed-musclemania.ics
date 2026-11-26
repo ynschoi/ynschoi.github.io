@@ -1,0 +1,24 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//bbcomp//schedule//KO
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:보디빌딩 대회 · MUSCLEMANIA
+X-WR-TIMEZONE:Asia/Seoul
+REFRESH-INTERVAL;VALUE=DURATION:P1D
+X-PUBLISHED-TTL:P1D
+BEGIN:VEVENT
+UID:musclemania-kr-2026@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261025
+DTEND;VALUE=DATE:20261026
+SUMMARY:MUSCLEMANIA 머슬마니아 코리아 챔피언십
+DESCRIPTION:접수 마감 2026-10-18\n종목 보디빌딩\, 클래식\, 
+ 피지크\, 모델\, 피트니스\, 데님\, 트랜스포메이션\, 미
+ 즈비키니\, 피규어\n원문 https://www.mmkorea.com/\n전체 일정 
+ https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 
+ 바뀔 수 있어요
+LOCATION:광운대학교 동해문화예술관\, 서울
+URL:https://www.mmkorea.com/
+END:VEVENT
+END:VCALENDAR

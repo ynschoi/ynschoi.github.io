@@ -29,6 +29,8 @@ jobs:
         run: python3 bbcomp/crawler/check_sites.py || true
       - name: Crawl
         run: python3 bbcomp/crawler/crawl.py
+      - name: 구독 캘린더(.ics) 생성
+        run: python3 bbcomp/crawler/make_ics.py
       - name: 수집 결과 요약
         if: always()
         run: |
@@ -43,7 +45,7 @@ jobs:
         run: |
           git config user.name "bbcomp-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add bbcomp/data.json
+          git add bbcomp/data.json bbcomp/cal
           if git diff --cached --quiet; then
             echo "변경 없음"
           else

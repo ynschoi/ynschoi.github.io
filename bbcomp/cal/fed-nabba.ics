@@ -1,0 +1,23 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//bbcomp//schedule//KO
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:보디빌딩 대회 · NABBA
+X-WR-TIMEZONE:Asia/Seoul
+REFRESH-INTERVAL;VALUE=DURATION:P1D
+X-PUBLISHED-TTL:P1D
+BEGIN:VEVENT
+UID:nabba-2026-pro-show@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261010
+DTEND;VALUE=DATE:20261011
+SUMMARY:NABBA PRO SHOW
+DESCRIPTION:참가비 400\,000원\n접수 마감 2026-10-09\n종목 PRO\, 
+ PDQ\n원문 https://nabba.kr/board/com_schedule.html\n전체 일정 https
+ ://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바
+ 뀔 수 있어요
+LOCATION:하얏트 리젠시 인천 파라다이스시티
+URL:https://nabba.kr/board/com_schedule.html
+END:VEVENT
+END:VCALENDAR

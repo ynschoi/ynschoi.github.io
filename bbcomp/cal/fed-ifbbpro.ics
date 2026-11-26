@@ -1,0 +1,109 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//bbcomp//schedule//KO
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:보디빌딩 대회 · IFBB PRO
+X-WR-TIMEZONE:Asia/Seoul
+REFRESH-INTERVAL;VALUE=DURATION:P1D
+X-PUBLISHED-TTL:P1D
+BEGIN:VEVENT
+UID:ifbbkorea-agp-pro2@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20260927
+DTEND;VALUE=DATE:20260928
+SUMMARY:IFBB PRO AGP 프로 올스타즈
+DESCRIPTION:종목 핏 모델\, 비키니\, 웰니스\, 피겨\, 멘즈 
+ 피지크\, 클래식 피지크\, 보디빌딩 212\n원문 https://ifbbpr
+ okorea.com/international/agp-pro2/\n전체 일정 https://ynschoi.github.
+ io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:잠실 롯데호텔\, 서울 잠실
+URL:https://ifbbprokorea.com/international/agp-pro2/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25142@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261010
+DTEND;VALUE=DATE:20261011
+SUMMARY:IFBB PRO 2026 Ultimate Warriors Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-ultimate-warri
+ ors-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 
+ 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Anaheim\, Anaheim\, California
+URL:https://www.ifbbpro.com/competition/2026-ultimate-warriors-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23217@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261016
+DTEND;VALUE=DATE:20261018
+SUMMARY:IFBB PRO 2026 Hurricane Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-hurricane-pro/
+ \n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 
+ 측 사정으로 바뀔 수 있어요
+LOCATION:St. Petersburg\, St. Petersburg\, Florida
+URL:https://www.ifbbpro.com/competition/2026-hurricane-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-23176@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261101
+SUMMARY:IFBB PRO 2026 All South Championships
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-all-south-cham
+ pionships/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정
+ 은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Orlando\, Orlando\, Florida
+URL:https://www.ifbbpro.com/competition/2026-all-south-championships/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-24647@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261107
+DTEND;VALUE=DATE:20261108
+SUMMARY:IFBB PRO 2026 Chattanooga Night of Champions Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-chattanooga-ni
+ ght-of-champions-pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Chattanooga\, Chattanooga\, Tennessee
+URL:https://www.ifbbpro.com/competition/2026-chattanooga-night-of-champion
+ s-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25582@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261114
+DTEND;VALUE=DATE:20261115
+SUMMARY:IFBB PRO 2026 Irongames Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-irongames-pro/
+ \n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 
+ 측 사정으로 바뀔 수 있어요
+LOCATION:San Diego\, San Diego\, California
+URL:https://www.ifbbpro.com/competition/2026-irongames-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25694@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261121
+DTEND;VALUE=DATE:20261123
+SUMMARY:IFBB PRO 2026 Atlantic Coast Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-atlantic-coast
+ -pro/\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주
+ 최 측 사정으로 바뀔 수 있어요
+LOCATION:Fort Lauderdale\, Fort Lauderdale\, Florida
+URL:https://www.ifbbpro.com/competition/2026-atlantic-coast-pro/
+END:VEVENT
+BEGIN:VEVENT
+UID:ifbbpro_world-pro-25167@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261121
+DTEND;VALUE=DATE:20261122
+SUMMARY:IFBB PRO 2026 Shawn Ray’s Hawaiian Classic Masters Pro
+DESCRIPTION:원문 https://www.ifbbpro.com/competition/2026-shawn-rays-haw
+ aiian-classic-masters-pro/\n전체 일정 https://ynschoi.github.io/bbcom
+ p/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:Honolulu\, Honolulu\, HawaII
+URL:https://www.ifbbpro.com/competition/2026-shawn-rays-hawaiian-classic-m
+ asters-pro/
+END:VEVENT
+END:VCALENDAR

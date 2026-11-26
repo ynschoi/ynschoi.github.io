@@ -27,7 +27,7 @@ from sources.common import KST, log  # noqa: E402
 
 DEFAULT_OUT = os.path.join(HERE, "..", "data.json")
 # 순서 = 중복 시 우선순위
-MODULES = ["unmo", "pca", "ifbbkorea", "nabba", "afex", "agonas", "kclassic", "oneclassic", "nac",
+MODULES = ["unmo", "pca", "ifbbkorea", "kbbf", "nabba", "afex", "agonas", "kclassic", "oneclassic", "nac",
            "musclemania", "wnbf", "fitnessvolt", "ifbbpro_world"]
 # 제외: monsterzym(robots.txt 전체 금지 → NPC 월드와이드 캘린더로 대체), kbbf·wnc(접근 제한 403),
 #       icn(사이트 내부 DB API 직접 호출 필요 — 사용하지 않음)

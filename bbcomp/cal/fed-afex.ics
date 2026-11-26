@@ -1,0 +1,28 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//bbcomp//schedule//KO
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:보디빌딩 대회 · AFEX
+X-WR-TIMEZONE:Asia/Seoul
+REFRESH-INTERVAL;VALUE=DURATION:P1D
+X-PUBLISHED-TTL:P1D
+BEGIN:VEVENT
+UID:afex-2026-novice-b@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261010
+DTEND;VALUE=DATE:20261011
+SUMMARY:AFEX 노비스 클래식 B
+DESCRIPTION:참가비 250\,000원~300\,000원\n접수 마감 2026-10-02\n
+ 종목 내추럴 보디빌딩\, 내추럴 남자 클래식 모델\, 내
+ 추럴 여자 클래식 모델\, 내추럴 피지크 모델\, 내추럴 
+ 비키니 모델\, 내추럴 남자 스포츠 모델\, 내추럴 여자 
+ 스포츠 모델\, 내추럴 핏모델\, 보디빌딩\, 남자 클래식 
+ 모델\, 여자 클래식 모델\, 피지크 모델\, 비키니 모델\, 
+ 남자 스포츠 모델\, 여자 스포츠 모델\, 핏모델\n원문 htt
+ ps://www.afex.co.kr/27\n전체 일정 https://ynschoi.github.io/bbcomp/\n
+ ※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:스위스 그랜드 호텔 그랜드볼룸\, 서울
+URL:https://www.afex.co.kr/27
+END:VEVENT
+END:VCALENDAR

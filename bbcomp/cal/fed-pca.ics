@@ -1,0 +1,92 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//bbcomp//schedule//KO
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:보디빌딩 대회 · PCA
+X-WR-TIMEZONE:Asia/Seoul
+REFRESH-INTERVAL;VALUE=DURATION:P1D
+X-PUBLISHED-TTL:P1D
+BEGIN:VEVENT
+UID:pca-pca-2026-10-03-siheung@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261003
+DTEND;VALUE=DATE:20261004
+SUMMARY:PCA SIHEUNG POINT LEAGUE
+DESCRIPTION:종목 남자 스포츠 모델\, 클래식 보디빌딩\, 비
+ 키니\, 클래식 피지크\n원문 https://coachn.co.kr/bbs/board.php?b
+ o_table=magazine&wr_id=180\n전체 일정 https://ynschoi.github.io/bbcom
+ p/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:인천 하버파크 호텔
+URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=180
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-pca-2026-10-10-daejeon@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261010
+DTEND;VALUE=DATE:20261011
+SUMMARY:PCA DAEJEON POINT LEAGUE
+DESCRIPTION:종목 남자 스포츠 모델\, 여자 스포츠 모델\, 보
+ 디빌딩\, 클래식 보디빌딩\, 피지크\, 클래식 피지크\n원
+ 문 https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=191\n전
+ 체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측 
+ 사정으로 바뀔 수 있어요
+LOCATION:충청북도 c&v 센터
+URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=191
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-pca-2026-10-17-cheongju@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261017
+DTEND;VALUE=DATE:20261018
+SUMMARY:PCA CHEONGJU POINT LEAGUE
+DESCRIPTION:종목 보디빌딩\, 남자 스포츠 모델\, 클래식 보
+ 디빌딩\, 피지크\, 클래식 피지크\n원문 https://coachn.co.kr/
+ bbs/board.php?bo_table=magazine&wr_id=202\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:충청북도 c&v 센터
+URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=202
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-pca-2026-10-24-ad91e81e@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261024
+DTEND;VALUE=DATE:20261025
+SUMMARY:PCA 노오석 클래식
+DESCRIPTION:종목 남자 스포츠 모델\, 비키니\, 머슬 모델\, 
+ 보디빌딩\, 클래식 보디빌딩\, 클래식 피지크\, 피지크\n
+ 원문 https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=213\n
+ 전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측
+  사정으로 바뀔 수 있어요
+LOCATION:대구 DTC
+URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=213
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-pca-2026-11-07-pohang@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261107
+DTEND;VALUE=DATE:20261108
+SUMMARY:PCA POHANG POINT LEAGUE
+DESCRIPTION:종목 남자 스포츠 모델\, 보디빌딩\, 클래식 보
+ 디빌딩\, 비키니\, 클래식 피지크\n원문 https://coachn.co.kr/
+ bbs/board.php?bo_table=magazine&wr_id=230\n전체 일정 https://ynschoi.
+ github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:신경주 대학교
+URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=230
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-pca-2026-11-28-seoul@bbcomp
+DTSTAMP:20261126T013522Z
+DTSTART;VALUE=DATE:20261128
+DTEND;VALUE=DATE:20261129
+SUMMARY:PCA SEOUL POINT LEAGUE
+DESCRIPTION:참가비 160\,000원\n원문 https://coachn.co.kr/sub/competi
+ tions_list.php?sca=PCA%EC%A0%91%EC%88%98\n전체 일정 https://ynschoi.g
+ ithub.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어
+ 요
+URL:https://coachn.co.kr/sub/competitions_list.php?sca=PCA%EC%A0%91%EC%88%
+ 98
+END:VEVENT
+END:VCALENDAR
