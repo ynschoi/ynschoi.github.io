@@ -20,17 +20,13 @@
 /* Layout: 한 열 모바일 우선. 주말(토·일) 단위 섹션 → 촘촘한 행. 상단 '마감 임박' 가로 띠, 하단 고정 탭.
    Palette: 무대 조명 아래 탄(tan) — 따뜻한 종이색 바탕, 잉크 남색 글자, 브론즈 강조, 마감 경고는 붉은 주황 */
 :root{
-  --bg:#f6f3ee; --surface:#fffdf9; --surface2:#efe9e0; --line:#e2dacd;
-  --ink:#1b2233; --muted:#6b6f7a; --accent:#a55a1f; --accent-soft:#f3e3d3; --accent-ink:#fff8f0;
+  --bg:#ffffff; --surface:#ffffff; --surface2:#f3f3f3; --line:#e3e3e3;
+  --ink:#1f1f1f; --muted:#5f6368; --accent:#1f1f1f; --accent-soft:#f1f1f1; --accent-ink:#ffffff;
   --warn:#c2410c; --warn-soft:#fde4d6; --ok:#2f7d4f; --ok-soft:#dcefe3; --off:#9aa0a8;
   --f-body:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
   --f-mono:"Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo",sans-serif;  /* 숫자도 Pretendard, tabular-nums로 정렬 */
   --r:12px;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#12151d; --surface:#1a1e28; --surface2:#232836; --line:#2d3342;
-  --ink:#ece8e1; --muted:#9aa0ad; --accent:#e09a5f; --accent-soft:#3a2c21; --accent-ink:#1a1209;
-  --warn:#ff8a5c; --warn-soft:#3d2219; --ok:#6fcf97; --ok-soft:#1d3327; --off:#6b7180; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#12151d; --surface:#1a1e28; --surface2:#232836; --line:#2d3342;
   --ink:#ece8e1; --muted:#9aa0ad; --accent:#e09a5f; --accent-soft:#3a2c21; --accent-ink:#1a1209;
@@ -129,7 +125,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .hw{display:grid;grid-template-columns:40px minmax(0,1fr);border-bottom:1px solid var(--line)}
 .hw.mb{border-top:1.5px solid var(--ink)}
 .hw.now{background:var(--surface2)}
-.hw.past{opacity:.6}
+.hw.past>b{color:var(--muted)}
 .hw>b{display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:11.5px;font-weight:800;border-right:1px solid var(--line);line-height:1.1}
 .hw>b em{font-style:normal;font-size:10.5px;font-weight:600;color:var(--muted)}
 .hl{display:flex;align-items:flex-start;gap:4px;padding:2px 6px;min-height:22px}
@@ -769,7 +765,7 @@ async function drawShare(){
   const c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
   try{await Promise.all([document.fonts.load('700 60px "Pretendard Variable"'),document.fonts.load('500 30px "Pretendard Variable"')])}catch(e){}
   const F='"Pretendard Variable",Pretendard,"Apple SD Gothic Neo","Noto Sans KR",sans-serif', M=F;
-  const C={bg:'#f6f3ee',ink:'#1b2233',mut:'#6b6f7a',acc:'#a55a1f',soft:'#efe9e0',line:'#e2dacd',warn:'#c2410c'};
+  const C={bg:'#ffffff',ink:'#1f1f1f',mut:'#5f6368',acc:'#1f1f1f',soft:'#f3f3f3',line:'#e3e3e3',warn:'#c2410c'};
   g.fillStyle=C.bg;g.fillRect(0,0,W,H);
   g.fillStyle=C.acc;g.fillRect(0,0,W,14);
   const pad=72;let y=pad+40;
@@ -826,7 +822,7 @@ async function drawYear(){
   const c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
   try{await Promise.all([document.fonts.load('700 60px "Pretendard Variable"'),document.fonts.load('500 20px "Pretendard Variable"')])}catch(e){}
   const F='"Pretendard Variable",Pretendard,"Apple SD Gothic Neo","Noto Sans KR",sans-serif', M=F;
-  const C={bg:'#fffdf9',ink:'#1b2233',mut:'#6b6f7a',acc:'#a55a1f',line:'#e2dacd',star:'#e09a00'};
+  const C={bg:'#ffffff',ink:'#1f1f1f',mut:'#5f6368',acc:'#1f1f1f',line:'#e3e3e3',star:'#1f1f1f'};
   g.fillStyle=C.bg;g.fillRect(0,0,W,H);
   const pad=44;
   g.fillStyle=C.acc;g.fillRect(pad,70,W-pad*2,4);
