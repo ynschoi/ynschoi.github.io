@@ -78,6 +78,7 @@ def crawl(years=None):
                     deadline = parse_kdate(dl, int(y))[0] if dl else None
                     host = f.get("주최및주관") or f.get("주최")
                     name = re.sub(r"\s*\((?:참가신청 연장|접수 연장)[^)]*\)\s*", " ", f.get("대회명") or title).strip()
+                    name = re.split(r"\s+(?:일\s*시|일\s*자|장\s*소)\s", name)[0].strip()  # 표 형식이 깨진 글
                     events.append({
                         "id": f"kbbf-{idx}", "fed": "KBBF", "name": name,
                         "date": start, "end": end,
