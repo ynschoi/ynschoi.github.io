@@ -696,6 +696,19 @@ LOCATION:경주 신경주 대학교
 URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=236
 END:VEVENT
 BEGIN:VEVENT
+UID:pca-pca-2026-11-14-anyang@bbcomp
+DTSTAMP:20261126T062239Z
+DTSTART;VALUE=DATE:20261114
+DTEND;VALUE=DATE:20261115
+SUMMARY:PCA ANYANG POINT LEAGUE
+DESCRIPTION:종목 보디빌딩\, 클래식 피지크\, 클래식 보디
+ 빌딩\, 비키니\, 피지크\n원문 https://coachn.co.kr/bbs/board.php
+ ?bo_table=magazine&wr_id=238\n전체 일정 https://ynschoi.github.io/bbc
+ omp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:용인 루터대학교
+URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=238
+END:VEVENT
+BEGIN:VEVENT
 UID:unmo-604@bbcomp
 DTSTAMP:20261126T082929Z
 DTSTART;VALUE=DATE:20261114
@@ -736,6 +749,20 @@ DESCRIPTION:참가비 180\,000원\n접수 마감 2026-11-08\n종목 클래
  어요
 LOCATION:서울 에스플렉스 센터
 URL:https://unmo.kr/m/shop/tm_view.php?gs_id=605
+END:VEVENT
+BEGIN:VEVENT
+UID:pca-npca-2026-11-15-anyang@bbcomp
+DTSTAMP:20261126T062239Z
+DTSTART;VALUE=DATE:20261115
+DTEND;VALUE=DATE:20261116
+SUMMARY:NPCA ANYANG POINT LEAGUE
+DESCRIPTION:종목 남자 스포츠 모델\, 피지크\, 머슬 모델\, 
+ 비키니\, 클래식 보디빌딩\, 클래식 피지크\, 보디빌딩\n
+ 원문 https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=245\n
+ 전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일정은 주최 측
+  사정으로 바뀔 수 있어요
+LOCATION:용인 루터대학교
+URL:https://coachn.co.kr/bbs/board.php?bo_table=magazine&wr_id=245
 END:VEVENT
 BEGIN:VEVENT
 UID:unmo-631@bbcomp
