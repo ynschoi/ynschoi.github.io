@@ -1,0 +1,14 @@
+name: bbcomp 사이트 구조 진단
+on:
+  workflow_dispatch: {}
+  push:
+    paths: ["bbcomp/crawler/probe/**"]
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 bbcomp/crawler/probe/probe.py

@@ -40,6 +40,11 @@ def norm(s):
     return re.sub(r"[\s\-_·()\[\]#]+", "", (s or "").lower())
 
 
+def pro_key(name):
+    n = re.sub(r"^\s*20\d\d\s+", "", (name or "").lower())
+    return re.sub(r"[^a-z0-9]+", "", n)
+
+
 def dedupe(events):
     """같은 출처 안에서는 이름 전체가 같을 때만, 다른 출처끼리는 같은 연맹·날짜·전체 이름일 때 합친다."""
     out, seen = [], {}
@@ -59,7 +64,8 @@ def dedupe(events):
 def clean(e, key):
     e = {k: v for k, v in e.items() if v not in (None, "", [])}
     e["src"] = key
-    e.setdefault("country", "KR")
+    # 해외 일정 출처는 국가가 비어 있으면 '?'(한국으로 오인하지 않게), 국내 출처만 기본 KR
+    e.setdefault("country", "?" if key in ("ifbbpro_world", "fitnessvolt", "musclemania", "wnbf") else "KR")
     e.setdefault("tier", "national" if e["country"] == "KR" else "international")
     if e.get("divisions"):
         e["divisions"] = [d.strip() for d in e["divisions"] if d and d.strip()]
@@ -86,6 +92,42 @@ def localize_monsterzym(e):
         e["name"] = f"{title} ({kind})" if kind else title
     e["host"] = e.get("host") or "MONSTERZYM"
     e["major"] = e.get("major") or "qualifier" in n or "champ" in n
+
+
+TRACK = {"date": "날짜", "end": "종료일", "place": "장소", "fee": "참가비", "deadline": "접수 마감"}
+
+
+def track_changes(events, old, now):
+    """이전 data.json과 비교해 바뀐 일정을 기록한다.
+    - 각 대회: firstSeen(처음 수집된 날), changes(최근 변경 5개)
+    - 전체: changelog(최근 90일 변경·신규 목록)"""
+    prev = {e["id"]: e for e in old.get("events", [])}
+    first_run = not prev
+    log_ = [c for c in old.get("changelog", []) if c.get("at", "") >= _days_ago(now, 90)]
+    for e in events:
+        p = prev.get(e["id"])
+        if p is None:
+            e["firstSeen"] = now[:10]
+            if not first_run and e.get("date", "") >= now[:10]:
+                log_.append({"at": now[:10], "id": e["id"], "kind": "new", "name": e.get("name"), "fed": e.get("fed")})
+            continue
+        e["firstSeen"] = p.get("firstSeen", now[:10])
+        ch = list(p.get("changes", []))
+        for f, label in TRACK.items():
+            a, b = p.get(f), e.get(f)
+            if a and b and a != b:
+                c = {"at": now[:10], "field": f, "label": label, "from": a, "to": b}
+                ch.append(c)
+                log_.append({**c, "id": e["id"], "kind": "change", "name": e.get("name"), "fed": e.get("fed")})
+        if ch:
+            e["changes"] = ch[-5:]
+    log_.sort(key=lambda c: c["at"], reverse=True)
+    return log_[:300]
+
+
+def _days_ago(now, n):
+    from datetime import date, timedelta
+    return (date.fromisoformat(now[:10]) - timedelta(days=n)).isoformat()
 
 
 def main():
@@ -135,12 +177,22 @@ def main():
                             "error": err or "0건"}
         log(f"[{key}] {'성공' if got else '실패 — 기존 데이터 유지'}: {sources[key]['count']}건 ({time.time()-t0:.0f}s)")
 
+    # IFBB 프로쇼: 공식(ifbbpro.com)이 받아지면 그걸 쓰고, fitnessvolt는 종목 보충과 공식이 실패했을 때 대체용
+    official = [e for e in events if e["src"] == "ifbbpro_world" and e.get("fed") == "IFBB PRO"]
+    if official:
+        fv = {(e["date"], pro_key(e["name"])): e for e in events if e["src"] == "fitnessvolt"}
+        for e in official:
+            m = fv.get((e["date"], pro_key(e["name"])))
+            if m and not e.get("divisions") and m.get("divisions"):
+                e["divisions"] = m["divisions"]
+        events = [e for e in events if e["src"] != "fitnessvolt"]
     # 국내 AGP 프로쇼는 IFBB 프로 코리아(공식)에 있으므로 비공식 출처의 같은 대회는 뺀다
     if any(e["src"] == "ifbbkorea" for e in events):
         events = [e for e in events if not (e["src"] == "fitnessvolt" and e.get("country") == "KR" and "AGP" in e.get("name", ""))]
     events = dedupe(sorted(events, key=lambda e: MODULES.index(e["src"]) if e["src"] in MODULES else 99))
     events.sort(key=lambda e: (e["date"], e.get("fed", ""), e.get("name", "")))
-    data = {"generated": now, "sources": sources, "events": events}
+    changelog = track_changes(events, old, now)
+    data = {"generated": now, "sources": sources, "events": events, "changelog": changelog}
     with open(out, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
     log(f"저장: {out} ({len(events)}건)")

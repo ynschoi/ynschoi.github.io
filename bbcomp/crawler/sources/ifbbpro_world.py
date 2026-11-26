@@ -34,7 +34,7 @@ NON_DIVISION_CATS = {"NPC Worldwide", "National Physique Committee", "Canadian P
                      "Natural"}
 
 COUNTRY_ISO = {
-    "south korea": "KR", "korea": "KR", "republic of korea": "KR", "japan": "JP", "china": "CN",
+    "south korea": "KR", "korea": "KR", "korea, republic of": "KR", "republic of korea": "KR", "japan": "JP", "china": "CN",
     "taiwan": "TW", "hong kong": "HK", "philippines": "PH", "thailand": "TH", "vietnam": "VN",
     "malaysia": "MY", "singapore": "SG", "indonesia": "ID", "india": "IN", "kazakhstan": "KZ",
     "australia": "AU", "new zealand": "NZ", "usa": "US", "united states": "US", "canada": "CA",
@@ -188,6 +188,9 @@ def _ifbbpro_shows(years):
             v = v if isinstance(v, dict) else {}
             city = ", ".join(x for x in (v.get("city"), v.get("state") or v.get("province")) if x)
             country = _country(v.get("country"))
+            st = (v.get("state") or v.get("province") or "").strip()
+            if not country and re.fullmatch(r"[A-Z]{2}", st or ""):
+                country = "US"  # 미국 주 약어만 있고 국가가 비어 있는 경우
             date = (e.get("start_date") or "")[:10]
             end = (e.get("end_date") or "")[:10]
             cats = [c.get("name") for c in (e.get("categories") or []) + (e.get("tags") or []) if c.get("name")]
@@ -199,7 +202,7 @@ def _ifbbpro_shows(years):
                 "country": country or None,
                 "divisions": [c for c in cats if re.search(r"physique|bikini|figure|fitness|wellness|bodybuilding|fit model|212", c, re.I)] or None,
                 "url": e.get("url"), "tier": "national" if country == "KR" else "international",
-                "major": True,
+                "major": bool(re.search(r"olympia|arnold classic", e.get("title") or "", re.I)) and not re.search(r"amateur", e.get("title") or "", re.I),
             }
             if date:
                 out.append({k: v for k, v in ev.items() if v is not None})
