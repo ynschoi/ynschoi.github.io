@@ -69,6 +69,10 @@ h1 em{font-style:normal;color:var(--accent)}
 .fav{flex:none;background:none;border:0;font-size:20px;line-height:1;padding:0 2px;cursor:pointer;color:#555b55}
 .fav.on{color:var(--star)}
 .empty{color:var(--muted);text-align:center;padding:48px 0}
+.tag{display:inline-block;font-size:10px;border:1px solid var(--line);color:var(--muted);border-radius:5px;padding:0 4px;margin-left:4px;vertical-align:1px}
+.src-row{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-top:1px solid var(--line)}
+.src-row:first-of-type{border-top:0}
+.ok{color:var(--accent)}.bad{color:var(--danger)}
 
 /* calendar */
 .cal-head{display:flex;align-items:center;justify-content:space-between;margin:18px 0 8px}
@@ -124,9 +128,9 @@ nav.tabs button.on{color:var(--accent);font-weight:700}
 <body>
 <div class="wrap">
   <header>
-    <div class="eyebrow">2026 · 3월–12월</div>
+    <div class="eyebrow" id="eyebrow">대회 일정</div>
     <h1>전국 보디빌딩 <em>대회 일정</em></h1>
-    <div class="sub">PCA · NPCA · WNGP · MUSA · ANBC · NPC · NABBA · AFEX · AGP 외</div>
+    <div class="sub">각 연맹 접수 사이트에서 매주 자동 수집</div>
     <button class="next" id="next" hidden></button>
   </header>
 
@@ -157,208 +161,10 @@ nav.tabs button.on{color:var(--accent);font-weight:700}
 
 <script>
 /* ───────── 데이터 ─────────
-   형식: "MM-DD[~DD] [*] 연맹 내용 [| 키=값; 키=값]"
-   * = 메이저(★) 대회.  키: 장소, 참가비, 마감, 비고
-   출처: @gacksung 2026 대회일정(4–12월), @bdink.official(3월·해외), 11–12월 상세 공지(11.24 업데이트) */
-const YEAR = 2026;
-const RAW = `
-03-07~08 몬스터짐 몽골 내추럴/오픈 리저널 | 장소=몽골
-03-21 PCA 창원
-03-22 NPC 내추럴/오픈 리저널
-03-22 NPCA 창원
-03-28 PCA 경남
-03-29 NPCA 경남
-04-04 WNGP 당진
-04-04 PCA 서울
-04-05 NPCA 서울
-04-05 MUSA 당진
-04-05 NPC 내추럴/오픈 리저널
-04-11 * PCA 아산 챔피언십
-04-11 WNGP 구미
-04-12 MUSA 구미
-04-12 * NPCA 아시안 챔피언십
-04-18 몬스터짐 내추럴 리저널
-04-18 PCA 광주
-04-18 WNGP 전라광주
-04-19 MUSA 전라광주
-04-19 NPCA 광주
-04-25~26 * AFEX 알파 챔피언십
-04-25 PCA 전북
-04-25 WNGP 서울
-04-25 NABBA 노비스 퍼스트
-04-26 NABBA 아마추어 클래식 서울
-04-26 MUSA 서울
-04-26 NPCA 전북
-04-26 NPC 내추럴/오픈 리저널
-04-26 ANBC 내추럴
-05-02 WNGP 울산
-05-02 PCA 성남
-05-02~03 몬스터짐 몽골 내추럴/오픈 · 프로 퀄리파이어 | 장소=몽골
-05-03 NPCA 성남
-05-03 MUSA 울산
-05-03 AGONAS 서울
-05-09~10 * 기타 김준호 클래식 코리아
-05-09 WNGP 강북
-05-09 PCA 김포
-05-10 NPCA 김포
-05-10 MUSA 강북
-05-16 WNGP 강남
-05-16 PCA 대구
-05-16 WNGP·MUSA 홍콩 | 장소=홍콩
-05-17 NPCA 대구
-05-17 MUSA 강남
-05-17 NPC 내추럴/오픈 리저널
-05-23 NPC 오픈 리저널
-05-23 * AGP 프로 퀄리파이어
-05-23 WNGP 오산
-05-23 AFEX 노비스 클래식
-05-23 PCA 김해
-05-24 NPCA 김해
-05-24 MUSA 오산
-05-24 NPC 내추럴 리저널
-05-24 * AGP 내추럴 프로 퀄리파이어/프로쇼
-05-30 WNGP 부천
-05-30 PCA 제주
-05-31 NPCA 제주
-05-31 MUSA 부천
-05-31 ANBC 내추럴
-06-06 PCA 화성
-06-07 NPCA 화성
-06-13~14 * NABBA 아시아 오픈 챔피언십
-06-13 몬스터짐 블랙콤 코리아 내추럴 리저널
-06-13 WNGP 창원
-06-13 PCA 인천
-06-14 MUSA 창원
-06-14 NPCA 인천
-06-20 WNGP 의정부
-06-20 PCA 대전
-06-21 NPCA 대전
-06-21 MUSA 의정부
-06-21 NPC 내추럴/오픈 리저널
-06-27 * AFEX 프로 퀄리파이어 서울
-06-27 WNGP 안산
-06-27 PCA 양산
-06-28 NPCA 양산
-06-28 MUSA 안산
-06-28 ANBC 내추럴
-07-04 WNGP 파주
-07-04 PCA 부산
-07-04 WNGP·MUSA 일본 | 장소=일본
-07-05 NPCA 부산
-07-05 MUSA 파주
-07-11~12 몬스터짐 압도 코리아 (내추럴·오픈·프로쇼)
-07-11~12 * NABBA 아마추어 클래식 부산 · ACB
-07-11 WNGP 평택
-07-11 PCA 울산
-07-12 NPCA 울산
-07-12 MUSA 평택
-07-18 AGONAS 광명 안양
-07-18 WNGP 김포
-07-18 PCA 세종
-07-19 NPCA 세종
-07-19 MUSA 김포
-07-19 ANBC 내추럴
-07-25~26 * AFEX 프로 퀄리파이어 부산
-07-25 * WNGP 경기 파이널
-07-25 PCA 천안
-07-26 NPCA 천안
-07-26 * MUSA 경기 파이널
-08-01 WNGP 성남
-08-02 MUSA 성남
-08-08 WNGP 천안
-08-08 PCA 광주
-08-09 NPCA 광주
-08-09 MUSA 천안
-08-15~16 * 기타 BOB 챔피언십
-08-15 PCA 수원
-08-16 NPCA 수원
-08-16 NPC 내추럴/오픈 리저널
-08-22~23 * 몬스터짐 아시안 챔피언십 (오픈·프로 퀄리파이어·프로쇼)
-08-22 WNGP 안양
-08-22 PCA 부천
-08-23 NPCA 부천
-08-23 MUSA 안양
-08-29~30 * AFEX & DRAX 챔피언십
-08-29 WNGP 의왕
-08-29 PCA 고양
-08-30 NPCA 고양
-08-30 MUSA 의왕
-08-30 ANBC 내추럴
-09-05~06 * 몬스터짐 내추럴 리저널 / 프로 퀄리파이어 / 프로쇼
-09-05 WNGP 제주
-09-05 PCA 창원
-09-06 NPCA 창원
-09-06 MUSA 제주
-09-06 AGP 필리핀 프로 퀄리파이어 | 장소=필리핀
-09-12~13 * NABBA 그랑프리
-09-12 NPC 내추럴/오픈 리저널
-09-12 WNGP 대구
-09-12 PCA 용인
-09-13 NPCA 용인
-09-13 MUSA 대구
-09-19 WNGP 인천
-09-19 * AFEX 오메가 파이널
-09-19 PCA 슈퍼시리즈
-09-20 NPCA 슈퍼시리즈
-09-20 MUSA 인천
-09-20 ANBC 내추럴
-09-20 NPC 내추럴/오픈 리저널
-09-26 AGP 내추럴 프로쇼
-09-26~27 * 기타 아마추어 올림피아
-09-26~27 AGP 프로 올스타즈
-10-03 WNGP 남양주
-10-03 PCA 시흥
-10-04 NPCA 시흥
-10-04 MUSA 남양주
-10-10~11 * NABBA 프로쇼
-10-10 AFEX 노비스 클래식 B
-10-10 WNGP 군포
-10-10 PCA 대전
-10-11 NPCA 대전
-10-11 MUSA 군포
-10-17 WNGP 시흥
-10-17 PCA 청주
-10-18 NPCA 청주
-10-18 MUSA 시흥
-10-18 NPC 내추럴/오픈 리저널
-10-24 WNGP 일산
-10-24 PCA 대구
-10-25 NPCA 대구
-10-25 MUSA 일산
-10-25 ANBC 내추럴
-10-25 NPC 내추럴/오픈 리저널
-10-25 * AGP 내추럴 프로 퀄리파이어
-10-31 WNGP 양주
-10-31 PCA 부산
-11-01 MUSA 양주
-11-01 NPCA 부산
-11-07 NABBA 노비스 파이널
-11-07 WNGP 용인
-11-07 PCA 포항
-11-08 NPCA 포항
-11-08 MUSA 용인
-11-14 WNGP 광명
-11-14 PCA 안양
-11-15 NPCA 안양
-11-15 MUSA 광명
-11-21 WNGP 대전
-11-21 PCA 안산
-11-22 NPCA 안산
-11-22 MUSA 대전
-11-28 PCA 서울 포인트리그 | 장소=경기 파주 · 엠파이브; 참가비=16만 원
-11-28 NPCA 뉴 빅터 서울 | 장소=경기 파주 · 엠파이브 (접수처엔 ‘서울 인근’으로 안내); 참가비=15만 원
-11-29 NPCA 서울 포인트리그 | 장소=경기 파주 · 엠파이브; 참가비=18만 원
-11-28 WNGP 부산 | 장소=부산 · 부산보건대 체육관; 참가비=18만 원; 비고=선수 접수 마감
-11-29 MUSA 부산 | 장소=부산 · 부산보건대 체육관; 참가비=18만 원; 비고=선수 접수 마감
-11-29 ANBC 부산 | 장소=부산 · 부산보건대 체육관; 참가비=18만 원; 비고=선수 접수 마감
-11-29 기타 울산시장배 | 장소=울산 · 복합혁신센터 13:00; 비고=접수 마감
-12-05 WNGP 고양 | 장소=경기 파주 · 엠파이브; 참가비=18만 원; 마감=11-29
-12-06 MUSA 고양 | 장소=경기 파주 · 엠파이브; 참가비=18만 원; 마감=11-29
-12-06 ANBC 고양 / ANBC 프로전 | 장소=경기 파주 · 엠파이브; 참가비=18만 원~; 마감=11-29
-12-12 * WNGP 화성 · 하반기 파이널 | 장소=충남 천안 · 남서울대 성암문화체육관; 참가비=일반 18만 원 · 파이널 28만 원; 마감=12-06
-12-13 * MUSA 화성 · 하반기 파이널 | 장소=충남 천안 · 남서울대 성암문화체육관; 참가비=일반 18만 원 · 파이널 28만 원; 마감=12-06
-`;
-
+   data.json : crawler/crawl.py 가 매주 각 연맹 접수 사이트에서 수집 (GitHub Actions)
+   필드: id src fed name date end place fee deadline host url major closed note */
+let YEAR = new Date().getFullYear();
+let META = {generated:null, sources:{}};
 const FEDS = {
   PCA:{c:'#6fd3ff',reg:'https://coachn.co.kr',regName:'코치엔'},
   NPCA:{c:'#9fb8ff',reg:'https://coachn.co.kr',regName:'코치엔'},
@@ -366,6 +172,7 @@ const FEDS = {
   MUSA:{c:'#ffb36b',reg:'https://unmo.kr',regName:'운동의모든것'},
   'WNGP·MUSA':{c:'#e8d860',reg:'https://unmo.kr',regName:'운동의모든것'},
   ANBC:{c:'#7ff0b8',reg:'https://unmo.kr',regName:'운동의모든것'},
+  BOB:{c:'#ffd84d',reg:'https://unmo.kr',regName:'운동의모든것'},
   NPC:{c:'#ff8fa3'},
   NABBA:{c:'#c9a2ff'},
   AFEX:{c:'#ff7a5c'},
@@ -376,20 +183,6 @@ const FEDS = {
   내일정:{c:'#ffffff'},
 };
 
-function parse(){
-  const out=[];
-  RAW.trim().split('\n').forEach((line,i)=>{
-    let [head,extra]=line.split(' | ');
-    const m=head.match(/^(\d\d)-(\d\d)(?:~(\d\d))?\s+(\*\s+)?(\S+)\s*(.*)$/);
-    if(!m) return;
-    const [,mm,dd,end,star,fed,rest]=m;
-    const ev={id:'d'+i,date:`${YEAR}-${mm}-${dd}`,end:end?`${YEAR}-${mm}-${end}`:null,major:!!star,fed,name:rest};
-    if(extra) extra.split('; ').forEach(kv=>{const k=kv.indexOf('=');ev[kv.slice(0,k)]=kv.slice(k+1)});
-    if(ev['마감']) ev['마감']=`${YEAR}-${ev['마감']}`;
-    out.push(ev);
-  });
-  return out;
-}
 
 /* ───────── 상태 ───────── */
 const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
@@ -399,7 +192,7 @@ const state={
   favs:new Set(LS.get('bb.favs',[])), custom:LS.get('bb.custom',[]),
   calMonth:null, calSel:null,
 };
-let BASE=parse();
+let BASE=[];
 const all=()=>BASE.concat(state.custom.map(c=>({...c,fed:'내일정'})));
 
 const $=s=>document.querySelector(s);
@@ -426,7 +219,7 @@ function filtered(){
       const f=e.fed==='WNGP·MUSA'?['WNGP','MUSA']:[e.fed];
       if(!f.some(x=>state.feds.has(x))) return false;
     }
-    if(q){const hay=(title(e)+' '+(e['장소']||'')+' '+(e['비고']||'')).toLowerCase();
+    if(q){const hay=(title(e)+' '+(e.place||'')+' '+(e.note||'')).toLowerCase();
       if(!q.split(/\s+/).every(w=>hay.includes(w))) return false;}
     return true;
   }).sort((a,b)=>a.date.localeCompare(b.date)||(b.major-a.major)||a.fed.localeCompare(b.fed));
@@ -435,10 +228,10 @@ function filtered(){
 /* ───────── 렌더 ───────── */
 function badge(e){const c=(FEDS[e.fed]||FEDS.기타).c;return `<span class="badge" style="background:${c}">${esc(e.fed==='내일정'?'MY':e.fed)}</span>`}
 function evCard(e){
-  const meta=[e.end&&esc(fmtRange(e)), e['장소']&&esc(e['장소']), e['참가비']&&`<span class="fee">${esc(e['참가비'])}</span>`,
-    e['마감']&&esc(`접수 마감 ${fmtMD(e['마감'])}`), e['비고']&&esc(e['비고'])].filter(Boolean).join(' · ');
+  const meta=[e.end&&esc(fmtRange(e)), e.place&&esc(e.place), e.fee&&`<span class="fee">${esc(e.fee)}</span>`,
+    e.deadline&&esc(`접수 마감 ${fmtMD(e.deadline)}`), e.note&&esc(e.note)].filter(Boolean).join(' · ');
   return `<div class="ev${e.major?' major':''}" data-id="${e.id}">
-    <div class="main"><div class="title">${badge(e)}${e.major?'<span style="color:var(--star)">★ </span>':''}${esc(title(e))}</div>
+    <div class="main"><div class="title">${badge(e)}${e.major?'<span style="color:var(--star)">★ </span>':''}${esc(title(e))}${e.src==='manual'?'<span class="tag">미확인</span>':''}${e.status?`<span class="tag">${esc(e.status)}</span>`:''}</div>
     ${meta?`<div class="meta">${meta}</div>`:''}</div>
     <button class="fav${state.favs.has(e.id)?' on':''}" data-fav="${e.id}" aria-label="관심 대회">${state.favs.has(e.id)?'♥':'♡'}</button></div>`;
 }
@@ -510,9 +303,9 @@ function renderAdd(){
     ev.preventDefault();const f=new FormData(ev.target);
     const date=f.get('date'),end=f.get('end');
     const c={id:'c'+Date.now(),date,end:end&&end>date?end:null,name:f.get('name').trim(),major:false};
-    if(f.get('place'))c['장소']=f.get('place').trim();
-    if(f.get('fee'))c['참가비']=f.get('fee').trim();
-    if(f.get('dl'))c['마감']=f.get('dl');
+    if(f.get('place'))c.place=f.get('place').trim();
+    if(f.get('fee'))c.fee=f.get('fee').trim();
+    if(f.get('dl'))c.deadline=f.get('dl');
     state.custom.push(c);LS.set('bb.custom',state.custom);state.favs.add(c.id);saveFavs();
     toast('추가했어요');render();
   };
@@ -532,10 +325,11 @@ function renderInfo(){
       <li>대회를 누르면 상세 · 캘린더(.ics) 추가 · 접수처 바로가기</li>
       <li>공유 버튼으로 대회 일정을 친구에게 보내기</li>
       <li>사파리 공유 → ‘홈 화면에 추가’하면 앱처럼 쓸 수 있어요</li></ul></section>
-    <section><h3>데이터 출처 · 주의</h3>
-      SNS에 공유된 2026 대회일정 이미지(@gacksung, @bdink.official, 11–12월 상세 공지 11.24 업데이트)를 옮겨 적은 것입니다.
-      출처마다 표기가 다르거나 일정이 바뀔 수 있으니 <b>출전 전 반드시 연맹 공지로 날짜·장소·참가비를 확인</b>하세요.
-      ★ 는 원본에서 메이저/챔피언십으로 표시된 대회입니다.</section>
+    <section><h3>데이터 출처 · 업데이트</h3>
+      ${Object.entries(META.sources||{}).map(([k,s])=>`<div class="src-row"><span>${s.url?`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label)}</a>`:esc(s.label)}</span>
+        <span>${s.count}건 · ${k==='manual'?esc(s.updated||''):(s.ok?'<span class="ok">정상</span>':'<span class="bad">최근 수집 실패(이전 데이터 표시)</span>')}</span></div>`).join('')}
+      <div style="margin-top:8px">마지막 수집: ${META.generated?esc(META.generated.replace('T',' ').slice(0,16)):'-'} (매주 월요일 자동)</div>
+      <div style="margin-top:6px">‘미확인’ 표시는 아직 공식 사이트 크롤링이 연결되지 않은 연맹으로, SNS 공유 이미지를 옮긴 일정입니다. <b>출전 전 연맹 공지로 꼭 확인</b>하세요.</div></section>
   </div>`;
 }
 
@@ -548,12 +342,12 @@ function renderNext(){
   const same=up.filter(x=>x.date===e.date).length;
   btn.hidden=false;
   btn.innerHTML=`<div class="dd">${ddLabel(n)}</div><div><div class="s">${favUp[0]?'다음 관심 대회':'다음 대회'} · ${fmtRange(e)}</div>
-    <div class="t">${esc(title(e))}${!favUp[0]&&same>1?` 외 ${same-1}개`:''}</div>${e['장소']?`<div class="s">${esc(e['장소'])}</div>`:''}</div>`;
+    <div class="t">${esc(title(e))}${!favUp[0]&&same>1?` 외 ${same-1}개`:''}</div>${e.place?`<div class="s">${esc(e.place)}</div>`:''}</div>`;
   btn.onclick=()=>{ if(favUp[0]) openSheet(e.id); else {setTab('list');requestAnimationFrame(()=>{const el=document.getElementById('day-'+e.date);el&&el.scrollIntoView({behavior:'smooth',block:'center'})})} };
 }
 
 function renderChips(){
-  const order=['PCA','NPCA','WNGP','MUSA','ANBC','NPC','NABBA','AFEX','AGP','몬스터짐','AGONAS','기타'];
+  const order=['PCA','NPCA','WNGP','MUSA','ANBC','BOB','NPC','NABBA','AFEX','AGP','몬스터짐','AGONAS','기타'];
   $('#fedChips').innerHTML=`<button class="chip${state.feds.size?'':' on'}" data-fed="">전체</button>`+
     order.map(f=>`<button class="chip${state.feds.has(f)?' on':''}" data-fed="${f}">${f}</button>`).join('');
   $('#tUpcoming').classList.toggle('on',state.upcoming);
@@ -573,12 +367,14 @@ function openSheet(id){
   const e=findEv(id);if(!e)return;
   const reg=FEDS[e.fed]&&FEDS[e.fed].reg;
   const n=daysUntil(e.date);
-  const rows=[['날짜',`${fmtRange(e)} · ${ddLabel(n)}`],['연맹',e.fed==='내일정'?'내 일정':e.fed],['장소',e['장소']],['참가비',e['참가비']],
-    ['접수 마감',e['마감']?`${fmtMD(e['마감'])} · ${ddLabel(daysUntil(e['마감']))}`:null],['비고',e['비고']],
-    ['접수처',reg?`<a href="${reg}" target="_blank" rel="noopener">${FEDS[e.fed].regName}</a>`:null]].filter(r=>r[1]);
+  const rows=[['날짜',`${fmtRange(e)} · ${ddLabel(n)}`],['연맹',e.fed==='내일정'?'내 일정':e.fed],['장소',e.place],['참가비',e.fee],
+    ['접수 마감',e.deadline?`${fmtMD(e.deadline)} · ${ddLabel(daysUntil(e.deadline))}`:null],['비고',e.note],
+    ['주최',e.host],['상태',e.status],
+    ['접수처',reg?`<a href="${reg}" target="_blank" rel="noopener">${FEDS[e.fed].regName}</a>`:null],
+    ['출처',e.url?`<a href="${esc(e.url)}" target="_blank" rel="noopener">원문 보기 ↗</a>`:e.src==='manual'?'SNS 공유 이미지 기준 (공식 사이트 미연동 · 미확인)':null]].filter(r=>r[1]);
   $('#sheet').innerHTML=`<div>${badge(e)}${e.major?'<span style="color:var(--star);font-weight:700">★ 메이저</span>':''}</div>
     <h3>${esc(title(e))}</h3>
-    <dl>${rows.map(([k,v])=>`<dt>${k}</dt><dd>${k==='접수처'?v:esc(v)}</dd>`).join('')}</dl>
+    <dl>${rows.map(([k,v])=>`<dt>${k}</dt><dd>${k==='접수처'||k==='출처'?v:esc(v)}</dd>`).join('')}</dl>
     <div class="btns">
       <button class="btn pri" id="sFav">${state.favs.has(e.id)?'♥ 관심 해제':'♡ 관심 대회'}</button>
       <button class="btn" id="sIcs">캘린더에 추가</button>
@@ -601,11 +397,11 @@ function toggleFav(id){state.favs.has(id)?state.favs.delete(id):state.favs.add(i
 function icsDate(s,add=0){const d=toDate(s);d.setDate(d.getDate()+add);return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`}
 function icsEsc(s){return String(s).replace(/[\\,;]/g,m=>'\\'+m).replace(/\n/g,'\\n')}
 function downloadIcs(e){
-  const desc=[e['참가비']&&`참가비 ${e['참가비']}`,e['마감']&&`접수 마감 ${e['마감']}`,e['비고'],'※ 출전 전 연맹 공지 확인'].filter(Boolean).join('\n');
+  const desc=[e.fee&&`참가비 ${e.fee}`,e.deadline&&`접수 마감 ${e.deadline}`,e.note,'※ 출전 전 연맹 공지 확인'].filter(Boolean).join('\n');
   const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//bbcomp//KO','CALSCALE:GREGORIAN','BEGIN:VEVENT',
     `UID:${e.id}-${e.date}@ynschoi.github.io`,`DTSTAMP:${new Date().toISOString().replace(/[-:]/g,'').slice(0,15)}Z`,
     `DTSTART;VALUE=DATE:${icsDate(e.date)}`,`DTEND;VALUE=DATE:${icsDate(endOf(e),1)}`,
-    `SUMMARY:${icsEsc(title(e))}`, e['장소']?`LOCATION:${icsEsc(e['장소'])}`:null, `DESCRIPTION:${icsEsc(desc)}`,
+    `SUMMARY:${icsEsc(title(e))}`, e.place?`LOCATION:${icsEsc(e.place)}`:null, `DESCRIPTION:${icsEsc(desc)}`,
     'BEGIN:VALARM','TRIGGER:-P7D','ACTION:DISPLAY','DESCRIPTION:대회 1주 전','END:VALARM',
     'END:VEVENT','END:VCALENDAR'].filter(Boolean).join('\r\n');
   const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
@@ -613,7 +409,7 @@ function downloadIcs(e){
   document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);
 }
 async function share(e){
-  const text=`🏆 ${title(e)}\n📅 ${YEAR}.${fmtRange(e)}${e['장소']?`\n📍 ${e['장소']}`:''}${e['참가비']?`\n💰 ${e['참가비']}`:''}`;
+  const text=`🏆 ${title(e)}\n📅 ${YEAR}.${fmtRange(e)}${e.place?`\n📍 ${e.place}`:''}${e.fee?`\n💰 ${e.fee}`:''}`;
   try{ if(navigator.share){await navigator.share({title:title(e),text,url:location.href});return}
        await navigator.clipboard.writeText(text+'\n'+location.href);toast('복사했어요'); }catch(err){}
 }
@@ -636,7 +432,13 @@ $('#view').addEventListener('click',e=>{
 $('#scrim').onclick=closeSheet;
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
 
-render();
+$('#view').innerHTML='<div class="empty">불러오는 중…</div>';
+fetch('data.json',{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(d=>{
+  META=d;BASE=d.events||[];
+  const ys=BASE.map(e=>+e.date.slice(0,4));if(ys.length&&!ys.includes(YEAR))YEAR=Math.max(...ys);
+  if(d.generated){const g=d.generated.slice(5,10).replace('-','.');$('#eyebrow').textContent=`${YEAR} · ${g} 업데이트`}
+  render();
+}).catch(err=>{$('#view').innerHTML=`<div class="empty">일정을 불러오지 못했어요 (${esc(err.message)}).<br>잠시 후 다시 열어주세요.</div>`});
 </script>
 </body>
 </html>
