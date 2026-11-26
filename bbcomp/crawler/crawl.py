@@ -107,8 +107,8 @@ def main():
         prev = prev_by.get(key, [])
         try:
             mod = importlib.import_module(f"sources.{key}")
-        except ModuleNotFoundError:
-            log(f"[{key}] 모듈 없음 — 건너뜀")
+        except Exception as e:  # noqa: BLE001  모듈 없음·작성 중 오류 → 기존 데이터 유지
+            log(f"[{key}] 모듈 불러오기 실패 — 건너뜀 ({e})")
             events += prev
             continue
         if only and key not in only:
