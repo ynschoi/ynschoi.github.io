@@ -86,6 +86,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .mid{min-width:0}
 .t{font-weight:600;display:flex;align-items:center;gap:6px;flex-wrap:wrap;word-break:keep-all}
 .fed{font-size:10.5px;font-weight:700;letter-spacing:.02em;border-radius:5px;padding:1px 6px;background:var(--surface2);color:var(--ink);white-space:nowrap}
+.tg{font-size:10.5px;font-weight:700;border-radius:5px;padding:1px 6px;white-space:nowrap}
+.tg.pq{background:var(--accent-soft);color:var(--accent)}.tg.pro{background:var(--ink);color:var(--bg)}.tg.top{background:var(--warn);color:var(--bg)}.tg.nat{background:var(--ok-soft);color:var(--ok)}
 .sub{font-size:12.5px;color:var(--muted);margin-top:2px;word-break:keep-all}
 .divs{font-size:12px;color:var(--accent);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .right{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
@@ -177,7 +179,7 @@ nav.tabs button[aria-current="page"]{color:var(--accent);font-weight:700}
       <button class="fbtn" id="openF"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h18M6 12h12M10 19h4"/></svg>필터<span class="cnt" id="fcnt" hidden></span></button>
     </div>
     <div class="active" id="active"></div>
-    <div class="summary"><span id="count"></span><button id="togPast"></button></div>
+    <div class="summary"><span id="count"></span><span style="display:flex;gap:12px"><button id="togWW" hidden></button><button id="togPast"></button></span></div>
   </div>
 
   <main id="view"></main>
@@ -231,7 +233,7 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 const S={
   tab:'list', scope:LS.get('bb.scope','KR'), q:'',
   feds:new Set(LS.get('bb.feds',[])), divs:new Set(LS.get('bb.divs',[])), openOnly:LS.get('bb.openOnly',false),
-  showPast:false, favs:new Set(LS.get('bb.favs',[])), cal:null, calSel:null, limit:60,
+  showPast:false, wwAll:false, kinds:new Set(), favs:new Set(LS.get('bb.favs',[])), cal:null, calSel:null, limit:60,
 };
 let DATA={events:[],sources:{},generated:null}, EV=[];
 
@@ -256,6 +258,10 @@ function prep(e){
   (e.divisions||[]).forEach(d=>{const c=catOf(d);(cats[c]=cats[c]||[]).push(d)});
   e._cats=cats; e._catList=Object.keys(cats);
   e._ww=e.country&&e.country!=='KR';
+  const nm=(e.name||'');
+  e._lv = e.fed==='IFBB PRO' ? (/olympia|arnold classic/i.test(nm)&&!/amateur/i.test(nm)?'top':'pro')
+        : (/퀄리파이어|qualifier|아마추어 올림피아|amateur olympia/i.test(nm)||e.proCards) ? 'pq' : null;
+  e._nat = /natural|내추럴|네추럴/i.test(nm) || ['ANBC','WNBF'].includes(e.fed);
   e._hay=[title(e),e.place,e.city,e.country,e.host,(e.divisions||[]).join(' ')].join(' ').toLowerCase();
   return e;
 }
@@ -276,12 +282,16 @@ function fedMatch(e){
     if(g==='기타'&&!FED_GROUPS.some(x=>x[1].includes(e.fed)))return true;}
   return false;
 }
-function base(){ return EV.filter(e=>(S.scope==='WW')===e._ww) }
+const LV={pq:'프로카드',pro:'프로쇼',top:'메이저'};
+function tagsHtml(e){return (e._lv?`<span class="tg ${e._lv}">${LV[e._lv]}</span>`:'')+(e._nat?'<span class="tg nat">내추럴</span>':'')}
+// 해외는 기본으로 프로 퀄리파이어·프로쇼·메이저만 (각국 지역 대회는 '전체 보기'로)
+function base(){ return EV.filter(e=>(S.scope==='WW')===e._ww && (S.scope!=='WW'||S.wwAll||e._lv)) }
 function filtered(opts={}){
   const q=S.q.trim().toLowerCase().split(/\s+/).filter(Boolean);
   return base().filter(e=>{
     if(!opts.keepPast && !S.showPast && endOf(e)<TODAY) return false;
     if(!fedMatch(e)) return false;
+    if(S.kinds.size && !((e._lv&&S.kinds.has(e._lv==='top'?'pro':e._lv))||(e._nat&&S.kinds.has('nat')))) return false;
     if(S.divs.size && !e._catList.some(c=>S.divs.has(c))) return false;
     if(S.openOnly){const s=status(e).k;if(s!=='open'&&s!=='soon')return false;}
     if(q.length && !q.every(w=>e._hay.includes(w))) return false;
@@ -304,7 +314,7 @@ function rowHtml(e){
   const dv=divSummary(e);
   return `<div class="row${st.k==='ended'?' past':''}" data-id="${esc(e.id)}" role="button" tabindex="0">
     <div class="date"><b>${d.getDate()}</b><span class="${w===6?'sat':w===0?'sun':''}">${WD[w]}</span></div>
-    <div class="mid"><div class="t"><span class="fed">${esc(fedName(e.fed))}</span>${esc(title(e).replace(new RegExp('^'+fedName(e.fed).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\s*'),'')||title(e))}</div>
+    <div class="mid"><div class="t"><span class="fed">${esc(fedName(e.fed))}</span>${tagsHtml(e)}${esc(title(e).replace(new RegExp('^'+fedName(e.fed).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\s*'),'')||title(e))}</div>
       ${sub?`<div class="sub">${sub}</div>`:''}${dv?`<div class="divs">${esc(dv)}</div>`:''}</div>
     <div class="right"><span class="st ${st.k}">${esc(st.t)}</span>
       <button class="heart" data-fav="${esc(e.id)}" aria-pressed="${fav}" aria-label="관심 대회">${heartSvg(fav)}</button></div></div>`;
@@ -340,12 +350,14 @@ function renderDeadlines(){
 function renderBar(){
   const show=S.tab==='list'||S.tab==='cal';
   $('#bar').hidden=!show;
-  const n=S.feds.size+S.divs.size+(S.openOnly?1:0);
+  const n=S.feds.size+S.divs.size+S.kinds.size+(S.openOnly?1:0);
   $('#fcnt').hidden=!n;$('#fcnt').textContent=n;
   $('#active').innerHTML=[...S.feds].map(f=>`<button class="pill x" data-rm-fed="${esc(f)}">${esc(f)}</button>`).join('')+
     [...S.divs].map(d=>`<button class="pill x" data-rm-div="${esc(d)}">${esc(d)}</button>`).join('')+
+    [...S.kinds].map(k=>`<button class="pill x" data-rm-kind="${k}">${({pq:'프로카드',pro:'프로쇼·메이저',nat:'내추럴'})[k]}</button>`).join('')+
     (S.openOnly?`<button class="pill x" data-rm-open>접수 가능만</button>`:'');
   $('#togPast').textContent=S.showPast?'지난 대회 숨기기':'지난 대회 보기';
+  $('#togWW').hidden=S.scope!=='WW';$('#togWW').textContent=S.wwAll?'중요 대회만':'지역 대회까지 전체';
   $('#scKR').setAttribute('aria-pressed',S.scope==='KR');$('#scWW').setAttribute('aria-pressed',S.scope==='WW');
 }
 function renderList(){
@@ -386,7 +398,7 @@ function renderInfo(){
   const src=Object.entries(DATA.sources||{});
   const gen=DATA.generated?DATA.generated.replace('T',' ').slice(0,16):'-';
   $('#view').innerHTML=`<section class="wk"><div class="wk-h"><h3>데이터 출처</h3><span class="c">${EV.length}개 대회</span></div>
-    <p class="src">각 연맹·협회의 공식 접수 페이지를 매주 월요일 자동으로 다시 읽어 옵니다. 마지막 수집 <span class="mono">${esc(gen)}</span>.</p>
+    <p class="src">각 연맹·협회의 공식 접수 페이지를 매주 월요일 자동으로 다시 읽어 옵니다. IFBB 프로쇼만 비공식 일정 모음(fitnessvolt.com)에서 가져옵니다. 마지막 수집 <span class="mono">${esc(gen)}</span>.</p>
     ${src.map(([k,s])=>`<div class="src-row"><span>${s.url?`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label)}</a>`:esc(s.label)}</span>
       <span class="mono">${s.count}건 ${s.ok?'':'<span class="bad">· 최근 수집 실패</span>'}</span></div>`).join('')}
     <p class="src" style="margin-top:12px">일정·장소·참가비는 주최 측 사정으로 바뀔 수 있어요. 출전 전에는 대회 상세의 ‘원문’ 링크로 꼭 확인하세요.</p></section>`;
@@ -414,12 +426,13 @@ function openSheet(id){
     ['참가비',e.fee],
     ['접수 마감',e.deadline?`${mdw(e.deadline)} · ${st.t}`:null],
     ['주최',e.host],
+    ['출처',e.unofficial?'fitnessvolt.com (비공식 일정 모음 · 주최 측 공지 확인 필요)':null],
   ].filter(r=>r[1]);
   const cats=Object.entries(e._cats||{});
   const reOf=c=>(DIV_CATS.find(x=>x[0]===c)||[])[1];
   const shorten=(c,items)=>items.map(d=>{const re=reOf(c);return (re?d.replace(re,''):d).replace(/^[\s\-·:]+/,'').trim()||d}).join(', ');
   $('#sheet').innerHTML=`<div class="grab"></div>
-    <div style="display:flex;gap:6px;align-items:center"><span class="fed">${esc(fedName(e.fed))}</span><span class="st ${st.k}">${esc(st.t)}</span>${e.major?'<span class="st closed">메이저</span>':''}</div>
+    <div style="display:flex;gap:6px;align-items:center"><span class="fed">${esc(fedName(e.fed))}</span><span class="st ${st.k}">${esc(st.t)}</span>${tagsHtml(e)}</div>
     <h2>${esc(title(e))}</h2>
     <dl class="kv">${rows.map(([k,v])=>`<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
     ${cats.length?`<div class="sec"><h4>종목 · ${(e.divisions||[]).length}개</h4>${cats.map(([c,items])=>`<div class="dgroup"><b>${esc(c)}</b><span>${esc(shorten(c,items))}</span></div>`).join('')}</div>`:''}
@@ -451,19 +464,22 @@ function filterSheet(){
   const cats=DIV_CATS.map(c=>c[0]).filter(c=>catCount[c]);
   $('#sheet').innerHTML=`<div class="grab"></div><h2>필터</h2>
     <div class="fgroup"><h4>접수</h4><div class="chips"><button class="chip" data-f-open aria-pressed="${S.openOnly}">접수 가능한 대회만</button></div></div>
+    <div class="fgroup"><h4>대회 성격</h4><div class="chips">
+      ${[['pq','프로카드 (퀄리파이어)'],['pro','프로쇼·메이저'],['nat','내추럴 (도핑검사)']].map(([k,l])=>`<button class="chip" data-f-kind="${k}" aria-pressed="${S.kinds.has(k)}">${l}</button>`).join('')}</div></div>
     <div class="fgroup"><h4>내 종목 <span>종목 정보가 있는 대회만 걸러져요</span></h4><div class="chips">
       ${cats.map(c=>`<button class="chip" data-f-div="${esc(c)}" aria-pressed="${S.divs.has(c)}">${esc(c)}<small>${catCount[c]}</small></button>`).join('')||'<span class="src">종목 정보가 아직 없어요</span>'}</div></div>
     <div class="fgroup"><h4>연맹·협회</h4><div class="chips">
       ${groups.map(([g,c])=>`<button class="chip" data-f-fed="${esc(g)}" aria-pressed="${S.feds.has(g)}">${esc(g)}<small>${c}</small></button>`).join('')}</div></div>
     <div class="acts"><button class="btn" id="fReset">초기화</button><button class="btn pri" id="fDone">${filtered().length}개 대회 보기</button></div>`;
   $('#scrim').hidden=false;$('#sheet').hidden=false;
-  $('#fReset').onclick=()=>{S.feds.clear();S.divs.clear();S.openOnly=false;save();render();filterSheet()};
+  $('#fReset').onclick=()=>{S.feds.clear();S.divs.clear();S.kinds.clear();S.openOnly=false;save();render();filterSheet()};
   $('#fDone').onclick=closeSheet;
 }
 $('#sheet').addEventListener('click',ev=>{
-  const t=ev.target.closest('[data-f-fed],[data-f-div],[data-f-open]');if(!t)return;
+  const t=ev.target.closest('[data-f-fed],[data-f-div],[data-f-open],[data-f-kind]');if(!t)return;
   if(t.dataset.fFed!==undefined){const g=t.dataset.fFed;S.feds.has(g)?S.feds.delete(g):S.feds.add(g)}
   else if(t.dataset.fDiv!==undefined){const g=t.dataset.fDiv;S.divs.has(g)?S.divs.delete(g):S.divs.add(g)}
+  else if(t.dataset.fKind!==undefined){const g=t.dataset.fKind;S.kinds.has(g)?S.kinds.delete(g):S.kinds.add(g)}
   else S.openOnly=!S.openOnly;
   save();render();filterSheet();
 });
@@ -477,10 +493,11 @@ document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>setTab(b.d
 $('#q').oninput=e=>{S.q=e.target.value;S.limit=60;render()};
 $('#openF').onclick=filterSheet;
 $('#togPast').onclick=()=>{S.showPast=!S.showPast;render()};
+$('#togWW').onclick=()=>{S.wwAll=!S.wwAll;S.limit=60;render()};
 $('#scKR').onclick=()=>{S.scope='KR';S.feds.clear();S.limit=60;save();render()};
 $('#scWW').onclick=()=>{S.scope='WW';S.feds.clear();S.limit=60;save();render()};
 $('#active').onclick=ev=>{const b=ev.target.closest('button');if(!b)return;
-  if(b.dataset.rmFed)S.feds.delete(b.dataset.rmFed);else if(b.dataset.rmDiv)S.divs.delete(b.dataset.rmDiv);else S.openOnly=false;save();render()};
+  if(b.dataset.rmFed)S.feds.delete(b.dataset.rmFed);else if(b.dataset.rmDiv)S.divs.delete(b.dataset.rmDiv);else if(b.dataset.rmKind)S.kinds.delete(b.dataset.rmKind);else S.openOnly=false;save();render()};
 document.addEventListener('click',ev=>{
   const h=ev.target.closest('[data-fav]');if(h){ev.stopPropagation();toggleFav(h.dataset.fav);return}
   const c=ev.target.closest('[data-day]');if(c){S.calSel=c.dataset.day;render();return}

@@ -11,12 +11,13 @@ PCA KOREA 공식 몰(www.pca-korea.com/mall)은 접수를 코치엔 앱으로 �
   3) 순위표     /bbs/board.php?bo_table=ranking
      → "[NPCA 안산 순위]" 글의 종목 제목(18pt 굵은 글씨)으로 divisions 보충
 
-ID는 연맹+날짜(+뉴빅터)로 만들어 출처가 바뀌어도 같은 대회는 같은 ID를 가진다 (crawl.py가 누적 보관).
+ID는 연맹+날짜(+뉴빅터)+지역으로 만들어 출처가 바뀌어도 같은 대회는 같은 ID를 가진다 (crawl.py가 누적 보관).
 """
 import html
 import re
 import urllib.parse
 import urllib.robotparser
+import zlib
 from datetime import date, datetime, timedelta
 
 from .common import KST, get, iso, log, parse_kdate, text, this_year
@@ -125,6 +126,10 @@ def make_event(fed, d, nv=False, **kw):
           "regUrl": f"{COACHN}/sub/competitions_list.php?sca="
                     + urllib.parse.quote("NPCA뉴빅터접수" if nv else f"{fed}접수")}
     ev.update(kw)
+    # 같은 날 같은 연맹 대회가 둘일 수 있어(예: NPCA 부천·동성로) 지역 키를 ID에 포함
+    rk = region_key(ev.get("name"))
+    en = CITY_EN.get(rk) or (rk if re.fullmatch(r"[A-Za-z0-9]+", rk) else f"{zlib.crc32(rk.encode()):08x}")
+    ev["id"] += "-" + en.lower()[:24]
     ev["major"] = bool(re.search(r"SUPER SERIES|CHAMPIONSHIP|FINAL|챔피언|파이널", ev.get("name") or "", re.I))
     return ev
 
@@ -289,7 +294,7 @@ def ranking_list():
             if not m or m.group(1) in seen:
                 continue
             t = text(li)
-            mt = re.search(r"\[\s*(N?PCA)\s+(.+?)\s*순위\s*\]", t)
+            mt = re.search(r"\[\s*(N?PCA)\s+(.+?)\s*(?:순위\s*\]|…|\.\.\.)", t)
             if not mt:
                 continue
             seen.add(m.group(1))
@@ -357,7 +362,12 @@ def crawl():
             by_region.setdefault((e["fed"], region_key(e["name"])), []).append(e)
     used = set()
     for r in ranking_list():
-        cands = [e for e in by_region.get((r["fed"], region_key(r["region"])), [])
+        reg = r["region"].strip()
+        cut = reg.endswith(("…", "..."))  # 목록 제목이 길면 말줄임
+        rk = region_key(reg.rstrip("….").strip())
+        pool = [e for (f, k), lst in by_region.items() if f == r["fed"] and (k == rk or cut and k.startswith(rk))
+                for e in lst]
+        cands = [e for e in pool
                  if e["date"] <= r["posted"].isoformat()
                  and e["date"] >= (r["posted"] - timedelta(days=150)).isoformat() and e["id"] not in used]
         if not cands:

@@ -28,10 +28,10 @@ from sources.common import KST, log  # noqa: E402
 DEFAULT_OUT = os.path.join(HERE, "..", "data.json")
 # 순서 = 중복 시 우선순위
 MODULES = ["unmo", "pca", "ifbbkorea", "nabba", "afex", "agonas", "kclassic", "oneclassic", "nac",
-           "musclemania", "wnbf", "ifbbpro_world"]
+           "musclemania", "wnbf", "fitnessvolt", "ifbbpro_world"]
 # 제외: monsterzym(robots.txt 전체 금지 → NPC 월드와이드 캘린더로 대체), kbbf·wnc(접근 제한 403),
 #       icn(사이트 내부 DB API 직접 호출 필요 — 사용하지 않음)
-ACCUMULATE = {"pca"}
+ACCUMULATE = {"pca", "fitnessvolt"}
 FIELDS = ["place", "city", "country", "fee", "deadline", "divisions", "qualification", "proCards",
           "host", "url", "regUrl", "end"]
 
@@ -135,6 +135,9 @@ def main():
                             "error": err or "0건"}
         log(f"[{key}] {'성공' if got else '실패 — 기존 데이터 유지'}: {sources[key]['count']}건 ({time.time()-t0:.0f}s)")
 
+    # 국내 AGP 프로쇼는 IFBB 프로 코리아(공식)에 있으므로 비공식 출처의 같은 대회는 뺀다
+    if any(e["src"] == "ifbbkorea" for e in events):
+        events = [e for e in events if not (e["src"] == "fitnessvolt" and e.get("country") == "KR" and "AGP" in e.get("name", ""))]
     events = dedupe(sorted(events, key=lambda e: MODULES.index(e["src"]) if e["src"] in MODULES else 99))
     events.sort(key=lambda e: (e["date"], e.get("fed", ""), e.get("name", "")))
     data = {"generated": now, "sources": sources, "events": events}
