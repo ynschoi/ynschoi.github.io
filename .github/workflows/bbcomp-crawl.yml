@@ -41,15 +41,21 @@ jobs:
           for k, s in d["sources"].items():
               print(("OK  " if s.get("ok") else "FAIL"), f"{s.get('count'):>4}", k, s.get("error", "") if not s.get("ok") else "")
           PY
+      - name: 지난해 협회 대회 보충 (history에 KBBF가 없을 때 한 번)
+        run: python3 bbcomp/crawler/history_kbbf.py || true
       - name: Commit if changed
         run: |
           git config user.name "bbcomp-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add bbcomp/data.json bbcomp/cal
+          # 수집 도중 브랜치에 다른 커밋이 올라왔으면 최신 브랜치 위에 이번 수집 결과를 덮어쓴다
+          mkdir -p /tmp/out && cp -r bbcomp/data.json bbcomp/cal bbcomp/history /tmp/out/
+          git fetch -q origin "${GITHUB_REF_NAME}"
+          git reset -q --hard "origin/${GITHUB_REF_NAME}"
+          rm -rf bbcomp/cal && cp -r /tmp/out/cal /tmp/out/history /tmp/out/data.json bbcomp/
+          git add bbcomp/data.json bbcomp/cal bbcomp/history
           if git diff --cached --quiet; then
             echo "변경 없음"
           else
             git commit -m "bbcomp: 대회일정 자동 수집 $(TZ=Asia/Seoul date +%Y-%m-%d)"
-            git pull --rebase -q origin "${GITHUB_REF_NAME}" || true
             git push origin "HEAD:${GITHUB_REF_NAME}"
           fi

@@ -45,9 +45,9 @@ def _fields(detail):
     return f, body
 
 
-def crawl():
+def crawl(years=None):
     events, seen = [], set()
-    years = {str(this_year()), str(this_year() + 1)}
+    years = {str(y) for y in years} if years else {str(this_year()), str(this_year() + 1)}
     for board, tier in BOARDS:
         first = get(f"{BASE}/{board}", headers=UA)
         cats = _year_categories(first)
