@@ -1,4 +1,4 @@
-<title>보디빌딩 대회일정</title>
+<title>BoCal</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preload" href="fonts/PretendardVariable.woff2" as="font" type="font/woff2" crossorigin>
 <style>@font-face{font-family:"Pretendard Variable";font-weight:45 920;font-style:normal;font-display:swap;src:url("fonts/PretendardVariable.woff2") format("woff2-variations")}</style>
@@ -37,6 +37,8 @@ a{color:var(--accent)}
 /* header */
 header{padding-block:18px 6px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
 header h1{margin:0;font-size:24px;font-weight:700;letter-spacing:-.02em;text-wrap:balance}
+.brand{font-size:28px!important;font-weight:800!important;letter-spacing:-.03em!important;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.brand span{font-size:14px;font-weight:600;color:var(--muted);letter-spacing:0}
 header .upd{font-size:12px;color:var(--muted)}
 .scope{display:inline-flex;background:var(--surface2);border-radius:999px;padding:3px;flex:none}
 .scope button{border:0;background:none;border-radius:999px;padding:5px 12px;font-size:13px;color:var(--muted);font-weight:600}
@@ -187,7 +189,7 @@ nav.tabs button[aria-current="page"]{color:var(--accent);font-weight:700}
 <div class="wrap">
   <header>
     <div>
-      <h1>보디빌딩 대회일정</h1>
+      <h1 class="brand">BoCal<span>보디빌딩 대회 캘린더</span></h1>
       <div class="upd" id="upd">불러오는 중</div>
     </div>
     <div class="scope" role="group" aria-label="지역">
@@ -621,7 +623,7 @@ const fmtVal=(f,v)=>/date|end|deadline/.test(f)&&/^\d{4}-\d\d-\d\d$/.test(v||'')
 /* ───────── 캘린더 파일 (.ics) ───────── */
 function icsText(list){
   const f=s=>s.replace(/-/g,''), e_=s=>String(s).replace(/([\\,;])/g,'\\$1').replace(/\n/g,'\\n');
-  const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//bbcomp//KO','CALSCALE:GREGORIAN','METHOD:PUBLISH'];
+  const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//BoCal//KO','CALSCALE:GREGORIAN','METHOD:PUBLISH'];
   list.forEach(e=>{L.push('BEGIN:VEVENT',`UID:${e.id}@bbcomp`,`DTSTAMP:${new Date().toISOString().replace(/[-:]/g,'').slice(0,15)}Z`,
     `DTSTART;VALUE=DATE:${f(e.date)}`,`DTEND;VALUE=DATE:${f(addD(endOf(e),1))}`,`SUMMARY:${e_(title(e))}`,
     `DESCRIPTION:${e_([e.fee&&`참가비 ${e.fee}`,e.deadline&&`접수 마감 ${e.deadline}`,e.url&&`원문 ${e.url}`].filter(Boolean).join('\n'))}`);
@@ -678,7 +680,7 @@ async function drawShare(){
   if(list.length>rows.length){g.fillStyle=C.mut;g.font=`500 26px ${F}`;g.fillText(`외 ${list.length-rows.length}개 대회`,pad,y+rows.length*rowH+44)}
   if(!list.length){g.fillStyle=C.mut;g.font=`500 32px ${F}`;g.fillText('예정된 대회가 없어요',pad,y+60)}
   g.fillStyle=C.line;g.fillRect(pad,H-110,W-pad*2,2);
-  g.fillStyle=C.mut;g.font=`500 26px ${F}`;g.fillText('전국 보디빌딩 대회일정',pad,H-62);
+  g.fillStyle=C.mut;g.font=`500 26px ${F}`;g.font=`800 28px ${F}`;g.fillStyle=C.ink;g.fillText('BoCal',pad,H-62);const bw=g.measureText('BoCal ').width;g.font=`500 24px ${F}`;g.fillStyle=C.mut;g.fillText('보디빌딩 대회 캘린더',pad+bw,H-62);
   g.textAlign='right';g.font=`600 26px ${M}`;g.fillStyle=C.acc;g.fillText('ynschoi.github.io/bbcomp',W-pad,H-62);g.textAlign='left';
   return c;
 }
@@ -747,7 +749,7 @@ async function drawYear(){
   g.fillStyle=C.line;g.fillRect(pad,H-74,W-pad*2,2);
   g.font=`600 20px ${F}`;g.fillStyle=C.star;g.fillText('★',pad,H-38);g.fillStyle=C.mut;g.font=`500 20px ${F}`;
   g.fillText('프로카드 획득 대회   일정은 주최 측 사정으로 바뀔 수 있어요',pad+26,H-38);
-  g.textAlign='right';g.font=`600 20px ${M}`;g.fillStyle=C.acc;g.fillText('ynschoi.github.io/bbcomp',W-pad,H-38);g.textAlign='left';
+  g.textAlign='right';g.font=`600 20px ${M}`;g.fillStyle=C.acc;const u='ynschoi.github.io/bbcomp';g.fillText(u,W-pad,H-38);const uw=g.measureText(u+'  ').width;g.font=`800 22px ${F}`;g.fillStyle=C.ink;g.fillText('BoCal',W-pad-uw,H-38);g.textAlign='left';
   return c;
 }
 async function openShare(kind){
@@ -760,8 +762,8 @@ async function openShare(kind){
     <div class="acts"><button class="btn pri" id="sShare">공유하기</button><button class="btn" id="sSave">이미지 저장</button><button class="btn" id="sClose">닫기</button></div>`;
   $('#scrim').hidden=false;$('#sheet').hidden=false;$('#sClose').onclick=closeSheet;
   const c=await (SHARE.kind==='year'?drawYear():drawShare());$('#sImg').src=c.toDataURL('image/png');
-  const file=()=>new Promise(r=>c.toBlob(b=>r(new File([b],'bodybuilding-schedule.png',{type:'image/png'})),'image/png'));
-  $('#sShare').onclick=async()=>{try{const f=await file();if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'보디빌딩 대회일정'})}else toast('이미지를 길게 눌러 저장해 주세요')}catch(e){}};
+  const file=()=>new Promise(r=>c.toBlob(b=>r(new File([b],'bocal-schedule.png',{type:'image/png'})),'image/png'));
+  $('#sShare').onclick=async()=>{try{const f=await file();if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'BoCal · 보디빌딩 대회 캘린더'})}else toast('이미지를 길게 눌러 저장해 주세요')}catch(e){}};
   $('#sSave').onclick=async()=>{try{const f=await file();const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500)}catch(e){toast('이미지를 길게 눌러 저장해 주세요')}};
 }
 

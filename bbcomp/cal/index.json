@@ -1,77 +1,77 @@
 [
  {
   "file": "kr.ics",
-  "label": "보디빌딩 대회 · 국내 전체",
-  "count": 61
+  "label": "BoCal · 국내 전체",
+  "count": 60
  },
  {
   "file": "kr-pro.ics",
-  "label": "보디빌딩 대회 · 국내 프로카드·프로쇼",
-  "count": 3
+  "label": "BoCal · 국내 프로카드·프로쇼",
+  "count": 2
  },
  {
   "file": "world-pro.ics",
-  "label": "보디빌딩 대회 · 해외 프로",
+  "label": "BoCal · 해외 프로",
   "count": 153
  },
  {
   "file": "fed-pca.ics",
-  "label": "보디빌딩 대회 · PCA",
+  "label": "BoCal · PCA",
   "count": 6
  },
  {
   "file": "fed-npca.ics",
-  "label": "보디빌딩 대회 · NPCA",
+  "label": "BoCal · NPCA",
   "count": 8
  },
  {
   "file": "fed-wngp.ics",
-  "label": "보디빌딩 대회 · WNGP",
+  "label": "BoCal · WNGP",
   "count": 12
  },
  {
   "file": "fed-musa.ics",
-  "label": "보디빌딩 대회 · MUSA",
+  "label": "BoCal · MUSA",
   "count": 12
  },
  {
   "file": "fed-anbc.ics",
-  "label": "보디빌딩 대회 · ANBC",
+  "label": "BoCal · ANBC",
   "count": 3
  },
  {
   "file": "fed-npc.ics",
-  "label": "보디빌딩 대회 · NPC",
+  "label": "BoCal · NPC",
   "count": 5
  },
  {
   "file": "fed-ifbbpro.ics",
-  "label": "보디빌딩 대회 · IFBB PRO",
-  "count": 2
+  "label": "BoCal · IFBB PRO",
+  "count": 1
  },
  {
   "file": "fed-nabba.ics",
-  "label": "보디빌딩 대회 · NABBA",
+  "label": "BoCal · NABBA",
   "count": 1
  },
  {
   "file": "fed-afex.ics",
-  "label": "보디빌딩 대회 · AFEX",
+  "label": "BoCal · AFEX",
   "count": 1
  },
  {
   "file": "fed-kclassic.ics",
-  "label": "보디빌딩 대회 · 케이클래식",
+  "label": "BoCal · 케이클래식",
   "count": 2
  },
  {
   "file": "fed-musclemania.ics",
-  "label": "보디빌딩 대회 · MUSCLEMANIA",
+  "label": "BoCal · MUSCLEMANIA",
   "count": 1
  },
  {
   "file": "fed-kbbf.ics",
-  "label": "보디빌딩 대회 · KBBF",
+  "label": "BoCal · KBBF",
   "count": 6
  }
 ]

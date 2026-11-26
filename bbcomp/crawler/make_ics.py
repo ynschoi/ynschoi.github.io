@@ -83,7 +83,7 @@ def vevent(e, stamp):
 
 
 def write(name, label, events, stamp):
-    lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//bbcomp//schedule//KO", "CALSCALE:GREGORIAN",
+    lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//BoCal//schedule//KO", "CALSCALE:GREGORIAN",
              "METHOD:PUBLISH", f"X-WR-CALNAME:{esc(label)}", "X-WR-TIMEZONE:Asia/Seoul",
              "REFRESH-INTERVAL;VALUE=DURATION:P1D", "X-PUBLISHED-TTL:P1D"]
     for e in events:
@@ -102,13 +102,13 @@ def main():
     ev = [e for e in data["events"] if e.get("date", "") >= since]
     kr = [e for e in ev if e.get("country", "KR") == "KR"]
     ww = [e for e in ev if e.get("country", "KR") != "KR"]
-    feeds = [("kr.ics", "보디빌딩 대회 · 국내 전체", kr),
-             ("kr-pro.ics", "보디빌딩 대회 · 국내 프로카드·프로쇼", [e for e in kr if level(e)]),
-             ("world-pro.ics", "보디빌딩 대회 · 해외 프로", [e for e in ww if level(e)])]
+    feeds = [("kr.ics", "BoCal · 국내 전체", kr),
+             ("kr-pro.ics", "BoCal · 국내 프로카드·프로쇼", [e for e in kr if level(e)]),
+             ("world-pro.ics", "BoCal · 해외 프로", [e for e in ww if level(e)])]
     for fed, slug in FED_SLUG.items():
         es = [e for e in kr if e.get("fed") == fed]
         if es:
-            feeds.append((f"fed-{slug}.ics", f"보디빌딩 대회 · {fed}", es))
+            feeds.append((f"fed-{slug}.ics", f"BoCal · {fed}", es))
     for name, label, es in feeds:
         write(name, label, es, stamp)
     index = [{"file": n, "label": l, "count": len(es)} for n, l, es in feeds]
