@@ -104,6 +104,29 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .empty{color:var(--muted);text-align:center;padding:40px 0}
 .more{display:block;margin:18px auto 0;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 16px;font-size:13px}
 
+/* 반기 주말 달력 (토/일 두 줄) */
+.hv-h{display:flex;align-items:center;gap:6px;margin-top:14px}
+.hv-h h3{margin:0;font-size:17px;flex:1}
+.hv-h button{border:1px solid var(--line);background:var(--surface);border-radius:10px;height:32px;padding:0 10px;font-size:13px}
+.hv-h button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:700}
+.hv-leg{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 6px;font-size:11px;color:var(--muted)}
+.hv-leg span{border-left:3px solid;padding-left:4px;line-height:13px}
+.hv{border-top:1px solid var(--ink)}
+.hw{display:grid;grid-template-columns:40px minmax(0,1fr);border-bottom:1px solid var(--line)}
+.hw.mb{border-top:1.5px solid var(--ink)}
+.hw.now{background:var(--surface2)}
+.hw.past{opacity:.6}
+.hw>b{display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:11.5px;font-weight:800;border-right:1px solid var(--line);line-height:1.1}
+.hw>b em{font-style:normal;font-size:10.5px;font-weight:600;color:var(--muted)}
+.hl{display:flex;align-items:flex-start;gap:4px;padding:2px 6px;min-height:22px}
+.hl>u{text-decoration:none;font-size:12px;font-weight:800;flex:none;width:36px;display:flex;gap:3px;justify-content:flex-end;padding-right:4px;line-height:18px;font-variant-numeric:tabular-nums}
+.hl>u i{font-style:normal;font-weight:600;color:var(--muted)}
+.hcs{display:flex;flex-wrap:wrap;gap:3px;min-width:0;padding:1px 0}
+.hc{font:inherit;font-size:11.5px;max-width:190px!important;font-weight:600;color:var(--ink);background:var(--surface);border:0;box-shadow:inset 0 0 0 1px var(--line);border-left:3px solid #8E8E93;border-radius:3px;padding:0 5px 0 4px;line-height:17px;white-space:nowrap;letter-spacing:-.02em;cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.hc.s{background:var(--ink);color:var(--bg);box-shadow:none;font-weight:800}
+.hl .z{color:var(--line);line-height:18px}
+.hw.off .hl{color:var(--muted);font-size:12px;line-height:18px;padding:5px 8px}
+.hv-mode{display:block;margin:14px auto 0;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 14px;font-size:12.5px;color:var(--muted)}
 /* 달력 */
 .cal-h{display:flex;align-items:center;justify-content:space-between;margin-top:16px}
 .cal-h h3{margin:0;font-size:17px}
@@ -265,7 +288,7 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 const S={
   tab:'list', scope:LS.get('bb.scope','KR'), q:'',
   feds:new Set(LS.get('bb.feds',[])), divs:new Set(LS.get('bb.divs',[])), openOnly:LS.get('bb.openOnly',false),
-  showPast:false, starOnly:LS.get('bb.starOnly',false), wwAll:false, kinds:new Set(), favs:new Set(LS.get('bb.favs',[])), cal:null, calSel:null, limit:60,
+  showPast:false, starOnly:LS.get('bb.starOnly',false), wwAll:false, kinds:new Set(), favs:new Set(LS.get('bb.favs',[])), cal:null, calSel:null, half:null, calMode:LS.get('bb.calMode','half'), limit:60,
 };
 let DATA={events:[],sources:{},generated:null}, EV=[], FEDS={}, HIST=[];
 const SITE='https://ynschoi.github.io/bbcomp/';
@@ -462,7 +485,86 @@ function renderList(){
   $('#count').textContent=`${list.length}개 대회`;
   $('#view').innerHTML=listHtml(list)+(list.length<=S.limit?ghostHtml(list):'');
 }
+// 단체 → 색 그룹 (애플 시스템 색)
+const HV_COL={g:'#34C759',p:'#007AFF',n:'#AF52DE',z:'#30B0C7',a:'#FF3B30',x:'#FF9500',k:'#8E8E93',o:'#D1D1D6'};
+const HV_LEG=[['g','WNGP·MUSA'],['p','PCA'],['n','NPC·AGP'],['z','몬스터짐'],['a','NABBA'],['x','AFEX'],['k','협회'],['o','기타']];
+const HV_UNMO=['WNGP','MUSA','ANBC'];
+// 칩용 짧은 이름: 표처럼 약칭 (색 막대가 단체를 말해주므로 협회는 'KBBF' 생략)
+function hvShort(t,f){
+  if(f==='KBBF') t=t.replace(/^KBBF\s+/,'');
+  if(f==='MUSCLEMANIA') t='머슬마니아';
+  return t.replace(/\s*챔피언십/g,'').replace(/그랑프리\(GP\)/,'GP').replace(/프로쇼\(NPS\)/,'프로쇼').replace(/아시아 오픈\(AOC\)|아시아 오픈 챔피언십\(AOC\)/,'아시아오픈')
+    .replace(/아마추어 클래식 (부산|서울)\((AC[BS])\)/,'$2').replace(/노비스 (퍼스트|파이널)\(NF\)/,'노비스 $1').replace(/내추럴 보디빌딩/,'내추럴')
+    .replace(/노비스 클래식 /,'노비스').replace(/프로 퀄리파이어|프로 퀄/g,'프로퀄').replace(/퀄리파이어/g,'퀄')
+    .replace(/\bSUPER\b/,'슈퍼시리즈').replace(/ZENITH NATURAL FITNESS COMPETITION/i,'ZENITH 내추럴').replace(/\s{2,}/g,' ').trim();
+}
+function hvGroup(f){return /^(WNGP|MUSA|ANBC|BOB)$/.test(f)?'g':/^N?PCA$/.test(f)?'p':/^(NPC|AGP|IFBB PRO)$/.test(f)?'n':f==='몬스터짐'?'z':f==='NABBA'?'a':f==='AFEX'?'x':f==='KBBF'?'k':'o'}
+// 하루치 대회 → 칩 목록: 같은 단체 같은 날은 한 칩(표 방식), 운동은 같은 장소 MUSA·ANBC를 한 칩으로
+function hvChips(es){
+  const gfed=e=>/\bAGP\b/.test(e.name||'')?'AGP':e.fed;
+  const gname=e=>{let n=gfed(e)==='AGP'?'AGP '+sname(e).replace(/^(NPC|IFBB PRO)\s+/,'').replace(/^AGP\s*/,''):sname(e);
+    n=n.replace(/\s*#\d+.*$/,'');
+    if(e.fed==='몬스터짐') n=n.replace(/\s*\(.*\)$/,'');
+    if(e.fed==='케이클래식') n=n.replace(/내추럴\s*/,'');
+    return n};
+  const gs=[],gk={};
+  es.forEach(e=>{const k=gfed(e)+(e._star&&gfed(e)==='NPC'?'*':'');/* NPC는 아마추어 올림피아(★)와 리저널을 따로 */if(gk[k]){gk[k].names.push(gname(e));gk[k].es.push(e);return}gk[k]={f:gfed(e),names:[gname(e)],es:[e]};gs.push(gk[k])});
+  let chips=gs.map(x=>({f:x.f,text:hvShort(combineNames(x.f,x.names),x.f),es:x.es,star:x.es.some(e=>e._star)}));
+  // 운동(WNGP/MUSA/ANBC) 같은 장소 → 'MUSA·ANBC 김포'
+  const unmo=/^(WNGP|MUSA|ANBC)$/;const out=[];
+  chips.forEach(c=>{if(!unmo.test(c.f)||c.star){out.push(c);return}
+    const rest=c.text.slice(c.f.length+1);const m=out.find(o=>unmo.test(o.f)&&!o.star&&o.text.endsWith(' '+rest));
+    if(m){const fs=m.text.slice(0,m.text.length-rest.length-1).split('·').concat(c.f).sort((a,b)=>HV_UNMO.indexOf(a)-HV_UNMO.indexOf(b));
+      m.text=`${fs.join('·')} ${rest}`;m.es=m.es.concat(c.es)}else out.push(c)});
+  const ord='gpnzaxko';
+  return out.sort((a,b)=>(b.star-a.star)||ord.indexOf(hvGroup(a.f))-ord.indexOf(hvGroup(b.f)));
+}
 function renderCal(){
+  if(S.calMode==='month'||S.scope==='WW') return renderMonth();
+  const list=filtered({keepPast:true}).filter(e=>!e._ww);
+  const t=toD(TODAY);
+  if(!S.half) S.half=[t.getFullYear(),t.getMonth()<6?1:2];
+  const [y,h]=S.half, start=new Date(y,h===1?0:6,1), end=new Date(y,h===1?6:12,0);
+  const inHalf=list.filter(e=>{const d=toD(e.date);return d>=start&&d<=end});
+  $('#count').textContent=`${inHalf.length}개 대회`;
+  // 날짜 → 그 날 대회 (평일 대회는 다음 토요일 줄에 '금 16' 꼴로)
+  const by=new Map(),wkday=new Map();
+  inHalf.forEach(e=>{const d=toD(e.date),w=d.getDay();let k=e.date;
+    if(w>=1&&w<=5){const s=new Date(d);s.setDate(d.getDate()+(6-w));k=ymd(s);wkday.set(e.id,`${d.getMonth()+1}.${d.getDate()}(${WD[w]}) `)}
+    if(!by.has(k))by.set(k,[]);by.get(k).push(e)});
+  // 기간 안 주말들 (토요일 기준, 일요일만 걸쳐도 포함)
+  const sats=[];const s0=new Date(start);s0.setDate(s0.getDate()-((s0.getDay()+1)%7));
+  for(let s=new Date(s0);s<=end;s.setDate(s.getDate()+7)){const su=new Date(s);su.setDate(s.getDate()+1);if(su>=start)sats.push(new Date(s))}
+  const chipHtml=(c)=>{const pre=c.es.length===1&&wkday.get(c.es[0].id)||'';
+    return `<button class="hc${c.star?' s':''}" data-ev="${esc(c.es[0].id)}" style="border-left-color:${HV_COL[hvGroup(c.f)]}">${c.star?'★ ':''}${esc(pre+c.text)}</button>`};
+  const day=(d)=>{const k=ymd(d),es=by.get(k)||[];
+    const inR=d>=start&&d<=end;
+    return `<div class="hl"><u>${d.getDate()}<i>${WD[d.getDay()]}</i></u><span class="hcs">${inR&&es.length?hvChips(es).map(chipHtml).join(''):'<span class="z">–</span>'}</span></div>`};
+  const rows=[];let lastM=-1,wk=0,run=[];
+  const nowSat=(()=>{const d=toD(TODAY),w=d.getDay();const s=new Date(d);s.setDate(d.getDate()+(w===0?-1:6-w));return ymd(s)})();
+  const flush=()=>{if(run.length>=3){const a=run[0],b=new Date(run[run.length-1]);b.setDate(b.getDate()+1);
+      rows.push(`<div class="hw off${run.some(x=>x._mb)?' mb':''}"><b>${a.getMonth()+1}–${b.getMonth()+1}월</b><div class="hl">${a.getMonth()+1}월 ${a.getDate()}일 – ${b.getMonth()+1}월 ${b.getDate()}일 · 대회 없음 (${run.length}주말)</div></div>`)}
+    else run.forEach(r=>rows.push(r._html));run=[]};
+  sats.forEach(sa=>{const su=new Date(sa);su.setDate(sa.getDate()+1);
+    const ref=sa>=start?sa:su, m=ref.getMonth();
+    const mb=m!==lastM; if(mb){wk=0;lastM=m} wk++;
+    const empty=!(by.get(ymd(sa))||[]).length&&!(by.get(ymd(su))||[]).length;
+    const isNow=ymd(sa)===nowSat, past=ymd(su)<TODAY;
+    const lab=isNow?'<b>이번<em>주말</em></b>':mb?`<b>${m+1}월<em>${wk}주</em></b>`:`<b><em>${wk}주</em></b>`;
+    const html=`<div class="hw${mb&&rows.length+run.length?' mb':''}${isNow?' now':''}${past&&!isNow?' past':''}">${lab}<div>${day(sa)}${day(su)}</div></div>`;
+    if(empty&&!isNow){const r=new Date(sa);r._html=html;r._mb=mb&&rows.length+run.length>0;run.push(r)}else{flush();rows.push(html)}});
+  flush();
+  $('#view').innerHTML=`<div class="hv-h"><button id="hvPrev" aria-label="이전 반기">‹</button><h3>${y} ${h===1?'1–6월':'7–12월'}</h3>
+      <button id="hvH1" aria-pressed="${h===1}">상반기</button><button id="hvH2" aria-pressed="${h===2}">하반기</button><button id="hvNext" aria-label="다음 반기">›</button></div>
+    <div class="hv-leg">${HV_LEG.map(([k,n])=>`<span style="border-color:${HV_COL[k]}">${n}</span>`).join('')}<span style="border:0;padding:0;color:var(--ink);font-weight:700">★ 프로카드</span></div>
+    <div class="hv">${rows.join('')||'<div class="empty">대회 없음</div>'}</div>
+    <button class="hv-mode" id="hvMode">월 달력으로 보기</button>`;
+  const go=(yy,hh)=>{S.half=[yy,hh];render()};
+  $('#hvPrev').onclick=()=>go(h===1?y-1:y,h===1?2:1);$('#hvNext').onclick=()=>go(h===2?y+1:y,h===2?1:2);
+  $('#hvH1').onclick=()=>go(y,1);$('#hvH2').onclick=()=>go(y,2);
+  $('#hvMode').onclick=()=>{S.calMode='month';LS.set('bb.calMode','month');render()};
+}
+function renderMonth(){
   const list=filtered({keepPast:true});
   $('#count').textContent=`${list.length}개 대회`;
   if(!S.cal){const t=toD(TODAY);S.cal=[t.getFullYear(),t.getMonth()+1]}
@@ -481,6 +583,8 @@ function renderCal(){
   $('#view').innerHTML=`<div class="cal-h"><button id="pm" aria-label="이전 달">‹</button><h3>${y}년 ${m}월</h3><button id="nm" aria-label="다음 달">›</button></div>
     <div class="grid">${g}</div>
     <div style="margin-top:10px">${sel?(selEs.length?`<div class="wk-h"><h3>${mdw(sel)}</h3><span class="c">${selEs.length}개</span></div>${selEs.map(rowHtml).join('')}`:`<div class="empty">${mdw(sel)} 대회 없음</div>`):'<div class="empty" style="padding:18px 0">날짜를 누르면 그날 대회가 보여요</div>'}</div>`;
+  $('#view').insertAdjacentHTML('beforeend',S.scope==='WW'?'':'<button class="hv-mode" id="hvMode">주말 반기 보기로</button>');
+  const hm=$('#hvMode');if(hm)hm.onclick=()=>{S.calMode='half';LS.set('bb.calMode','half');render()};
   $('#pm').onclick=()=>{S.cal=m===1?[y-1,12]:[y,m-1];S.calSel=null;render()};
   $('#nm').onclick=()=>{S.cal=m===12?[y+1,1]:[y,m+1];S.calSel=null;render()};
 }
@@ -862,6 +966,7 @@ $('#active').onclick=ev=>{const b=ev.target.closest('button');if(!b)return;
   if(b.dataset.rmFed)S.feds.delete(b.dataset.rmFed);else if(b.dataset.rmDiv)S.divs.delete(b.dataset.rmDiv);else if(b.dataset.rmKind)S.kinds.delete(b.dataset.rmKind);else S.openOnly=false;save();render()};
 document.addEventListener('click',ev=>{
   const h=ev.target.closest('[data-fav]');if(h){ev.stopPropagation();toggleFav(h.dataset.fav);return}
+  const hc=ev.target.closest('.hc[data-ev]');if(hc){openSheet(hc.dataset.ev);return}
   const c=ev.target.closest('[data-day]');if(c){S.calSel=c.dataset.day;render();return}
   const fo=ev.target.closest('[data-fed-open]');if(fo){openFed(fo.dataset.fedOpen);return}
   const sh=ev.target.closest('[data-share]');if(sh){openShare(sh.dataset.share);return}
