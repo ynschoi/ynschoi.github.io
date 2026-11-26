@@ -1,0 +1,194 @@
+{
+ "_note": "단체 안내. 각 단체 공식 페이지와 수집한 대회 공지에서 확인한 내용만 적는다. 확인하지 못한 항목은 null. 2026-11-26 작성",
+ "WNGP": {
+  "name": "WNGP", "group": "운동의모든것",
+  "summary": "운동의모든것이 운영하는 단체로 MUSA·BOB·ANBC와 같은 접수처(unmo.kr)를 씁니다. 전국 각지에서 거의 매주 열려 대회 수가 가장 많고, 상·하반기 파이널에서 프로카드를 줍니다.",
+  "natural": "mixed", "doping": "출전 시 도핑 서약, 도핑테스트·내추럴 인증제도 운영 (운동의모든것 공지)",
+  "proPath": "상·하반기 파이널 (프로카드)",
+  "judging": [
+   {"division": "보디빌딩", "criteria": "X-테이퍼 체형에 근육 사이즈와 분리도를 함께 봅니다. 사이즈가 커도 분리도가 부족하면 분리도가 좋은 선수가 앞설 수 있고, 포징·표현력·태닝까지 점수에 들어갑니다."},
+   {"division": "클래식보디빌딩", "criteria": "키에 따른 체중 제한 안에서 근육량보다 상·하체 균형과 클래식한 X-실루엣, 다리 길이를 봅니다. 과하게 마른 컨디션은 감점입니다."},
+   {"division": "클래식피지크", "criteria": "X자 실루엣과 상·하체·전후면의 볼륨과 비율이 가장 중요합니다. 베큠 포즈는 잘 쓰면 가산점이 될 수 있습니다."},
+   {"division": "피지크", "criteria": "복부의 선명도, 어깨 볼륨, 가슴 크기로 만드는 V 테이퍼가 핵심이고, 후면 삼각근부터 광배까지의 분리도와 두께도 봅니다."},
+   {"division": "머슬모델", "criteria": "스포츠모델보다 큰 근매스와 강한 컨디셔닝에, 모델다운 포즈와 클래식 보디빌딩 포즈를 섞은 표현력을 봅니다."},
+   {"division": "스포츠모델", "criteria": "근육 크기보다 X 테이퍼의 구조미, 다이어트 상태, 자연미와 모델다운 표현력을 종합해 봅니다. 상완·흉근이 지나치게 크면 감점입니다."},
+   {"division": "비키니", "criteria": "여성미를 잃지 않는 적당한 다이어트 상태를 봅니다. 대퇴사두가 다 갈라지거나 혈관이 보일 정도의 강한 다이어트는 감점입니다."}
+  ],
+  "fees": {"entry": "18만 원", "extra": null, "membership": null, "note": "파이널 28만 원"},
+  "links": {"site": "https://unmo.kr", "register": "https://unmo.kr/m/shop/tournament.php", "instagram": null, "youtube": null},
+  "sources": ["https://unmo.kr/m/bbs/list.php?boardid=44", "https://unmo.kr/m/bbs/list.php?boardid=13", "https://unmo.kr/m/shop/tournament.php"]
+ },
+ "MUSA": {
+  "name": "MUSA", "group": "운동의모든것",
+  "summary": "운동의모든것이 운영하며 WNGP와 같은 주말(보통 일요일)에 같은 지역에서 열리는 경우가 많습니다. 종목·심사 기준은 운동의모든것 공통 가이드를 따릅니다.",
+  "natural": false, "doping": null, "proPath": "상·하반기 파이널 (프로카드)",
+  "judging": [
+   {"division": "공통", "criteria": "운동의모든것 종목별 심사 가이드(보디빌딩·클래식·피지크·머슬모델·스포츠모델·비키니)를 따릅니다. WNGP 항목 참고."}
+  ],
+  "fees": {"entry": "18만 원", "extra": null, "membership": null, "note": "파이널 28만 원"},
+  "links": {"site": "https://unmo.kr", "register": "https://unmo.kr/m/shop/tournament.php", "instagram": null, "youtube": null},
+  "sources": ["https://unmo.kr/m/bbs/list.php?boardid=44", "https://unmo.kr/m/shop/tournament.php"]
+ },
+ "ANBC": {
+  "name": "ANBC", "group": "운동의모든것",
+  "summary": "운동의모든것이 운영하는 대회로 WNGP·MUSA와 같은 날 같은 장소에서 열리는 경우가 많습니다. ANBC 랭킹 점수는 WNGP 랭킹에 합산됩니다.",
+  "natural": null, "doping": null, "proPath": "ANBC 파이널 (프로전)",
+  "judging": [],
+  "fees": {"entry": "18만 원", "extra": null, "membership": null, "note": null},
+  "links": {"site": "https://unmo.kr", "register": "https://unmo.kr/m/shop/tournament.php", "instagram": null, "youtube": null},
+  "sources": ["https://unmo.kr/m/bbs/list.php?boardid=13"]
+ },
+ "BOB": {
+  "name": "BOB 챔피언십", "group": "운동의모든것",
+  "summary": "운동의모든것이 여는 상금 대회입니다. 2026년 총상금 2억 4천만 원을 내걸었고 비기너·노비스 상금을 따로 줬습니다.",
+  "natural": null, "doping": null, "proPath": null, "judging": [],
+  "fees": {"entry": null, "extra": null, "membership": null, "note": null},
+  "links": {"site": "https://unmo.kr", "register": "https://unmo.kr/m/shop/tournament.php", "instagram": null, "youtube": null},
+  "sources": ["https://unmo.kr/m/bbs/list.php?boardid=13"]
+ },
+ "PCA": {
+  "name": "PCA KOREA", "group": "PCA KOREA",
+  "summary": "영국 PCA의 한국 지부로, 같은 주말에 PCA(토)와 NPCA(일)를 나눠 여는 '포인트 리그' 방식으로 전국을 돕니다. 접수는 코치엔 앱·웹에서 받습니다.",
+  "natural": false, "doping": null, "proPath": null,
+  "judging": [
+   {"division": "보디빌딩", "criteria": "PCA 체급 -65/-75/-85/+85kg. 개인 포징과 규정 포즈 비교로 근육량과 완성도를 봅니다."},
+   {"division": "클래식보디빌딩", "criteria": "근육 사이즈보다 미적 감각과 비율. 컨디셔닝·분리도가 갖춰진 위에서 클래식한 조화를 평가합니다. 키 대비 체중 체급 A~D."},
+   {"division": "피지크", "criteria": "넓은 어깨와 얇은 허리의 대비, 복직근 선명도, 광배의 폭과 좌우 대칭. V 테이퍼 포즈가 핵심입니다."},
+   {"division": "머슬모델", "criteria": "보디빌딩식 과한 힘 표현 없이 모델다운 포즈로 X 테이퍼, 광배, 팔, 대퇴사두를 봅니다."},
+   {"division": "스포츠모델", "criteria": "과도한 근육 사이즈는 감점. 전체 컨디셔닝과 균형, 둔근·햄스트링·등 상부 발달을 봅니다."},
+   {"division": "비키니", "criteria": "광배·어깨·얇은 허리가 핵심이고 팔은 슬림할수록 좋습니다. 햄스트링 비중이 높고 대퇴사두가 너무 갈라지면 감점입니다."},
+   {"division": "핏모델", "criteria": "근육보다 균형감, 신체 비율, 무대 표현력. 건강한 비치 바디를 지향하고 의상 디자인 제한이 없습니다."}
+  ],
+  "fees": {"entry": "16만 원", "extra": null, "membership": null, "note": "얼리버드 입장권 별도 판매"},
+  "links": {"site": "https://www.pca-korea.com", "register": "https://coachn.co.kr/sub/competitions_list.php", "instagram": null, "youtube": "https://www.youtube.com/channel/UCiaDt-LYcoFRc0JeCzFRIUA"},
+  "sources": ["https://coachn.co.kr/bbs/board.php?bo_table=eventinfo", "https://www.pca-korea.com/mall/index.php"]
+ },
+ "NPCA": {
+  "name": "NPCA (PCA KOREA)", "group": "PCA KOREA",
+  "summary": "PCA KOREA가 여는 내추럴 대회로 보통 PCA 다음 날(일요일) 같은 지역에서 열립니다. 도핑검사 결과를 공지합니다. 입문자용 '뉴 빅터' 시리즈도 있습니다.",
+  "natural": true, "doping": "대회별 도핑검사, 결과 공지 (코치엔 대회공지)", "proPath": null,
+  "judging": [
+   {"division": "보디빌딩", "criteria": "NPCA 체급 -65/-70/-75/+75kg. 나머지 종목 기준은 PCA와 같습니다."}
+  ],
+  "fees": {"entry": "18만 원", "extra": null, "membership": null, "note": "뉴 빅터 15만 원"},
+  "links": {"site": "https://www.pca-korea.com", "register": "https://coachn.co.kr/sub/competitions_list.php", "instagram": null, "youtube": "https://www.youtube.com/channel/UCiaDt-LYcoFRc0JeCzFRIUA"},
+  "sources": ["https://coachn.co.kr/bbs/board.php?bo_table=cnotice", "https://coachn.co.kr/bbs/board.php?bo_table=eventinfo"]
+ },
+ "NPC": {
+  "name": "NPC Worldwide Korea (IFBB 프로 코리아)", "group": "IFBB 프로 코리아",
+  "summary": "올림피아로 이어지는 NPC/IFBB 프로 리그의 한국 대회입니다. 오픈·내추럴 리저널이 각각 연 12회 열리고, 그해 리저널에 한 번 이상 나가야 프로 퀄리파이어에 출전할 수 있습니다. NPC 월드와이드 멤버십이 필요합니다.",
+  "natural": "mixed",
+  "doping": "내추럴 대회: 미국 Quest Diagnostics 검사. 종목 오버럴 1위와 무작위 선정 선수 대상",
+  "proPath": "리저널 → 프로 퀄리파이어·아마추어 올림피아(프로카드) → IFBB 프로쇼",
+  "judging": [
+   {"division": "보디빌딩", "criteria": "8가지 규정 포즈와 개인 포징으로 사이즈, 균형, 근육질의 전체 밸런스를 봅니다. 심사위원 100% 채점."},
+   {"division": "클래식피지크", "criteria": "얇은 허리에 잘 발달된 상·하체의 조화와 조각 같은 근육미. 4가지 규정 포즈와 개인 포징의 예술성을 봅니다."},
+   {"division": "멘즈피지크", "criteria": "적당한 근육과 균형의 종합 컨디셔닝. 보디빌딩이 아니므로 과한 근육은 감점이고, 무대 표현과 호응도도 봅니다."},
+   {"division": "비키니", "criteria": "여성스럽고 자연스러운 근육미. 입문하기 가장 쉬운 여성 기본 종목으로 전면과 후면을 심사합니다."},
+   {"division": "웰니스", "criteria": "상체에 비해 잘 발달된 하체의 밸런스와 과하지 않은 사이즈·다이어트 상태를 봅니다."},
+   {"division": "피겨", "criteria": "여성미를 잃지 않으면서 조각처럼 섬세하고 균형 잡힌 근육미. 전면·후면·쿼터 턴을 봅니다."},
+   {"division": "핏모델", "criteria": "비키니보다 근육량과 컨디셔닝이 낮은 잡지 커버 같은 자연스러운 몸. 어깨·팔·다리·햄스트링에 세퍼레이션이 보이면 안 됩니다."}
+  ],
+  "fees": {"entry": "39만 원", "extra": "+15만 원", "membership": "NPC 월드와이드 멤버십 별도", "note": "트루 노비스 24만 원 · 프로 퀄리파이어 48만 원"},
+  "links": {"site": "https://ifbbprokorea.com", "register": "https://ifbbprokorea.com/schedule/", "instagram": "https://www.instagram.com/ifbbprokorea/", "youtube": "https://www.youtube.com/channel/UCO8B3aCl-XhlyfiBQhtV8Sg"},
+  "sources": ["https://ifbbprokorea.com/division_rules/", "https://ifbbprokorea.com/rules/doping/", "https://ifbbprokorea.com/schedule/"]
+ },
+ "AGP": {
+  "name": "AGP (IFBB 프로 코리아)", "group": "IFBB 프로 코리아",
+  "summary": "IFBB 프로 코리아가 여는 프로 퀄리파이어·프로쇼 브랜드입니다. 오픈과 내추럴이 따로 있고, 필리핀 프로 퀄리파이어도 엽니다.",
+  "natural": "mixed", "doping": "내추럴 프로 퀄리파이어: 오버럴 1·2위 등 도핑검사", "proPath": "프로 퀄리파이어 종목별 프로카드 1장(최대 7장)",
+  "judging": [{"division": "공통", "criteria": "NPC 종목 규정을 따릅니다. NPC 항목 참고."}],
+  "fees": {"entry": "48만 원", "extra": "+15만 원", "membership": "NPC 월드와이드 멤버십 별도", "note": "필리핀 프로 퀄리파이어 38만 원"},
+  "links": {"site": "https://ifbbprokorea.com", "register": "https://ifbbprokorea.com/schedule/", "instagram": "https://www.instagram.com/ifbbprokorea/", "youtube": "https://www.youtube.com/channel/UCO8B3aCl-XhlyfiBQhtV8Sg"},
+  "sources": ["https://ifbbprokorea.com/schedule/proqualifier/"]
+ },
+ "IFBB PRO": {
+  "name": "IFBB Professional League", "group": null,
+  "summary": "프로카드를 받은 선수만 나가는 프로 리그입니다. 프로쇼 우승 등으로 올림피아 출전권을 얻습니다. 한국에서는 AGP·몬스터짐 프로쇼가 열립니다.",
+  "natural": "mixed", "doping": null, "proPath": "프로쇼 → 올림피아",
+  "judging": [], "fees": {"entry": null, "extra": null, "membership": null, "note": null},
+  "links": {"site": "https://www.ifbbpro.com", "register": null, "instagram": null, "youtube": null},
+  "sources": ["https://www.ifbbpro.com/schedule/"]
+ },
+ "몬스터짐": {
+  "name": "월드 오브 몬스터짐", "group": "NPC Worldwide",
+  "summary": "NPC 월드와이드 승인 리저널·프로 퀄리파이어와 IFBB 프로쇼를 여는 대회 시리즈입니다(쇼맨, 김준호 클래식, 블랙크롬, 압도, 아시안 챔피언십, 코리아 내추럴 파이널). 몽골 대회도 엽니다.",
+  "natural": "mixed", "doping": null, "proPath": "아시안 챔피언십·코리아 내추럴 파이널 프로 퀄리파이어 → 프로쇼",
+  "judging": [{"division": "공통", "criteria": "NPC 종목 규정을 따릅니다. NPC 항목 참고."}],
+  "fees": {"entry": null, "extra": null, "membership": "NPC 월드와이드 멤버십 필요", "note": null},
+  "links": {"site": "https://event.monsterzym.com", "register": null, "instagram": null, "youtube": null},
+  "sources": ["https://npcnewsonline.com/schedule/"]
+ },
+ "NABBA": {
+  "name": "NABBA KOREA", "group": null,
+  "summary": "영국 NABBA의 한국 대회로 노비스 퍼스트·파이널, 아마추어 클래식, 아시아 오픈 챔피언십, 그랑프리, 프로쇼를 엽니다.",
+  "natural": null, "doping": null, "proPath": "그랑프리·아시아 오픈 → 프로쇼",
+  "judging": [], "fees": {"entry": "25만 원", "extra": null, "membership": null, "note": "대회별 25만~40만 원"},
+  "links": {"site": "https://nabba.kr", "register": "https://nabba.kr/board/com_schedule.html", "instagram": "https://instagram.com/nabbakorea/", "youtube": "https://youtube.com/@nabbakorea"},
+  "sources": ["https://nabba.kr/board/com_schedule.html"]
+ },
+ "AFEX": {
+  "name": "AFEX KOREA", "group": null,
+  "summary": "시즌 A(알파 챔피언십 등)와 시즌 B(오메가 파이널 등)로 나눠 운영하며, 프로 퀄리파이어와 노비스 클래식을 엽니다. 대회 개최 2개월 전부터 접수합니다.",
+  "natural": null, "doping": null, "proPath": "프로 퀄리파이어",
+  "judging": [], "fees": {"entry": "23.5만 원", "extra": null, "membership": null, "note": "대회별 23.5만~35만 원"},
+  "links": {"site": "https://www.afex.co.kr", "register": "https://www.afex.co.kr", "instagram": "https://www.instagram.com/afexkorea/", "youtube": null},
+  "sources": ["https://www.afex.co.kr/"]
+ },
+ "AGONAS": {
+  "name": "AGONAS KOREA", "group": "잠백이",
+  "summary": "잠백이 쇼핑몰에서 접수받는 대회로 2026년 수원·광명·서울에서 열렸습니다.",
+  "natural": null, "doping": null, "proPath": null, "judging": [],
+  "fees": {"entry": "15만 원", "extra": null, "membership": null, "note": null},
+  "links": {"site": "https://jambaekee.com", "register": "https://jambaekee.com", "instagram": "https://www.instagram.com/jambaekee_official/", "youtube": null},
+  "sources": ["https://jambaekee.com/product/2026-agonas-korea/267/"]
+ },
+ "케이클래식": {
+  "name": "케이클래식 (K-CLASSIC)", "group": "키스모스",
+  "summary": "키스모스에서 접수받는 대회로 오픈과 내추럴을 같은 날 엽니다. 2026년 대구·서울·부산에서 열렸습니다.",
+  "natural": "mixed", "doping": null, "proPath": null, "judging": [],
+  "fees": {"entry": "14만 원", "extra": "+8만 원", "membership": null, "note": "얼리버드 14만 / 일반 17만 / 추가 20만 원"},
+  "links": {"site": "https://kismos.co.kr", "register": "https://kismos.co.kr", "instagram": "https://www.instagram.com/kismos_official/", "youtube": "https://www.youtube.com/@thekismos"},
+  "sources": ["https://kismos.co.kr/product/detail.html?product_no=2245&cate_no=822&display_group=1"]
+ },
+ "ONECLASSIC": {
+  "name": "원클래식 (ONE CLASSIC)", "group": null,
+  "summary": "연 1회 대전 한밭대학교에서 열리는 단독 대회입니다. 접수 시기에 따라 참가비가 오릅니다.",
+  "natural": null, "doping": null, "proPath": null, "judging": [],
+  "fees": {"entry": "19만 원", "extra": "+9만 원", "membership": null, "note": "1차 얼리버드 19만 / 2차 24만 / 정상가 29만 원"},
+  "links": {"site": "https://oneclassic.co.kr", "register": "https://oneclassic.co.kr/register", "instagram": null, "youtube": null},
+  "sources": ["https://oneclassic.co.kr/about", "https://oneclassic.co.kr/register/notice"]
+ },
+ "NAC": {
+  "name": "NAC 코리아", "group": null,
+  "summary": "파주 엠파이브에서 열리는 대회입니다. 일정은 포스터와 인스타그램으로 공지합니다.",
+  "natural": null, "doping": null, "proPath": null, "judging": [],
+  "fees": {"entry": "15만 원", "extra": "+7만 원", "membership": null, "note": null},
+  "links": {"site": "https://www.nackorea.com", "register": "https://www.nackorea.com", "instagram": "https://www.instagram.com/nackorea_official/", "youtube": "https://www.youtube.com/@nackorea"},
+  "sources": ["https://www.nackorea.com/"]
+ },
+ "MUSCLEMANIA": {
+  "name": "머슬마니아 코리아", "group": "모델라인 컴퍼니",
+  "summary": "미국 머슬마니아의 한국 대회로 모델라인 컴퍼니가 주최합니다. 2026년은 10월 25일 광운대 동해문화예술관에서 열렸고 데님 종목과 노비스 부문이 새로 생겼습니다.",
+  "natural": true, "doping": null, "proPath": null, "judging": [],
+  "fees": {"entry": null, "extra": null, "membership": null, "note": null},
+  "links": {"site": "https://www.mmkorea.com", "register": "https://www.mmkorea.com", "instagram": "https://www.instagram.com/musclemaniakorea/", "youtube": null},
+  "sources": ["https://www.mmkorea.com/", "https://isplus.com/article/view/isp202607230119"]
+ },
+ "KBBF": {
+  "name": "대한보디빌딩협회 (KBBF)", "group": "대한체육회",
+  "summary": "대한체육회 회원단체이자 국제보디빌딩연맹(IFBB) 한국 협회입니다. Mr.&Ms. Korea, 전국체전, 생활체육대축전과 시·도 선발대회를 열고 국가대표를 선발합니다. 올림피아로 이어지는 IFBB 프로 리그와는 다른 체계입니다.",
+  "natural": null, "doping": "한국도핑방지위원회 도핑방지교육 이수 필요 (대회 요강)", "proPath": "국가대표 선발전 → IFBB 아시아·세계선수권",
+  "judging": [], "fees": {"entry": null, "extra": null, "membership": "선수 등록 필요", "note": null},
+  "links": {"site": "https://bodybuilding.or.kr", "register": "https://bodybuilding.or.kr/contest_kr", "instagram": null, "youtube": null},
+  "sources": ["https://bodybuilding.or.kr/contest_kr", "https://bodybuilding.or.kr/contest_city"]
+ },
+ "WNC": {
+  "name": "내추럴 WNC", "group": null,
+  "summary": "도핑테스트를 하는 내추럴 대회입니다. 레깅스핏 종목이 있습니다. 공식 사이트 공지는 2021년 이후 갱신이 없습니다.",
+  "natural": true, "doping": "도핑테스트 시행 (공식 사이트 메뉴)", "proPath": null, "judging": [],
+  "fees": {"entry": null, "extra": null, "membership": null, "note": null},
+  "links": {"site": "https://kfma.imweb.me", "register": "https://kfma.imweb.me", "instagram": null, "youtube": null},
+  "sources": ["https://kfma.imweb.me/"]
+ }
+}

@@ -430,14 +430,14 @@ function render(){
 
 
 /* ───────── 지난해 이맘때 ───────── */
-const normName=n=>String(n||'').toLowerCase().replace(/20\d\d|제\s*\d+\s*회|\d+(st|nd|rd|th)?|[\s\-_·()\[\]#.&,]/g,'');
+const normName=(n,f)=>String(n||'').toLowerCase().replace(new RegExp('^\\s*'+String(f||'').toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\s*'),'').replace(/20\d\d|제\s*\d+\s*회|\d+(st|nd|rd|th)?|[\s\-_·()\[\]#.&,]/g,'');
 function lastYearOf(e){
   if(!HIST.length) return null;
-  const k=normName(e.name);let best=null,bd=99;
+  const k=normName(e.name,e.fed);let best=null,bd=99;
   for(const h of HIST){
     if(h.fed!==e.fed) continue;
     const dd=Math.abs((toD(addYear(h.date,1))-toD(e.date))/864e5);
-    const same=normName(h.name)===k||(k.length>3&&normName(h.name).includes(k.slice(0,6)));
+    const hn=normName(h.name,h.fed);const same=hn===k||(k.length>1&&(hn.includes(k)||k.includes(hn)));
     if(same&&dd<60&&dd<bd){best=h;bd=dd}
   }
   return best;
@@ -447,13 +447,14 @@ function ghostHtml(list){
   if(!HIST.length||S.scope!=='KR') return '';
   // 지금부터 10주 안에서, 올해 일정에 아직 없는 작년 대회 (작년 날짜 +1년 기준)
   const from=TODAY, to=addD(TODAY,70);
-  const have=new Set(list.map(e=>e.fed+normName(e.name)));
-  const g=HIST.filter(h=>{const d=addYear(h.date,1);return d>=from&&d<=to&&!have.has(h.fed+normName(h.name))&&fedMatch(h)})
+  // 작년 같은 주말(±7일)에 같은 단체 대회가 올해도 잡혀 있으면 이미 공지된 것으로 본다
+  const cur=EV.filter(e=>!e._ww);
+  const g=HIST.filter(h=>{const d=addYear(h.date,1);return d>=from&&d<=to&&!cur.some(e=>e.fed===h.fed&&Math.abs((toD(e.date)-toD(addYear(h.date,1)))/864e5)<=7)&&fedMatch(h)})
     .sort((a,b)=>a.date.localeCompare(b.date)).slice(0,40);
   if(!g.length) return '';
-  return `<div class="ghost-h"><h3>지난해 이맘때 열린 대회</h3><small>${HIST_YEAR}년 기준 · 올해 일정 미발표</small></div>`+
+  return `<div class="ghost-h"><h3>지난해 이맘때 열린 대회</h3><small>${HIST_YEAR}년 일정 · 올해는 아직 공지 전</small></div>`+
     g.map(h=>{const d=toD(h.date),w=d.getDay();return `<div class="row ghost"><div class="date"><b>${d.getMonth()+1}.${d.getDate()}</b><span>${HIST_YEAR}</span></div>
-    <div class="mid"><div class="t"><span class="fed">${esc(fedName(h.fed))}</span>${esc(h.name)}</div><div class="sub">${esc([h.place,h.city].filter(Boolean).join(' · ')||'')}${h.src?` · 출처 ${esc(h.src)}`:''}</div></div><div class="right"></div></div>`}).join('');
+    <div class="mid"><div class="t"><span class="fed">${esc(fedName(h.fed))}</span>${esc(h.name)}</div><div class="sub">${esc([h.place,h.city].filter(Boolean).join(' · ')||'장소 미상')}</div></div><div class="right"></div></div>`}).join('');
 }
 let HIST_YEAR=new Date().getFullYear()-1;
 
