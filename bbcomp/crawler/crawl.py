@@ -45,6 +45,37 @@ def pro_key(name):
     return re.sub(r"[^a-z0-9]+", "", n)
 
 
+def korea_pro_cleanup(events):
+    """국내 프로 대회 정리.
+    - IFBB 프로 리그 전체 일정(ifbbpro_world)의 한국 AGP·아마추어 올림피아는 IFBB 프로 코리아(공식, 한글·종목·참가비 있음)와 겹치므로 뺀다
+    - 몬스터짐 프로쇼·퀄리파이어의 영문 이름은 같은 날 몬스터짐 리저널의 한글 대회명으로 바꾼다"""
+    have_kor = any(e["src"] == "ifbbkorea" for e in events)
+    out = []
+    for e in events:
+        n = e.get("name", "")
+        if have_kor and e["src"] in ("ifbbpro_world", "fitnessvolt") and e.get("country") == "KR" \
+                and re.search(r"\bAGP\b|Amateur Olympia", n, re.I):
+            continue
+        out.append(e)
+    mz_title = {}
+    for e in out:
+        if e.get("fed") == "몬스터짐" and re.search(r"[가-힣]", e.get("name", "")):
+            mz_title.setdefault(e["date"], e["name"].split(" (")[0])
+    for e in out:
+        n = e.get("name", "")
+        if e.get("fed") == "몬스터짐" and not re.search(r"[가-힣]", n):
+            base = mz_title.get(e["date"], "몬스터짐")
+            kind = "프로 퀄리파이어" if re.search(r"qualifier", n, re.I) else "IFBB 프로쇼"
+            if re.search(r"natural", n, re.I):
+                kind = "내추럴 " + kind
+            e["name"] = f"{base} ({kind})"
+            e["major"] = True
+            if any(x is not e and x.get("fed") == "몬스터짐" and x["date"] == e["date"] and kind in x.get("name", "")
+                   for x in out):
+                e["_drop"] = True  # 같은 날 같은 종류(예: '오픈 프로 퀄리파이어')가 이미 있음
+    return [e for e in out if not e.pop("_drop", False)]
+
+
 def dedupe(events):
     """같은 출처 안에서는 이름 전체가 같을 때만, 다른 출처끼리는 같은 연맹·날짜·전체 이름일 때 합친다."""
     out, seen = [], {}
@@ -189,6 +220,7 @@ def main():
     # 국내 AGP 프로쇼는 IFBB 프로 코리아(공식)에 있으므로 비공식 출처의 같은 대회는 뺀다
     if any(e["src"] == "ifbbkorea" for e in events):
         events = [e for e in events if not (e["src"] == "fitnessvolt" and e.get("country") == "KR" and "AGP" in e.get("name", ""))]
+    events = korea_pro_cleanup(events)
     events = dedupe(sorted(events, key=lambda e: MODULES.index(e["src"]) if e["src"] in MODULES else 99))
     events.sort(key=lambda e: (e["date"], e.get("fed", ""), e.get("name", "")))
     changelog = track_changes(events, old, now)

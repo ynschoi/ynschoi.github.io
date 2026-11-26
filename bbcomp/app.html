@@ -87,6 +87,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .t{font-weight:600;display:flex;align-items:center;gap:6px;flex-wrap:wrap;word-break:keep-all}
 .fed{font-size:10.5px;font-weight:700;letter-spacing:.02em;border-radius:5px;padding:1px 6px;background:var(--surface2);color:var(--ink);white-space:nowrap}
 .tg{font-size:10.5px;font-weight:700;border-radius:5px;padding:1px 6px;white-space:nowrap}
+.star{color:#e09a00;font-size:15px;line-height:1}
+.row.is-star .t{font-weight:700}
 .tg.pq{background:var(--accent-soft);color:var(--accent)}.tg.pro{background:var(--ink);color:var(--bg)}.tg.top{background:var(--warn);color:var(--bg)}.tg.nat{background:var(--ok-soft);color:var(--ok)}
 .sub{font-size:12.5px;color:var(--muted);margin-top:2px;word-break:keep-all}
 .divs{font-size:12px;color:var(--accent);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -207,7 +209,7 @@ nav.tabs button[aria-current="page"]{color:var(--accent);font-weight:700}
       <button class="fbtn" id="openF"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h18M6 12h12M10 19h4"/></svg>필터<span class="cnt" id="fcnt" hidden></span></button>
     </div>
     <div class="active" id="active"></div>
-    <div class="summary"><span id="count"></span><span style="display:flex;gap:12px"><button id="togWW" hidden></button><button id="togPast"></button></span></div>
+    <div class="summary"><span id="count"></span><span style="display:flex;gap:12px"><button id="togStar"></button><button id="togWW" hidden></button><button id="togPast"></button></span></div>
   </div>
 
   <main id="view"></main>
@@ -262,7 +264,7 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 const S={
   tab:'list', scope:LS.get('bb.scope','KR'), q:'',
   feds:new Set(LS.get('bb.feds',[])), divs:new Set(LS.get('bb.divs',[])), openOnly:LS.get('bb.openOnly',false),
-  showPast:false, wwAll:false, kinds:new Set(), favs:new Set(LS.get('bb.favs',[])), cal:null, calSel:null, limit:60,
+  showPast:false, starOnly:LS.get('bb.starOnly',false), wwAll:false, kinds:new Set(), favs:new Set(LS.get('bb.favs',[])), cal:null, calSel:null, limit:60,
 };
 let DATA={events:[],sources:{},generated:null}, EV=[], FEDS={}, HIST=[];
 const SITE='https://ynschoi.github.io/bbcomp/';
@@ -283,6 +285,15 @@ const range=e=>e.end?`${mdw(e.date)}–${mdw(e.end)}`:mdw(e.date);
 const fedName=f=>FED_LABEL[f]||f;
 const title=e=>{const n=e.name||'';const f=fedName(e.fed);return (e.fed==='기타'||n.toUpperCase().startsWith(String(e.fed).toUpperCase()))?n:`${f} ${n}`};
 
+function sname(e){
+  let n=String(e.name||'');
+  n=n.replace(/^\s*20\d\d\s*(년도?)?\s*/,'').replace(/제\s*\d+\s*회\s*/g,'').replace(/\s*(겸|및)\s.*$/,'')
+     .replace(/선발대회|선발전/,'선발').replace(/\s+\d\.\s.*$|\s*기\s*간\s*:.*$/,'')
+     .replace(/\s*POINT LEAGUE|\s*SERIES IN\b/i,'').replace(/\s*(CHAMPIONSHIP|챔피언쉽)\b/i,' 챔피언십').replace(/\s{2,}/g,' ').trim();
+  const f=fedName(e.fed);
+  if(n.toUpperCase().startsWith(f.toUpperCase())) n=n.slice(f.length).trim();
+  return (e.fed==='기타'?'':f+' ')+n;
+}
 function catOf(d){for(const[c,re] of DIV_CATS) if(re.test(d)) return c; return '기타 종목'}
 function prep(e){
   const cats={};
@@ -293,6 +304,11 @@ function prep(e){
   e._lv = e.fed==='IFBB PRO' ? (/olympia|arnold classic/i.test(nm)&&!/amateur/i.test(nm)?'top':'pro')
         : (/퀄리파이어|qualifier|아마추어 올림피아|amateur olympia/i.test(nm)||e.proCards) ? 'pq' : null;
   e._nat = /natural|내추럴|네추럴/i.test(nm) || ['ANBC','WNBF'].includes(e.fed);
+  // ★ 중요 대회: 프로카드를 주거나 프로쇼·시즌 파이널·챔피언십급 (노비스 대회 제외)
+  const big=/파이널|final|챔피언|champion|그랑프리|grand ?prix|올림피아|olympia|프로쇼|pro ?show|프로전|퀄리파이어|qualifier|오메가|알파|\bAOC\b|\bACB\b|아마추어 클래식|Mr\.?\s*&?\s*Ms\.?\s*Korea|전국체육대회/i;
+  e._star = !!e._lv || (!e._ww && e.fed==='BOB') ||
+    (e.fed==='KBBF' ? /Mr\.?\s*&\s*Ms\.?\s*Korea|^제?\s*\d*회?\s*전국체육대회$|국가대표/i.test(nm.replace(/^20\d\d\s*(년도?)?\s*/,'').trim())
+     : (!e._ww && big.test(nm) && !/노비스|novice/i.test(nm)));
   const recent=s=>s&&diff(s)>=-14;
   e._chg=(e.changes||[]).some(c=>recent(c.at)) && endOf(e)>=TODAY;
   e._new=!e._chg && !!e.firstSeen && e.firstSeen>FIRST && recent(e.firstSeen) && endOf(e)>=TODAY;
@@ -317,6 +333,8 @@ function fedMatch(e){
   return false;
 }
 const LV={pq:'프로카드',pro:'프로쇼',top:'메이저'};
+const FED_COLOR={NPC:'#7b3fbf',AGP:'#7b3fbf','IFBB PRO':'#7b3fbf','몬스터짐':'#1f8a4c',NABBA:'#d0312d',AFEX:'#e07b00',
+  AGONAS:'#2f4f8f',BOB:'#b8860b',KBBF:'#1d5fbf','케이클래식':'#8a5a2b',ONECLASSIC:'#8a5a2b',MUSCLEMANIA:'#c2185b',NAC:'#00838f'};
 function tagsHtml(e){return (e._lv?`<span class="tg ${e._lv}">${LV[e._lv]}</span>`:'')+(e._nat?'<span class="tg nat">내추럴</span>':'')
   +(e._chg?'<span class="tg chg">일정 변경</span>':'')+(e._new?'<span class="tg new">NEW</span>':'')}
 // 해외는 기본으로 프로 퀄리파이어·프로쇼·메이저만 (각국 지역 대회는 '전체 보기'로)
@@ -326,6 +344,7 @@ function filtered(opts={}){
   return base().filter(e=>{
     if(!opts.keepPast && !S.showPast && endOf(e)<TODAY) return false;
     if(!fedMatch(e)) return false;
+    if(S.starOnly && !e._star) return false;
     if(S.kinds.size && !((e._lv&&S.kinds.has(e._lv==='top'?'pro':e._lv))||(e._nat&&S.kinds.has('nat')))) return false;
     if(S.divs.size && !e._catList.some(c=>S.divs.has(c))) return false;
     if(S.openOnly){const s=status(e).k;if(s!=='open'&&s!=='soon')return false;}
@@ -347,9 +366,9 @@ function rowHtml(e){
   const d=toD(e.date),w=d.getDay(),st=status(e),fav=S.favs.has(e.id);
   const sub=[e.end?range(e):null,e._ww?[e.city,e.country].filter(Boolean).join(', '):null,e.place||(e._ww?null:'장소 추후 공지'),e.fee].filter(Boolean).map(esc).join(' · ');
   const dv=divSummary(e);
-  return `<div class="row${st.k==='ended'?' past':''}" data-id="${esc(e.id)}" role="button" tabindex="0">
+  return `<div class="row${st.k==='ended'?' past':''}${e._star?' is-star':''}" data-id="${esc(e.id)}" role="button" tabindex="0">
     <div class="date"><b>${d.getDate()}</b><span class="${w===6?'sat':w===0?'sun':''}">${WD[w]}</span></div>
-    <div class="mid"><div class="t"><span class="fed">${esc(fedName(e.fed))}</span>${tagsHtml(e)}${esc(title(e).replace(new RegExp('^'+fedName(e.fed).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\s*'),'')||title(e))}</div>
+    <div class="mid"><div class="t"><span class="fed"${FED_COLOR[e.fed]?` style="background:${FED_COLOR[e.fed]};color:#fff"`:''}>${esc(fedName(e.fed))}</span>${e._star?'<span class="star" title="중요 대회">★</span>':''}${tagsHtml(e)}${esc(title(e).replace(new RegExp('^'+fedName(e.fed).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\s*'),'')||title(e))}</div>
       ${sub?`<div class="sub">${sub}</div>`:''}${dv?`<div class="divs">${esc(dv)}</div>`:''}</div>
     <div class="right"><span class="st ${st.k}">${esc(st.t)}</span>
       <button class="heart" data-fav="${esc(e.id)}" aria-pressed="${fav}" aria-label="관심 대회">${heartSvg(fav)}</button></div></div>`;
@@ -392,6 +411,7 @@ function renderBar(){
     [...S.kinds].map(k=>`<button class="pill x" data-rm-kind="${k}">${({pq:'프로카드',pro:'프로쇼·메이저',nat:'내추럴'})[k]}</button>`).join('')+
     (S.openOnly?`<button class="pill x" data-rm-open>접수 가능만</button>`:'');
   $('#togPast').textContent=S.showPast?'지난 대회 숨기기':'지난 대회 보기';
+  $('#togStar').textContent=S.starOnly?'★ 중요만 보는 중':'★ 중요 대회만';$('#togStar').style.fontWeight=S.starOnly?'700':'';
   $('#togWW').hidden=S.scope!=='WW';$('#togWW').textContent=S.wwAll?'중요 대회만':'지역 대회까지 전체';
   $('#scKR').setAttribute('aria-pressed',S.scope==='KR');$('#scWW').setAttribute('aria-pressed',S.scope==='WW');
 }
@@ -531,7 +551,7 @@ function renderFav(){
       :'<div class="empty">대회 목록에서 ♡를 눌러 출전·관심 대회를 모아두세요.<br>모은 대회는 이미지로 공유하거나 캘린더에 한 번에 넣을 수 있어요.</div>'}</section>
     ${past.length?`<section class="wk"><div class="wk-h"><h3>지난 대회</h3><span class="c">${past.length}개</span></div>${past.map(rowHtml).join('')}</section>`:''}
     <section class="wk"><div class="wk-h"><h3>전체 일정 공유</h3></div>
-      <div class="acts" style="margin-top:10px"><button class="btn" data-share="weeks">다가오는 4주 일정 이미지</button><button class="btn" data-share="month">이번 달 일정 이미지</button></div></section>`;
+      <div class="acts" style="margin-top:10px"><button class="btn" data-share="weeks">다가오는 4주 일정 이미지</button><button class="btn" data-share="month">이번 달 일정 이미지</button><button class="btn pri" data-share="year">연간 한눈에 보기</button></div></section>`;
 }
 
 /* ───────── 정보 탭: 구독 캘린더 · 변경 내역 · 출처 ───────── */
@@ -626,15 +646,81 @@ const pad2=n=>String(n).padStart(2,'0');
 function roundRect(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()}
 function fitText(g,s,x,y,maxW){s=String(s||'');if(g.measureText(s).width<=maxW){g.fillText(s,x,y);return}
   while(s.length>1&&g.measureText(s+'…').width>maxW)s=s.slice(0,-1);g.fillText(s+'…',x,y)}
+
+/* ───────── 연간 한눈에 보기 (월별 칸 · 단체 색 · ★ 중요) ───────── */
+async function drawYear(){
+  const yr=TODAY.slice(0,4);
+  // 지금 필터 그대로, 올해 국내 대회 (지난 대회 포함)
+  const list=filtered({keepPast:true}).filter(e=>e.date.startsWith(yr)&&!e._ww).sort((a,b)=>a.date.localeCompare(b.date)||(b._star-a._star));
+  // 같은 날 같은 시리즈(예: 아시안 챔피언십 리저널·퀄리파이어·프로쇼)는 한 줄로
+  const KIND_SHORT=k=>k.replace(/오픈 |내추럴 /g,m=>m).replace('IFBB 프로쇼','프로쇼').replace('프로 퀄리파이어','프로퀄').replace(' 리저널','').replace('리저널','');
+  const groups=[];const gk={};
+  list.forEach(e=>{const nm=sname(e);const m=nm.match(/^(.*?)\s*\(([^)]*)\)\s*$/);
+    const base=m?m[1]:nm, kind=m?m[2]:'';const k=e.fed+'|'+e.date+'|'+base;
+    if(gk[k]){gk[k].kinds.push(kind);gk[k].star=gk[k].star||e._star;return}
+    gk[k]={e,base,kinds:kind?[kind]:[],star:e._star};groups.push(gk[k])});
+  const lines=groups.map(x=>{const ks=[...new Set(x.kinds.map(KIND_SHORT).filter(Boolean))];
+    return {e:x.e,star:x.star,text:x.base+(ks.length?` ${ks.join('/')}`:'')}});
+  const byM={};lines.forEach(l=>{const m=+l.e.date.slice(5,7);(byM[m]=byM[m]||[]).push(l)});
+  const months=Object.keys(byM).map(Number).sort((a,b)=>a-b);
+  const W=1080,H=SHARE.fmt==='story'?1920:1350;
+  const c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
+  try{await Promise.all([document.fonts.load('700 60px "IBM Plex Sans KR"'),document.fonts.load('500 20px "IBM Plex Sans KR"'),document.fonts.load('600 20px "IBM Plex Mono"')])}catch(e){}
+  const F='"IBM Plex Sans KR","Apple SD Gothic Neo","Noto Sans KR",sans-serif', M='"IBM Plex Mono",ui-monospace,monospace';
+  const C={bg:'#fffdf9',ink:'#1b2233',mut:'#6b6f7a',acc:'#a55a1f',line:'#e2dacd',star:'#e09a00'};
+  g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+  const pad=44;
+  g.fillStyle=C.acc;g.fillRect(pad,70,W-pad*2,4);
+  g.fillStyle=C.ink;g.font=`700 64px ${F}`;g.textAlign='center';g.fillText(`${yr} 대회일정`,W/2,140);
+  g.fillStyle=C.mut;g.font=`500 22px ${F}`;g.fillText(`${S.starOnly?'★ 중요 대회':'국내 대회'} ${list.length}개 · ${md(TODAY)} 기준`,W/2,178);g.textAlign='left';
+  if(!months.length){g.fillStyle=C.mut;g.font=`500 30px ${F}`;g.fillText('조건에 맞는 대회가 없어요',pad,260);return c}
+  const cols=months.length>6?4:months.length>2?3:months.length;
+  const rows=Math.ceil(months.length/cols);
+  const top=208, bottom=H-88, colW=(W-pad*2)/cols, rowH=(bottom-top)/rows;
+  // 글자 크기: 줄바꿈 포함 가장 긴 달이 칸에 들어가는 최대 크기 (12~19px)
+  const wrap=(s,fs,maxW)=>{g.font=`700 ${fs}px ${F}`;const out=[];let cur='';
+    for(const w of s.split(' ')){const tr=cur?cur+' '+w:w;if(g.measureText(tr).width>maxW&&cur){out.push(cur);cur=w}else cur=tr}
+    if(cur)out.push(cur);return out};
+  let fs=19;
+  const need=fs=>Math.max(...months.map(m=>byM[m].reduce((n,l)=>{g.font=`600 ${fs}px ${M}`;const dw=g.measureText('00–00 ').width;
+    return n+wrap(l.text+(l.star?' ★':''),fs,colW-dw-10).length},0)))*fs*1.3;
+  while(fs>12&&need(fs)>rowH-66)fs--;
+  const lh=Math.round(fs*1.3);
+  months.forEach((m,i)=>{
+    const cx=pad+(i%cols)*colW, cy=top+Math.floor(i/cols)*rowH;
+    g.fillStyle=C.ink;g.font=`700 42px ${F}`;g.fillText(`${m}월`,cx+2,cy+44);
+    let yy=cy+44+14+lh;
+    g.font=`600 ${fs}px ${M}`;const dw=g.measureText('00–00 ').width;
+    let shown=0;
+    byM[m].forEach(l=>{
+      const e=l.e;if(yy>cy+rowH-lh)return;shown++;
+      g.font=`600 ${fs}px ${M}`;g.fillStyle=C.mut;g.fillText(`${e.date.slice(8)}${e.end?'–'+e.end.slice(8):''}`,cx+2,yy);
+      const parts=wrap(l.text+(l.star?' ★':''),fs,colW-dw-10);
+      parts.forEach((ln,j)=>{
+        g.font=`${l.star?700:500} ${fs}px ${F}`;g.fillStyle=FED_COLOR[e.fed]||C.ink;
+        if(ln.endsWith('★')){const s=ln.slice(0,-1);g.fillText(s,cx+2+dw,yy);g.fillStyle=C.star;g.fillText('★',cx+2+dw+g.measureText(s).width,yy)}
+        else g.fillText(ln,cx+2+dw,yy);
+        yy+=lh;
+      });
+    });
+    if(shown<byM[m].length){g.font=`600 ${fs}px ${F}`;g.fillStyle=C.acc;g.fillText(`+${byM[m].length-shown}개 더`,cx+2+dw,cy+rowH-4)}
+  });
+  g.fillStyle=C.line;g.fillRect(pad,H-74,W-pad*2,2);
+  g.font=`600 20px ${F}`;g.fillStyle=C.star;g.fillText('★',pad,H-38);g.fillStyle=C.mut;g.font=`500 20px ${F}`;
+  g.fillText('프로카드·파이널 등 중요 대회   일정은 주최 측 사정으로 바뀔 수 있어요',pad+26,H-38);
+  g.textAlign='right';g.font=`600 20px ${M}`;g.fillStyle=C.acc;g.fillText('ynschoi.github.io/bbcomp',W-pad,H-38);g.textAlign='left';
+  return c;
+}
 async function openShare(kind){
   if(kind)SHARE.kind=kind;
   $('#sheet').innerHTML=`<div class="grab"></div><h2>공유 이미지</h2>
     <div class="seg" role="group"><button data-sfmt="feed" aria-pressed="${SHARE.fmt==='feed'}">피드 4:5</button><button data-sfmt="story" aria-pressed="${SHARE.fmt==='story'}">스토리 9:16</button></div>
     <img class="share-prev" id="sImg" alt="공유 이미지 미리보기">
+    ${SHARE.kind==='year'?`<p class="src" style="text-align:center">지금 걸린 필터가 그대로 들어가요. ‘★ 중요 대회만’을 켜면 이 이미지처럼 핵심 대회만 담겨요.</p>`:''}
     <p class="src" style="text-align:center">휴대폰에서는 이미지를 길게 눌러 저장한 뒤 인스타에 올리세요.</p>
     <div class="acts"><button class="btn pri" id="sShare">공유하기</button><button class="btn" id="sSave">이미지 저장</button><button class="btn" id="sClose">닫기</button></div>`;
   $('#scrim').hidden=false;$('#sheet').hidden=false;$('#sClose').onclick=closeSheet;
-  const c=await drawShare();$('#sImg').src=c.toDataURL('image/png');
+  const c=await (SHARE.kind==='year'?drawYear():drawShare());$('#sImg').src=c.toDataURL('image/png');
   const file=()=>new Promise(r=>c.toBlob(b=>r(new File([b],'bodybuilding-schedule.png',{type:'image/png'})),'image/png'));
   $('#sShare').onclick=async()=>{try{const f=await file();if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'보디빌딩 대회일정'})}else toast('이미지를 길게 눌러 저장해 주세요')}catch(e){}};
   $('#sSave').onclick=async()=>{try{const f=await file();const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500)}catch(e){toast('이미지를 길게 눌러 저장해 주세요')}};
@@ -728,6 +814,7 @@ $('#q').oninput=e=>{S.q=e.target.value;S.limit=60;render()};
 $('#openF').onclick=filterSheet;
 $('#togPast').onclick=()=>{S.showPast=!S.showPast;render()};
 $('#togWW').onclick=()=>{S.wwAll=!S.wwAll;S.limit=60;render()};
+$('#togStar').onclick=()=>{S.starOnly=!S.starOnly;LS.set('bb.starOnly',S.starOnly);S.limit=60;render()};
 $('#scKR').onclick=()=>{S.scope='KR';S.feds.clear();S.limit=60;save();render()};
 $('#scWW').onclick=()=>{S.scope='WW';S.feds.clear();S.limit=60;save();render()};
 $('#active').onclick=ev=>{const b=ev.target.closest('button');if(!b)return;
