@@ -524,7 +524,7 @@ $('#scrim').onclick=closeSheet;
 $('#view').innerHTML='<div class="empty">대회 일정을 불러오는 중…</div>';
 fetch('data.json',{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}).then(d=>{
   DATA=d;EV=(d.events||[]).map(prep).sort((a,b)=>a.date.localeCompare(b.date));
-  if(d.generated){$('#upd').textContent=`${md(d.generated.slice(0,10))} 업데이트 · 공식 사이트 ${Object.values(d.sources||{}).filter(s=>s.ok).length}곳`}
+  if(d.generated){$('#upd').textContent=`${md(d.generated.slice(0,10))} 업데이트 · 출처 ${Object.values(d.sources||{}).filter(s=>s.ok).length}곳`}
   if(!EV.some(e=>e._ww))$('.scope').hidden=true;
   render();
 }).catch(err=>{$('#upd').textContent='';$('#view').innerHTML=`<div class="empty">일정을 불러오지 못했어요 (${esc(err.message)}).<br>잠시 후 새로고침해 주세요.</div>`});
