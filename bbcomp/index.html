@@ -298,14 +298,53 @@ const range=e=>e.end?`${mdw(e.date)}–${mdw(e.end)}`:mdw(e.date);
 const fedName=f=>FED_LABEL[f]||f;
 const title=e=>{const n=e.name||'';const f=fedName(e.fed);return (e.fed==='기타'||n.toUpperCase().startsWith(String(e.fed).toUpperCase()))?n:`${f} ${n}`};
 
+const CITY_EN={SEOUL:'서울',BUSAN:'부산',DAEGU:'대구',INCHEON:'인천',GWANGJU:'광주',DAEJEON:'대전',ULSAN:'울산',SEJONG:'세종',
+  SUWON:'수원',YONGIN:'용인',GOYANG:'고양',SEONGNAM:'성남',BUCHEON:'부천',ANSAN:'안산',ANYANG:'안양',SIHEUNG:'시흥',HWASEONG:'화성',
+  GIMPO:'김포',GIMHAE:'김해',CHANGWON:'창원',YANGSAN:'양산',JEJU:'제주',JEONBUK:'전북',GYEONGNAM:'경남',CHEONAN:'천안',CHEONGJU:'청주',
+  POHANG:'포항',GUMI:'구미',ASAN:'아산',GWANGMYEONG:'광명',PAJU:'파주',UIJEONGBU:'의정부',NAMYANGJU:'남양주'};
+const NABBA_KO=[[/asia open championship/i,'아시아 오픈 챔피언십(AOC)'],[/grand prix/i,'그랑프리(GP)'],[/pro show/i,'프로쇼(NPS)'],
+  [/novice first/i,'노비스 퍼스트(NF)'],[/novice final/i,'노비스 파이널(NF)'],[/amateur classic seoul/i,'아마추어 클래식 서울(ACS)'],
+  [/amateur classic busan/i,'아마추어 클래식 부산(ACB)'],[/mega fitness weekend/i,'메가 피트니스 위크엔드'],[/natural bodybuilding/i,'내추럴 보디빌딩']];
 function sname(e){
   let n=String(e.name||'');
+  const f=fedName(e.fed);
+  if(e.fed==='NABBA'){for(const[re,k] of NABBA_KO) if(re.test(n)){n=k;break}}
+  if(/^N?PCA$/.test(e.fed)){ // 'SEOUL POINT LEAGUE' → '서울', 'NEW VICTOR SERIES IN SEOUL' → '뉴빅터 서울'
+    const nv=/new victor/i.test(n);
+    n=n.replace(/new victor series in/i,'').replace(/point league|series/ig,'').trim();
+    n=n.split(/\s+/).map(w=>CITY_EN[w.toUpperCase()]||w).join(' ');
+    if(nv) n='뉴빅터 '+n;
+  }
   n=n.replace(/^\s*20\d\d\s*(년도?)?\s*/,'').replace(/제\s*\d+\s*회\s*/g,'').replace(/\s*(겸|및)\s.*$/,'')
      .replace(/선발대회|선발전/,'선발').replace(/\s+\d\.\s.*$|\s*기\s*간\s*:.*$/,'')
-     .replace(/\s*POINT LEAGUE|\s*SERIES IN\b/i,'').replace(/\s*(CHAMPIONSHIP|챔피언쉽)\b/i,' 챔피언십').replace(/\s{2,}/g,' ').trim();
-  const f=fedName(e.fed);
+     .replace(/\s*#\d+\s*$/,'').replace(/\s*\((상|하)반기 프로카드\)/,' $1반기').replace(/\bBOB CHAMPIONSHIP\b/i,'BOB 챔피언십')
+     .replace(/\s*(CHAMPIONSHIP|챔피언쉽)\b/i,' 챔피언십').replace(/\s{2,}/g,' ').trim();
+  if(e.fed==='KBBF'){ // 협회 대회명은 길어서 핵심만: 'Mr.&Ms. 경기 선발', '서울특별시장배' 등
+    n=n.split(/\s+&\s+(?=[가-힣]|전국체)|\s\/\s|\s*\(/)[0].replace(/보디빌딩\s*(&\s*)?(피트니스)?\s*(대회|경기)?|피트니스\s*(선수권\s*)?대회|선수권대회|대회$/g,'')
+      .replace(/MR\.?\s*&\s*MS\.?/i,'Mr.&Ms.').replace(/\s{2,}/g,' ').trim();
+  }
   if(n.toUpperCase().startsWith(f.toUpperCase())) n=n.slice(f.length).trim();
   return (e.fed==='기타'?'':f+' ')+n;
+}
+// 같은 날 같은 단체 대회 여러 개를 표처럼 한 줄로: '내추럴 리저널'+'오픈 리저널' → '내추럴/오픈 리저널', '경기'+'파이널' → '경기X파이널'
+function combineNames(fed,names){
+  const f=fedName(fed);const parts=[...new Set(names.map(n=>n.startsWith(f+' ')?n.slice(f.length+1):n))];
+  if(parts.length===1) return `${fed==='기타'?'':f+' '}${parts[0]}`;
+  const fin=parts.find(p=>/^파이널/.test(p)), city=parts.find(p=>!/파이널/.test(p));
+  if(fin&&city&&parts.length===2) return `${f} ${city}X${fin}`;
+  const sp=parts.map(p=>p.split(' ')),last=sp[0][sp[0].length-1];
+  if(sp.every(w=>w.length===2&&w[1]===last)) return `${f} ${sp.map(w=>w[0]).join('/')} ${last}`;
+  // '아시안 챔피언십 (오픈 리저널)' 꼴: 앞부분이 같으면 괄호 안만 모은다
+  const base=parts.map(p=>p.replace(/\s*\(.*\)$/,''));
+  if(base.every(b=>b===base[0])){
+    // 괄호 안 종류를 표처럼: '내추럴/오픈 리저널/프로퀄/프로쇼'
+    const ks=parts.map(p=>(p.match(/\((.*)\)$/)||[,''])[1]).filter(Boolean);
+    const reg=ks.filter(k=>/리저널/.test(k)).map(k=>k.replace(/\s*리저널/,'')).sort((a,b)=>a.includes('내추럴')?-1:1);
+    const other=ks.filter(k=>!/리저널/.test(k)).map(k=>k.replace('IFBB 프로쇼','프로쇼').replace('프로 퀄리파이어','프로퀄'))
+      .sort((a,b)=>(/프로쇼/.test(a)?1:0)-(/프로쇼/.test(b)?1:0));
+    const out=[reg.length?`${reg.join('/')} 리저널`:null,...other].filter(Boolean);
+    return `${f} ${base[0]} ${out.join('/')}`}
+  return `${f} ${parts.join(' / ')}`;
 }
 function catOf(d){for(const[c,re] of DIV_CATS) if(re.test(d)) return c; return '기타 종목'}
 function prep(e){
@@ -317,11 +356,13 @@ function prep(e){
   e._lv = e.fed==='IFBB PRO' ? (/olympia|arnold classic/i.test(nm)&&!/amateur/i.test(nm)?'top':'pro')
         : (/퀄리파이어|qualifier|아마추어 올림피아|amateur olympia/i.test(nm)||e.proCards) ? 'pq' : null;
   e._nat = /natural|내추럴|네추럴/i.test(nm) || ['ANBC','WNBF'].includes(e.fed);
-  // ★ 중요 대회: 프로카드를 주거나 프로쇼·시즌 파이널·챔피언십급 (노비스 대회 제외)
-  const big=/파이널|final|챔피언|champion|그랑프리|grand ?prix|올림피아|olympia|프로쇼|pro ?show|프로전|퀄리파이어|qualifier|오메가|알파|\bAOC\b|\bACB\b|아마추어 클래식|Mr\.?\s*&?\s*Ms\.?\s*Korea|전국체육대회/i;
-  e._star = !!e._lv || (!e._ww && e.fed==='BOB') ||
-    (e.fed==='KBBF' ? /Mr\.?\s*&\s*Ms\.?\s*Korea|^제?\s*\d*회?\s*전국체육대회$|국가대표/i.test(nm.replace(/^20\d\d\s*(년도?)?\s*/,'').trim())
-     : (!e._ww && big.test(nm) && !/노비스|novice/i.test(nm)));
+  // ★ = 프로카드 획득 대회 (선수들이 공유하는 연간표 기준)
+  e._star = !e._ww && (e._lv==='pq'
+    || (/^(WNGP|MUSA|ANBC)$/.test(e.fed) && /파이널|프로전/.test(nm))
+    || e.fed==='BOB' || /\bBOB\b/i.test(nm)
+    || (/^N?PCA$/.test(e.fed) && /아시안|asian/i.test(nm))
+    || (e.fed==='AFEX' && /챔피언|champion|오메가|omega|알파|alpha|퀄리파이어|drax/i.test(nm))
+    || (e.fed==='NABBA' && /asia open|아시아 오픈|grand prix|그랑프리|pro show|프로쇼/i.test(nm)));
   const recent=s=>s&&diff(s)>=-14;
   e._chg=(e.changes||[]).some(c=>recent(c.at)) && endOf(e)>=TODAY;
   e._new=!e._chg && !!e.firstSeen && e.firstSeen>FIRST && recent(e.firstSeen) && endOf(e)>=TODAY;
@@ -381,7 +422,7 @@ function rowHtml(e){
   const dv=divSummary(e);
   return `<div class="row${st.k==='ended'?' past':''}${e._star?' is-star':''}" data-id="${esc(e.id)}" role="button" tabindex="0">
     <div class="date"><b>${d.getDate()}</b><span class="${w===6?'sat':w===0?'sun':''}">${WD[w]}</span></div>
-    <div class="mid"><div class="t"><span class="fed"${FED_COLOR[e.fed]?` style="background:${FED_COLOR[e.fed]};color:#fff"`:''}>${esc(fedName(e.fed))}</span>${e._star?'<span class="star" title="중요 대회">★</span>':''}${tagsHtml(e)}${esc(title(e).replace(new RegExp('^'+fedName(e.fed).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\s*'),'')||title(e))}</div>
+    <div class="mid"><div class="t"><span class="fed"${FED_COLOR[e.fed]?` style="background:${FED_COLOR[e.fed]};color:#fff"`:''}>${esc(fedName(e.fed))}</span>${e._star?'<span class="star" title="프로카드 획득 대회">★</span>':''}${tagsHtml(e)}${esc(sname(e).replace(new RegExp('^'+fedName(e.fed).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\s*'),'')||title(e))}</div>
       ${sub?`<div class="sub">${sub}</div>`:''}${dv?`<div class="divs">${esc(dv)}</div>`:''}</div>
     <div class="right"><span class="st ${st.k}">${esc(st.t)}</span>
       <button class="heart" data-fav="${esc(e.id)}" aria-pressed="${fav}" aria-label="관심 대회">${heartSvg(fav)}</button></div></div>`;
@@ -424,7 +465,7 @@ function renderBar(){
     [...S.kinds].map(k=>`<button class="pill x" data-rm-kind="${k}">${({pq:'프로카드',pro:'프로쇼·메이저',nat:'내추럴'})[k]}</button>`).join('')+
     (S.openOnly?`<button class="pill x" data-rm-open>접수 가능만</button>`:'');
   $('#togPast').textContent=S.showPast?'지난 대회 숨기기':'지난 대회 보기';
-  $('#togStar').textContent=S.starOnly?'★ 중요만 보는 중':'★ 중요 대회만';$('#togStar').style.fontWeight=S.starOnly?'700':'';
+  $('#togStar').textContent=S.starOnly?'★ 프로카드 대회만 보는 중':'★ 프로카드 대회만';$('#togStar').style.fontWeight=S.starOnly?'700':'';
   $('#togWW').hidden=S.scope!=='WW';$('#togWW').textContent=S.wwAll?'중요 대회만':'지역 대회까지 전체';
   $('#scKR').setAttribute('aria-pressed',S.scope==='KR');$('#scWW').setAttribute('aria-pressed',S.scope==='WW');
 }
@@ -643,7 +684,7 @@ async function drawShare(){
     const fx=pad+180; const fn=fedName(e.fed);
     g.font=`700 24px ${F}`;const fw=g.measureText(fn).width+22;
     g.fillStyle=C.soft;roundRect(g,fx,yy+22,fw,38,8);g.fill();g.fillStyle=C.ink;g.fillText(fn,fx+11,yy+50);
-    g.font=`700 36px ${F}`;g.fillStyle=C.ink;fitText(g,(e.name||'').replace(new RegExp('^'+fn+'\\s*'),''),fx+fw+14,yy+53,W-pad-(fx+fw+14)-120);
+    g.font=`700 36px ${F}`;g.fillStyle=C.ink;fitText(g,sname(e).replace(new RegExp('^'+fn.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\s*'),''),fx+fw+14,yy+53,W-pad-(fx+fw+14)-120);
     g.font=`500 25px ${F}`;g.fillStyle=C.mut;
     const sub=[e.place||e.city||'장소 추후 공지',e.deadline&&e.deadline>=TODAY?`접수 ~${md(e.deadline)}`:null].filter(Boolean).join(' · ');
     fitText(g,sub,fx,yy+88,W-pad-fx);
@@ -665,15 +706,14 @@ async function drawYear(){
   const yr=TODAY.slice(0,4);
   // 지금 필터 그대로, 올해 국내 대회 (지난 대회 포함)
   const list=filtered({keepPast:true}).filter(e=>e.date.startsWith(yr)&&!e._ww).sort((a,b)=>a.date.localeCompare(b.date)||(b._star-a._star));
-  // 같은 날 같은 시리즈(예: 아시안 챔피언십 리저널·퀄리파이어·프로쇼)는 한 줄로
-  const KIND_SHORT=k=>k.replace(/오픈 |내추럴 /g,m=>m).replace('IFBB 프로쇼','프로쇼').replace('프로 퀄리파이어','프로퀄').replace(' 리저널','').replace('리저널','');
+  // 같은 날 같은 단체 대회는 한 줄로 (표 방식)
   const groups=[];const gk={};
-  list.forEach(e=>{const nm=sname(e);const m=nm.match(/^(.*?)\s*\(([^)]*)\)\s*$/);
-    const base=m?m[1]:nm, kind=m?m[2]:'';const k=e.fed+'|'+e.date+'|'+base;
-    if(gk[k]){gk[k].kinds.push(kind);gk[k].star=gk[k].star||e._star;return}
-    gk[k]={e,base,kinds:kind?[kind]:[],star:e._star};groups.push(gk[k])});
-  const lines=groups.map(x=>{const ks=[...new Set(x.kinds.map(KIND_SHORT).filter(Boolean))];
-    return {e:x.e,star:x.star,text:x.base+(ks.length?` ${ks.join('/')}`:'')}});
+  const gfed=e=>/\bAGP\b/.test(e.name||'')?'AGP':e.fed;
+  const gname=e=>gfed(e)==='AGP'?'AGP '+sname(e).replace(/^(NPC|IFBB PRO)\s+/,'').replace(/^AGP\s*/,''):sname(e);
+  list.forEach(e=>{const k=gfed(e)+'|'+e.date;
+    if(gk[k]){gk[k].names.push(gname(e));gk[k].star=gk[k].star||e._star;if(e.end>(gk[k].e.end||''))gk[k].e={...gk[k].e,end:e.end};return}
+    gk[k]={e,g:gfed(e),names:[gname(e)],star:e._star};groups.push(gk[k])});
+  const lines=groups.map(x=>({e:x.g==='AGP'?{...x.e,fed:'AGP'}:x.e,star:x.star,text:combineNames(x.g,x.names)}));
   const byM={};lines.forEach(l=>{const m=+l.e.date.slice(5,7);(byM[m]=byM[m]||[]).push(l)});
   const months=Object.keys(byM).map(Number).sort((a,b)=>a-b);
   const W=1080,H=SHARE.fmt==='story'?1920:1350;
@@ -685,7 +725,7 @@ async function drawYear(){
   const pad=44;
   g.fillStyle=C.acc;g.fillRect(pad,70,W-pad*2,4);
   g.fillStyle=C.ink;g.font=`700 64px ${F}`;g.textAlign='center';g.fillText(`${yr} 대회일정`,W/2,140);
-  g.fillStyle=C.mut;g.font=`500 22px ${F}`;g.fillText(`${S.starOnly?'★ 중요 대회':'국내 대회'} ${list.length}개 · ${md(TODAY)} 기준`,W/2,178);g.textAlign='left';
+  g.fillStyle=C.mut;g.font=`500 22px ${F}`;g.fillText(`${S.starOnly?'★ 프로카드 획득 대회':'국내 대회'} ${list.length}개 · ${md(TODAY)} 기준`,W/2,178);g.textAlign='left';
   if(!months.length){g.fillStyle=C.mut;g.font=`500 30px ${F}`;g.fillText('조건에 맞는 대회가 없어요',pad,260);return c}
   const cols=months.length>6?4:months.length>2?3:months.length;
   const rows=Math.ceil(months.length/cols);
@@ -704,11 +744,11 @@ async function drawYear(){
     g.fillStyle=C.ink;g.font=`700 42px ${F}`;g.fillText(`${m}월`,cx+2,cy+44);
     let yy=cy+44+14+lh;
     g.font=`600 ${fs}px ${M}`;const dw=g.measureText('00–00 ').width;
-    let shown=0;
+    let shown=0,full=false;
     byM[m].forEach(l=>{
-      const e=l.e;if(yy>cy+rowH-lh)return;shown++;
+      const e=l.e;const parts=wrap(l.text+(l.star?' ★':''),fs,colW-dw-10);
+      if(full||yy+(parts.length-1)*lh>cy+rowH-lh-2){full=true;return}shown++;
       g.font=`600 ${fs}px ${M}`;g.fillStyle=C.mut;g.fillText(`${e.date.slice(8)}${e.end?'–'+e.end.slice(8):''}`,cx+2,yy);
-      const parts=wrap(l.text+(l.star?' ★':''),fs,colW-dw-10);
       parts.forEach((ln,j)=>{
         g.font=`${l.star?700:500} ${fs}px ${F}`;g.fillStyle=FED_COLOR[e.fed]||C.ink;
         if(ln.endsWith('★')){const s=ln.slice(0,-1);g.fillText(s,cx+2+dw,yy);g.fillStyle=C.star;g.fillText('★',cx+2+dw+g.measureText(s).width,yy)}
@@ -720,7 +760,7 @@ async function drawYear(){
   });
   g.fillStyle=C.line;g.fillRect(pad,H-74,W-pad*2,2);
   g.font=`600 20px ${F}`;g.fillStyle=C.star;g.fillText('★',pad,H-38);g.fillStyle=C.mut;g.font=`500 20px ${F}`;
-  g.fillText('프로카드·파이널 등 중요 대회   일정은 주최 측 사정으로 바뀔 수 있어요',pad+26,H-38);
+  g.fillText('프로카드 획득 대회   일정은 주최 측 사정으로 바뀔 수 있어요',pad+26,H-38);
   g.textAlign='right';g.font=`600 20px ${M}`;g.fillStyle=C.acc;g.fillText('ynschoi.github.io/bbcomp',W-pad,H-38);g.textAlign='left';
   return c;
 }
@@ -729,7 +769,7 @@ async function openShare(kind){
   $('#sheet').innerHTML=`<div class="grab"></div><h2>공유 이미지</h2>
     <div class="seg" role="group"><button data-sfmt="feed" aria-pressed="${SHARE.fmt==='feed'}">피드 4:5</button><button data-sfmt="story" aria-pressed="${SHARE.fmt==='story'}">스토리 9:16</button></div>
     <img class="share-prev" id="sImg" alt="공유 이미지 미리보기">
-    ${SHARE.kind==='year'?`<p class="src" style="text-align:center">지금 걸린 필터가 그대로 들어가요. ‘★ 중요 대회만’을 켜면 이 이미지처럼 핵심 대회만 담겨요.</p>`:''}
+    ${SHARE.kind==='year'?`<p class="src" style="text-align:center">지금 걸린 필터가 그대로 들어가요. ‘★ 프로카드 대회만’을 켜면 프로카드 획득 대회만 담겨요.</p>`:''}
     <p class="src" style="text-align:center">휴대폰에서는 이미지를 길게 눌러 저장한 뒤 인스타에 올리세요.</p>
     <div class="acts"><button class="btn pri" id="sShare">공유하기</button><button class="btn" id="sSave">이미지 저장</button><button class="btn" id="sClose">닫기</button></div>`;
   $('#scrim').hidden=false;$('#sheet').hidden=false;$('#sClose').onclick=closeSheet;
