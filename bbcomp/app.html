@@ -784,7 +784,7 @@ function openSheet(id){
     ['참가비',e.fee],
     ['접수 마감',e.deadline?`${mdw(e.deadline)} · ${st.t}`:null],
     ['주최',e.host],
-    ['출처',e.unofficial?'fitnessvolt.com (비공식 일정 모음 · 주최 측 공지 확인 필요)':null],
+    ['출처',e.unofficial?(e.srcNote||'fitnessvolt.com (비공식 일정 모음 · 주최 측 공지 확인 필요)'):null],
   ].filter(r=>r[1]);
   const cats=Object.entries(e._cats||{});
   const reOf=c=>(DIV_CATS.find(x=>x[0]===c)||[])[1];
