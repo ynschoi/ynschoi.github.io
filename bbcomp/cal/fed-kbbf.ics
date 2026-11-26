@@ -1,0 +1,106 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//bbcomp//schedule//KO
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:보디빌딩 대회 · KBBF
+X-WR-TIMEZONE:Asia/Seoul
+REFRESH-INTERVAL;VALUE=DURATION:P1D
+X-PUBLISHED-TTL:P1D
+BEGIN:VEVENT
+UID:kbbf-172867825@bbcomp
+DTSTAMP:20261126T020755Z
+DTSTART;VALUE=DATE:20261001
+DTEND;VALUE=DATE:20261002
+SUMMARY:KBBF 제37회 서울특별시장배보디빌딩대회 일시 2026.
+  10. 4.(일)
+DESCRIPTION:원문 https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6
+ InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=1
+ 72867825&t=board\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 
+ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:세종대학교 광개토관 컨벤션센터 C홀
+URL:https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTt
+ zOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=172867825&t=boar
+ d
+END:VEVENT
+BEGIN:VEVENT
+UID:kbbf-174412236@bbcomp
+DTSTAMP:20261126T020755Z
+DTSTART;VALUE=DATE:20261017
+DTEND;VALUE=DATE:20261018
+SUMMARY:KBBF 제107회 전국체육대회
+DESCRIPTION:원문 https://bodybuilding.or.kr/contest_kr/?q=YToyOntzOjQ6In
+ BhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=174
+ 412236&t=board\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 일
+ 정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:제주 한림수협 다목적어업인지원센터 3층 대연회
+ 장
+URL:https://bodybuilding.or.kr/contest_kr/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzO
+ jEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=174412236&t=board
+END:VEVENT
+BEGIN:VEVENT
+UID:kbbf-174977859@bbcomp
+DTSTAMP:20261126T020755Z
+DTSTART;VALUE=DATE:20261025
+DTEND;VALUE=DATE:20261026
+SUMMARY:KBBF 2026 FIKO(피코) 도핑테스트 대회
+DESCRIPTION:접수 마감 2026-10-18\n원문 https://bodybuilding.or.kr/co
+ ntest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6Mzo
+ iYWxsIjt9&bmode=view&idx=174977859&t=board\n전체 일정 https://ynschoi
+ .github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:대구보건대학교 인당아트홀 (대구광역시 북구 영
+ 송로 15)
+URL:https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTt
+ zOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=174977859&t=boar
+ d
+END:VEVENT
+BEGIN:VEVENT
+UID:kbbf-174214214@bbcomp
+DTSTAMP:20261126T020755Z
+DTSTART;VALUE=DATE:20261101
+DTEND;VALUE=DATE:20261102
+SUMMARY:KBBF 2026년 제10회 전국 유니버시티 파이널 챔피언
+ 십 일시 2026년 11월 1일(일) 09:00~ *개회식 13:00
+DESCRIPTION:원문 https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6
+ InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=1
+ 74214214&t=board\n전체 일정 https://ynschoi.github.io/bbcomp/\n※ 
+ 일정은 주최 측 사정으로 바뀔 수 있어요
+LOCATION:부산 영도 피아크
+URL:https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTt
+ zOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=174214214&t=boar
+ d
+END:VEVENT
+BEGIN:VEVENT
+UID:kbbf-175018503@bbcomp
+DTSTAMP:20261126T020755Z
+DTSTART;VALUE=DATE:20261106
+DTEND;VALUE=DATE:20261108
+SUMMARY:KBBF 제56회 Mr. YMCA 선발대회
+DESCRIPTION:접수 마감 2026-10-30\n원문 https://bodybuilding.or.kr/co
+ ntest_kr/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiY
+ WxsIjt9&bmode=view&idx=175018503&t=board\n전체 일정 https://ynschoi.g
+ ithub.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있어
+ 요
+LOCATION:강원특별자치도 평창군 봉평생활체육관
+URL:https://bodybuilding.or.kr/contest_kr/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzO
+ jEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=175018503&t=board
+END:VEVENT
+BEGIN:VEVENT
+UID:kbbf-174937240@bbcomp
+DTSTAMP:20261126T020755Z
+DTSTART;VALUE=DATE:20261129
+DTEND;VALUE=DATE:20261130
+SUMMARY:KBBF 제21회 울산광역시장배 생활체육 보디빌딩 선
+ 발대회
+DESCRIPTION:접수 마감 2026-11-20\n원문 https://bodybuilding.or.kr/co
+ ntest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6Mzo
+ iYWxsIjt9&bmode=view&idx=174937240&t=board\n전체 일정 https://ynschoi
+ .github.io/bbcomp/\n※ 일정은 주최 측 사정으로 바뀔 수 있
+ 어요
+LOCATION:울산혁신도시 복합혁신센터
+URL:https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTt
+ zOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=174937240&t=boar
+ d
+END:VEVENT
+END:VCALENDAR

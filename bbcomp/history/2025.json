@@ -21,6 +21,10 @@
   {
    "label": "IFBB 프로쇼 (fitnessvolt.com · 비공식)",
    "url": "https://fitnessvolt.com/bodybuilding/seasons/2025/"
+  },
+  {
+   "label": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_kr"
   }
  ],
  "events": [
@@ -35,6 +39,18 @@
    "country": "KR",
    "src": "운동의모든것 (unmo.kr)",
    "url": "https://unmo.kr/m/shop/tm_view.php?gs_id=462"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-149114865",
+   "fed": "KBBF",
+   "name": "2025 SPOEX 대학·고교보디빌딩·미즈피트니스대회(2025 IFBB 아시아선수권대회 국가대표 선발전)",
+   "date": "2025-03-29",
+   "end": "2025-03-30",
+   "place": "서울 코엑스 B홀 메인무대 〔서울 강남구 영동대로 513 소재〕",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_kr/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=149114865&t=board"
   },
   {
    "id": "h2025-unmo-421",
@@ -59,6 +75,18 @@
    "country": "KR",
    "src": "운동의모든것 (unmo.kr)",
    "url": "https://unmo.kr/m/shop/tm_view.php?gs_id=422"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-157129343",
+   "fed": "KBBF",
+   "name": "2025년도 제5회Mr. & Ms. 세종선발대회겸 피트니스 선수권 대회 및 제106회 전국체육대회 대표선수 선발전 일시 2025. 4. 5.(토) 13:30",
+   "date": "2025-04-05",
+   "end": null,
+   "place": "세종시민회관 대강당 (세종 조치원읍 문화로17)",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MztzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=157129343&t=board"
   },
   {
    "id": "h2025-unmo-423",
@@ -145,6 +173,18 @@
    "url": "https://unmo.kr/m/shop/tm_view.php?gs_id=428"
   },
   {
+   "id": "h2025-kbbf-kbbf-158554323",
+   "fed": "KBBF",
+   "name": "2025 전국생활체육대축전 보디빌딩 경기",
+   "date": "2025-04-26",
+   "end": null,
+   "place": "전라남도 담양문화회관 〔전남 담양군 지침6길 29〕",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_kr/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=158554323&t=board"
+  },
+  {
    "id": "h2025-unmo-429",
    "fed": "WNGP",
    "name": "WNGP 인천",
@@ -181,6 +221,18 @@
    "url": "https://unmo.kr/m/shop/tm_view.php?gs_id=430"
   },
   {
+   "id": "h2025-kbbf-kbbf-160836514",
+   "fed": "KBBF",
+   "name": "2025 제25회 Mr. & Ms. 부산선발대회 일시 2025. 5. 3. (토) 09:00 ~",
+   "date": "2025-05-03",
+   "end": null,
+   "place": "동서대학교 소향아트홀 (부산 사상구",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MjtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=160836514&t=board"
+  },
+  {
    "id": "h2025-unmo-431",
    "fed": "WNGP",
    "name": "WNGP 전남",
@@ -205,6 +257,30 @@
    "url": "https://unmo.kr/m/shop/tm_view.php?gs_id=432"
   },
   {
+   "id": "h2025-kbbf-kbbf-158956287",
+   "fed": "KBBF",
+   "name": "2025년 대전광역시장배 겸 제36회 Mr. & 제12회 Ms. 대전 & 피트니스 챔피온쉽 일시 2025년 05월 17일(토) 본선 13:00 ☞ 생활체육부 경기 시작: 11:00",
+   "date": "2025-05-09",
+   "end": null,
+   "place": "대전 배재대학교 콘서트홀",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MjtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=158956287&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-158685837",
+   "fed": "KBBF",
+   "name": "2025년 제7회 전국 유니버시티 퍼스트 챔피언십 일시 2025. 5. 10 (토) 09:00~18:00 보디빌딩,피트니스대회 2025.5.11. (일) 09:00~18:00 필라테스행사",
+   "date": "2025-05-10",
+   "end": null,
+   "place": "대림대학교 홍지관 아트홀",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MjtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=158685837&t=board"
+  },
+  {
    "id": "h2025-unmo-433",
    "fed": "WNGP",
    "name": "WNGP 대전",
@@ -215,6 +291,18 @@
    "country": "KR",
    "src": "운동의모든것 (unmo.kr)",
    "url": "https://unmo.kr/m/shop/tm_view.php?gs_id=433"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-158536796",
+   "fed": "KBBF",
+   "name": "제106회 전국체육대회 제1차 광주광역시예선대회 & 제39회 Mr. & 제10회 Ms. 광주 선발대회 일시 2025. 5. 11.(일)",
+   "date": "2025-05-11",
+   "end": null,
+   "place": "광주대학교 호심관 대강당",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MjtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=158536796&t=board"
   },
   {
    "id": "h2025-unmo-434",
@@ -239,6 +327,30 @@
    "country": "KR",
    "src": "운동의모든것 (unmo.kr)",
    "url": "https://unmo.kr/m/shop/tm_view.php?gs_id=460"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-158536364",
+   "fed": "KBBF",
+   "name": "2025년 제44회 Mr. & 제30회 Ms. 서울 선발대회 및 협회장배대회 (겸 제106회 전국체육대회 서울시 예선전 및 2025년도 Mr. & Ms. Korea 서울시 예선전) 일시 2025년 5월 17일(토) 계측 09:30 본선 12:30",
+   "date": "2025-05-17",
+   "end": null,
+   "place": "광운대학교 동해문화예술관 2층 대공연장",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MztzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=158536364&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-156266108",
+   "fed": "KBBF",
+   "name": "제35회 Mr. 충북선발대회 겸 제5회 Ms. & Mr. 피트니스 챔피언 쉽 일시 2025. 5. 17.(토)",
+   "date": "2025-05-17",
+   "end": null,
+   "place": "충북대학교 개신문화관 대공연장〔충북 청주시 서원구 충대로1〕",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MztzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=156266108&t=board"
   },
   {
    "id": "h2025-unmo-435",
@@ -277,6 +389,18 @@
    "url": "https://npcnewsonline.com/schedule_event/2025-npc-worldwide-monsterzym-korea-pro-qualifier/"
   },
   {
+   "id": "h2025-kbbf-kbbf-163683443",
+   "fed": "KBBF",
+   "name": "2025 Mr. & Ms. 경북 선발대회 일시 2025년 5월 18일(일)",
+   "date": "2025-05-18",
+   "end": null,
+   "place": "문경새재도립공원야외공연장",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MjtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=163683443&t=board"
+  },
+  {
    "id": "h2025-unmo-436",
    "fed": "MUSA",
    "name": "MUSA 안성",
@@ -289,6 +413,42 @@
    "url": "https://unmo.kr/m/shop/tm_view.php?gs_id=436"
   },
   {
+   "id": "h2025-kbbf-kbbf-161522089",
+   "fed": "KBBF",
+   "name": "2025년 제64회 Mr. & Ms. 전남 선발전 & 피트니스 챔피언쉽대회 & 제106회 전국체전 1차 선발전 일시 2025년 5월 24일(토) 13:00",
+   "date": "2025-05-24",
+   "end": null,
+   "place": "전남 순천문화건강센터 다목적홀",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MjtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=161522089&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-164057386",
+   "fed": "KBBF",
+   "name": "2025년도 제43회 Mr. & Ms. 인천선발대회 겸 피트니스 선수권 및 제106회 전국체육대회 대표선수 1차 선발전 일시 2025. 5. 24.(토) - 11:00",
+   "date": "2025-05-24",
+   "end": null,
+   "place": "계양문화회관 공연장 [인천 계양구 계양산로 35번길 11계산동]",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MjtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=164057386&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-160914271",
+   "fed": "KBBF",
+   "name": "제32회 Mr. 강원선발대회 및 제106회 전국체육대회 1차 선발전 일시 2025년 5월24일(토) 09:00",
+   "date": "2025-05-24",
+   "end": null,
+   "place": "속초시 문화예술회관",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MjtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=160914271&t=board"
+  },
+  {
    "id": "h2025-unmo-437",
    "fed": "WNGP",
    "name": "WNGP 남양주",
@@ -299,6 +459,18 @@
    "country": "KR",
    "src": "운동의모든것 (unmo.kr)",
    "url": "https://unmo.kr/m/shop/tm_view.php?gs_id=437"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-158741528",
+   "fed": "KBBF",
+   "name": "제60회 Mr. & Ms. 경기 선발대회 겸 제106회 전국체육대회 1차 선발전 일시 2025. 5. 25.(일) 13시",
+   "date": "2025-05-25",
+   "end": null,
+   "place": "파주시민회관 대공연장 [경기도 파주시 시민회관길 33]",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MjtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=158741528&t=board"
   },
   {
    "id": "h2025-unmo-438",
@@ -337,6 +509,18 @@
    "url": "https://unmo.kr/m/shop/tm_view.php?gs_id=440"
   },
   {
+   "id": "h2025-kbbf-kbbf-158484862",
+   "fed": "KBBF",
+   "name": "제59회 Mr. 충남 & 피트니스 선발대회 일시 2025. 6. 7. (토)",
+   "date": "2025-06-07",
+   "end": null,
+   "place": "서천 문예의 전당 (충청남도 서천군 서천읍 서천로14번길 20)",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MztzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=158484862&t=board"
+  },
+  {
    "id": "h2025-unmo-441",
    "fed": "WNGP",
    "name": "WNGP 세종",
@@ -359,6 +543,18 @@
    "country": "KR",
    "src": "운동의모든것 (unmo.kr)",
    "url": "https://unmo.kr/m/shop/tm_view.php?gs_id=442"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-161559209",
+   "fed": "KBBF",
+   "name": "제40회 Mr. 전북 및 제10회 전북특별자치도지사배보디빌딩대회 일시 2025년 6월 14일(토)",
+   "date": "2025-06-14",
+   "end": null,
+   "place": "전주교육문화회관 공연장(전북 전주시 덕진구 진북동 소재)",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MjtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=161559209&t=board"
   },
   {
    "id": "h2025-unmo-443",
@@ -625,6 +821,18 @@
    "url": "https://unmo.kr/m/shop/tm_view.php?gs_id=492"
   },
   {
+   "id": "h2025-kbbf-kbbf-166518090",
+   "fed": "KBBF",
+   "name": "2025 Mr. & Ms. Korea(2025 IFBB 세계선수권대회 제1차 국가대표 선발전)",
+   "date": "2025-08-08",
+   "end": "2025-08-10",
+   "place": "서울특별시교육청 잠실학생체육관 〔서울 송파구 올림픽로 25(잠실동 10)〕",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_kr/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=166518090&t=board"
+  },
+  {
    "id": "h2025-unmo-466",
    "fed": "WNGP",
    "name": "WNGP 성남",
@@ -745,6 +953,18 @@
    "url": "https://unmo.kr/m/shop/tm_view.php?gs_id=471"
   },
   {
+   "id": "h2025-kbbf-kbbf-166599925",
+   "fed": "KBBF",
+   "name": "제36회 서울특별시장배보디빌딩대회 일시 2025. 9. 6.(토)",
+   "date": "2025-09-06",
+   "end": null,
+   "place": "일원동 에코파크",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MjtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=166599925&t=board"
+  },
+  {
    "id": "h2025-coachn-pca-2025-09-06",
    "fed": "PCA",
    "name": "PCA 슈퍼시리즈",
@@ -779,6 +999,30 @@
    "country": "KR",
    "src": "운동의모든것 (unmo.kr)",
    "url": "https://unmo.kr/m/shop/tm_view.php?gs_id=479"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-167365492",
+   "fed": "KBBF",
+   "name": "2025 IFBB 세계보디빌딩선수권대회 제2차 국가대표 선발전 계측 및 선발전 일시 2025. 9. 13.(토)",
+   "date": "2025-09-13",
+   "end": null,
+   "place": "올림픽회관 지하 1층 KSPO 연수원 대강당 [서울 송파구 올림픽로 424(방이동) 올림픽회관 지하1층]",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_kr/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=167365492&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-167365472",
+   "fed": "KBBF",
+   "name": "2025 IFBB 세계피트니스선수권대회 제2차 국가대표 선발전 계측 및 선발전 일시 2025. 9. 13.(토)",
+   "date": "2025-09-13",
+   "end": null,
+   "place": "올림픽회관 지하 1층 KSPO 연수원 대강당 [서울 송파구 올림픽로 424(방이동) 올림픽회관 지하1층]",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_kr/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=167365472&t=board"
   },
   {
    "id": "h2025-unmo-480",
@@ -827,6 +1071,18 @@
    "country": "KR",
    "src": "운동의모든것 (unmo.kr)",
    "url": "https://unmo.kr/m/shop/tm_view.php?gs_id=483"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-167636726",
+   "fed": "KBBF",
+   "name": "제55회 Mr. YMCA 선발대회 2. 기 간: 2025. 9. 26.(금) ~ 27.(토) 3.",
+   "date": "2025-09-26",
+   "end": "2025-09-27",
+   "place": "부천대학교 한길체육관(경기도 부천시 원미구 신흥로 56번길 25 소재) 4.",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_kr/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=167636726&t=board"
   },
   {
    "id": "h2025-afex-novice-classic-b-2025-09-27",
@@ -1033,6 +1289,18 @@
    "url": "https://unmo.kr/m/shop/tm_view.php?gs_id=498"
   },
   {
+   "id": "h2025-kbbf-kbbf-167702458",
+   "fed": "KBBF",
+   "name": "제8회 광주광역시체육회장배대회 일시 2025. 10. 26.(일)",
+   "date": "2025-10-26",
+   "end": null,
+   "place": "광주대학교 호심관 대강당",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MjtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=167702458&t=board"
+  },
+  {
    "id": "h2025-unmo-499",
    "fed": "MUSA",
    "name": "MUSA 일산",
@@ -1043,6 +1311,18 @@
    "country": "KR",
    "src": "운동의모든것 (unmo.kr)",
    "url": "https://unmo.kr/m/shop/tm_view.php?gs_id=499"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-168156638",
+   "fed": "KBBF",
+   "name": "2025년 제3회 충남도지사배 보디빌딩&피트니스 선발대회 일시 2025. 11. 1.(토)",
+   "date": "2025-11-01",
+   "end": null,
+   "place": "공주대 백제교육문화관",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MjtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=168156638&t=board"
   },
   {
    "id": "h2025-unmo-500",
@@ -1067,6 +1347,18 @@
    "country": "KR",
    "src": "운동의모든것 (unmo.kr)",
    "url": "https://unmo.kr/m/shop/tm_view.php?gs_id=501"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-167571681",
+   "fed": "KBBF",
+   "name": "2025년 제8회 전국 유니버시티 파이널 챔피언십 보디빌딩&피트니스 대회 일시 2025년 11월 8일(토) 09:00~18:00 *개회식 13:00",
+   "date": "2025-11-08",
+   "end": null,
+   "place": "단국대학교 천안캠퍼스 학생회관 4층 학생극장",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MjtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=167571681&t=board"
   },
   {
    "id": "h2025-unmo-502",
@@ -1235,6 +1527,378 @@
    "country": "KR",
    "src": "운동의모든것 (unmo.kr)",
    "url": "https://unmo.kr/m/shop/tm_view.php?gs_id=519"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-169590900",
+   "fed": "KBBF",
+   "name": "2026 SPOEX 대학보디빌딩대회 겸 고교보디빌딩대회 및 미즈피트니스대회",
+   "date": "2026-03-28",
+   "end": "2026-03-29",
+   "place": "서울 코엑스 B홀 메인무대 〔서울 강남구 영동대로 513 소재〕",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_kr/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=169590900&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-169588130",
+   "fed": "KBBF",
+   "name": "2026년도 제6회 Mr.&Ms. 세종선발대회 겸 피트니스 선수권대회 및 제107회 전국체육대회 대표선수 선발전 일시 2026년 04월 04일 (토) 13:30",
+   "date": "2026-04-04",
+   "end": null,
+   "place": "세종시민회관 대강당",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MjtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=169588130&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-169336689",
+   "fed": "KBBF",
+   "name": "2026 MR.&MS. GYEONGNAM 선발대회 겸 협회장배대회 일시 2026년 04월 11일 (토) 계측 08:00 / 개회식 및 본선 12:00",
+   "date": "2026-04-11",
+   "end": null,
+   "place": "경상남도 산청군 실내체육관",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MjtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=169336689&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-170380402",
+   "fed": "KBBF",
+   "name": "2026 전국생활체육대축전 보디빌딩 경기",
+   "date": "2026-04-25",
+   "end": null,
+   "place": "경상남도 진영스포츠센터(경남 김해시 진영읍 김해대로 253)",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_kr/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=170380402&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-170668857",
+   "fed": "KBBF",
+   "name": "2026 Mr. & Ms. 경북 선발대회 일시 2026. 05. 02.(토) 13:00",
+   "date": "2026-05-02",
+   "end": null,
+   "place": "문경새재도립공원 야외공연장",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=170668857&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-170842099",
+   "fed": "KBBF",
+   "name": "제61회 Mr. & Ms. 경기 선발대회 겸 제107회 전국체육대회 1차 선발전 일시 2026. 5. 3.(일) 13시",
+   "date": "2026-05-03",
+   "end": null,
+   "place": "파주 아이레벨 트라움벨트 경기장 [경기도 파주시 회동길 342]",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=170842099&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-170432166",
+   "fed": "KBBF",
+   "name": "2026년도 제8회 광주광역시체육회장배 보디빌딩 & 피트니스대회 일시 2026. 5. 9.(토)",
+   "date": "2026-05-09",
+   "end": null,
+   "place": "광주대학교 호심관 대강당",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=170432166&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-170432216",
+   "fed": "KBBF",
+   "name": "제107회 전국체육대회 제1차 광주광역시예선대회 & 제40회 Mr. & 제11회 Ms. 광주 선발대회 일시 2026. 5. 10.(일)",
+   "date": "2026-05-10",
+   "end": null,
+   "place": "광주대학교 호심관 대강당",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=170432216&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-170768936",
+   "fed": "KBBF",
+   "name": "제36회 Mr. 충북선발대회 겸 제6회 Ms. & Mr. 피트니스 대회 일시 2026. 5. 16.(토)",
+   "date": "2026-05-16",
+   "end": null,
+   "place": "충청대학교 컨벤션센터",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=170768936&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-170677251",
+   "fed": "KBBF",
+   "name": "제65회 Mr&Ms 전남 선발전 & 피트니스 오픈 챔피언쉽대회 & 제107회 전국체전 1차 선발전 일시 2026년 5월 23일(토) 13:00",
+   "date": "2026-05-23",
+   "end": null,
+   "place": "전남 순천문화건강센터 다목적홀",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=170677251&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-171259821",
+   "fed": "KBBF",
+   "name": "2026년도 제44회 Mr.& Ms. 인천선발대회 겸 피트니스 선수권 및 제107회 전국체육대회 대표선수 1차 선발전 일시 2026. 5. 30.(토) - 11:00",
+   "date": "2026-05-30",
+   "end": null,
+   "place": "계양문화회관 공연장 [인천 계양구 계양산로 35번길 11]",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=171259821&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-170271493",
+   "fed": "KBBF",
+   "name": "제45회 미스터서울 & 제31회 미즈 서울선발대회 및 협회장배대회 일시 2026년 5월 30일(토) 계측 09:30 본선 12:30",
+   "date": "2026-05-30",
+   "end": null,
+   "place": "세종대학교 컨벤션센터",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MjtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=170271493&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-171647363",
+   "fed": "KBBF",
+   "name": "2026 제38회 Mr. 제주 CHAMPIONS & 전국체전 도대표선발전 일시 2026. 6. 6(토) 개회식 및 본선 13:00~",
+   "date": "2026-06-06",
+   "end": null,
+   "place": "봉개 문화체육센터(제주시 봉개북3길 6) 참가마감 2026. 5. 30. 18:00 까지 제38회 미스터제주 선발대회 요강.hwp 867KB",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=171647363&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-171530715",
+   "fed": "KBBF",
+   "name": "제33회 Mr. 강원 선발대회 및 제107회 전국체육대회 1차 선발전 일시 2026년 6월 6일(토)",
+   "date": "2026-06-06",
+   "end": null,
+   "place": "홍천군 홍천문화원",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=171530715&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-170846514",
+   "fed": "KBBF",
+   "name": "제60회 Mr. 충남 보디빌딩 & 피트니스 선발대회(겸 제107회 전국체전 대표선발전) 일시 2026. 6. 6.(토)",
+   "date": "2026-06-06",
+   "end": null,
+   "place": "보령문화예술회관 [충남 보령시 성주산로 101]",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=170846514&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-170570910",
+   "fed": "KBBF",
+   "name": "제41회 Mr. 전북 및 제11회 전북특별자치도지사배 보디빌딩대회 일시 2026년 6월 13일(토)",
+   "date": "2026-06-13",
+   "end": null,
+   "place": "김제시문화예술회관 대공연장",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=170570910&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-170750275",
+   "fed": "KBBF",
+   "name": "2026년 제29회 Mr. & 제6회 Ms. 울산선발대회 일시 2026. 6. 14(일) 09시 (개회식 13:00~)",
+   "date": "2026-06-14",
+   "end": null,
+   "place": "울산혁신도시복합혁신센터 다목적체육관",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=170750275&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-171158564",
+   "fed": "KBBF",
+   "name": "2026년 제9회 전국 유니버시티 퍼스트 챔피언십(보디빌딩, 피트니스) 일시 2026. 06. 20.(토) 09:00~",
+   "date": "2026-06-20",
+   "end": null,
+   "place": "상상플렛폼 (월미로 33)",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=171158564&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-171906149",
+   "fed": "KBBF",
+   "name": "2026 전북특별자치도교육감배 보디빌딩대회 일시 2026년 7월 19일(일)",
+   "date": "2026-07-19",
+   "end": null,
+   "place": "전주교육문화회관 공연장",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=171906149&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-172418832",
+   "fed": "KBBF",
+   "name": "2026 IFBB 세계피트니스 및 보디빌딩선수권대회 제1차 국가대표 선발전 2. 기 간: 2026. 8. 14.(금) ~ 15.(토) 3.",
+   "date": "2026-08-14",
+   "end": "2026-08-15",
+   "place": "경북 경주화백컨벤션센터 - 경기 일정 1. 계측: 2026. 8. 14.(금) ❃ 계측 시 경기복 확인, 선수 번호표 배부 2. 선발전: 2026. 8. 15.(토) * 체급별 계측 시간 및 경기 시간(예정 안)은 8. 10.(월) 이전 공지 * 계측 종료 후 경기시간은 재공지 되며, 재공지된 시간을 필히 확인 * 계측 종료 후 경기 시간은 재공지 → 재공",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_kr/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=172418832&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-172418854",
+   "fed": "KBBF",
+   "name": "2026 IFBB 아시아선수권대회 제1차 국가대표 선발전 2. 기 간: 2026. 8. 14.(금) ~ 15.(토) 3.",
+   "date": "2026-08-14",
+   "end": "2026-08-15",
+   "place": "경북 경주화백컨벤션센터 - 경기 일정 1. 계측: 2026. 8. 14.(금) ❃ 계측 시 경기복 확인, 선수 번호표 배부 2. 선발전: 2026. 8. 15.(토) * 체급별 계측 시간 및 경기 시간(예정 안)은 8. 10.(월) 이전 공지 * 계측 종료 후 경기시간은 재공지 되며, 재공지된 시간을 필히 확인 * 계측 종료 후 경기 시간은 재공지 → 재공",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_kr/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=172418854&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-171966111",
+   "fed": "KBBF",
+   "name": "2026 Mr. & Ms. Korea",
+   "date": "2026-08-14",
+   "end": "2026-08-16",
+   "place": "경상북도 경주화백컨벤션센터 (경북 경주시 보문로 507)",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_kr/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=171966111&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-171862206",
+   "fed": "KBBF",
+   "name": "2026년 인천광역시장배 전국 피트니스 선수권 대회",
+   "date": "2026-08-29",
+   "end": null,
+   "place": "인천 하버파크호텔 〔인천광역시 중구 제물량로 217〕",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_kr/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=171862206&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-173178998",
+   "fed": "KBBF",
+   "name": "2026년 제4회 충남도지사배 보디빌딩&피트니스 선발대회 일시 2026. 8. 29.(토)",
+   "date": "2026-08-29",
+   "end": null,
+   "place": "부여박물관 사비마루",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=173178998&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-172940935",
+   "fed": "KBBF",
+   "name": "2026 Mr. & Ms. Busan 일시 2026. 9. 12. (토)",
+   "date": "2026-09-12",
+   "end": null,
+   "place": "남구 국민 체육센터 대강당",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=172940935&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-172867825",
+   "fed": "KBBF",
+   "name": "제37회 서울특별시장배보디빌딩대회 일시 2026. 10. 4.(일)",
+   "date": "2026-10-01",
+   "end": null,
+   "place": "세종대학교 광개토관 컨벤션센터 C홀",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=172867825&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-174412236",
+   "fed": "KBBF",
+   "name": "제107회 전국체육대회",
+   "date": "2026-10-17",
+   "end": null,
+   "place": "제주 한림수협 다목적어업인지원센터 3층 대연회장",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_kr/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=174412236&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-174977859",
+   "fed": "KBBF",
+   "name": "2026 FIKO(피코) 도핑테스트 대회",
+   "date": "2026-10-25",
+   "end": null,
+   "place": "대구보건대학교 인당아트홀 (대구광역시 북구 영송로 15)",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=174977859&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-174214214",
+   "fed": "KBBF",
+   "name": "2026년 제10회 전국 유니버시티 파이널 챔피언십 일시 2026년 11월 1일(일) 09:00~ *개회식 13:00",
+   "date": "2026-11-01",
+   "end": null,
+   "place": "부산 영도 피아크",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=174214214&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-175018503",
+   "fed": "KBBF",
+   "name": "제56회 Mr. YMCA 선발대회",
+   "date": "2026-11-06",
+   "end": "2026-11-07",
+   "place": "강원특별자치도 평창군 봉평생활체육관",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_kr/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=175018503&t=board"
+  },
+  {
+   "id": "h2025-kbbf-kbbf-174937240",
+   "fed": "KBBF",
+   "name": "제21회 울산광역시장배 생활체육 보디빌딩 선발대회",
+   "date": "2026-11-29",
+   "end": null,
+   "place": "울산혁신도시 복합혁신센터",
+   "city": null,
+   "country": "KR",
+   "src": "대한보디빌딩협회",
+   "url": "https://bodybuilding.or.kr/contest_city/?q=YToyOntzOjQ6InBhZ2UiO2k6MTtzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=174937240&t=board"
   }
  ]
 }

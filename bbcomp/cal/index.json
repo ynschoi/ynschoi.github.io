@@ -7,12 +7,12 @@
  {
   "file": "kr-pro.ics",
   "label": "보디빌딩 대회 · 국내 프로카드·프로쇼",
-  "count": 9
+  "count": 3
  },
  {
   "file": "world-pro.ics",
   "label": "보디빌딩 대회 · 해외 프로",
-  "count": 203
+  "count": 153
  },
  {
   "file": "fed-pca.ics",
@@ -47,7 +47,7 @@
  {
   "file": "fed-ifbbpro.ics",
   "label": "보디빌딩 대회 · IFBB PRO",
-  "count": 8
+  "count": 2
  },
  {
   "file": "fed-nabba.ics",
@@ -68,5 +68,10 @@
   "file": "fed-musclemania.ics",
   "label": "보디빌딩 대회 · MUSCLEMANIA",
   "count": 1
+ },
+ {
+  "file": "fed-kbbf.ics",
+  "label": "보디빌딩 대회 · KBBF",
+  "count": 6
  }
 ]
