@@ -117,14 +117,16 @@ body.cal-half header,body.cal-half #dl,body.cal-half #bar{display:none!important
 .hvx .w>b.now,.hvx .w>b.now em{color:#1f1f1f}
 .hvx .mb{border-top:1.5px solid #1f1f1f}
 .hvx .nw{background:#f5f5f5}
-.hvx .l{display:flex;align-items:center;gap:3px;height:15px;padding:0 4px;min-width:0;overflow:hidden}
-.hvx .l>u{text-decoration:none;font-size:9.5px;font-weight:800;color:#1f1f1f;flex:none;width:28px;display:flex;gap:2px;justify-content:flex-end;padding-right:3px}
+.hvx .l{display:flex;align-items:flex-start;gap:3px;min-height:15px;padding:1.5px 4px;min-width:0}
+.hvx .cs{display:flex;flex-wrap:wrap;gap:2px 3px;min-width:0}
+.hvx .c{max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.hvx .l>u{text-decoration:none;line-height:12px;font-size:9.5px;font-weight:800;color:#1f1f1f;flex:none;width:28px;display:flex;gap:2px;justify-content:flex-end;padding-right:3px}
 .hvx .l>u i{font-style:normal;font-weight:600;color:#9aa0a6}
 .hvx .c{font:inherit;font-size:9px;font-weight:600;color:#3c4043;background:#fff;border:0;box-shadow:inset 0 0 0 1px #dadce0;border-radius:2px 3px 3px 2px;border-left:3px solid #9aa0a6;padding:0 4px 0 3px;line-height:12px;white-space:nowrap;letter-spacing:-0.02em;flex:none;cursor:pointer}
 .hvx .c.s{background:#1f1f1f;color:#fff;box-shadow:none;font-weight:800}
 .hvx .more{font-size:9px;font-weight:700;color:#5f6368;flex:none;border:0;background:none;padding:0 2px;margin:0}
 .hvx .z{color:#d0d0d0;font-size:9px}
-.hvx .off .l{color:#bdbdbd;font-size:9.5px;height:22px}
+.hvx .off .l{color:#bdbdbd;font-size:9.5px;min-height:22px;align-items:center}
 .hvx-mode{display:block;margin:14px auto 0;border:1px solid #e3e3e3;background:#fff;border-radius:999px;padding:7px 14px;font-size:12.5px;color:#5f6368}
 /* 달력 */
 .cal-h{display:flex;align-items:center;justify-content:space-between;margin-top:16px}
@@ -547,7 +549,7 @@ function renderCal(){
   const chip=c=>{const pre=c.es.length===1&&wkday.get(c.es[0].id)||'';
     return `<button class="c${c.star?' s':''}" data-ev="${esc(c.es[0].id)}" style="border-left-color:${HV_COL[hvGroup(c.f)]}">${c.star?'★ ':''}${esc(pre+c.text)}</button>`};
   const day=(d,su)=>{const es=d>=start&&d<=end?(by.get(ymd(d))||[]):[];
-    return `<div class="l${su?' su':''}" data-d="${ymd(d)}"><u>${d.getDate()}<i>${WD[d.getDay()]}</i></u>${es.length?hvChips(es).map(chip).join(''):'<span class="z">–</span>'}</div>`};
+    return `<div class="l${su?' su':''}" data-d="${ymd(d)}"><u>${d.getDate()}<i>${WD[d.getDay()]}</i></u><span class="cs">${es.length?hvChips(es).map(chip).join(''):'<span class="z">–</span>'}</span></div>`};
   const nowSat=(()=>{const w=t.getDay();const s=new Date(t);s.setDate(t.getDate()+(w===0?-1:6-w));return ymd(s)})();
   const rows=[];let lastM=-1,wk=0,run=[];
   const flush=()=>{if(run.length>=3){const a=run[0].d,b=new Date(run[run.length-1].d);b.setDate(b.getDate()+1);
@@ -566,11 +568,6 @@ function renderCal(){
     <div class="legend">${HV_LEG.map(([k,n])=>`<span style="border-color:${HV_COL[k]}">${n}</span>`).join('')}</div>
     <div>${rows.join('')}</div></div>
     <button class="hvx-mode" id="hvMode2">월 달력으로 보기</button>`;
-  // 한 줄에 다 안 들어가는 날은 뒤쪽 칩을 접고 '+N'
-  document.querySelectorAll('.hvx .l').forEach(l=>{const cs=[...l.querySelectorAll('.c')];if(l.scrollWidth<=l.clientWidth||!cs.length)return;
-    const more=document.createElement('button');more.className='more';l.appendChild(more);let hid=0;
-    for(let i=cs.length-1;i>0&&l.scrollWidth>l.clientWidth;i--){cs[i].remove();hid++;more.textContent='+'+hid;more.dataset.day=''}
-    more.onclick=()=>{const d=l.dataset.d;S.calMode='month';S.cal=[+d.slice(0,4),+d.slice(5,7)];S.calSel=d;render()};if(!hid)more.remove()});
   const go=hh=>{S.half=[y,hh];render()};
   $('#hvH1').onclick=()=>go(1);$('#hvH2').onclick=()=>go(2);
   $('#hvMode').onclick=$('#hvMode2').onclick=()=>{S.calMode='month';LS.set('bb.calMode','month');render()};
